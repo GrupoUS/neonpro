@@ -3,6 +3,8 @@ import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface ContraindicationAnalysisLoaderData {
@@ -67,7 +69,7 @@ function ContraindicationAnalysisPage() {
 
           return analysis
         } catch (error) {
-          console.error('Error exporting contraindication analysis:', error)
+          await logger.error('Error exporting contraindication analysis:')
           throw error
         }
       }}

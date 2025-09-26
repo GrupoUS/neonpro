@@ -17,10 +17,9 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import * as React from 'react'
 import { useState } from 'react'
 
-export const Route = (createFileRoute as any)('/patient-engagement')({
+export const Route = createFileRoute('/patient-engagement/')({
   component: PatientEngagementDashboard,
 })
 

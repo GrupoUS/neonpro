@@ -2,20 +2,22 @@
 // Test globals will be available through vitest global setup
 import '@testing-library/jest-dom'
 import { JSDOM } from 'jsdom'
+import { vi } from 'vitest'
 
 // Setup JSDOM environment before all tests - only if not already set by vitest
+let dom: JSDOM | null = null
 if (typeof global.document === 'undefined') {
-  const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
     url: 'http://localhost:8080',
   })
 
-  // Set global DOM objects (with proper handling of read-only properties)
-  global.document = dom.window.document
-  global.window = dom.window
+  // Set global DOM objects with proper type assertions
+  global.document = dom.window.document as any
+  global.window = dom.window as any
 
   // Also set on globalThis for React Testing Library
-  globalThis.document = dom.window.document
-  globalThis.window = dom.window
+  globalThis.document = dom.window.document as any
+  globalThis.window = dom.window as any
 
   // Use Object.defineProperty for read-only properties
   Object.defineProperty(global, 'navigator', {
@@ -26,7 +28,7 @@ if (typeof global.document === 'undefined') {
 }
 
 // Define DOM properties only if DOM is available
-if (typeof dom !== 'undefined') {
+if (dom) {
   Object.defineProperty(global, 'localStorage', {
     value: dom.window.localStorage,
     writable: false,
@@ -34,24 +36,6 @@ if (typeof dom !== 'undefined') {
   })
 
   Object.defineProperty(global, 'sessionStorage', {
-    value: dom.window.sessionStorage,
-    writable: false,
-    configurable: true,
-  })
-
-  Object.defineProperty(globalThis, 'navigator', {
-    value: dom.window.navigator,
-    writable: false,
-    configurable: true,
-  })
-
-  Object.defineProperty(globalThis, 'localStorage', {
-    value: dom.window.localStorage,
-    writable: false,
-    configurable: true,
-  })
-
-  Object.defineProperty(globalThis, 'sessionStorage', {
     value: dom.window.sessionStorage,
     writable: false,
     configurable: true,
@@ -74,84 +58,189 @@ if (typeof dom !== 'undefined') {
     writable: false,
     configurable: true,
   })
-
-  Object.defineProperty(globalThis, 'location', {
-    value: dom.window.location,
-    writable: false,
-    configurable: true,
-  })
-
-  Object.defineProperty(globalThis, 'history', {
-    value: dom.window.history,
-    writable: false,
-    configurable: true,
-  })
-
-  Object.defineProperty(globalThis, 'URL', {
-    value: dom.window.URL,
-    writable: false,
-    configurable: true,
-  })
 }
 
 // Mock global APIs that might be used in components
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: () => ({
-    matches: false,
-    media: '',
-    onchange: null,
-    addListener: () => {}, // deprecated
-    removeListener: () => {}, // deprecated
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => {},
-  }),
-})
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: () => ({
+      matches: false,
+      media: '',
+      onchange: null,
+      addListener: () => {}, // deprecated
+      removeListener: () => {}, // deprecated
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {},
+    }),
+  })
+} else if (typeof global !== 'undefined') {
+  // Fallback for Node.js environment
+  Object.defineProperty(global, 'matchMedia', {
+    writable: true,
+    value: () => ({
+      matches: false,
+      media: '',
+      onchange: null,
+      addListener: () => {},
+      removeListener: () => {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => {},
+    }),
+  })
+}
 
-// Mock ResizeObserver
+// Mock ResizeObserver with complete interface
 global.ResizeObserver = class ResizeObserver {
   observe = () => {}
   unobserve = () => {}
   disconnect = () => {}
+  takeRecords = () => []
 }
 
-// Mock IntersectionObserver
+// Mock IntersectionObserver with complete interface
 global.IntersectionObserver = class IntersectionObserver {
+  root: Element | null = null
+  rootMargin: string = '0px'
+  thresholds: ReadonlyArray<number> = []
   observe = () => {}
   unobserve = () => {}
   disconnect = () => {}
+  takeRecords = () => []
 }
 
 // Mock Web APIs
-Object.defineProperty(window, 'scrollTo', {
-  value: () => {},
-  writable: true,
-})
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'scrollTo', {
+    value: () => {},
+    writable: true,
+  })
+}
 
 // Mock crypto.randomUUID if not available
-if (!window.crypto?.randomUUID) {
+if (typeof window !== 'undefined' && !window.crypto?.randomUUID) {
   Object.defineProperty(window.crypto, 'randomUUID', {
-    value: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
+    value: () => {
+      // Generate a more realistic UUID format for testing
+      const hex = Math.random().toString(16).substr(2, 8)
+      return `test-${hex}-${Date.now().toString(16)}`
+    },
+    writable: false,
+    configurable: true,
+  })
+} else if (typeof global !== 'undefined' && !(global as any).crypto?.randomUUID) {
+  // Fallback for Node.js environment
+  Object.defineProperty(global, 'crypto', {
+    value: {
+      randomUUID: () => {
+        const hex = Math.random().toString(16).substr(2, 8)
+        return `test-${hex}-${Date.now().toString(16)}`
+      }
+    },
+    writable: false,
+    configurable: true,
   })
 }
 
 // Mock fetch API for consistent testing
-global.fetch = () =>
-  Promise.resolve({
+global.fetch = vi.fn().mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+  const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : input.url
+
+  // Default mock response
+  return Promise.resolve({
     ok: true,
+    status: 200,
+    statusText: 'OK',
+    headers: new Headers(),
     json: async () => ({}),
     text: async () => '',
+    blob: async () => new Blob(),
+    arrayBuffer: async () => new ArrayBuffer(0),
+    clone: () => global.fetch(input, init),
+    bodyUsed: false,
+    body: null,
+    url,
+    redirected: false,
+    type: 'basic',
   })
+}) as any
 
-// Mock URL.createObjectURL
-global.URL.createObjectURL = () => 'mock-url'
-global.URL.revokeObjectURL = () => {}
+// Mock URL with simplified approach
+if (typeof global !== 'undefined') {
+  if (!global.URL) {
+    // Use a more complete URL mock
+    global.URL = class URL {
+      static createObjectURL(obj: Blob | MediaSource): string {
+        return 'mock-url'
+      }
+      static revokeObjectURL(url: string): void {
+        // Mock implementation
+      }
+      static canParse(url: string | URL, base?: string | URL): boolean {
+        try {
+          new URL(url, base)
+          return true
+        } catch {
+          return false
+        }
+      }
+      static parse(url: string | URL, base?: string | URL): URL {
+        return new URL(url, base)
+      }
+      // Instance properties
+      hash = ''
+      host = ''
+      hostname = ''
+      href = ''
+      origin = ''
+      password = ''
+      pathname = ''
+      port = ''
+      protocol = ''
+      search = ''
+      searchParams = new URLSearchParams()
+      username = ''
+      constructor(url: string | URL, base?: string | URL) {
+        // Mock constructor
+      }
+      toJSON(): string {
+        return this.href
+      }
+      toString(): string {
+        return this.href
+      }
+    }
+  }
+}
 
-// Mock performance API
-global.performance = {
-  ...global.performance,
-  now: () => Date.now(),
+// Mock performance API with complete interface
+if (typeof global !== 'undefined') {
+  global.performance = {
+    ...(global.performance || {}),
+    now: () => Date.now(),
+    clearMarks: () => {},
+    clearMeasures: () => {},
+    mark: (markName: string, markOptions?: PerformanceMarkOptions) => {
+      return { name: markName, entryType: 'mark', startTime: Date.now(), duration: 0 } as PerformanceMark
+    },
+    measure: (measureName: string, startMark?: string, endMark?: string) => {
+      return { name: measureName, entryType: 'measure', startTime: Date.now(), duration: 0 } as PerformanceMeasure
+    },
+    getEntriesByName: () => [],
+    getEntriesByType: () => [],
+    getEntries: () => [],
+    setResourceTimingBufferSize: () => {},
+    toJSON: () => ({}),
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false,
+    timeOrigin: Date.now(),
+    onresourcetimingbufferfull: null,
+    clearResourceTimings: () => {},
+    eventCounts: new Map(),
+  } as Performance
 }
 
 // Mock WebSocket for AGUI protocol testing
@@ -166,57 +255,117 @@ global.WebSocket = class MockWebSocket {
   onmessage: ((this: WebSocket, ev: MessageEvent) => any) | null = null
   onopen: ((this: WebSocket, ev: Event) => any) | null = null
   readyState: number = 1
-  CONNECTING = 0
-  OPEN = 1
-  CLOSING = 2
-  CLOSED = 3
-  static CONNECTING = 0
-  static OPEN = 1
-  static CLOSING = 2
-  static CLOSED = 3
+
+  // WebSocket state constants
+  static readonly CONNECTING = 0
+  static readonly OPEN = 1
+  static readonly CLOSING = 2
+  static readonly CLOSED = 3
+  readonly CONNECTING = 0
+  readonly OPEN = 1
+  readonly CLOSING = 2
+  readonly CLOSED = 3
 
   constructor(url: string | URL, protocols?: string | string[]) {
     this.url = url.toString()
     this.protocol = typeof protocols === 'string' ? protocols : protocols?.[0] ?? ''
+    // Simulate connection opening
+    setTimeout(() => {
+      if (this.onopen) {
+        this.onopen(new Event('open'))
+      }
+    }, 0)
   }
-  send = () => {}
-  close = () => {}
-  addEventListener = () => {}
-  removeEventListener = () => {}
-  readyState = 1
-  static CONNECTING = 0
-  static OPEN = 1
-  static CLOSING = 2
-  static CLOSED = 3
+
+  send = (data: string | ArrayBufferLike | Blob | ArrayBufferView) => {
+    // Mock send method
+  }
+
+  close = (code?: number, reason?: string) => {
+    this.readyState = MockWebSocket.CLOSED
+    if (this.onclose) {
+      this.onclose(new CloseEvent('close', { code, reason }))
+    }
+  }
+
+  // Required WebSocket methods for interface compliance
+  addEventListener(type: string, listener: EventListener): void {
+    // Mock addEventListener
+  }
+
+  removeEventListener(type: string, listener: EventListener): void {
+    // Mock removeEventListener
+  }
+
+  dispatchEvent(event: Event): boolean {
+    // Mock dispatchEvent
+    return true
+  }
 }
 
-// Mock localStorage and sessionStorage with proper JSDOM implementation
-if (typeof dom !== 'undefined') {
-  const localStorageMock = (global as any).dom?.window.localStorage || (typeof window !== 'undefined' ? window.localStorage : undefined)
-  const sessionStorageMock = (global as any).dom?.window.sessionStorage || (typeof window !== 'undefined' ? window.sessionStorage : undefined)
-  global.localStorage = localStorageMock
-  global.sessionStorage = sessionStorageMock
-} // Setup test globals will be handled by vitest automatically
+// localStorage and sessionStorage are already set up by JSDOM above
+// Setup test globals will be handled by vitest automatically
 // MSW server setup will be handled by individual test files
 
 // Custom test utilities
 
 ;(globalThis as any).testUtils = {
   waitFor: (ms: number) => new Promise(resolve => setTimeout(resolve, ms)),
-  createMockEvent: (type: string, data: any) => ({ type, data, preventDefault: () => {} }),
+  createMockEvent: (type: string, data: any = {}) => ({
+    type,
+    data,
+    preventDefault: () => {},
+    stopPropagation: () => {},
+    bubbles: true,
+    cancelable: true,
+  }),
   createMockResponse: (data: any, status = 200) => ({
     ok: status >= 200 && status < 300,
     status,
+    statusText: status === 200 ? 'OK' : 'Error',
     json: async () => data,
     text: async () => JSON.stringify(data),
+    blob: async () => new Blob([JSON.stringify(data)]),
+    arrayBuffer: async () => {
+    if (typeof TextEncoder !== 'undefined') {
+      return new TextEncoder().encode(JSON.stringify(data)).buffer
+    }
+    // Fallback for environments without TextEncoder
+    const str = JSON.stringify(data)
+    const buffer = new ArrayBuffer(str.length * 2)
+    const view = new Uint16Array(buffer)
+    for (let i = 0, strLen = str.length; i < strLen; i++) {
+      view[i] = str.charCodeAt(i)
+    }
+    return buffer
+  },
+    headers: new Headers(),
+    url: 'http://localhost:3000/api/test',
+    redirected: false,
+    type: 'basic',
   }),
+  createMockWebSocket: (url: string) => {
+    const ws = new (global as any).WebSocket(url)
+    return ws
+  },
+  createMockLocalStorage: () => {
+    const store: Record<string, string> = {}
+    return {
+      getItem: (key: string) => store[key] || null,
+      setItem: (key: string, value: string) => { store[key] = value },
+      removeItem: (key: string) => { delete store[key] },
+      clear: () => { Object.keys(store).forEach(key => delete store[key]) },
+      key: (index: number) => Object.keys(store)[index] || null,
+      length: Object.keys(store).length,
+    }
+  },
 }
 
 // Mock console methods in tests to reduce noise
 const originalConsole = { ...console }
 beforeAll(() => {
   console.log = (...args) => {
-    if (process.env.VITE_DEBUG === 'true') {
+    if (process.env.DEBUG === 'true') {
       originalConsole.log(...args)
     }
   }

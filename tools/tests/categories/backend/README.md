@@ -1,6 +1,7 @@
 # Backend Tests
 
 ## API Tests
+
 - RESTful API endpoint validation
 - Request/response format testing
 - Authentication and authorization
@@ -8,6 +9,7 @@
 - Healthcare API compliance (HL7, FHIR)
 
 ## Integration Tests
+
 - Cross-service communication
 - Database integration
 - Third-party service integration
@@ -15,6 +17,7 @@
 - Healthcare workflow integration
 
 ## Middleware Tests
+
 - Authentication middleware
 - Authorization middleware
 - Logging and monitoring
@@ -22,6 +25,7 @@
 - Healthcare compliance middleware
 
 ## Unit Tests
+
 - Individual function testing
 - Utility function validation
 - Business logic testing
@@ -29,6 +33,7 @@
 - Security function testing
 
 ## Test Commands
+
 ```bash
 # Run all backend tests
 cd tools/tests && bun run test:backend

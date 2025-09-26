@@ -12,7 +12,7 @@ export const mcpTools = {
    * Sequential thinking tool for complex problem analysis
    */
   sequentialThinking: async (problem: string): Promise<string> => {
-    console.log('🧠 Using sequential thinking MCP tool for:', problem)
+    console.log("🧠 Using sequential thinking MCP tool for:", problem)
     // This would integrate with the actual MCP tool
     return `Sequential analysis completed for: ${problem}`
   },
@@ -22,45 +22,53 @@ export const mcpTools = {
    */
   archonTaskManagement: {
     createTask: async (title: string, description: string) => {
-      console.log('📋 Creating Archon task:', title)
+      console.log("📋 Creating Archon task:", title)
       // This would integrate with the actual Archon MCP tool
-      return { id: `task-${Date.now()}`, title, status: 'created' }
+      return { id: `task-${Date.now()}`, title, status: "created" }
     },
-    
+
     updateTask: async (taskId: string, status: string) => {
-      console.log('📝 Updating Archon task:', taskId, 'to', status)
+      console.log("📝 Updating Archon task:", taskId, "to", status)
       // This would integrate with the actual Archon MCP tool
       return { id: taskId, status, updatedAt: new Date().toISOString() }
     },
-    
+
     searchTasks: async (query: string) => {
-      console.log('🔍 Searching Archon tasks:', query)
+      console.log("🔍 Searching Archon tasks:", query)
       // This would integrate with the actual Archon MCP tool
-      return [{ id: 'sample-task', title: 'Sample Task', status: 'todo' }]
-    }
+      return [{ id: "sample-task", title: "Sample Task", status: "todo" }]
+    },
   },
 
   /**
    * Serena codebase analysis integration
    */
   serenaAnalysis: {
-    findSymbol: async (symbolPath: string, filePath?: string) => {
-      console.log('🔍 Finding symbol with Serena:', symbolPath)
+    findSymbol: async (
+      symbolPath: string,
+      filePath?: string,
+    ): Promise<{ name: string; location: string }> => {
+      console.log("🔍 Finding symbol with Serena:", symbolPath)
       // This would integrate with the actual Serena MCP tool
-      return { name: symbolPath, location: filePath || 'unknown' }
+      return { name: symbolPath, location: filePath || "unknown" }
     },
-    
-    searchForPattern: async (pattern: string, _options?: any) => {
-      console.log('🔍 Searching pattern with Serena:', pattern)
+
+    searchForPattern: async (
+      pattern: string,
+      _options?: { limit?: number },
+    ): Promise<Array<{ file: string; matches: string[] }>> => {
+      console.log("🔍 Searching pattern with Serena:", pattern)
       // This would integrate with the actual Serena MCP tool
-      return [{ file: 'sample.ts', matches: [pattern] }]
+      return [{ file: "sample.ts", matches: [pattern] }]
     },
-    
-    getSymbolsOverview: async (filePath: string) => {
-      console.log('📊 Getting symbols overview with Serena:', filePath)
+
+    getSymbolsOverview: async (
+      filePath: string,
+    ): Promise<{ symbols: string[]; imports: string[]; exports: string[] }> => {
+      console.log("📊 Getting symbols overview with Serena:", filePath)
       // This would integrate with the actual Serena MCP tool
       return { symbols: [], imports: [], exports: [] }
-    }
+    },
   },
 
   /**
@@ -68,16 +76,16 @@ export const mcpTools = {
    */
   context7Docs: {
     resolveLibrary: async (libraryName: string) => {
-      console.log('📚 Resolving library with Context7:', libraryName)
+      console.log("📚 Resolving library with Context7:", libraryName)
       // This would integrate with the actual Context7 MCP tool
       return { id: `/org/${libraryName}`, name: libraryName }
     },
-    
+
     getLibraryDocs: async (libraryId: string, topic?: string) => {
-      console.log('📖 Getting library docs with Context7:', libraryId)
+      console.log("📖 Getting library docs with Context7:", libraryId)
       // This would integrate with the actual Context7 MCP tool
       return { content: `Documentation for ${libraryId}`, topic }
-    }
+    },
   },
 
   /**
@@ -85,23 +93,23 @@ export const mcpTools = {
    */
   desktopCommander: {
     readFile: async (filePath: string) => {
-      console.log('📄 Reading file with Desktop Commander:', filePath)
+      console.log("📄 Reading file with Desktop Commander:", filePath)
       // This would integrate with the actual Desktop Commander MCP tool
       return { content: `Content of ${filePath}`, path: filePath }
     },
-    
-    writeFile: async (filePath: string, content: string) => {
-      console.log('✍️  Writing file with Desktop Commander:', filePath)
+
+    writeFile: async (filePath: string, _content: string) => {
+      console.log("✍️  Writing file with Desktop Commander:", filePath)
       // This would integrate with the actual Desktop Commander MCP tool
       return { success: true, path: filePath }
     },
-    
+
     listDirectory: async (dirPath: string) => {
-      console.log('📁 Listing directory with Desktop Commander:', dirPath)
+      console.log("📁 Listing directory with Desktop Commander:", dirPath)
       // This would integrate with the actual Desktop Commander MCP tool
-      return { files: ['file1.ts', 'file2.ts'], directories: ['dir1', 'dir2'] }
-    }
-  }
+      return { files: ["file1.ts", "file2.ts"], directories: ["dir1", "dir2"] }
+    },
+  },
 }
 
 /**
@@ -141,9 +149,9 @@ export const validateCodeQuality = {
    */
   isFunctionComplex: (code: string): boolean => {
     const ifCount = (code.match(/if\s*\(/g) || []).length
-    const lines = code.split('\n').length
+    const lines = code.split("\n").length
     return ifCount > 3 || lines > 20
-  }
+  },
 }
 
 /**
@@ -183,7 +191,7 @@ export const validateSecurity = {
    */
   hasPathTraversal: (code: string): boolean => {
     return /\+\s*(filename|filepath|path)/.test(code) && /fs\.(readFile|writeFile)/.test(code)
-  }
+  },
 }
 
 /**
@@ -209,7 +217,7 @@ export const validateHealthcare = {
    */
   hasSensitiveData: (code: string): boolean => {
     return /(sensitiveData|medicalRecord|patientData|healthData)/.test(code)
-  }
+  },
 }
 
 /**
@@ -234,9 +242,9 @@ export const validatePerformance = {
    * Check for large functions
    */
   hasLargeFunctions: (code: string): boolean => {
-    const lines = code.split('\n')
+    const lines = code.split("\n")
     return lines.length > 30
-  }
+  },
 }
 
 /**
@@ -269,7 +277,7 @@ export const validateImports = {
    */
   hasDefaultExports: (code: string): boolean => {
     return /export\s+default/.test(code)
-  }
+  },
 }
 
 /**
@@ -280,19 +288,19 @@ export const analyzeFile = {
    * Get basic file statistics
    */
   getStats: (code: string) => {
-    const lines = code.split('\n')
+    const lines = code.split("\n")
     const words = code.split(/\s+/).filter(word => word.length > 0)
     const functions = (code.match(/function\s+\w+/g) || []).length
     const classes = (code.match(/class\s+\w+/g) || []).length
     const interfaces = (code.match(/interface\s+\w+/g) || []).length
-    
+
     return {
       lineCount: lines.length,
       wordCount: words.length,
       functionCount: functions,
       classCount: classes,
       interfaceCount: interfaces,
-      complexity: functions + classes * 2 + interfaces
+      complexity: functions + classes * 2 + interfaces,
     }
   },
 
@@ -332,35 +340,35 @@ export const analyzeFile = {
     const recommendations: string[] = []
 
     if (validateCodeQuality.hasConsoleStatements(code)) {
-      recommendations.push('Remove console.log statements from production code')
+      recommendations.push("Remove console.log statements from production code")
     }
 
     if (validateCodeQuality.hasTodoComments(code)) {
-      recommendations.push('Address TODO and FIXME comments')
+      recommendations.push("Address TODO and FIXME comments")
     }
 
     if (validateSecurity.hasXssVulnerability(code)) {
-      recommendations.push('Replace innerHTML with textContent to prevent XSS')
+      recommendations.push("Replace innerHTML with textContent to prevent XSS")
     }
 
     if (validateSecurity.hasEvalUsage(code)) {
-      recommendations.push('Avoid using eval() - use safer alternatives')
+      recommendations.push("Avoid using eval() - use safer alternatives")
     }
 
     if (validateSecurity.hasHardcodedSecrets(code)) {
-      recommendations.push('Move hardcoded secrets to environment variables')
+      recommendations.push("Move hardcoded secrets to environment variables")
     }
 
     if (validatePerformance.hasMemoryLeaks(code)) {
-      recommendations.push('Add event listener cleanup to prevent memory leaks')
+      recommendations.push("Add event listener cleanup to prevent memory leaks")
     }
 
     if (validateCodeQuality.isFunctionComplex(code)) {
-      recommendations.push('Consider breaking down complex functions')
+      recommendations.push("Consider breaking down complex functions")
     }
 
     return recommendations
-  }
+  },
 }
 
 /**
@@ -372,26 +380,38 @@ export const validateFile = async (code: string, filename?: string, useMcp: bool
   const recommendations = analyzeFile.getRecommendations(code)
 
   // Enhanced validation with MCP tools if enabled
-  let mcpResults: any = null
+  let mcpResults: {
+    patternSearch?: Array<{ file: string; matches: string[] }>
+    symbolsOverview?: { symbols: string[]; imports: string[]; exports: string[] }
+    mcpEnabled: boolean
+    error?: string
+  } | null = null
   if (useMcp) {
     try {
       // Use MCP tools for deeper analysis
-      const patternSearch = await mcpTools.serenaAnalysis.searchForPattern('function.*\\(', { limit: 10 })
-      const symbolsOverview = filename ? await mcpTools.serenaAnalysis.getSymbolsOverview(filename) : null
-      
+      const patternSearch = await mcpTools.serenaAnalysis.searchForPattern("function.*\\(", {
+        limit: 10,
+      })
+      const symbolsOverview = filename
+        ? await mcpTools.serenaAnalysis.getSymbolsOverview(filename)
+        : null
+
       mcpResults = {
         patternSearch,
-        symbolsOverview,
-        mcpEnabled: true
+        symbolsOverview: symbolsOverview || undefined,
+        mcpEnabled: true,
       }
     } catch (error) {
-      console.warn('MCP integration failed, falling back to basic validation:', error)
-      mcpResults = { mcpEnabled: false, error: error instanceof Error ? error.message : 'Unknown error' }
+      console.warn("MCP integration failed, falling back to basic validation:", error)
+      mcpResults = {
+        mcpEnabled: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      }
     }
   }
 
   return {
-    filename: filename || 'unknown',
+    filename: filename || "unknown",
     stats,
     qualityScore,
     recommendations,
@@ -401,19 +421,21 @@ export const validateFile = async (code: string, filename?: string, useMcp: bool
       security: validateSecurity,
       healthcare: validateHealthcare,
       performance: validatePerformance,
-      imports: validateImports
+      imports: validateImports,
     },
     summary: {
       totalIssues: recommendations.length,
-      criticalIssues: recommendations.filter(r => 
-        r.includes('XSS') || r.includes('eval') || r.includes('secrets')
-      ).length,
-      warningIssues: recommendations.filter(r => 
-        !r.includes('XSS') && !r.includes('eval') && !r.includes('secrets')
-      ).length
+      criticalIssues:
+        recommendations.filter(r =>
+          r.includes("XSS") || r.includes("eval") || r.includes("secrets")
+        ).length,
+      warningIssues:
+        recommendations.filter(r =>
+          !r.includes("XSS") && !r.includes("eval") && !r.includes("secrets")
+        ).length,
     },
     timestamp: new Date().toISOString(),
-    version: '2.0.0-mcp'
+    version: "2.0.0-mcp",
   }
 }
 
@@ -421,35 +443,41 @@ export const validateFile = async (code: string, filename?: string, useMcp: bool
  * Enhanced agent validation with MCP-powered analysis
  */
 export const validateWithMcp = async (code: string, filename?: string) => {
-  console.log('🤖 Starting MCP-powered validation for:', filename || 'unknown')
-  
+  console.log("🤖 Starting MCP-powered validation for:", filename || "unknown")
+
   try {
     // Use sequential thinking for complex analysis
-    const analysis = await mcpTools.sequentialThinking(`Analyze code quality and security for ${filename || 'unknown file'}`)
-    
+    const analysis = await mcpTools.sequentialThinking(
+      `Analyze code quality and security for ${filename || "unknown file"}`,
+    )
+
     // Perform basic validation
     const basicResults = validateFile(code, filename)
-    
+
     // Use Archon for task management if issues found
-    const results = await basicResults
+    // basicResults already used above; no need to reassign
+    const results = await validateFile(code, filename)
     if (results.summary.totalIssues > 0) {
       await mcpTools.archonTaskManagement.createTask(
-        `Fix issues in ${filename || 'unknown file'}`,
-        `Found ${(await basicResults).summary.totalIssues} issues requiring attention`
+        `Fix issues in ${filename || "unknown file"}`,
+        `Found ${results.summary.totalIssues} issues requiring attention`,
       )
     }
-    
+
     // Use Serena for deeper code analysis
-    const complexFunctions = await mcpTools.serenaAnalysis.searchForPattern('function.*\\{[\\s\\S]*?\\}', { limit: 5 })
-    
+    const complexFunctions = await mcpTools.serenaAnalysis.searchForPattern(
+      "function.*\\{[\\s\\S]*?\\}",
+      { limit: 5 },
+    )
+
     return {
       ...basicResults,
       mcpAnalysis: analysis,
       complexFunctionsFound: complexFunctions.length,
-      enhanced: true
+      enhanced: true,
     }
   } catch (error) {
-    console.error('MCP validation failed, falling back to basic:', error)
+    console.error("MCP validation failed, falling back to basic:", error)
     return validateFile(code, filename)
   }
 }
@@ -462,73 +490,79 @@ export const agentWorkflow = {
    * Complete code review workflow
    */
   codeReview: async (filePath: string) => {
-    console.log('🔍 Starting code review workflow for:', filePath)
-    
+    console.log("🔍 Starting code review workflow for:", filePath)
+
     try {
       // Read file using Desktop Commander
       const fileContent = await mcpTools.desktopCommander.readFile(filePath)
-      
+
       // Validate with MCP integration
       const validation = await validateWithMcp(fileContent.content, filePath)
-      
+
       // Create task if issues found
       if (validation.summary.totalIssues > 0) {
         await mcpTools.archonTaskManagement.createTask(
           `Review and fix: ${filePath}`,
-          `Found ${validation.summary.totalIssues} issues in ${filePath}`
+          `Found ${validation.summary.totalIssues} issues in ${filePath}`,
         )
       }
-      
+
       return {
         success: true,
         validation,
         filePath,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     } catch (error) {
-      console.error('Code review workflow failed:', error)
+      console.error("Code review workflow failed:", error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         filePath,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     }
   },
-  
+
   /**
    * Healthcare compliance workflow
    */
   healthcareCompliance: async (filePath: string) => {
-    console.log('🏥 Starting healthcare compliance workflow for:', filePath)
-    
+    console.log("🏥 Starting healthcare compliance workflow for:", filePath)
+
     try {
       const fileContent = await mcpTools.desktopCommander.readFile(filePath)
       const validation = await validateWithMcp(fileContent.content, filePath)
-      
+
       // Check for healthcare-specific compliance
       const healthcareIssues = [
-        ...(validateSecurity.hasHardcodedSecrets(fileContent.content) ? ['Hardcoded secrets found'] : []),
-        ...(validateHealthcare.hasSensitiveData(fileContent.content) ? ['Sensitive patient data detected'] : []),
-        ...(validateSecurity.hasXssVulnerability(fileContent.content) ? ['XSS vulnerability in healthcare UI'] : [])
+        ...(validateSecurity.hasHardcodedSecrets(fileContent.content)
+          ? ["Hardcoded secrets found"]
+          : []),
+        ...(validateHealthcare.hasSensitiveData(fileContent.content)
+          ? ["Sensitive patient data detected"]
+          : []),
+        ...(validateSecurity.hasXssVulnerability(fileContent.content)
+          ? ["XSS vulnerability in healthcare UI"]
+          : []),
       ]
-      
+
       return {
         success: true,
         healthcareIssues,
         validation,
         compliant: healthcareIssues.length === 0,
         filePath,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     } catch (error) {
-      console.error('Healthcare compliance workflow failed:', error)
+      console.error("Healthcare compliance workflow failed:", error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         filePath,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
     }
-  }
+  },
 }

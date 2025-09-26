@@ -5,6 +5,7 @@
  */
 
 import { Hono } from 'hono'
+import { z } from 'zod'
 import { requireAuth } from '../../middleware/authn'
 import { dataProtection } from '../../middleware/lgpd-middleware'
 import { ComprehensiveAuditService } from '../../services/audit-service'
@@ -152,7 +153,7 @@ const getHandler = async (c: any) => {
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
       })
-      .catch(async (err => {
+      .catch(async (err) => {
         console.error('Audit logging failed:', err)
         return { success: false }
       })

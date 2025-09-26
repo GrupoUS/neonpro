@@ -3,6 +3,8 @@ import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 export const Route = createFileRoute('/aesthetic-scheduling/certification')({
   component: CertificationValidatorPage,
@@ -35,7 +37,7 @@ function CertificationValidatorPage() {
           const result = await api.aestheticScheduling.validateProfessionalCertifications(data)
           return result
         } catch (error) {
-          console.error('Error validating certifications:', error)
+          await logger.error('Error validating certifications:')
           throw error
         }
       }}

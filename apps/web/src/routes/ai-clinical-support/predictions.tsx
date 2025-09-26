@@ -3,6 +3,8 @@ import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface TreatmentPredictionLoaderData {
@@ -60,10 +62,10 @@ function TreatmentPredictionPage() {
       onPredictionUpdate={async prediction => {
         try {
           // Store prediction in local state or send to backend
-          console.warn('Treatment prediction updated:', prediction)
+          await logger.warn('Treatment prediction updated:')
           return prediction
         } catch (error) {
-          console.error('Error updating prediction:', error)
+          await logger.error('Error updating prediction:')
           throw error
         }
       }}

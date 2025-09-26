@@ -13,8 +13,10 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 import { useState } from 'react'
+import { logger } from '@/utils/logger'
 
-export const Route = (createFileRoute as any)('/inventory/product/$productId')({
+
+export const Route = createFileRoute('/inventory/product/$productId')({
   component: ProductDetail,
 })
 
@@ -94,7 +96,7 @@ function ProductDetail() {
       setBatches(batchesResponse)
       setTransactions(transactionsResponse)
     } catch (error) {
-      console.error('Error loading product data:', error)
+      await logger.error('Error loading product data:')
     } finally {
       setLoading(false)
     }
@@ -163,7 +165,7 @@ function ProductDetail() {
       await api.inventory.deleteProduct.mutate({ id: productId })
       navigate({ to: '/dashboard' })
     } catch (error) {
-      console.error('Error deleting product:', error)
+      await logger.error('Error deleting product:')
     }
   }
 

@@ -130,18 +130,24 @@ validate_environment() {
         exit 1
     fi
     
-    npx vercel link --project "$PROJECT_NAME" --yes --scope grupous
+    # GLOBAL CONFIGURATION
+    # ==============================================
+    
+    export VERCEL_ORG_ID="team_bjVDLqo42Gb3p28RelxJia6x"
+    export VERCEL_PROJECT_ID="prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY"
+    
+    npx vercel link --yes
     log_success "Linked to Vercel project: $PROJECT_NAME"
     
     # Pull production environment variables
     log_step "Pulling production environment variables from Vercel"
     [ -f .env.local ] && rm .env.local
-    npx vercel env pull .env.local --environment=production --yes --scope grupous
+    npx vercel env pull .env.local --environment=production --yes
     source .env.local
     log_success "Environment variables loaded"
     
     # Validate required environment variables
-    validate_required_env_vars "DATABASE_URL" "SUPABASE_SERVICE_ROLE_KEY" "SUPABASE_ANON_KEY" "NEXTAUTH_SECRET" "NEXTAUTH_URL" "VERCEL_ORG_ID" "VERCEL_PROJECT_ID"
+    validate_required_env_vars "DATABASE_URL" "SUPABASE_SERVICE_ROLE_KEY" "SUPABASE_ANON_KEY" "VERCEL_ORG_ID" "VERCEL_PROJECT_ID"
     
     # Validate URLs
     validate_url "$PRODUCTION_URL" "production URL"
@@ -157,14 +163,15 @@ setup_turbo_caching() {
     log_step "Configuring Turborepo remote caching"
     require_command "turbo" "Install Turborepo: npm install -g turbo"
     
-    export TURBO_TEAM=grupous
-    
-    if [ -z "${TURBO_TOKEN:-}" ]; then
-        log_error "TURBO_TOKEN not set. Please set it for non-interactive remote caching."
+    if [ -z \"${TURBO_TOKEN:-}\" ]; then
+        log_error "TURBO_TOKEN not set. Required for non-interactive remote caching."
         exit 1
     fi
     
-    log_success "Turborepo remote caching configured with team $TURBO_TEAM"
+    export TURBO_TEAM=\"grupous\"
+    log_info \"Using non-interactive Turbo caching with TURBO_TOKEN and TURBO_TEAM=grupous\"
+    
+    log_success \"Turborepo remote caching configured with team $TURBO_TEAM\"
 }
 
 # ==============================================
@@ -274,7 +281,7 @@ deploy_application() {
             
             # Run staging deployment
             log_step "Executing Staging Deployment"
-            npx vercel deploy --project "$PROJECT_NAME" --yes --scope grupous
+            npx vercel deploy --project "$PROJECT_NAME" --yes
             
             DEPLOY_URL=$(npx vercel ls | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
             log_success "Staging deployment completed: $DEPLOY_URL"
@@ -290,7 +297,7 @@ deploy_application() {
             
             # Execute production deployment
             log_step "Executing Production Deployment"
-            npx vercel deploy --prod --project "$PROJECT_NAME" --yes --scope grupous
+            npx vercel deploy --prod --project "$PROJECT_NAME" --yes
             
             DEPLOY_URL=$(npx vercel ls | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
             log_success "Production deployment completed: $DEPLOY_URL"

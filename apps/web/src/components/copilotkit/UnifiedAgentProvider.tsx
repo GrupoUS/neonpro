@@ -3,7 +3,8 @@
  * Provides seamless integration between frontend CopilotKit and backend orchestration
  */
 
-import { CopilotKit, useCoAgent } from '@copilotkit/react-core'
+import { CopilotKit } from '@copilotkit/react-core'
+import useCoAgent from '@copilotkit/react-core'
 import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 // Mock types for now - will be replaced with actual API integration
 interface UnifiedAgentRequest {

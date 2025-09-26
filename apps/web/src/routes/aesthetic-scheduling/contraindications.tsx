@@ -3,6 +3,8 @@ import * as React from 'react'
 // import { useQuery } from "@tanstack/react-query";
 // import { api } from "@/lib/api";
 import { ContraindicationAnalysis } from '@/components/ai-clinical-support/ContraindicationAnalysis'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface ContraindicationAnalysisLoaderData {
@@ -41,10 +43,10 @@ function ContraindicationAnalysisPage() {
       onExportReport={async analysis => {
         try {
           // Implementation for exporting report
-          console.warn('Exporting contraindication analysis:', analysis)
+          await logger.warn('Exporting contraindication analysis:')
           return analysis
         } catch (error) {
-          console.error('Error exporting report:', error)
+          await logger.error('Error exporting report:')
           throw error
         }
       }}

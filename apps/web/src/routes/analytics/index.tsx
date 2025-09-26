@@ -31,7 +31,7 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { api } from '~/lib/api'
+import { api } from '@/lib/api'
 
 export const Route = createFileRoute('/analytics/')({
   component: AnalyticsDashboard,
@@ -46,7 +46,7 @@ function AnalyticsDashboard() {
     newPatients: 0,
     noShowRate: 0,
   })
-  const [dashboardData, setDashboardData] = useState<any>(null)
+  
 
   // Mock data for demonstration
   const kpis = [

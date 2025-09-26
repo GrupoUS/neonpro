@@ -24,11 +24,29 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { api } from '~/utils/api'
+import { api } from '@/lib/api'
+import { logger } from '@/utils/logger'
 
 export const Route = createFileRoute('/compliance/')({
   component: ComplianceDashboard,
 })
+
+interface ComplianceAlert {
+  id: string
+  title: string
+  severity_level: string
+  created_at: string
+}
+
+interface ComplianceAssessment {
+  id?: string
+  requirement?: {
+    name: string
+  }
+  assessment_date: string
+  status: string
+  score?: number
+}
 
 interface ComplianceDashboardData {
   complianceScore: number
@@ -48,8 +66,8 @@ interface ComplianceDashboardData {
     licensesExpired: number
     licensesExpiringSoon: number
   }
-  recentAlerts: any[]
-  recentAssessments: any[]
+  recentAlerts: ComplianceAlert[]
+  recentAssessments: ComplianceAssessment[]
 }
 
 function ComplianceDashboard() {
@@ -88,7 +106,7 @@ function ComplianceDashboard() {
       }
     } catch (err) {
       setError('Erro ao carregar dados do dashboard')
-      console.error('Error loading dashboard data:', err)
+    await logger.error('Error loading dashboard data', { error: err })
     } finally {
       setLoading(false)
     }

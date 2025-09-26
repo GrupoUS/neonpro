@@ -5,6 +5,8 @@ export default defineConfig({
     globals: false,
     environment: 'node',
     pool: 'threads',
+    include: ['**/*.{test,spec}.{ts,tsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html', 'lcov'],
@@ -18,24 +20,4 @@ export default defineConfig({
       },
     },
   },
-  projects: [
-    {
-      name: 'apps',
-      test: {
-        include: ['apps/**/*.{test,spec}.{ts,tsx}'],
-      },
-    },
-    {
-      name: 'packages', 
-      test: {
-        include: ['packages/**/*.{test,spec}.{ts,tsx}'],
-      },
-    },
-    {
-      name: 'tools',
-      test: {
-        include: ['tools/**/*.{test,spec}.{ts,tsx}'],
-      },
-    },
-  ],
 })

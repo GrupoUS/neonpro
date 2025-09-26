@@ -75,7 +75,38 @@ export interface LocationData {
   address?: string
 }
 
-export class PWANativeDeviceService {
+interface BeforeInstallEvent extends Event {
+  preventDefault(): void
+  prompt(): void
+  userChoice?: Promise<{ outcome: 'accepted' | 'dismissed' }>
+}
+
+interface PermissionEvent extends Event {
+  target: {
+    name: string
+    state: 'granted' | 'denied' | 'prompt'
+  }
+}
+
+interface DeviceCalendarEvent {
+  id: string
+  title: string
+  description?: string
+  start: string
+  end: string
+  location?: string
+}
+
+interface NotificationOptions {
+  body?: string
+  icon?: string
+  badge?: string
+  tag?: string
+  data?: Record<string, unknown>
+  actions?: NotificationAction[]
+}
+
+import { logger } from '@/utils/logger'
   private static instance: PWANativeDeviceService
   private capabilities: Map<string, DeviceCapability> = new Map()
   private isInitialized = false
@@ -118,9 +149,9 @@ export class PWANativeDeviceService {
       this.setupEventListeners()
       this.isInitialized = true
 
-      console.warn('NeonPro Native Device Service initialized successfully')
+      await logger.info('NeonPro Native Device Service initialized successfully')
     } catch (error) {
-      console.error('Failed to initialize Native Device Service:', error)
+      await logger.error('Failed to initialize Native Device Service', { error })
       throw error
     }
   }
@@ -244,12 +275,12 @@ export class PWANativeDeviceService {
 
     // Listen for permission changes
     if ('permissions' in navigator) {
-      navigator.permissions.addEventListener('change', this.handlePermissionChange)
+      ;(navigator.permissions as any).addEventListener('change', this.handlePermissionChange)
     }
 
     // Listen for PWA install events
     const handleAppInstalled = () => this.handleAppInstalled()
-    const handleBeforeInstall = (e: any) => this.handleBeforeInstall(e)
+    const handleBeforeInstall = (e: BeforeInstallEvent) => this.handleBeforeInstall(e)
 
     window.addEventListener('appinstalled', handleAppInstalled)
     window.addEventListener('beforeinstallprompt', handleBeforeInstall)
@@ -264,15 +295,15 @@ export class PWANativeDeviceService {
   }
 
   private handleOnline(): void {
-    console.warn('Device online - syncing pending operations')
+    await logger.info('Device online - syncing pending operations')
     this.syncPendingOperations()
   }
 
   private handleOffline(): void {
-    console.warn('Device offline - enabling offline mode')
+    await logger.info('Device offline - enabling offline mode')
   }
 
-  private handlePermissionChange = (event: any): void => {
+  private handlePermissionChange = (event: PermissionEvent): void => {
     const capability = this.capabilities.get(event.target.name)
     if (capability) {
       capability.permission = event.target.state
@@ -281,12 +312,12 @@ export class PWANativeDeviceService {
   }
 
   private handleAppInstalled(): void {
-    console.warn('NeonPro PWA installed successfully')
+    await logger.info('NeonPro PWA installed successfully')
     this.updateCapabilityUsage('notifications')
   }
 
-  private handleBeforeInstall(event: any): void {
-    console.warn('PWA install prompt available')
+  private handleBeforeInstall(event: BeforeInstallEvent): void {
+    await logger.info('PWA install prompt available')
     event.preventDefault()
   }
 
@@ -347,7 +378,7 @@ export class PWANativeDeviceService {
 
       return photo
     } catch (error) {
-      console.error('Error capturing photo:', error)
+      await logger.error('Error capturing photo', { error })
       return null
     }
   }
@@ -417,7 +448,7 @@ export class PWANativeDeviceService {
 
       return deviceContacts
     } catch (error) {
-      console.error('Error importing contacts:', error)
+      await logger.error('Error importing contacts', { error })
       return []
     }
   }
@@ -467,7 +498,7 @@ export class PWANativeDeviceService {
           timeMax: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         })
 
-        deviceEvents.push(...events.map((event: any) => ({
+        deviceEvents.push(...events.map((event: DeviceCalendarEvent) => ({
           id: `device-${event.id}`,
           title: event.title,
           description: event.description,
@@ -484,7 +515,7 @@ export class PWANativeDeviceService {
       this.updateCapabilityUsage('calendar')
       return deviceEvents
     } catch (error) {
-      console.error('Error syncing calendar:', error)
+      await logger.error('Error syncing calendar', { error })
       return []
     }
   }
@@ -554,14 +585,7 @@ export class PWANativeDeviceService {
     return permission === 'granted'
   }
 
-  async showNotification(title: string, options: {
-    body?: string
-    icon?: string
-    badge?: string
-    tag?: string
-    data?: any
-    actions?: NotificationAction[]
-  } = {}): Promise<boolean> {
+  async showNotification(title: string, options: NotificationOptions = {}): Promise<boolean> {
     if (!await this.requestNotificationPermission()) return false
 
     try {
@@ -572,7 +596,7 @@ export class PWANativeDeviceService {
           badge: options.badge || '/icons/badge-72x72.png',
           tag: options.tag,
           data: options.data,
-          actions: options.actions,
+          ...(options.actions ? { actions: options.actions } : {}),
         })
 
         notification.onclick = () => {
@@ -589,7 +613,7 @@ export class PWANativeDeviceService {
       this.updateCapabilityUsage('notifications')
       return true
     } catch (error) {
-      console.error('Error showing notification:', error)
+      await logger.error('Error showing notification', { error })
       return false
     }
   }
@@ -609,7 +633,7 @@ export class PWANativeDeviceService {
         await navigator.share(data)
       } else if ('canShare' in navigator) {
         // Fallback for browsers that don't support full sharing
-        await navigator.share({
+        await (navigator as any).share({
           title: data.title,
           text: data.text,
           url: data.url,
@@ -621,7 +645,7 @@ export class PWANativeDeviceService {
       this.updateCapabilityUsage('sharing')
       return true
     } catch (error) {
-      console.error('Error sharing content:', error)
+      await logger.error('Error sharing content', { error })
       return false
     }
   }
@@ -681,7 +705,7 @@ export class PWANativeDeviceService {
 
   private async syncPendingOperations(): Promise<void> {
     // Sync pending photos, contacts, calendar events, etc.
-    console.warn('Syncing pending operations...')
+    await logger.info('Syncing pending operations...')
 
     // Implementation would depend on backend sync endpoints
   }
@@ -691,21 +715,22 @@ export class PWANativeDeviceService {
     if (this.eventHandlers) {
       // Remove all event listeners
       if (this.eventHandlers.handleOnline) {
-        window.removeEventListener('online', this.eventHandlers.handleOnline)
+        window.removeEventListener('online', this.eventHandlers.handleOnline as EventListener)
       }
       if (this.eventHandlers.handleOffline) {
-        window.removeEventListener('offline', this.eventHandlers.handleOffline)
+        window.removeEventListener('offline', this.eventHandlers.handleOffline as EventListener)
       }
       if (this.eventHandlers.handleAppInstalled) {
-        window.removeEventListener('appinstalled', this.eventHandlers.handleAppInstalled)
+        window.removeEventListener('appinstalled', this.eventHandlers.handleAppInstalled as EventListener)
       }
       if (this.eventHandlers.handleBeforeInstall) {
-        window.removeEventListener('beforeinstallprompt', this.eventHandlers.handleBeforeInstall)
+        window.removeEventListener('beforeinstallprompt', this.eventHandlers.handleBeforeInstall as EventListener)
       }
 
       // Remove permission change listener
       if ('permissions' in navigator) {
-        navigator.permissions.removeEventListener('change', this.handlePermissionChange)
+        // The Permissions API does not support removeEventListener.
+        // Permission change listeners are automatically removed when the page is unloaded.
       }
 
       // Clear handlers
@@ -713,7 +738,7 @@ export class PWANativeDeviceService {
     }
 
     // Clear capabilities if needed
-    if (import.meta.env.MODE === 'development') {
+    if (process.env.NODE_ENV === 'development') {
       this.capabilities.clear()
     }
   }

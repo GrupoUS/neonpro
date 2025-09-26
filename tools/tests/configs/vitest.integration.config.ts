@@ -1,35 +1,35 @@
-import { defineConfig } from 'vitest/config'
-import { resolve } from 'path'
+import { resolve } from "path"
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   test: {
     globals: false,
-    environment: 'node',
+    environment: "node",
     isolate: true,
-    pool: 'threads',
+    pool: "threads",
     include: [
-      '**/*.integration.test.{ts,tsx}',
-      '**/*.integration.spec.{ts,tsx}',
-      '**/*.api.test.{ts,tsx}',
+      "**/*.integration.test.{ts,tsx}",
+      "**/*.integration.spec.{ts,tsx}",
+      "**/*.api.test.{ts,tsx}",
     ],
     exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/e2e/**',
-      '**/*.unit.test.{ts,tsx}',
-      '**/*.e2e.test.{ts,tsx}',
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/e2e/**",
+      "**/*.unit.test.{ts,tsx}",
+      "**/*.e2e.test.{ts,tsx}",
     ],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'lcov'],
+      provider: "v8",
+      reporter: ["text", "json", "lcov"],
       exclude: [
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/test-results/**',
-        '**/coverage/**',
-        '**/*.config.*',
-        '**/*.setup.*',
-        '**/e2e/**',
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/test-results/**",
+        "**/coverage/**",
+        "**/*.config.*",
+        "**/*.setup.*",
+        "**/e2e/**",
       ],
       thresholds: {
         global: {
@@ -40,16 +40,16 @@ export default defineConfig({
         },
       },
     },
-    setupFiles: ['./setup/integration.setup.ts'],
+    setupFiles: ["./setup/integration.setup.ts"],
     testTimeout: 30000,
     hookTimeout: 30000,
-    globalSetup: ['./setup/integration.global-setup.ts'],
-    teardown: ['./setup/ai.global-teardown.ts'],
+    globalSetup: ["./setup/integration.global-setup.ts"],
+    teardown: ["./setup/ai.global-teardown.ts"],
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, '../../..'),
-      '@tests': resolve(__dirname, '..'),
+      "@": resolve(__dirname, "../../.."),
+      "@tests": resolve(__dirname, ".."),
     },
   },
 })

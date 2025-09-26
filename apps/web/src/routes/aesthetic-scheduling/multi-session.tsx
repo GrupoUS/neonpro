@@ -3,6 +3,8 @@ import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 export const Route = createFileRoute('/aesthetic-scheduling/multi-session')({
   component: MultiSessionSchedulerPage,
@@ -35,7 +37,7 @@ function MultiSessionSchedulerPage() {
           const result = await api.aestheticScheduling.scheduleProcedures(data)
           return result
         } catch (error) {
-          console.error('Error scheduling procedures:', error)
+          await logger.error('Error scheduling procedures:')
           throw error
         }
       }}

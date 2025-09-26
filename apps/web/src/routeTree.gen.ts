@@ -9,19 +9,91 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthLoginRouteImport } from './routes/auth/login'
-import { Route as AuthRegisterRouteImport } from './routes/auth/register'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as TreatmentPlans_rootRouteImport } from './routes/treatment-plans/__root'
+import { Route as AiClinicalSupport_rootRouteImport } from './routes/ai-clinical-support/__root'
+import { Route as AestheticScheduling_rootRouteImport } from './routes/aesthetic-scheduling/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PatientEngagementIndexRouteImport } from './routes/patient-engagement/index'
+import { Route as InventoryIndexRouteImport } from './routes/inventory/index'
+import { Route as FinancialManagementIndexRouteImport } from './routes/financial-management/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as CoordinationIndexRouteImport } from './routes/coordination/index'
+import { Route as ComplianceIndexRouteImport } from './routes/compliance/index'
+import { Route as AnalyticsIndexRouteImport } from './routes/analytics/index'
+import { Route as InventoryNewProductRouteImport } from './routes/inventory/new-product'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AiClinicalSupportRecommendationsRouteImport } from './routes/ai-clinical-support/recommendations'
+import { Route as AiClinicalSupportPredictionsRouteImport } from './routes/ai-clinical-support/predictions'
+import { Route as AiClinicalSupportMonitoringRouteImport } from './routes/ai-clinical-support/monitoring'
+import { Route as AiClinicalSupportGuidelinesRouteImport } from './routes/ai-clinical-support/guidelines'
+import { Route as AiClinicalSupportContraindicationsRouteImport } from './routes/ai-clinical-support/contraindications'
+import { Route as AiClinicalSupportAssessmentRouteImport } from './routes/ai-clinical-support/assessment'
+import { Route as AestheticSchedulingRoomsRouteImport } from './routes/aesthetic-scheduling/rooms'
+import { Route as AestheticSchedulingRecoveryRouteImport } from './routes/aesthetic-scheduling/recovery'
+import { Route as AestheticSchedulingPackagesRouteImport } from './routes/aesthetic-scheduling/packages'
+import { Route as AestheticSchedulingMultiSessionRouteImport } from './routes/aesthetic-scheduling/multi-session'
+import { Route as AestheticSchedulingContraindicationsRouteImport } from './routes/aesthetic-scheduling/contraindications'
+import { Route as AestheticSchedulingCertificationRouteImport } from './routes/aesthetic-scheduling/certification'
+import { Route as InventoryProductProductIdRouteImport } from './routes/inventory/product/$productId'
 
+const TreatmentPlans_rootRoute = TreatmentPlans_rootRouteImport.update({
+  id: '/treatment-plans/__root',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiClinicalSupport_rootRoute = AiClinicalSupport_rootRouteImport.update({
+  id: '/ai-clinical-support/__root',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AestheticScheduling_rootRoute =
+  AestheticScheduling_rootRouteImport.update({
+    id: '/aesthetic-scheduling/__root',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientEngagementIndexRoute = PatientEngagementIndexRouteImport.update({
+  id: '/patient-engagement/',
+  path: '/patient-engagement/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryIndexRoute = InventoryIndexRouteImport.update({
+  id: '/inventory/',
+  path: '/inventory/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinancialManagementIndexRoute =
+  FinancialManagementIndexRouteImport.update({
+    id: '/financial-management/',
+    path: '/financial-management/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoordinationIndexRoute = CoordinationIndexRouteImport.update({
+  id: '/coordination/',
+  path: '/coordination/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComplianceIndexRoute = ComplianceIndexRouteImport.update({
+  id: '/compliance/',
+  path: '/compliance/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryNewProductRoute = InventoryNewProductRouteImport.update({
+  id: '/inventory/new-product',
+  path: '/inventory/new-product',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
@@ -34,43 +106,316 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
   path: '/auth/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiClinicalSupportRecommendationsRoute =
+  AiClinicalSupportRecommendationsRouteImport.update({
+    id: '/ai-clinical-support/recommendations',
+    path: '/ai-clinical-support/recommendations',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AiClinicalSupportPredictionsRoute =
+  AiClinicalSupportPredictionsRouteImport.update({
+    id: '/ai-clinical-support/predictions',
+    path: '/ai-clinical-support/predictions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AiClinicalSupportMonitoringRoute =
+  AiClinicalSupportMonitoringRouteImport.update({
+    id: '/ai-clinical-support/monitoring',
+    path: '/ai-clinical-support/monitoring',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AiClinicalSupportGuidelinesRoute =
+  AiClinicalSupportGuidelinesRouteImport.update({
+    id: '/ai-clinical-support/guidelines',
+    path: '/ai-clinical-support/guidelines',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AiClinicalSupportContraindicationsRoute =
+  AiClinicalSupportContraindicationsRouteImport.update({
+    id: '/ai-clinical-support/contraindications',
+    path: '/ai-clinical-support/contraindications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AiClinicalSupportAssessmentRoute =
+  AiClinicalSupportAssessmentRouteImport.update({
+    id: '/ai-clinical-support/assessment',
+    path: '/ai-clinical-support/assessment',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AestheticSchedulingRoomsRoute =
+  AestheticSchedulingRoomsRouteImport.update({
+    id: '/aesthetic-scheduling/rooms',
+    path: '/aesthetic-scheduling/rooms',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AestheticSchedulingRecoveryRoute =
+  AestheticSchedulingRecoveryRouteImport.update({
+    id: '/aesthetic-scheduling/recovery',
+    path: '/aesthetic-scheduling/recovery',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AestheticSchedulingPackagesRoute =
+  AestheticSchedulingPackagesRouteImport.update({
+    id: '/aesthetic-scheduling/packages',
+    path: '/aesthetic-scheduling/packages',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AestheticSchedulingMultiSessionRoute =
+  AestheticSchedulingMultiSessionRouteImport.update({
+    id: '/aesthetic-scheduling/multi-session',
+    path: '/aesthetic-scheduling/multi-session',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AestheticSchedulingContraindicationsRoute =
+  AestheticSchedulingContraindicationsRouteImport.update({
+    id: '/aesthetic-scheduling/contraindications',
+    path: '/aesthetic-scheduling/contraindications',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AestheticSchedulingCertificationRoute =
+  AestheticSchedulingCertificationRouteImport.update({
+    id: '/aesthetic-scheduling/certification',
+    path: '/aesthetic-scheduling/certification',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const InventoryProductProductIdRoute =
+  InventoryProductProductIdRouteImport.update({
+    id: '/inventory/product/$productId',
+    path: '/inventory/product/$productId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aesthetic-scheduling': typeof AestheticScheduling_rootRoute
+  '/aesthetic-scheduling/certification': typeof AestheticSchedulingCertificationRoute
+  '/aesthetic-scheduling/contraindications': typeof AestheticSchedulingContraindicationsRoute
+  '/aesthetic-scheduling/multi-session': typeof AestheticSchedulingMultiSessionRoute
+  '/aesthetic-scheduling/packages': typeof AestheticSchedulingPackagesRoute
+  '/aesthetic-scheduling/recovery': typeof AestheticSchedulingRecoveryRoute
+  '/aesthetic-scheduling/rooms': typeof AestheticSchedulingRoomsRoute
+  '/ai-clinical-support': typeof AiClinicalSupport_rootRoute
+  '/ai-clinical-support/assessment': typeof AiClinicalSupportAssessmentRoute
+  '/ai-clinical-support/contraindications': typeof AiClinicalSupportContraindicationsRoute
+  '/ai-clinical-support/guidelines': typeof AiClinicalSupportGuidelinesRoute
+  '/ai-clinical-support/monitoring': typeof AiClinicalSupportMonitoringRoute
+  '/ai-clinical-support/predictions': typeof AiClinicalSupportPredictionsRoute
+  '/ai-clinical-support/recommendations': typeof AiClinicalSupportRecommendationsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/inventory/new-product': typeof InventoryNewProductRoute
+  '/treatment-plans': typeof TreatmentPlans_rootRoute
+  '/analytics': typeof AnalyticsIndexRoute
+  '/compliance': typeof ComplianceIndexRoute
+  '/coordination': typeof CoordinationIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/financial-management': typeof FinancialManagementIndexRoute
+  '/inventory': typeof InventoryIndexRoute
+  '/patient-engagement': typeof PatientEngagementIndexRoute
+  '/inventory/product/$productId': typeof InventoryProductProductIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aesthetic-scheduling': typeof AestheticScheduling_rootRoute
+  '/aesthetic-scheduling/certification': typeof AestheticSchedulingCertificationRoute
+  '/aesthetic-scheduling/contraindications': typeof AestheticSchedulingContraindicationsRoute
+  '/aesthetic-scheduling/multi-session': typeof AestheticSchedulingMultiSessionRoute
+  '/aesthetic-scheduling/packages': typeof AestheticSchedulingPackagesRoute
+  '/aesthetic-scheduling/recovery': typeof AestheticSchedulingRecoveryRoute
+  '/aesthetic-scheduling/rooms': typeof AestheticSchedulingRoomsRoute
+  '/ai-clinical-support': typeof AiClinicalSupport_rootRoute
+  '/ai-clinical-support/assessment': typeof AiClinicalSupportAssessmentRoute
+  '/ai-clinical-support/contraindications': typeof AiClinicalSupportContraindicationsRoute
+  '/ai-clinical-support/guidelines': typeof AiClinicalSupportGuidelinesRoute
+  '/ai-clinical-support/monitoring': typeof AiClinicalSupportMonitoringRoute
+  '/ai-clinical-support/predictions': typeof AiClinicalSupportPredictionsRoute
+  '/ai-clinical-support/recommendations': typeof AiClinicalSupportRecommendationsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/inventory/new-product': typeof InventoryNewProductRoute
+  '/treatment-plans': typeof TreatmentPlans_rootRoute
+  '/analytics': typeof AnalyticsIndexRoute
+  '/compliance': typeof ComplianceIndexRoute
+  '/coordination': typeof CoordinationIndexRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/financial-management': typeof FinancialManagementIndexRoute
+  '/inventory': typeof InventoryIndexRoute
+  '/patient-engagement': typeof PatientEngagementIndexRoute
+  '/inventory/product/$productId': typeof InventoryProductProductIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aesthetic-scheduling/__root': typeof AestheticScheduling_rootRoute
+  '/aesthetic-scheduling/certification': typeof AestheticSchedulingCertificationRoute
+  '/aesthetic-scheduling/contraindications': typeof AestheticSchedulingContraindicationsRoute
+  '/aesthetic-scheduling/multi-session': typeof AestheticSchedulingMultiSessionRoute
+  '/aesthetic-scheduling/packages': typeof AestheticSchedulingPackagesRoute
+  '/aesthetic-scheduling/recovery': typeof AestheticSchedulingRecoveryRoute
+  '/aesthetic-scheduling/rooms': typeof AestheticSchedulingRoomsRoute
+  '/ai-clinical-support/__root': typeof AiClinicalSupport_rootRoute
+  '/ai-clinical-support/assessment': typeof AiClinicalSupportAssessmentRoute
+  '/ai-clinical-support/contraindications': typeof AiClinicalSupportContraindicationsRoute
+  '/ai-clinical-support/guidelines': typeof AiClinicalSupportGuidelinesRoute
+  '/ai-clinical-support/monitoring': typeof AiClinicalSupportMonitoringRoute
+  '/ai-clinical-support/predictions': typeof AiClinicalSupportPredictionsRoute
+  '/ai-clinical-support/recommendations': typeof AiClinicalSupportRecommendationsRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/inventory/new-product': typeof InventoryNewProductRoute
+  '/treatment-plans/__root': typeof TreatmentPlans_rootRoute
+  '/analytics/': typeof AnalyticsIndexRoute
+  '/compliance/': typeof ComplianceIndexRoute
+  '/coordination/': typeof CoordinationIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/financial-management/': typeof FinancialManagementIndexRoute
+  '/inventory/': typeof InventoryIndexRoute
+  '/patient-engagement/': typeof PatientEngagementIndexRoute
+  '/inventory/product/$productId': typeof InventoryProductProductIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth/login' | '/auth/register' | '/dashboard'
+  fullPaths:
+    | '/'
+    | '/aesthetic-scheduling'
+    | '/aesthetic-scheduling/certification'
+    | '/aesthetic-scheduling/contraindications'
+    | '/aesthetic-scheduling/multi-session'
+    | '/aesthetic-scheduling/packages'
+    | '/aesthetic-scheduling/recovery'
+    | '/aesthetic-scheduling/rooms'
+    | '/ai-clinical-support'
+    | '/ai-clinical-support/assessment'
+    | '/ai-clinical-support/contraindications'
+    | '/ai-clinical-support/guidelines'
+    | '/ai-clinical-support/monitoring'
+    | '/ai-clinical-support/predictions'
+    | '/ai-clinical-support/recommendations'
+    | '/auth/login'
+    | '/auth/register'
+    | '/inventory/new-product'
+    | '/treatment-plans'
+    | '/analytics'
+    | '/compliance'
+    | '/coordination'
+    | '/dashboard'
+    | '/financial-management'
+    | '/inventory'
+    | '/patient-engagement'
+    | '/inventory/product/$productId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth/login' | '/auth/register' | '/dashboard'
-  id: '__root__' | '/' | '/auth/login' | '/auth/register' | '/dashboard/'
+  to:
+    | '/'
+    | '/aesthetic-scheduling'
+    | '/aesthetic-scheduling/certification'
+    | '/aesthetic-scheduling/contraindications'
+    | '/aesthetic-scheduling/multi-session'
+    | '/aesthetic-scheduling/packages'
+    | '/aesthetic-scheduling/recovery'
+    | '/aesthetic-scheduling/rooms'
+    | '/ai-clinical-support'
+    | '/ai-clinical-support/assessment'
+    | '/ai-clinical-support/contraindications'
+    | '/ai-clinical-support/guidelines'
+    | '/ai-clinical-support/monitoring'
+    | '/ai-clinical-support/predictions'
+    | '/ai-clinical-support/recommendations'
+    | '/auth/login'
+    | '/auth/register'
+    | '/inventory/new-product'
+    | '/treatment-plans'
+    | '/analytics'
+    | '/compliance'
+    | '/coordination'
+    | '/dashboard'
+    | '/financial-management'
+    | '/inventory'
+    | '/patient-engagement'
+    | '/inventory/product/$productId'
+  id:
+    | '__root__'
+    | '/'
+    | '/aesthetic-scheduling/__root'
+    | '/aesthetic-scheduling/certification'
+    | '/aesthetic-scheduling/contraindications'
+    | '/aesthetic-scheduling/multi-session'
+    | '/aesthetic-scheduling/packages'
+    | '/aesthetic-scheduling/recovery'
+    | '/aesthetic-scheduling/rooms'
+    | '/ai-clinical-support/__root'
+    | '/ai-clinical-support/assessment'
+    | '/ai-clinical-support/contraindications'
+    | '/ai-clinical-support/guidelines'
+    | '/ai-clinical-support/monitoring'
+    | '/ai-clinical-support/predictions'
+    | '/ai-clinical-support/recommendations'
+    | '/auth/login'
+    | '/auth/register'
+    | '/inventory/new-product'
+    | '/treatment-plans/__root'
+    | '/analytics/'
+    | '/compliance/'
+    | '/coordination/'
+    | '/dashboard/'
+    | '/financial-management/'
+    | '/inventory/'
+    | '/patient-engagement/'
+    | '/inventory/product/$productId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AestheticScheduling_rootRoute: typeof AestheticScheduling_rootRoute
+  AestheticSchedulingCertificationRoute: typeof AestheticSchedulingCertificationRoute
+  AestheticSchedulingContraindicationsRoute: typeof AestheticSchedulingContraindicationsRoute
+  AestheticSchedulingMultiSessionRoute: typeof AestheticSchedulingMultiSessionRoute
+  AestheticSchedulingPackagesRoute: typeof AestheticSchedulingPackagesRoute
+  AestheticSchedulingRecoveryRoute: typeof AestheticSchedulingRecoveryRoute
+  AestheticSchedulingRoomsRoute: typeof AestheticSchedulingRoomsRoute
+  AiClinicalSupport_rootRoute: typeof AiClinicalSupport_rootRoute
+  AiClinicalSupportAssessmentRoute: typeof AiClinicalSupportAssessmentRoute
+  AiClinicalSupportContraindicationsRoute: typeof AiClinicalSupportContraindicationsRoute
+  AiClinicalSupportGuidelinesRoute: typeof AiClinicalSupportGuidelinesRoute
+  AiClinicalSupportMonitoringRoute: typeof AiClinicalSupportMonitoringRoute
+  AiClinicalSupportPredictionsRoute: typeof AiClinicalSupportPredictionsRoute
+  AiClinicalSupportRecommendationsRoute: typeof AiClinicalSupportRecommendationsRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  InventoryNewProductRoute: typeof InventoryNewProductRoute
+  TreatmentPlans_rootRoute: typeof TreatmentPlans_rootRoute
+  AnalyticsIndexRoute: typeof AnalyticsIndexRoute
+  ComplianceIndexRoute: typeof ComplianceIndexRoute
+  CoordinationIndexRoute: typeof CoordinationIndexRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
+  FinancialManagementIndexRoute: typeof FinancialManagementIndexRoute
+  InventoryIndexRoute: typeof InventoryIndexRoute
+  PatientEngagementIndexRoute: typeof PatientEngagementIndexRoute
+  InventoryProductProductIdRoute: typeof InventoryProductProductIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/treatment-plans/__root': {
+      id: '/treatment-plans/__root'
+      path: '/treatment-plans'
+      fullPath: '/treatment-plans'
+      preLoaderRoute: typeof TreatmentPlans_rootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-clinical-support/__root': {
+      id: '/ai-clinical-support/__root'
+      path: '/ai-clinical-support'
+      fullPath: '/ai-clinical-support'
+      preLoaderRoute: typeof AiClinicalSupport_rootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/__root': {
+      id: '/aesthetic-scheduling/__root'
+      path: '/aesthetic-scheduling'
+      fullPath: '/aesthetic-scheduling'
+      preLoaderRoute: typeof AestheticScheduling_rootRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -78,11 +423,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patient-engagement/': {
+      id: '/patient-engagement/'
+      path: '/patient-engagement'
+      fullPath: '/patient-engagement'
+      preLoaderRoute: typeof PatientEngagementIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory/': {
+      id: '/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financial-management/': {
+      id: '/financial-management/'
+      path: '/financial-management'
+      fullPath: '/financial-management'
+      preLoaderRoute: typeof FinancialManagementIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/dashboard/': {
       id: '/dashboard/'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coordination/': {
+      id: '/coordination/'
+      path: '/coordination'
+      fullPath: '/coordination'
+      preLoaderRoute: typeof CoordinationIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compliance/': {
+      id: '/compliance/'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics/': {
+      id: '/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory/new-product': {
+      id: '/inventory/new-product'
+      path: '/inventory/new-product'
+      fullPath: '/inventory/new-product'
+      preLoaderRoute: typeof InventoryNewProductRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/register': {
@@ -99,14 +493,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai-clinical-support/recommendations': {
+      id: '/ai-clinical-support/recommendations'
+      path: '/ai-clinical-support/recommendations'
+      fullPath: '/ai-clinical-support/recommendations'
+      preLoaderRoute: typeof AiClinicalSupportRecommendationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-clinical-support/predictions': {
+      id: '/ai-clinical-support/predictions'
+      path: '/ai-clinical-support/predictions'
+      fullPath: '/ai-clinical-support/predictions'
+      preLoaderRoute: typeof AiClinicalSupportPredictionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-clinical-support/monitoring': {
+      id: '/ai-clinical-support/monitoring'
+      path: '/ai-clinical-support/monitoring'
+      fullPath: '/ai-clinical-support/monitoring'
+      preLoaderRoute: typeof AiClinicalSupportMonitoringRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-clinical-support/guidelines': {
+      id: '/ai-clinical-support/guidelines'
+      path: '/ai-clinical-support/guidelines'
+      fullPath: '/ai-clinical-support/guidelines'
+      preLoaderRoute: typeof AiClinicalSupportGuidelinesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-clinical-support/contraindications': {
+      id: '/ai-clinical-support/contraindications'
+      path: '/ai-clinical-support/contraindications'
+      fullPath: '/ai-clinical-support/contraindications'
+      preLoaderRoute: typeof AiClinicalSupportContraindicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-clinical-support/assessment': {
+      id: '/ai-clinical-support/assessment'
+      path: '/ai-clinical-support/assessment'
+      fullPath: '/ai-clinical-support/assessment'
+      preLoaderRoute: typeof AiClinicalSupportAssessmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/rooms': {
+      id: '/aesthetic-scheduling/rooms'
+      path: '/aesthetic-scheduling/rooms'
+      fullPath: '/aesthetic-scheduling/rooms'
+      preLoaderRoute: typeof AestheticSchedulingRoomsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/recovery': {
+      id: '/aesthetic-scheduling/recovery'
+      path: '/aesthetic-scheduling/recovery'
+      fullPath: '/aesthetic-scheduling/recovery'
+      preLoaderRoute: typeof AestheticSchedulingRecoveryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/packages': {
+      id: '/aesthetic-scheduling/packages'
+      path: '/aesthetic-scheduling/packages'
+      fullPath: '/aesthetic-scheduling/packages'
+      preLoaderRoute: typeof AestheticSchedulingPackagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/multi-session': {
+      id: '/aesthetic-scheduling/multi-session'
+      path: '/aesthetic-scheduling/multi-session'
+      fullPath: '/aesthetic-scheduling/multi-session'
+      preLoaderRoute: typeof AestheticSchedulingMultiSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/contraindications': {
+      id: '/aesthetic-scheduling/contraindications'
+      path: '/aesthetic-scheduling/contraindications'
+      fullPath: '/aesthetic-scheduling/contraindications'
+      preLoaderRoute: typeof AestheticSchedulingContraindicationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aesthetic-scheduling/certification': {
+      id: '/aesthetic-scheduling/certification'
+      path: '/aesthetic-scheduling/certification'
+      fullPath: '/aesthetic-scheduling/certification'
+      preLoaderRoute: typeof AestheticSchedulingCertificationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory/product/$productId': {
+      id: '/inventory/product/$productId'
+      path: '/inventory/product/$productId'
+      fullPath: '/inventory/product/$productId'
+      preLoaderRoute: typeof InventoryProductProductIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AestheticScheduling_rootRoute: AestheticScheduling_rootRoute,
+  AestheticSchedulingCertificationRoute: AestheticSchedulingCertificationRoute,
+  AestheticSchedulingContraindicationsRoute:
+    AestheticSchedulingContraindicationsRoute,
+  AestheticSchedulingMultiSessionRoute: AestheticSchedulingMultiSessionRoute,
+  AestheticSchedulingPackagesRoute: AestheticSchedulingPackagesRoute,
+  AestheticSchedulingRecoveryRoute: AestheticSchedulingRecoveryRoute,
+  AestheticSchedulingRoomsRoute: AestheticSchedulingRoomsRoute,
+  AiClinicalSupport_rootRoute: AiClinicalSupport_rootRoute,
+  AiClinicalSupportAssessmentRoute: AiClinicalSupportAssessmentRoute,
+  AiClinicalSupportContraindicationsRoute:
+    AiClinicalSupportContraindicationsRoute,
+  AiClinicalSupportGuidelinesRoute: AiClinicalSupportGuidelinesRoute,
+  AiClinicalSupportMonitoringRoute: AiClinicalSupportMonitoringRoute,
+  AiClinicalSupportPredictionsRoute: AiClinicalSupportPredictionsRoute,
+  AiClinicalSupportRecommendationsRoute: AiClinicalSupportRecommendationsRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  InventoryNewProductRoute: InventoryNewProductRoute,
+  TreatmentPlans_rootRoute: TreatmentPlans_rootRoute,
+  AnalyticsIndexRoute: AnalyticsIndexRoute,
+  ComplianceIndexRoute: ComplianceIndexRoute,
+  CoordinationIndexRoute: CoordinationIndexRoute,
   DashboardIndexRoute: DashboardIndexRoute,
+  FinancialManagementIndexRoute: FinancialManagementIndexRoute,
+  InventoryIndexRoute: InventoryIndexRoute,
+  PatientEngagementIndexRoute: PatientEngagementIndexRoute,
+  InventoryProductProductIdRoute: InventoryProductProductIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

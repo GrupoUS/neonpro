@@ -563,7 +563,7 @@ export class AgentAuditService {
    */
   private startFlushTimer(): void {
     this.flushTimer = setInterval(() => {
-      this.flushPendingEvents().catch(async (console.error)
+      this.flushPendingEvents().catch(console.error)
     }, this.flushInterval)
   }
 

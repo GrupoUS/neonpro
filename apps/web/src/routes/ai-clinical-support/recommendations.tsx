@@ -3,6 +3,8 @@ import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface TreatmentRecommendationsLoaderData {
@@ -48,7 +50,7 @@ function TreatmentRecommendationsPage() {
           })
           return result
         } catch (error) {
-          console.error('Error creating treatment plan:', error)
+          await logger.error('Error creating treatment plan:')
           throw error
         }
       }}

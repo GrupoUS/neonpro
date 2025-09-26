@@ -1,23 +1,23 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   test: {
     globals: false,
-    environment: 'node',
+    environment: "node",
     setupFiles: [],
     isolate: false,
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         singleThread: true,
       },
     },
     include: [
-      './**/*.{test,spec}.{js,ts}',
+      "./**/*.{test,spec}.{js,ts}",
     ],
     exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
+      "**/node_modules/**",
+      "**/dist/**",
     ],
   },
 })

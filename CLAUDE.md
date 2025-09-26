@@ -1,7 +1,7 @@
 # Development Workflow
 
-> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
-> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Don't keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
+> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow this workflow systematically.
+> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and/or `tavily` for official docs and best practices. Don't keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
 > **ALWAYS** Execute Tasks, tools and Agents in parallel when possible to optimize time and efficiency.
 
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
@@ -27,16 +27,14 @@ When you have ANY doubt during development:
 
 ```yaml
 CORE_STANDARDS:
-  mantra: "Think → Research → Decompose → Plan → Implement → Validate"
+  mantra: "Think → Research → Plan → Decompose with atomic tasks → Implement → Validate"
   mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
   research_driven: "Multi-source validation for all complex implementations"
-  research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
-  cognitive_authority: "Automated thinking activation with complexity-based routing"
+  research_excellence: "Context7 → Tavily → Archon Knowledge base → Sequential Thinking chain"
   vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
   core_principle: "Simple systems that work over complex systems that don't"
-  archon_first_rule: "MANDATORY Archon MCP integration for all task management"
   preserve_context: "Maintain complete context across all agent and thinking transitions"
-  incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
+  incorporate_always: "Incorporate what we already have, avoid creating new files, enhance the existing structure"
   pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
 ```
 

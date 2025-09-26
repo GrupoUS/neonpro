@@ -10,7 +10,7 @@ export interface OfflineOperation {
   type: 'create' | 'update' | 'delete'
   entity: string
   entityId: string
-  data: any
+  data: Record<string, unknown>
   timestamp: Date
   priority: 'low' | 'medium' | 'high' | 'critical'
   retryCount: number
@@ -49,8 +49,15 @@ export interface ConflictResolutionStrategy {
   mergeStrategy: 'auto' | 'prompt' | 'always-server' | 'always-client'
 }
 
+interface ServerData {
+  version: number
+  timestamp: Date
+  data: Record<string, unknown>
+}
+
+import { logger } from '@/utils/logger'
+
 export class PWAOfflineManager {
-  private static instance: PWAOfflineManager
   private queues: Map<string, OfflineQueue> = new Map()
   private isOnline = navigator.onLine
   private syncInProgress = false
@@ -94,9 +101,9 @@ export class PWAOfflineManager {
         setTimeout(() => this.processAllQueues(), 1000)
       }
 
-      console.warn('NeonPro Offline Manager initialized successfully')
+      await logger.info('NeonPro Offline Manager initialized successfully')
     } catch (error) {
-      console.error('Failed to initialize Offline Manager:', error)
+      await logger.error('Failed to initialize Offline Manager', { error })
       throw error
     }
   }
@@ -158,7 +165,7 @@ export class PWAOfflineManager {
         })
       }
     } catch (error) {
-      console.error('Error loading queues:', error)
+      await logger.error('Error loading queues', { error })
     }
   }
 
@@ -203,7 +210,7 @@ export class PWAOfflineManager {
 
   private handleOnline(): void {
     this.isOnline = true
-    console.warn('Device online - starting sync process')
+    await logger.info('Device online - starting sync process')
 
     if (this.settings.autoSync) {
       this.processAllQueues()
@@ -212,7 +219,7 @@ export class PWAOfflineManager {
 
   private handleOffline(): void {
     this.isOnline = false
-    console.warn('Device offline - enabling offline mode')
+    await logger.info('Device offline - enabling offline mode')
   }
 
   // Queue Management
@@ -410,7 +417,7 @@ export class PWAOfflineManager {
   private async executeApiOperation(operation: OfflineOperation): Promise<{
     success: boolean
     conflict?: boolean
-    serverData?: any
+    serverData?: ServerData
     bytesSynced?: number
     error?: string
   }> {
@@ -443,8 +450,8 @@ export class PWAOfflineManager {
 
   private async resolveConflict(
     clientOperation: OfflineOperation,
-    serverData: any,
-  ): Promise<{ resolved: boolean; mergedData?: any }> {
+    serverData: ServerData,
+  ): Promise<{ resolved: boolean; mergedData?: Record<string, unknown> }> {
     const strategy = this.conflictStrategies.get(clientOperation.entity)
 
     if (!strategy || strategy.mergeStrategy === 'auto') {
@@ -468,7 +475,7 @@ export class PWAOfflineManager {
     }
 
     // Manual resolution - would show UI prompt
-    console.warn('Manual conflict resolution required for operation:', clientOperation.id)
+    await logger.warn('Manual conflict resolution required for operation', { operationId: clientOperation.id })
     return { resolved: false }
   }
 
@@ -615,17 +622,17 @@ export class PWAOfflineManager {
   }
 
   // Data compression and encryption (placeholder implementations)
-  private async compressData(data: any): Promise<any> {
+  private async compressData(data: Record<string, unknown>): Promise<Record<string, unknown>> {
     // Implement compression logic
     return this.settings.compressionEnabled ? data : data
   }
 
-  private async encryptData(data: any): Promise<any> {
+  private async encryptData(data: Record<string, unknown>): Promise<Record<string, unknown>> {
     // Implement encryption logic
     return this.settings.encryptionEnabled ? data : data
   }
 
-  private async decryptData(data: any): Promise<any> {
+  private async decryptData(data: Record<string, unknown>): Promise<Record<string, unknown>> {
     // Implement decryption logic
     return this.settings.encryptionEnabled ? data : data
   }
@@ -639,9 +646,9 @@ export class PWAOfflineManager {
         const registration = await navigator.serviceWorker.ready
         // @ts-ignore - SyncManager may not be in all TypeScript definitions
         await registration.sync.register('neonpro-sync')
-        console.warn('Background sync registered')
+        await logger.info('Background sync registered')
       } catch (error) {
-        console.error('Error registering background sync:', error)
+        await logger.error('Error registering background sync', { error })
       }
     }
   }
