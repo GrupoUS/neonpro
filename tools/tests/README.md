@@ -42,10 +42,11 @@ const hasPerformanceIssues = validatePerformance.hasMemoryLeaks(code)
 
 ### Arquivos
 
-- `agent-helpers.test.ts` - Testes de helpers para agents
-- `basic-functionality.test.ts` - Testes de funcionalidade básica
-- `security-validation.test.ts` - Testes de segurança essencial
-- `agent-utils.ts` - Utilitários para agents
+- `agent-helpers.test.ts` - Helpers para agentes
+- `basic-functionality.test.ts` - Funcionalidades básicas da plataforma
+- `security-validation.test.ts` - Guardrails de segurança e compliance
+- `categories/backend/unit` - Suíte rápida de verificações unitárias
+- `lgpd-compliance` - Testes de conformidade LGPD
 
 ### Categorias de Validação
 
@@ -79,13 +80,10 @@ const hasPerformanceIssues = validatePerformance.hasMemoryLeaks(code)
 
 ```bash
 # Todos os testes
-pnpm test
+pnpm run test:run
 
-# Testes específicos
-pnpm test agent-helpers.test.ts
-
-# Com coverage
-pnpm test:coverage
+# Testes unitários apenas
+pnpm vitest run --config vitest.config.ts
 ```
 
 ## 📊 Exemplo de Saída

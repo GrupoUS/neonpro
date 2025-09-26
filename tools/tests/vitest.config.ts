@@ -19,7 +19,6 @@ export default defineConfig({
       "**/node_modules/**",
       "**/dist/**",
       "**/*.red-phase.*",
-      "**/config-manager-enhanced.test.ts",
     ],
   },
 })

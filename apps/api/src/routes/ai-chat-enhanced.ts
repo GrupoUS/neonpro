@@ -16,6 +16,15 @@ import { CacheKeyGenerator, SemanticCacheService } from '../services/semantic-ca
 // Import healthcare compliance utilities
 import { LGPDComplianceValidator } from '../utils/lgpd-compliance-validator'
 
+// Define HealthcareComplianceContext interface
+interface HealthcareComplianceContext {
+  operation: string
+  patientId?: string
+  professionalId?: string
+  dataClassification: string
+  legalBasis: string
+}
+
 // Import OpenTelemetry for performance monitoring
 import { SpanStatusCode, trace } from '@opentelemetry/api'
 
