@@ -790,12 +790,24 @@ export class ObservabilityManager {
   }
 }
 
-// Factory function for easy instantiation
+/**
+ * Create a configured ObservabilityManager instance.
+ *
+ * @param options - Optional configuration to override defaults (feature toggles, retention/intervals, alert webhook, environment, serviceName, etc.)
+ * @returns A new ObservabilityManager configured with the provided options
+ */
 export function createObservabilityManager(options?: ObservabilityManagerOptions): ObservabilityManager {
   return new ObservabilityManager(options)
 }
 
-// Utility function for tracing async operations
+/**
+ * Wraps an async operation in a performance trace, ensuring the trace is finished whether the operation succeeds or throws.
+ *
+ * @param manager - Observability manager used to start and finish the trace
+ * @param name - Name to assign to the trace/span
+ * @param operation - Async function to execute while traced
+ * @returns The resolved value from `operation`
+ */
 export function withTrace<T>(
   manager: ObservabilityManager,
   name: string,
@@ -815,7 +827,14 @@ export function withTrace<T>(
   })
 }
 
-// Utility function for timing operations
+/**
+ * Measures the duration of a synchronous operation and records it as a timing metric.
+ *
+ * @param manager - Observability manager used to record the timing metric
+ * @param name - Metric name under which the operation duration will be recorded
+ * @param operation - Synchronous function whose execution time will be measured
+ * @returns The value returned by `operation`
+ */
 export function timeOperation<T>(
   manager: ObservabilityManager,
   name: string,

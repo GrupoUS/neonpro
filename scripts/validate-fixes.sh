@@ -22,23 +22,27 @@ else
     exit 1
 fi
 
-# Logging functions
+# log_info logs an informational message prefixed with `[INFO]` in blue; the first argument is the message to output.
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"
 }
 
+# log_success outputs a success message prefixed with a green "[✅ SUCCESS]" tag.
 log_success() {
     echo -e "${GREEN}[✅ SUCCESS]${NC} $1"
 }
 
+# log_warning outputs a warning message prefixed with "[⚠️  WARNING]" in yellow.
 log_warning() {
     echo -e "${YELLOW}[⚠️  WARNING]${NC} $1"
 }
 
+# log_error outputs an error message prefixed with "[❌ ERROR]" in red and resets the color afterward.
 log_error() {
     echo -e "${RED}[❌ ERROR]${NC} $1"
 }
 
+# log_validation echoes a validation message prefixed with a purple "[🔍 VALIDATION]" tag.
 log_validation() {
     echo -e "${PURPLE}[🔍 VALIDATION]${NC} $1"
 }
@@ -48,7 +52,7 @@ TOTAL_TESTS=0
 PASSED_TESTS=0
 FAILED_TESTS=0
 
-# Function to run a test and track results
+# run_test runs a named test command, increments TOTAL_TESTS, logs the attempt, and on success increments PASSED_TESTS and logs success; on failure increments FAILED_TESTS, logs an error, and returns a non-zero status.
 run_test() {
     local test_name="$1"
     local test_command="$2"
@@ -67,7 +71,7 @@ run_test() {
     fi
 }
 
-# Function to test file permissions
+# test_shell_script_permissions checks all `.sh` files under `SCRIPT_DIR` for execute permission and returns non-zero if any are missing execute bits.
 test_shell_script_permissions() {
     log_info "Testing shell script permissions..."
     
@@ -92,7 +96,7 @@ test_shell_script_permissions() {
     fi
 }
 
-# Function to test configuration loading
+# test_configuration_loading verifies that the centralized config.sh exists and defines `MINIMUM_NODE_VERSION` and `REQUIRED_MEMORY_GB`, logs the outcome, and returns 0 on success or 1 on failure.
 test_configuration_loading() {
     log_info "Testing configuration loading..."
     
@@ -112,7 +116,7 @@ test_configuration_loading() {
     fi
 }
 
-# Function to test environment validation
+# test_environment_validation checks that deploy-unified.sh exists and contains a `validate_required_env_vars` reference by setting test environment variables and returning 0 on success or 1 on failure.
 test_environment_validation() {
     log_info "Testing environment validation functions..."
     
@@ -137,7 +141,8 @@ test_environment_validation() {
     fi
 }
 
-# Function to test database connection handling
+# test_database_connection_handling verifies that setup-supabase-migrations.sh defines the required database helper functions: validate_database_url, test_database_connection, and execute_db_command.
+# It returns 0 if all required functions are present and 1 if the file is missing or any required function is absent.
 test_database_connection_handling() {
     log_info "Testing database connection handling..."
     
@@ -164,7 +169,7 @@ test_database_connection_handling() {
     fi
 }
 
-# Function to test security input validation
+# test_security_input_validation checks that audit-unified.sh exists and contains the functions validate_and_sanitize_input, sanitize_string, and validate_path; it signals success when all are present and failure otherwise.
 test_security_input_validation() {
     log_info "Testing security input validation..."
     
@@ -191,7 +196,7 @@ test_security_input_validation() {
     fi
 }
 
-# Function to test configuration externalization
+# test_configuration_externalization checks that the centralized config.sh exists, verifies required configuration variables are declared, and ensures key scripts reference the centralized configuration.
 test_configuration_externalization() {
     log_info "Testing configuration externalization..."
     
@@ -236,7 +241,7 @@ test_configuration_externalization() {
     fi
 }
 
-# Function to test script functionality
+# test_script_functionality checks the syntax of all `.sh` scripts under `SCRIPT_DIR`, logs per-script results, and returns 0 if all scripts are syntactically valid or 1 if any have syntax errors.
 test_script_functionality() {
     log_info "Testing basic script functionality..."
     
@@ -262,7 +267,8 @@ test_script_functionality() {
     fi
 }
 
-# Main validation function
+# main executes the full validation test suite for the TDD GREEN phase, printing per-test results and a final summary.
+# It runs each validation, updates TOTAL_TESTS, PASSED_TESTS, and FAILED_TESTS, computes a success rate, and returns exit code 0 when the success rate is 90% or greater; returns exit code 1 otherwise (including when no tests were executed).
 main() {
     log_info "🔍 Starting comprehensive TDD GREEN phase validation..."
     log_info "Testing all implemented fixes from the TDD cycle"

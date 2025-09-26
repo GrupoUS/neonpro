@@ -572,7 +572,12 @@ export class BackupManager {
   }
 }
 
-// Factory function for easy instantiation
+/**
+ * Create a BackupManager configured with the provided backup settings.
+ *
+ * @param config - The backup configuration (scheduling, storage, data selection, security, and performance) used to initialize the manager
+ * @returns The instantiated BackupManager configured according to `config`
+ */
 export function createBackupManager(config: BackupConfig): BackupManager {
   return new BackupManager(config)
 }

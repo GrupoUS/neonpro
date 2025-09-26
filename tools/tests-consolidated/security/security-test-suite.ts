@@ -298,7 +298,12 @@ describe('Scripts Directory Security Test Suite', () => {
   });
 });
 
-// Helper functions for security reporting
+/**
+ * Maps a vulnerability type identifier to a concise remediation recommendation.
+ *
+ * @param vulnerabilityType - Identifier of the vulnerability (e.g. `'sql_injection'`, `'hardcoded_secrets'`, `'xss_vulnerability'`)
+ * @returns A short remediation recommendation for the provided vulnerability type, or a generic review message if the type is unknown
+ */
 function getRecommendation(vulnerabilityType: string): string {
   const recommendations: Record<string, string> = {
     'insecure_file_permissions': 'Set secure file permissions (644 for files, 755 for executables)',
@@ -314,6 +319,12 @@ function getRecommendation(vulnerabilityType: string): string {
   return recommendations[vulnerabilityType] || 'Review and fix security vulnerability';
 }
 
+/**
+ * Maps a vulnerability severity label to a human-readable remediation priority.
+ *
+ * @param severity - Severity label (commonly 'critical', 'high', 'medium', or 'low')
+ * @returns Recommended priority string with target timeframe; returns a generic review-and-prioritize message for unknown severities
+ */
 function getPriority(severity: string): string {
   const priorities: Record<string, string> = {
     'critical': 'Immediate - Fix within 24 hours',
@@ -388,7 +399,13 @@ export interface ComplianceStatus {
   overallScore: number;
 }
 
-// Main test execution function
+/**
+ * Run the suite of security validators for the scripts directory and produce an aggregated security test result.
+ *
+ * Current implementation returns a mock, empty result suitable for integration and scaffolding.
+ *
+ * @returns A SecurityTestResult containing aggregated metrics, discovered vulnerabilities, remediation recommendations, and compliance status.
+ */
 export async function runSecurityTests(): Promise<SecurityTestResult> {
   console.log('🔒 Running Scripts Directory Security Tests...');
   

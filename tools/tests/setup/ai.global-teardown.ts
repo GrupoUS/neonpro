@@ -1,5 +1,12 @@
 import type { Vitest } from 'vitest/node'
 
+/**
+ * Perform global teardown for AI tests: clean up service mocks, generate reports, validate compliance, and clear shared test state.
+ *
+ * Removes `global.aiTestState` to clear any persisted AI test state.
+ *
+ * @param context - Vitest runtime context provided by the test runner
+ */
 export default async function globalTeardown(context: Vitest) {
   console.log('🧹 AI testing global teardown starting')
   

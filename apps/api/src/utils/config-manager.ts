@@ -488,7 +488,12 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
   }
 }
 
-// Factory function for easy instantiation
+/**
+ * Create a ConfigManager configured with the provided options.
+ *
+ * @param options - Configuration options controlling environment, persistence, validation, auditing, and other manager behavior
+ * @returns A new ConfigManager instance configured according to `options`
+ */
 export function createConfigManager<T extends Record<string, any>>(
   options: ConfigManagerOptions
 ): ConfigManager<T> {
