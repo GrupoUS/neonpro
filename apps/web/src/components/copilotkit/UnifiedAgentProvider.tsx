@@ -3,8 +3,7 @@
  * Provides seamless integration between frontend CopilotKit and backend orchestration
  */
 
-import { CopilotKit } from '@copilotkit/react-core'
-import useCoAgent from '@copilotkit/react-core'
+import { CopilotKit, useCoAgent } from '@copilotkit/react-core'
 import React, { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 // Mock types for now - will be replaced with actual API integration
 interface UnifiedAgentRequest {
@@ -31,9 +30,9 @@ const unifiedAgentInterface = {
   initialize: async () => {},
   getHealthStatus: async () => ({ success: true, data: {} }),
   createConversation: async (sessionId: string, userId: string, patientId?: string, description?: string, options?: any) => ({ success: true }),
-  processRequest: async (request: UnifiedAgentRequest) => ({ 
-    success: true, 
-    data: { response: { content: 'Mock response', type: 'text' } } 
+  processRequest: async (request: UnifiedAgentRequest) => ({
+    success: true,
+    data: { response: { content: 'Mock response', type: 'text' }, success: true }
   }),
 }
 
@@ -273,7 +272,7 @@ export const UnifiedAgentProvider: React.FC<UnifiedAgentProviderProps> = ({
           return JSON.parse(response.response.content)
         } catch {
           // Return natural language response
-          return { response: response.response.content, success: true } as UnifiedAgentResponse
+          return { response: { content: response.response.content, type: 'text' }, success: true } as UnifiedAgentResponse
         }
       }
 

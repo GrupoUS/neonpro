@@ -1,6 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { Building2 } from 'lucide-react'
-import * as React from 'react'
 
 export const Route = createFileRoute('/')({
   component: Home,

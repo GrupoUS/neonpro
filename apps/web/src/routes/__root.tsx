@@ -11,8 +11,8 @@ export const Route = createRootRoute({
       <TRPCProvider>
         <UnifiedAgentProvider
           config={{
-            clinicId: process.env.NEXT_PUBLIC_CLINIC_ID || 'default-clinic',
-            userId: process.env.NEXT_PUBLIC_USER_ID || 'default-user',
+            clinicId: import.meta.env.VITE_CLINIC_ID || 'default-clinic',
+            userId: import.meta.env.VITE_USER_ID || 'default-user',
             userRole: 'admin', // Would be determined by auth in real app
             language: 'pt-BR',
             compliance: {

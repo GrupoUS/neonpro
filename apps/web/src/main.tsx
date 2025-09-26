@@ -148,7 +148,7 @@ if (navigator.onLine) {
 }
 
 // Cleanup function for development hot-reloading
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof window !== 'undefined' && import.meta.env.MODE === 'development') {
   window.addEventListener('beforeunload', () => {
     const cleanup = window.__pwaCleanup
     if (cleanup?.cleanup) {

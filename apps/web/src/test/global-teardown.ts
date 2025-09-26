@@ -1,4 +1,4 @@
-import { afterAll } from 'vitest'
+import { afterAll, vi } from 'vitest'
 import { server } from './global-setup'
 
 afterAll(() => {

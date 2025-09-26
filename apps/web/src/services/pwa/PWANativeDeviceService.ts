@@ -713,7 +713,7 @@ export class PWANativeDeviceService {
     }
 
     // Clear capabilities if needed
-    if (process.env.NODE_ENV === 'development') {
+    if (import.meta.env.MODE === 'development') {
       this.capabilities.clear()
     }
   }

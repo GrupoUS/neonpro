@@ -155,7 +155,30 @@ global.performance = {
 }
 
 // Mock WebSocket for AGUI protocol testing
-global.WebSocket = class WebSocket {
+global.WebSocket = class MockWebSocket {
+  url: string
+  protocol: string
+  binaryType: BinaryType = 'blob'
+  bufferedAmount: number = 0
+  extensions: string = ''
+  onclose: ((this: WebSocket, ev: CloseEvent) => any) | null = null
+  onerror: ((this: WebSocket, ev: Event) => any) | null = null
+  onmessage: ((this: WebSocket, ev: MessageEvent) => any) | null = null
+  onopen: ((this: WebSocket, ev: Event) => any) | null = null
+  readyState: number = 1
+  CONNECTING = 0
+  OPEN = 1
+  CLOSING = 2
+  CLOSED = 3
+  static CONNECTING = 0
+  static OPEN = 1
+  static CLOSING = 2
+  static CLOSED = 3
+
+  constructor(url: string | URL, protocols?: string | string[]) {
+    this.url = url.toString()
+    this.protocol = typeof protocols === 'string' ? protocols : protocols?.[0] ?? ''
+  }
   send = () => {}
   close = () => {}
   addEventListener = () => {}
@@ -169,8 +192,8 @@ global.WebSocket = class WebSocket {
 
 // Mock localStorage and sessionStorage with proper JSDOM implementation
 if (typeof dom !== 'undefined') {
-  const localStorageMock = dom.window.localStorage
-  const sessionStorageMock = dom.window.sessionStorage
+  const localStorageMock = (global as any).dom?.window.localStorage || (typeof window !== 'undefined' ? window.localStorage : undefined)
+  const sessionStorageMock = (global as any).dom?.window.sessionStorage || (typeof window !== 'undefined' ? window.sessionStorage : undefined)
   global.localStorage = localStorageMock
   global.sessionStorage = sessionStorageMock
 } // Setup test globals will be handled by vitest automatically
@@ -193,7 +216,7 @@ if (typeof dom !== 'undefined') {
 const originalConsole = { ...console }
 beforeAll(() => {
   console.log = (...args) => {
-    if (process.env.DEBUG === 'true') {
+    if (process.env.VITE_DEBUG === 'true') {
       originalConsole.log(...args)
     }
   }

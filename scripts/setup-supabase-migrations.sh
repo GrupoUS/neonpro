@@ -52,7 +52,9 @@ success() { echo -e "${GREEN}✅ SUCCESS:${NC} $1"; }
 warning() { echo -e "${YELLOW}⚠️ WARNING:${NC} $1"; }
 error() { echo -e "${RED}❌ ERROR:${NC} $1"; }
 
-info "This script must be run from the NeonPro project root directory"
+# Check if we are in project root
+if [ ! -f "package.json" ] || [ ! -d "apps" ]; then
+    info "This script must be run from the NeonPro project root directory"
     exit 1
 fi
 
