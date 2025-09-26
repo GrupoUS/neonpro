@@ -15,7 +15,6 @@
  */
 
 import { PrismaClient } from '@prisma/client'
-import type { Database } from '@neonpro/database'
 import { healthcareRLS } from './supabase.js'
 
 // Healthcare context interface for RLS
