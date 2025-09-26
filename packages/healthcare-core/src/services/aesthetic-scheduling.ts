@@ -133,6 +133,61 @@ export interface ContraindicationCheck {
   safe: boolean
 }
 
+export interface MedicalHistory {
+  pregnancyStatus?: string
+  allergies?: string[]
+  age?: number
+  medications?: string[]
+  conditions?: string[]
+  previousSurgeries?: string[]
+  skinType?: string
+  fitzpatrickScale?: string
+  healingHistory?: string
+}
+
+export interface SpecialRequirements {
+  accessibility?: boolean
+  language?: string
+  timing?: {
+    preferredDays?: string[]
+    preferredTimes?: string[]
+  }
+  equipment?: string[]
+  professionalPreferences?: string[]
+  accommodations?: string[]
+}
+
+export interface SchedulingPreferences {
+  preferredTimes?: string[]
+  preferredProfessionals?: string[]
+  specialAccommodations?: string[]
+  timingFlexibility?: 'low' | 'medium' | 'high'
+  communicationPreference?: 'phone' | 'email' | 'sms' | 'app'
+  followUpPreference?: 'in_person' | 'virtual' | 'hybrid'
+}
+
+export interface Appointment {
+  id: string
+  patientId: string
+  professionalId: string
+  startTime: Date
+  endTime: Date
+  procedureType: string
+  status: string
+  room?: string
+}
+
+export interface DurationFactor {
+  type: 'complexity' | 'patient_condition' | 'equipment_setup'
+  value: string | number
+}
+
+export interface EmergencyProtocolValidation {
+  protocolsValid: boolean
+  missingProtocols: string[]
+  recommendations: string[]
+}
+
 export class EnhancedAestheticSchedulingService {
   private procedureCache = new Map<string, AestheticProcedure>()
 
@@ -150,8 +205,8 @@ export class EnhancedAestheticSchedulingService {
     preferredDates?: Date[]
     preferredProfessionals?: string[]
     urgencyLevel?: 'routine' | 'urgent' | 'immediate'
-    medicalHistory?: any
-    specialRequirements?: any
+    medicalHistory?: MedicalHistory
+    specialRequirements?: SpecialRequirements
   }): Promise<SchedulingResult> {
     try {
       // Mock implementation - in real system would integrate with database
@@ -229,7 +284,7 @@ export class EnhancedAestheticSchedulingService {
     packageId: string,
     patientId: string,
     startDate: Date,
-    // preferences: any = {}
+    _preferences: SchedulingPreferences = {}
   ): Promise<SchedulingResult> {
     try {
       // Mock treatment package scheduling
@@ -366,7 +421,7 @@ export class EnhancedAestheticSchedulingService {
   /**
    * Optimize room allocation for aesthetic procedures
    */
-  optimizeRoomAllocation(appointments: any[]): RoomAllocation {
+  optimizeRoomAllocation(appointments: Appointment[]): RoomAllocation {
     // Mock room allocation optimization
     return {
       recommendations: appointments.map(apt => ({
@@ -386,7 +441,7 @@ export class EnhancedAestheticSchedulingService {
   async checkContraindications(request: {
     patientId: string
     procedureIds: string[]
-    medicalHistory?: any
+    medicalHistory?: MedicalHistory
   }): Promise<ContraindicationCheck> {
     try {
       const contraindications: string[] = []
@@ -399,12 +454,12 @@ export class EnhancedAestheticSchedulingService {
       }
 
       // Check allergy history
-      if (request.medicalHistory?.allergies?.length > 0) {
+      if (request.medicalHistory?.allergies && request.medicalHistory.allergies.length > 0) {
         warnings.push('Histórico de alergias - revisar produtos utilizados')
       }
 
       // Check age restrictions
-      if (request.medicalHistory?.age < 18) {
+      if (request.medicalHistory?.age !== undefined && request.medicalHistory.age < 18) {
         contraindications.push('Menores de 18 anos requerem autorização dos pais')
       }
 
@@ -429,7 +484,7 @@ export class EnhancedAestheticSchedulingService {
   /**
    * Calculate variable duration based on factors
    */
-  calculateVariableDuration(baseDuration: number, factors: any[]): number {
+  calculateVariableDuration(baseDuration: number, factors: DurationFactor[]): number {
     let totalDuration = baseDuration
 
     factors.forEach(factor => {
@@ -740,11 +795,7 @@ export class EnhancedAestheticSchedulingService {
   /**
    * Validate emergency protocols for aesthetic procedures
    */
-  validateEmergencyProtocols(procedureType: string): {
-    protocolsValid: boolean
-    missingProtocols: string[]
-    recommendations: string[]
-  } {
+  validateEmergencyProtocols(procedureType: string): EmergencyProtocolValidation {
     const highRiskTypes = ['surgical', 'laser']
     
     if (highRiskTypes.includes(procedureType)) {

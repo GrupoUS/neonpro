@@ -29,9 +29,9 @@ export interface IngestionAdapter {
   isConnected(): boolean
 
   /** Data ingestion methods */
-  ingestBatch(data: any[]): Promise<IngestionResult>
+  ingestBatch(data: Record<string, unknown>[]): Promise<IngestionResult>
   ingestStream(stream: ReadableStream): Promise<IngestionResult>
-  ingestSingle(record: any): Promise<IngestionResult>
+  ingestSingle(record: Record<string, unknown>): Promise<IngestionResult>
 
   /** Configuration management */
   updateConfig(config: Partial<IngestionConfig>): Promise<void>
@@ -91,7 +91,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   /** Abstract methods to be implemented by specific adapters */
   abstract connect(): Promise<void>
   abstract disconnect(): Promise<void>
-  abstract ingestBatch(data: any[]): Promise<IngestionResult>
+  abstract ingestBatch(data: Record<string, unknown>[]): Promise<IngestionResult>
   abstract ingestStream(stream: ReadableStream): Promise<IngestionResult>
   abstract getMetrics(): Promise<IngestionMonitoringMetrics>
 
@@ -101,7 +101,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     return this.isConnectedFlag
   }
 
-  async ingestSingle(record: any): Promise<IngestionResult> {
+  async ingestSingle(record: Record<string, unknown>): Promise<IngestionResult> {
     return this.ingestBatch([record])
   }
 
@@ -179,13 +179,13 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     }
   }
 
-  protected validateData(data: any[]): {
-    valid: any[]
-    invalid: any[]
+  protected validateData(data: Record<string, unknown>[]): {
+    valid: Record<string, unknown>[]
+    invalid: Record<string, unknown>[]
     errors: IngestionError[]
   } {
-    const valid: any[] = []
-    const invalid: any[] = []
+    const valid: Record<string, unknown>[] = []
+    const invalid: Record<string, unknown>[] = []
     const errors: IngestionError[] = []
 
     data.forEach((record, _index) => {
@@ -252,11 +252,11 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     return { valid, invalid, errors }
   }
 
-  protected transformData(data: any[]): {
-    transformed: any[]
+  protected transformData(data: Record<string, unknown>[]): {
+    transformed: Record<string, unknown>[]
     errors: IngestionError[]
   } {
-    const transformed: any[] = []
+    const transformed: Record<string, unknown>[] = []
     const errors: IngestionError[] = []
 
     data.forEach((record, _index) => {
@@ -298,7 +298,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     return { transformed, errors }
   }
 
-  private applyValidationRule(record: any, rule: ValidationRule): boolean {
+  private applyValidationRule(record: Record<string, unknown>, rule: ValidationRule): boolean {
     const fieldValue = this.getFieldValue(record, rule.field)
 
     switch (rule.type) {
@@ -334,7 +334,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     }
   }
 
-  private applyTransformationRule(record: any, rule: TransformationRule): any {
+  private applyTransformationRule(record: Record<string, unknown>, rule: TransformationRule): Record<string, unknown> {
     const sourceValue = this.getFieldValue(record, rule.sourceField)
     let transformedValue = sourceValue
 
@@ -360,11 +360,11 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     return record
   }
 
-  private getFieldValue(record: any, fieldPath: string): any {
+  private getFieldValue(record: Record<string, unknown>, fieldPath: string): unknown {
     return fieldPath.split('.').reduce((obj, _key) => obj?.[_key], record)
   }
 
-  private setFieldValue(record: any, fieldPath: string, value: any): void {
+  private setFieldValue(record: Record<string, unknown>, fieldPath: string, value: unknown): void {
     const keys = fieldPath.split('.')
     const lastKey = keys.pop()!
     const target = keys.reduce((obj, _key) => {
@@ -374,19 +374,19 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     target[lastKey] = value
   }
 
-  private validateCompliance(_record: any, _rule: ValidationRule): boolean {
+  private validateCompliance(_record: Record<string, unknown>, _rule: ValidationRule): boolean {
     // Placeholder for compliance validation logic
     // Would integrate with actual compliance frameworks
     return true
   }
 
-  private anonymizeValue(value: any, _logic: any): any {
+  private anonymizeValue(value: unknown, _logic: Record<string, unknown>): unknown {
     // Placeholder for anonymization logic
     // Would implement various anonymization techniques
     return `***${String(value).slice(-3)}`
   }
 
-  private calculateValue(_record: any, _logic: any): any {
+  private calculateValue(_record: Record<string, unknown>, _logic: Record<string, unknown>): unknown {
     // Placeholder for calculation logic
     // Would implement formula evaluation
     return 0
@@ -402,7 +402,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
   // Connection pool for database operations (intentionally unused in this implementation)
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  private _connectionPool: any = null
+  private _connectionPool: unknown = null
 
   async connect(): Promise<void> {
     // Placeholder for database connection logic
@@ -435,7 +435,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
     this._connectionPool = null
   }
 
-  async ingestBatch(data: any[]): Promise<IngestionResult> {
+  async ingestBatch(data: Record<string, unknown>[]): Promise<IngestionResult> {
     const startTime = new Date()
     const operationId = `db_batch_${Date.now()}`
 
@@ -546,7 +546,7 @@ export class APIIngestionAdapter extends BaseIngestionAdapter {
   // Webhook server for API operations (intentionally unused in this implementation)
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  private _webhookServer: any = null
+  private _webhookServer: unknown = null
 
   async connect(): Promise<void> {
     // Placeholder for API connection logic
@@ -558,7 +558,7 @@ export class APIIngestionAdapter extends BaseIngestionAdapter {
     this._webhookServer = null
   }
 
-  async ingestBatch(data: any[]): Promise<IngestionResult> {
+  async ingestBatch(data: Record<string, unknown>[]): Promise<IngestionResult> {
     // Similar implementation to DatabaseIngestionAdapter
     return this.ingestBatch(data)
   }

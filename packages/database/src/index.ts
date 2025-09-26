@@ -13,7 +13,7 @@ export { prisma } from './client-full.js'
 export { checkDatabaseHealth, closeDatabaseConnections } from './client-full.js'
 
 // Database types
-export type { Database } from './types/supabase'
+export type { Database } from './types/supabase.js'
 
 // Minimal BaseService implementation for API routes
 export class BaseService {

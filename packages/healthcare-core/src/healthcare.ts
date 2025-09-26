@@ -1,40 +1,7 @@
 // Healthcare Domain Types
 // Common fields: id: string, createdAt: Date, updatedAt: Date, deletedAt?: Date | null
 
-// Treatment-related types
-export interface TreatmentPlan {
-  id: string
-  patientId: string
-  startDate: Date
-  endDate?: Date
-  status: 'draft' | 'active' | 'completed'
-  procedures: TreatmentProcedure[]
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
-
-export interface TreatmentSession {
-  id: string
-  planId: string
-  date: Date
-  duration: number
-  notes?: string
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
-
-export interface TreatmentProcedure {
-  id: string
-  name: string
-  description?: string
-  duration: number
-  cost?: number
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
+// Treatment-related types are now exported from services/treatment-planning.ts
 
 export interface TreatmentAssessment {
   id: string
@@ -57,16 +24,7 @@ export interface TreatmentProgressTracking {
   deletedAt?: Date | null
 }
 
-export interface TreatmentRecommendation {
-  id: string
-  patientId: string
-  procedureId: string
-  reason: string
-  priority: 'low' | 'medium' | 'high'
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
+// TreatmentRecommendation is now exported from services/treatment-planning.ts
 
 export interface TreatmentDocument {
   id: string
@@ -186,35 +144,4 @@ export interface DataSubjectRequest {
   deletedAt?: Date | null
 }
 
-// Inventory-related types
-export interface InventoryCategory {
-  id: string
-  name: string
-  description: string
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
-
-export interface Product {
-  id: string
-  categoryId: string
-  name: string
-  sku: string
-  price: number
-  stock: number
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
-
-export interface InventoryBatch {
-  id: string
-  productId: string
-  batchNumber: string
-  expiryDate: Date
-  quantity: number
-  createdAt: Date
-  updatedAt: Date
-  deletedAt?: Date | null
-}
+// Inventory-related types are now exported from services/inventory-management.ts

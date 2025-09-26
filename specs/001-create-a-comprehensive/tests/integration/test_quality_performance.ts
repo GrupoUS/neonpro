@@ -2,7 +2,7 @@
 // TDD RED Phase: These tests MUST FAIL initially
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { QualityPerformanceValidator } from '../../../packages/utils/src/quality';
+import { QualityPerformanceValidator } from '@neonpro/utils/src/quality';
 
 describe('Code Quality & Performance Preservation Tests', () => {
   let validator: QualityPerformanceValidator;

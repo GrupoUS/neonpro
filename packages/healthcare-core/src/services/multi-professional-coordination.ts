@@ -1,6 +1,170 @@
 // Basic Multi-Professional Coordination Service
 // Essential healthcare professional coordination functionality
 
+// Input Interfaces for type-safe operations
+export interface CreateProfessionalTeamInput {
+  clinicId: string
+  name: string
+  description?: string
+  teamType: 'multidisciplinary' | 'specialized' | 'consultation' | 'emergency'
+}
+
+export interface AddTeamMemberInput {
+  teamId: string
+  professionalId: string
+  role: 'leader' | 'coordinator' | 'member' | 'consultant' | 'supervisor'
+  permissions?: Record<string, unknown>
+  scopeLimitations?: string[]
+}
+
+export interface CreateReferralInput {
+  patientId: string
+  referringProfessionalId: string
+  referredProfessionalId: string
+  referralType: 'consultation' | 'treatment' | 'assessment' | 'supervision' | 'second_opinion'
+  reason: string
+  clinicalNotes?: string
+  urgencyLevel: 'low' | 'medium' | 'high' | 'emergency'
+  responseDeadline?: Date
+}
+
+export interface RespondToReferralInput {
+  referralId: string
+  status: 'pending' | 'accepted' | 'rejected' | 'completed'
+  response?: string
+}
+
+export interface CreateCollaborativeSessionInput {
+  patientId: string
+  teamId: string
+  sessionType: 'planning' | 'treatment' | 'assessment' | 'follow_up' | 'emergency'
+  scheduledAt: Date
+  duration: number
+  notes?: string
+}
+
+export interface AddSessionParticipantInput {
+  sessionId: string
+  professionalId: string
+  role: string
+}
+
+export interface CreateCoordinationThreadInput {
+  patientId?: string
+  teamId?: string
+  title: string
+  description?: string
+}
+
+export interface AddCoordinationMessageInput {
+  threadId: string
+  professionalId: string
+  content: string
+  messageType: 'text' | 'clinical_update' | 'decision' | 'action_item'
+}
+
+export interface CreateProfessionalSupervisionInput {
+  supervisorId: string
+  superviseeId: string
+  supervisionType: string
+  scope: string
+  startDate: Date
+  endDate?: Date
+}
+
+export interface ValidateProfessionalScopeInput {
+  professionalId: string
+  validationType: string
+  scope: string
+  notes?: string
+}
+
+export interface CreateCoordinationProtocolInput {
+  clinicId: string
+  name: string
+  description: string
+  protocolType: string
+  steps?: ProtocolStep[]
+}
+
+export interface ProtocolStep {
+  step: number
+  title: string
+  description: string
+  responsible?: string
+  timeline?: string
+  required?: boolean
+}
+
+export interface ExecuteProtocolInput {
+  protocolId: string
+  sessionId?: string
+  executedBy: string
+  result?: ProtocolExecutionResult
+}
+
+export interface ProtocolExecutionResult {
+  success: boolean
+  data?: Record<string, unknown>
+  notes?: string
+  timestamp: Date
+}
+
+export interface CoordinationAnalytics {
+  totalTeams: number
+  activeReferrals: number
+  completedSessions: number
+  collaborationMetrics: CollaborationMetrics
+}
+
+export interface CollaborationMetrics {
+  teamEfficiency: number
+  referralResponseTime: number
+  sessionAttendance: number
+  communicationFrequency: number
+  satisfactionScore?: number
+}
+
+export interface SessionFilter {
+  patientId?: string
+  teamId?: string
+  sessionType?: string
+  status?: string
+  dateRange?: {
+    startDate: Date
+    endDate: Date
+  }
+}
+
+export interface ThreadFilter {
+  patientId?: string
+  teamId?: string
+  isActive?: boolean
+  dateRange?: {
+    startDate: Date
+    endDate: Date
+  }
+}
+
+export interface SupervisionFilter {
+  supervisorId?: string
+  superviseeId?: string
+  supervisionType?: string
+  isActive?: boolean
+  dateRange?: {
+    startDate: Date
+    endDate: Date
+  }
+}
+
+export interface ProfessionalCollaborationMetrics {
+  referralsSent: number
+  referralsReceived: number
+  sessionsParticipated: number
+  teamsMemberOf: number
+}
+
+// Core Data Interfaces
 export interface ProfessionalTeam {
   id: string
   clinicId: string
@@ -17,7 +181,7 @@ export interface TeamMember {
   teamId: string
   professionalId: string
   role: 'leader' | 'coordinator' | 'member' | 'consultant' | 'supervisor'
-  permissions?: Record<string, any>
+  permissions?: Record<string, unknown>
   scopeLimitations?: string[]
   isActive: boolean
   joinedAt: Date
@@ -107,7 +271,7 @@ export interface CoordinationProtocol {
   name: string
   description: string
   protocolType: string
-  steps: any[]
+  steps: unknown[]
   isActive: boolean
   createdAt: Date
 }
@@ -118,22 +282,22 @@ export interface ProtocolExecution {
   sessionId?: string
   executedBy: string
   status: string
-  result?: any
+  result?: unknown
   executedAt: Date
 }
 
 export class MultiProfessionalCoordinationService {
-  // private database: any
-  private auditService: any
+  // private database: unknown
+  private auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
 
-  constructor({ database, auditService }: { database?: any; auditService?: any } = {}) {
+  constructor({ database, auditService }: { database?: unknown; auditService?: { logAction?: (action: string, data: unknown) => Promise<void> } } = {}) {
     // this.database = database
     this.auditService = auditService
     console.log('MultiProfessionalCoordinationService initialized with database:', !!database)
   }
 
   // Team Management
-  async createProfessionalTeam(input: any): Promise<ProfessionalTeam> {
+  async createProfessionalTeam(input: CreateProfessionalTeamInput): Promise<ProfessionalTeam> {
     const team: ProfessionalTeam = {
       id: crypto.randomUUID(),
       clinicId: input.clinicId,
@@ -145,7 +309,7 @@ export class MultiProfessionalCoordinationService {
       updatedAt: new Date()
     }
 
-    await this.auditService?.logAction('create_professional_team', { teamId: team.id })
+    await this.auditService?.logAction?.('create_professional_team', { teamId: team.id })
     return team
   }
 
@@ -154,7 +318,7 @@ export class MultiProfessionalCoordinationService {
     return []
   }
 
-  async addTeamMember(input: any): Promise<TeamMember> {
+  async addTeamMember(input: AddTeamMemberInput): Promise<TeamMember> {
     const member: TeamMember = {
       id: crypto.randomUUID(),
       teamId: input.teamId,
@@ -166,16 +330,16 @@ export class MultiProfessionalCoordinationService {
       joinedAt: new Date()
     }
 
-    await this.auditService?.logAction('add_team_member', { memberId: member.id })
+    await this.auditService?.logAction?.('add_team_member', { memberId: member.id })
     return member
   }
 
   async removeTeamMember(teamMemberId: string): Promise<void> {
-    await this.auditService?.logAction('remove_team_member', { teamMemberId })
+    await this.auditService?.logAction?.('remove_team_member', { teamMemberId })
   }
 
   // Referral Management
-  async createReferral(input: any): Promise<ProfessionalReferral> {
+  async createReferral(input: CreateReferralInput): Promise<ProfessionalReferral> {
     const referral: ProfessionalReferral = {
       id: crypto.randomUUID(),
       patientId: input.patientId,
@@ -190,7 +354,7 @@ export class MultiProfessionalCoordinationService {
       createdAt: new Date()
     }
 
-    await this.auditService?.logAction('create_referral', { referralId: referral.id })
+    await this.auditService?.logAction?.('create_referral', { referralId: referral.id })
     return referral
   }
 
@@ -199,18 +363,18 @@ export class MultiProfessionalCoordinationService {
     return []
   }
 
-  async respondToReferral(input: any): Promise<ProfessionalReferral> {
+  async respondToReferral(input: RespondToReferralInput & CreateReferralInput): Promise<ProfessionalReferral> {
     const referral = await this.createReferral(input)
     referral.status = input.status
     referral.response = input.response
     referral.respondedAt = new Date()
 
-    await this.auditService?.logAction('respond_to_referral', { referralId: referral.id })
+    await this.auditService?.logAction?.('respond_to_referral', { referralId: referral.id })
     return referral
   }
 
   // Collaborative Sessions
-  async createCollaborativeSession(input: any): Promise<CollaborativeSession> {
+  async createCollaborativeSession(input: CreateCollaborativeSessionInput): Promise<CollaborativeSession> {
     const session: CollaborativeSession = {
       id: crypto.randomUUID(),
       patientId: input.patientId,
@@ -223,16 +387,16 @@ export class MultiProfessionalCoordinationService {
       createdAt: new Date()
     }
 
-    await this.auditService?.logAction('create_collaborative_session', { sessionId: session.id })
+    await this.auditService?.logAction?.('create_collaborative_session', { sessionId: session.id })
     return session
   }
 
-  async getCollaborativeSessions(/*filters: any*/): Promise<CollaborativeSession[]> {
+  async getCollaborativeSessions(/*filters: SessionFilter*/): Promise<CollaborativeSession[]> {
     // Mock implementation
     return []
   }
 
-  async addSessionParticipant(input: any): Promise<SessionParticipant> {
+  async addSessionParticipant(input: AddSessionParticipantInput): Promise<SessionParticipant> {
     const participant: SessionParticipant = {
       id: crypto.randomUUID(),
       sessionId: input.sessionId,
@@ -242,12 +406,12 @@ export class MultiProfessionalCoordinationService {
       isActive: true
     }
 
-    await this.auditService?.logAction('add_session_participant', { participantId: participant.id })
+    await this.auditService?.logAction?.('add_session_participant', { participantId: participant.id })
     return participant
   }
 
   // Coordination Threads
-  async createCoordinationThread(input: any): Promise<CoordinationThread> {
+  async createCoordinationThread(input: CreateCoordinationThreadInput): Promise<CoordinationThread> {
     const thread: CoordinationThread = {
       id: crypto.randomUUID(),
       patientId: input.patientId,
@@ -258,16 +422,16 @@ export class MultiProfessionalCoordinationService {
       createdAt: new Date()
     }
 
-    await this.auditService?.logAction('create_coordination_thread', { threadId: thread.id })
+    await this.auditService?.logAction?.('create_coordination_thread', { threadId: thread.id })
     return thread
   }
 
-  async getCoordinationThreads(/*filters: any*/): Promise<CoordinationThread[]> {
+  async getCoordinationThreads(/*filters: ThreadFilter*/): Promise<CoordinationThread[]> {
     // Mock implementation
     return []
   }
 
-  async addCoordinationMessage(input: any): Promise<CoordinationMessage> {
+  async addCoordinationMessage(input: AddCoordinationMessageInput): Promise<CoordinationMessage> {
     const message: CoordinationMessage = {
       id: crypto.randomUUID(),
       threadId: input.threadId,
@@ -277,12 +441,12 @@ export class MultiProfessionalCoordinationService {
       createdAt: new Date()
     }
 
-    await this.auditService?.logAction('add_coordination_message', { messageId: message.id })
+    await this.auditService?.logAction?.('add_coordination_message', { messageId: message.id })
     return message
   }
 
   // Professional Supervision
-  async createProfessionalSupervision(input: any): Promise<ProfessionalSupervision> {
+  async createProfessionalSupervision(input: CreateProfessionalSupervisionInput): Promise<ProfessionalSupervision> {
     const supervision: ProfessionalSupervision = {
       id: crypto.randomUUID(),
       supervisorId: input.supervisorId,
@@ -295,17 +459,17 @@ export class MultiProfessionalCoordinationService {
       createdAt: new Date()
     }
 
-    await this.auditService?.logAction('create_professional_supervision', { supervisionId: supervision.id })
+    await this.auditService?.logAction?.('create_professional_supervision', { supervisionId: supervision.id })
     return supervision
   }
 
-  async getSupervisionRelationships(/*filters: any*/): Promise<ProfessionalSupervision[]> {
+  async getSupervisionRelationships(/*filters: SupervisionFilter*/): Promise<ProfessionalSupervision[]> {
     // Mock implementation
     return []
   }
 
   // Scope Validation
-  async validateProfessionalScope(input: any): Promise<ScopeValidation> {
+  async validateProfessionalScope(input: ValidateProfessionalScopeInput): Promise<ScopeValidation> {
     const validation: ScopeValidation = {
       id: crypto.randomUUID(),
       professionalId: input.professionalId,
@@ -316,16 +480,16 @@ export class MultiProfessionalCoordinationService {
       validatedAt: new Date()
     }
 
-    await this.auditService?.logAction('validate_professional_scope', { validationId: validation.id })
+    await this.auditService?.logAction?.('validate_professional_scope', { validationId: validation.id })
     return validation
   }
 
-  async createScopeValidation(input: any): Promise<ScopeValidation> {
+  async createScopeValidation(input: ValidateProfessionalScopeInput): Promise<ScopeValidation> {
     return await this.validateProfessionalScope(input)
   }
 
   // Coordination Protocols
-  async createCoordinationProtocol(input: any): Promise<CoordinationProtocol> {
+  async createCoordinationProtocol(input: CreateCoordinationProtocolInput): Promise<CoordinationProtocol> {
     const protocol: CoordinationProtocol = {
       id: crypto.randomUUID(),
       clinicId: input.clinicId,
@@ -337,7 +501,7 @@ export class MultiProfessionalCoordinationService {
       createdAt: new Date()
     }
 
-    await this.auditService?.logAction('create_coordination_protocol', { protocolId: protocol.id })
+    await this.auditService?.logAction?.('create_coordination_protocol', { protocolId: protocol.id })
     return protocol
   }
 
@@ -346,7 +510,7 @@ export class MultiProfessionalCoordinationService {
     return []
   }
 
-  async executeProtocol(input: any): Promise<ProtocolExecution> {
+  async executeProtocol(input: ExecuteProtocolInput): Promise<ProtocolExecution> {
     const execution: ProtocolExecution = {
       id: crypto.randomUUID(),
       protocolId: input.protocolId,
@@ -357,7 +521,7 @@ export class MultiProfessionalCoordinationService {
       executedAt: new Date()
     }
 
-    await this.auditService?.logAction('execute_protocol', { executionId: execution.id })
+    await this.auditService?.logAction?.('execute_protocol', { executionId: execution.id })
     return execution
   }
 
@@ -367,11 +531,11 @@ export class MultiProfessionalCoordinationService {
     return []
   }
 
-  async createCollaborativeSessionForTreatment(input: any): Promise<CollaborativeSession> {
+  async createCollaborativeSessionForTreatment(input: CreateCollaborativeSessionInput): Promise<CollaborativeSession> {
     return await this.createCollaborativeSession(input)
   }
 
-  async getCoordinationAnalytics(/*clinicId: string*/): Promise<any> {
+  async getCoordinationAnalytics(/*clinicId: string*/): Promise<CoordinationAnalytics> {
     // Mock implementation
     return {
       totalTeams: 0,
@@ -381,7 +545,7 @@ export class MultiProfessionalCoordinationService {
     }
   }
 
-  async getProfessionalCollaborationMetrics(/*professionalId: string*/): Promise<any> {
+  async getProfessionalCollaborationMetrics(/*professionalId: string*/): Promise<ProfessionalCollaborationMetrics> {
     // Mock implementation
     return {
       referralsSent: 0,

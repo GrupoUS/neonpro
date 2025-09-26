@@ -2,7 +2,7 @@
 // TDD RED Phase: These tests MUST FAIL initially
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { ImportDependencyAnalyzer } from '../../../packages/utils/src/analysis';
+import { ImportDependencyAnalyzer } from '@neonpro/utils/src/analysis';
 
 describe('Import Dependency Validation Contract Tests', () => {
   let analyzer: ImportDependencyAnalyzer;

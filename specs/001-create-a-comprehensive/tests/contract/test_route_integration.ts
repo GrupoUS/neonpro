@@ -2,7 +2,7 @@
 // TDD RED Phase: These tests MUST FAIL initially
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { RouteIntegrationAnalyzer } from '../../../packages/utils/src/analysis';
+import { RouteIntegrationAnalyzer } from '@neonpro/utils/src/analysis';
 
 describe('Route Integration Validation Contract Tests', () => {
   let analyzer: RouteIntegrationAnalyzer;

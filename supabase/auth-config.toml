@@ -1,0 +1,175 @@
+# =============================================================================
+# NeonPro Supabase Auth Configuration
+# =============================================================================
+# Configurações de autenticação para healthcare compliance (LGPD, ANVISA, CFM)
+
+# Project Configuration
+project_id = "ownkoxryswokcdanrdgj"
+
+[auth]
+enabled = true
+# Site URL para redirecionamentos
+site_url = "${SITE_URL:-https://neonpro.vercel.app}"
+
+# URLs de redirecionamento permitidas
+additional_redirect_urls = [
+    "http://localhost:3000",
+    "http://localhost:3000/auth/callback", 
+    "https://neonpro.vercel.app",
+    "https://neonpro.vercel.app/auth/callback",
+    "https://neonpro.vercel.app/dashboard"
+]
+
+# Configurações de segurança para healthcare
+jwt_expiry = 86400  # 24 horas para segurança máxima
+enable_signup = false  # Cadastro controlado por admins da clínica
+enable_confirmations = true  # Confirmação obrigatória de email
+enable_recoveries = true
+enable_signups = false
+
+# Multi-factor authentication (recomendado para healthcare)
+enable_manual_linking = false
+enable_phone_confirmations = true
+enable_phone_signups = false
+
+# Configurações de senha para compliance
+password_min_length = 12
+# Exigir pelo menos 1 maiúscula, 1 minúscula, 1 número, 1 símbolo
+
+# Configurações de sessão
+refresh_token_rotation_enabled = true
+refresh_token_reuse_interval = 10
+security_update_password_require_reauthentication = true
+
+# Rate limiting para proteção
+max_enrolled_factors = 10
+
+# Email templates personalizados para healthcare
+[auth.email]
+enable_signup = false
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = true
+
+# Templates customizados (aplicados via migration)
+template_confirmation_subject = "Confirme seu email - NeonPro Healthcare"
+template_recovery_subject = "Recuperação de senha - NeonPro Healthcare"
+template_magic_link_subject = "Login seguro - NeonPro Healthcare"
+
+# SMS Configuration (opcional para 2FA)
+[auth.sms]
+enable_signup = false
+enable_confirmations = true
+max_frequency = 5  # Máximo 5 SMS por hora
+template = "Seu código de confirmação NeonPro: {{ .Code }}"
+
+# OAuth Providers Configuration
+[auth.external.google]
+enabled = true
+client_id = "${GOOGLE_CLIENT_ID:-your-google-client-id}"
+client_secret = "${GOOGLE_CLIENT_SECRET:-your-google-client-secret}"
+redirect_uri = "https://ownkoxryswokcdanrdgj.supabase.co/auth/v1/callback"
+
+# Scopes necessários para healthcare (mínimos por privacidade)
+scopes = ["openid", "email", "profile"]
+
+# Configurações específicas para profissionais de saúde
+[auth.external.google.claims]
+# Mapear claims do Google para campos do perfil
+email_verified = "email_verified"
+name = "name"
+picture = "avatar_url"
+
+# Apple OAuth (futuro)
+[auth.external.apple]
+enabled = false
+# Configuração futura para iOS app
+
+# Microsoft OAuth (para integração hospitalar)
+[auth.external.azure]
+enabled = false
+# Configuração futura para integração com sistemas hospitalares
+
+# Security Headers para compliance
+[auth.security]
+# Headers específicos para healthcare
+headers = [
+    "X-Healthcare-Compliance: LGPD-ANVISA-CFM",
+    "X-Content-Type-Options: nosniff",
+    "X-Frame-Options: DENY",
+    "X-XSS-Protection: 1; mode=block",
+    "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+]
+
+# Audit logging para compliance
+audit_log_retention_days = 2555  # 7 anos conforme LGPD
+enable_audit_logs = true
+
+# Custom claims para autorização baseada em roles
+[auth.jwt]
+default_role = "patient"  # Role padrão para novos usuários
+admin_roles = ["admin", "super_admin"]
+healthcare_roles = ["medico", "enfermeiro", "fisioterapeuta", "nutricionista", "psicologo", "dentista"]
+
+# Claims customizados para healthcare
+custom_claims = {
+    profession = "user_metadata.profession",
+    license = "user_metadata.license", 
+    clinic = "user_metadata.clinic",
+    lgpd_consent = "user_metadata.lgpd_consent"
+}
+
+# Hook functions para validação customizada
+[auth.hooks]
+# Hook para validar registro de profissionais
+validation_hook = "${SUPABASE_URL}/auth/hooks/validate-healthcare-professional"
+
+# Hook para audit logging
+audit_hook = "${SUPABASE_URL}/auth/hooks/audit-log"
+
+# Rate limiting específico para healthcare
+[auth.rate_limits]
+# Tentativas de login
+login_attempts = 5
+login_lockout_duration = 900  # 15 minutos
+
+# Recuperação de senha
+password_recovery = 3
+recovery_lockout_duration = 3600  # 1 hora
+
+# Confirmação de email
+email_confirmation = 3
+confirmation_lockout_duration = 1800  # 30 minutos
+
+# Configurações de desenvolvimento
+[auth.development]
+# Apenas para ambiente de desenvolvimento
+enable_dev_mode = false
+disable_ssl_verification = false
+log_level = "info"
+
+# Test users para desenvolvimento (apenas dev)
+test_users = []
+
+# Webhook configuration para integração
+[auth.webhooks]
+# Webhook para sincronização com sistema interno
+user_created = "${API_URL}/webhooks/auth/user-created"
+user_updated = "${API_URL}/webhooks/auth/user-updated"
+user_deleted = "${API_URL}/webhooks/auth/user-deleted"
+
+# Configurações de compliance
+[auth.compliance]
+# LGPD
+data_retention_days = 2555  # 7 anos
+enable_data_export = true
+enable_data_deletion = true
+consent_version = "1.0"
+
+# ANVISA
+enable_professional_validation = true
+require_license_verification = true
+
+# CFM
+enable_medical_ethics_compliance = true
+audit_medical_actions = true

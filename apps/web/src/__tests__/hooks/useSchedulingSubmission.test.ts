@@ -1,22 +1,29 @@
+import * as React from 'react'
 import { renderHook, act } from '@testing-library/react'
 import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { vi } from 'vitest'
 
-// Mock the trpcClient
-vi.mock('@/lib/trpcClient', () => ({
-  trpcClient: {
-    aestheticScheduling: {
-      scheduleTreatmentPackage: {
-        useMutation: vi.fn(() => ({
-          mutate: vi.fn(),
-          isPending: false,
-          error: null,
-          data: null,
-        })),
+// Mock the trpc client properly with types
+vi.mock('@/lib/trpc', () => {
+  const mockUseMutation = vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    isPending: false,
+    error: null,
+    data: null,
+  }))
+
+  return {
+    trpc: {
+      aestheticScheduling: {
+        scheduleProcedures: {
+          useMutation: mockUseMutation,
+        },
       },
     },
-  },
-}))
+  }
+})
 
 // Mock the schema
 vi.mock('@/types/aesthetic-scheduling', () => ({
@@ -26,6 +33,9 @@ vi.mock('@/types/aesthetic-scheduling', () => ({
       procedures: [{ id: 'proc-1', date: '2024-01-01' }],
     }),
   },
+ // Add any other exports that might be needed
+  AestheticSchedulingResponse: {},
+  MultiSessionSchedulingRequest: {},
 }))
 
 describe('useSchedulingSubmission', () => {
@@ -40,8 +50,9 @@ describe('useSchedulingSubmission', () => {
     })
   })
 
-  const wrapper = ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: queryClient }, children)
+  const wrapper = ({ children }: { children: React.ReactNode }) => {
+    return React.createElement(QueryClientProvider, { client: queryClient }, children)
+  }
 
   describe('Modern Hook Patterns', () => {
     it('should use modern React Query patterns with isPending', () => {

@@ -1,13 +1,14 @@
 #!/usr/bin/env tsx
+
 /**
  * Script to sync Supabase types with Prisma schema
  * Run with: npx tsx scripts/sync-types.ts
  */
 
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { HealthcareSecurityLogger } from '@neonpro/security'
-import fs from 'fs'
-import path, { dirname } from 'path'
-import { fileURLToPath } from 'url'
 
 // Global healthcare security logger instance
 let healthcareLogger: HealthcareSecurityLogger | null = null
@@ -30,7 +31,7 @@ function getHealthcareLogger(): HealthcareSecurityLogger {
 // ES module equivalents for __dirname
 const _filename = fileURLToPath(import.meta.url)
 void _filename
-const dirname = dirname(__filename)
+const dirnamePath = dirname(__filename)
 
 // Read Prisma schema and generate basic Supabase types
 const _prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma')

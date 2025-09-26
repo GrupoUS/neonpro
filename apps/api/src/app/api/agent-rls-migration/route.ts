@@ -1,34 +1,35 @@
 import { createAdminClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(_request: NextRequest) {
+export async function POST(request: NextRequest) {
+  let error: Error | null = null
   try {
     // Get admin client
     const supabase = createAdminClient()
 
     // Simple SQL execution using the existing admin client
-    const executeSQL = async (_sql: string) => {
+    const executeSQL = async () => {
       try {
-        const { data, error } = await supabase
-          .from('pg_tables')
-          .select('*')
-          .limit(1)
+        const { count, error: queryError } = await supabase
+          .from('users')
+          .select('id', { count: 'exact', head: true })
 
-        if (error) {
-          throw error
+        if (queryError) {
+          throw queryError
         }
 
-        return { success: true, data }
-      } catch {
+        return { success: true, data: { count } }
+      } catch (err) {
+        error = err as Error
         return {
           success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error.message,
         }
       }
     }
 
     // Check if we can connect to the database
-    const connectionTest = await executeSQL('SELECT 1')
+    const connectionTest = await executeSQL()
     if (!connectionTest.success) {
       return NextResponse.json(
         { error: 'Database connection failed', details: connectionTest.error },
@@ -41,12 +42,13 @@ export async function POST(_request: NextRequest) {
       message: 'Database connection successful - Ready to execute agent RLS migration',
       connectionTest: connectionTest.success,
     })
-  } catch {
+  } catch (err) {
+    error = err as Error
     console.error('Migration error:', error)
     return NextResponse.json(
       {
         error: 'Migration failed',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        details: error.message,
       },
       { status: 500 },
     )

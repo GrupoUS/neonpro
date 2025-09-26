@@ -1,11 +1,11 @@
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from "@/utils/healthcare-errors"
+import { logger } from "@/utils/secure-logger"
 
 /**
  * Global error handler middleware for the API
  */
-export async function errorHandler(c: Context, next: Next) {
+export async function errorHandler(c: Context, next: Next): Promise<void> {
   try {
     await next()
   } catch (error) {

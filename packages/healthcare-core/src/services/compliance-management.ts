@@ -102,6 +102,34 @@ export interface ProfessionalLicenseCompliance {
   updatedAt: Date
 }
 
+export interface ComplianceReportData {
+  summary?: {
+    totalAssessments: number
+    passedAssessments: number
+    failedAssessments: number
+    complianceScore: number
+  }
+  anvisaCompliance?: {
+    totalProducts: number
+    compliantProducts: number
+    nonCompliantProducts: number
+    expiredRegistrations: number
+  }
+  licenseStatus?: {
+    totalProfessionals: number
+    activeLicenses: number
+    expiredLicenses: number
+    pendingVerifications: number
+  }
+  dataBreach?: {
+    totalIncidents: number
+    resolvedIncidents: number
+    activeIncidents: number
+    severityDistribution: Record<string, number>
+  }
+  [key: string]: unknown
+}
+
 export interface ComplianceReport {
   id: string
   clinicId: string
@@ -110,15 +138,21 @@ export interface ComplianceReport {
   reportPeriodEnd: Date
   generatedBy?: string
   generatedAt: Date
-  data: any
+  data: ComplianceReportData
   status: 'generating' | 'completed' | 'failed'
 }
 
+export interface CacheEntry {
+  data: unknown
+  createdAt: Date
+  expiry?: Date
+}
+
 export class ComplianceManagementService {
-  private cache = new Map<string, any>()
+  private cache = new Map<string, CacheEntry>()
   // private cacheExpiry = 300000 // 5 minutes
 
-  constructor(/*private supabase?: any*/) {
+  constructor(/*private supabase?: unknown*/) {
   // Initialize with Supabase client if provided
   // if (supabase) {
   //   console.log('ComplianceManagementService initialized with Supabase client');
@@ -274,7 +308,11 @@ export class ComplianceManagementService {
       }
 
       // Mock database storage
-      this.cache.set(`assessment_${assessment.id}`, assessment)
+      const cacheEntry: CacheEntry = {
+        data: assessment,
+        createdAt: new Date()
+      }
+      this.cache.set(`assessment_${assessment.id}`, cacheEntry)
 
       return assessment
     } catch (error) {
@@ -342,7 +380,8 @@ export class ComplianceManagementService {
     score?: number
   ): Promise<ComplianceAssessment> {
     try {
-      const assessment = this.cache.get(`assessment_${assessmentId}`) as ComplianceAssessment
+      const cacheEntry = this.cache.get(`assessment_${assessmentId}`) as CacheEntry
+      const assessment = cacheEntry.data as ComplianceAssessment
       if (!assessment) {
         throw new Error('Assessment not found')
       }
@@ -354,7 +393,7 @@ export class ComplianceManagementService {
       assessment.updatedAt = new Date()
       assessment.assessedAt = new Date()
 
-      this.cache.set(`assessment_${assessmentId}`, assessment)
+      this.cache.set(`assessment_${assessmentId}`, cacheEntry)
 
       return assessment
     } catch (error) {
@@ -390,7 +429,11 @@ export class ComplianceManagementService {
       }
 
       // Mock storage
-      this.cache.set(`consent_${consent.id}`, consent)
+      const cacheEntry: CacheEntry = {
+        data: consent,
+        createdAt: new Date()
+      }
+      this.cache.set(`consent_${consent.id}`, cacheEntry)
 
       return consent
     } catch (error) {
@@ -438,7 +481,8 @@ export class ComplianceManagementService {
    */
   async withdrawConsent(consentId: string, withdrawalReason?: string): Promise<DataConsent> {
     try {
-      const consent = this.cache.get(`consent_${consentId}`) as DataConsent
+      const cacheEntry = this.cache.get(`consent_${consentId}`) as CacheEntry
+      const consent = cacheEntry.data as DataConsent
       if (!consent) {
         throw new Error('Consent not found')
       }
@@ -447,7 +491,7 @@ export class ComplianceManagementService {
       consent.withdrawnAt = new Date()
       consent.withdrawalReason = withdrawalReason
 
-      this.cache.set(`consent_${consentId}`, consent)
+      this.cache.set(`consent_${consentId}`, cacheEntry)
 
       return consent
     } catch (error) {
@@ -470,20 +514,24 @@ export class ComplianceManagementService {
       const request: DataSubjectRequest = {
         id: `request_${Date.now()}`,
         userId: input.clientId, // Map clientId to userId for now
-        type: input.requestType as any, // Map requestType to type
+        type: input.requestType as 'access' | 'rectification' | 'erasure' | 'portability' | 'objection', // Map requestType to type
         clientId: input.clientId,
         clinicId: input.clinicId,
-        requestType: input.requestType,
+        requestType: input.requestType as 'access' | 'deletion' | 'correction', // Convert to proper type
         requestDescription: input.requestDescription,
         requestedData: input.requestedData,
-        status: 'pending' as any,
+        status: 'pending' as 'pending' | 'in_progress' | 'completed' | 'rejected',
         createdAt: new Date(),
         requestedAt: new Date(),
         updatedAt: new Date(),
       }
 
       // Mock storage
-      this.cache.set(`request_${request.id}`, request)
+      const cacheEntry: CacheEntry = {
+        data: request,
+        createdAt: new Date()
+      }
+      this.cache.set(`request_${request.id}`, cacheEntry)
 
       return request
     } catch (error) {
@@ -502,12 +550,12 @@ export class ComplianceManagementService {
         {
           id: 'request_1',
           userId: 'client_1',
-          type: 'access' as any,
+          type: 'access' as 'access' | 'rectification' | 'erasure' | 'portability' | 'objection',
           clientId: 'client_1',
           clinicId,
           requestType: 'access',
           requestDescription: 'Solicitação de acesso a todos os meus dados',
-          status: 'in_progress' as any,
+          status: 'in_progress' as 'pending' | 'in_progress' | 'completed' | 'rejected',
           createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
           requestedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -515,12 +563,12 @@ export class ComplianceManagementService {
         {
           id: 'request_2',
           userId: 'client_2',
-          type: 'deletion' as any,
+          type: 'erasure' as 'access' | 'rectification' | 'erasure' | 'portability' | 'objection',
           clientId: 'client_2',
           clinicId,
           requestType: 'erasure',
           requestDescription: 'Solicitação de exclusão de meus dados',
-          status: 'pending' as any,
+          status: 'pending' as 'pending' | 'in_progress' | 'completed' | 'rejected',
           createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
           requestedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
           updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
@@ -548,17 +596,19 @@ export class ComplianceManagementService {
     processedBy?: string
   ): Promise<DataSubjectRequest> {
     try {
-      const request = this.cache.get(`request_${requestId}`) as DataSubjectRequest
+      const cacheEntry = this.cache.get(`request_${requestId}`) as CacheEntry
+      const request = cacheEntry.data as DataSubjectRequest
       if (!request) {
         throw new Error('Request not found')
       }
 
       request.status = status
+      request.requestType = status === 'completed' ? 'access' : status === 'rejected' ? 'deletion' : 'correction' // Map to proper type
       request.responseText = responseText
       request.processedBy = processedBy
       request.processedAt = new Date()
 
-      this.cache.set(`request_${requestId}`, request)
+      this.cache.set(`request_${requestId}`, cacheEntry)
 
       return request
     } catch (error) {
@@ -597,7 +647,11 @@ export class ComplianceManagementService {
       }
 
       // Mock storage
-      this.cache.set(`breach_${incident.id}`, incident)
+      const cacheEntry: CacheEntry = {
+        data: incident,
+        createdAt: new Date()
+      }
+      this.cache.set(`breach_${incident.id}`, cacheEntry)
 
       return incident
     } catch (error) {
@@ -653,7 +707,8 @@ export class ComplianceManagementService {
     }
   ): Promise<DataBreachIncident> {
     try {
-      const incident = this.cache.get(`breach_${incidentId}`) as DataBreachIncident
+      const cacheEntry = this.cache.get(`breach_${incidentId}`) as CacheEntry
+      const incident = cacheEntry.data as DataBreachIncident
       if (!incident) {
         throw new Error('Incident not found')
       }
@@ -661,7 +716,7 @@ export class ComplianceManagementService {
       Object.assign(incident, updates)
       incident.updatedAt = new Date()
 
-      this.cache.set(`breach_${incidentId}`, incident)
+      this.cache.set(`breach_${incidentId}`, cacheEntry)
 
       return incident
     } catch (error) {
@@ -701,7 +756,11 @@ export class ComplianceManagementService {
       }
 
       // Mock storage
-      this.cache.set(`anvisa_${productId}`, compliance)
+      const cacheEntry: CacheEntry = {
+        data: compliance,
+        createdAt: new Date()
+      }
+      this.cache.set(`anvisa_${productId}`, cacheEntry)
 
       return compliance
     } catch (error) {
@@ -792,7 +851,11 @@ export class ComplianceManagementService {
       }
 
       // Mock storage
-      this.cache.set(`license_${professionalId}`, compliance)
+      const cacheEntry: CacheEntry = {
+        data: compliance,
+        createdAt: new Date()
+      }
+      this.cache.set(`license_${professionalId}`, cacheEntry)
 
       return compliance
     } catch (error) {
