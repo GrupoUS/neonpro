@@ -493,7 +493,7 @@ describe('Enhanced Session Manager Integration Tests', () => {
     })
   })
 
-  describe('Performance Monitoring', () =gt; {
+  describe('Performance Monitoring', () => {
     it('should monitor session performance metrics', async () => {
       const performanceMetrics = await sessionManager.getSessionPerformanceMetrics('session-123')
 

@@ -61,11 +61,6 @@ export class MockAuditTrailService {
     return Promise.resolve()
   }
 
-  static async logSecurityEvent(userId: string, action: string, resource: string, details: any = {}) {
-    // Mock implementation
-    return Promise.resolve()
-  }
-
   static async logSecurityEvent(event: any) {
     // Mock implementation for test compatibility
     return Promise.resolve()

@@ -373,7 +373,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
     })
   })
 
-  describe('Inventory and Product Security', () =gt; {
+  describe('Inventory and Product Security', () => {
     it('should secure aesthetic product inventory access', async () => {
       vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
         isValid: true,

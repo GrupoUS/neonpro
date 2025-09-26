@@ -4,48 +4,22 @@
   "name": "neonpro-aesthetic-api",
   "alias": ["api.neonpro.com.br"],
   "regions": ["gru1"],
-  "trailingSlash": false,
-  "cleanUrls": true,
-  "projectSettings": {
-    "devCommand": "turbo run dev --filter=api",
-    "buildCommand": "turbo run build:vercel --filter=api",
-    "outputDirectory": ".next",
-    "installCommand": "bun install --frozen-lockfile"
-  },
-  "env": {
-    "NODE_ENV": "production",
-    "VERCEL_REGION": "gru1",
-    "LGPD_ENFORCEMENT": "strict",
-    "DATA_RESIDENCY": "brazil",
-    "CLIENT_DATA_PROTECTION": "enabled",
-    "AUDIT_LOGGING": "enabled",
-    "API_RATE_LIMIT": "1000/hour"
-  },
+  "buildCommand": "cd ../.. && bun install --frozen-lockfile && cd apps/api && bun run build",
+  "installCommand": "cd ../.. && bun install --frozen-lockfile",
+  "framework": null,
   "build": {
     "env": {
-      "NEXT_TELEMETRY_DISABLED": "1",
-      "SKIP_BUILD_STATIC_GENERATION": "false",
-      "TURBO_REMOTE_CACHE_SIGNATURE": "true"
+      "TURBO_REMOTE_CACHE_SIGNATURE": "true",
+      "VERCEL_ANALYTICS_ID": "${VERCEL_ANALYTICS_ID}",
+      "NODE_OPTIONS": "--max-old-space-size=2048"
     }
   },
   "functions": {
-    "apps/api/src/pages/api/**/*.ts": {
-      "runtime": "edge",
+    "vercel/**/*.ts": {
+      "runtime": "nodejs20.x",
       "regions": ["gru1"],
-      "memory": 256,
-      "maxDuration": 30
-    },
-    "apps/api/src/app/api/**/*.ts": {
-      "runtime": "edge",
-      "regions": ["gru1"],
-      "memory": 512,
+      "memory": 1024,
       "maxDuration": 60
-    },
-    "app/api/trpc/**/*": {
-      "runtime": "edge",
-      "regions": ["gru1"],
-      "memory": 512,
-      "maxDuration": 30
     }
   },
   "headers": [
@@ -98,11 +72,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' data: *.gstatic.com; connect-src 'self' wss: ws: https://api.supabase.com *.supabase.co; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
-        },
-        {
-          "key": "X-LGPD-Data-Protection",
-          "value": "client-data-classified"
+          "value": "default-src 'self'; script-src 'self' *.vercel-analytics.com; style-src 'self' *.googleapis.com; img-src 'self' data: https:; font-src 'self' data: *.gstatic.com; connect-src 'self' https://api.supabase.com *.supabase.co wss: ws:; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;"
         },
         {
           "key": "X-Rate-Limit-Limit",
@@ -156,14 +126,10 @@
         },
         {
           "key": "X-Rate-Limit-Limit",
-          "value": "1000"
+          "value": "100"
         },
         {
-          "key": "X-Rate-Limit-Remaining",
-          "value": "999"
-        },
-        {
-          "key": "X-Rate-Limit-Reset",
+          "key": "X-Rate-Limit-Window",
           "value": "3600"
         }
       ]
@@ -185,43 +151,50 @@
   "redirects": [
     {
       "source": "/health",
-      "destination": "/api/health",
+      "destination": "/health",
       "permanent": false
     },
     {
-      "source": "/compliance",
-      "destination": "/api/compliance/report",
+      "source": "/docs",
+      "destination": "/openapi.json",
       "permanent": false
+    },
+    {
+      "source": "/swagger",
+      "destination": "/docs",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
       "destination": "/api/$1"
+    },
+    {
+      "source": "/v1/(.*)",
+      "destination": "/api/v1/$1"
     }
   ],
   "crons": [
     {
-      "path": "/api/health/check",
-      "schedule": "0 0 * * *"
+      "path": "/health",
+      "schedule": "*/5 * * * *"
     },
     {
-      "path": "/api/compliance/audit",
+      "path": "/api/cleanup/ai-sessions",
       "schedule": "0 2 * * *"
     },
     {
-      "path": "/api/performance/metrics",
-      "schedule": "0 0 * * *"
+      "path": "/api/cleanup/expired-predictions",
+      "schedule": "0 3 * * *"
     },
     {
-      "path": "/api/anvisa/adverse-events/sync",
+      "path": "/metrics",
       "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/data-protection/lgpd-retention",
-      "schedule": "0 4 * * *"
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "outputDirectory": "dist",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
 }

@@ -12,8 +12,14 @@
     "includes": [
       "apps/**/*.{js,jsx,ts,tsx,json}",
       "packages/**/*.{js,jsx,ts,tsx,json}",
-      "scripts/**/*.{js,ts}",
-      "*.{js,ts,json}"
+      "scripts/**/*.{js,ts,sh}",
+      "*.{js,ts,json}",
+      "vercel.json",
+      "apps/**/vercel.json",
+      "turbo.json",
+      "tsconfig*.json",
+      "*.config.{js,ts}",
+      "**/*.config.{js,ts}"
     ],
     "experimentalScannerIgnores": [
       "node_modules",
@@ -40,10 +46,7 @@
       "*.js.map",
       "*.css.map",
       "public",
-      "docs",
-      "tools/reports",
-      "specs",
-      "supabase/functions"
+      "tools/reports"
     ]
   },
   "linter": {
@@ -180,6 +183,28 @@
         "rules": {
           "suspicious": {
             "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "vercel.json",
+        "**/vercel.json",
+        "turbo*.json",
+        "build-*.sh",
+        "deploy*.sh",
+        "**/deploy*.sh",
+        "scripts/**/*.sh"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noDuplicateObjectKeys": "error"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
           }
         }
       }

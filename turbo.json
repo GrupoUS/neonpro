@@ -15,6 +15,27 @@
     "AUDIT_LOGGING"
   ],
   "tasks": {
+    "//#biome:check": {
+      "cache": true,
+      "inputs": ["biome.json", "apps/**/biome.json", "packages/**/biome.json"]
+    },
+    "//#biome:fix": {
+      "cache": false
+    },
+    "//#format": {
+      "cache": true,
+      "inputs": ["biome.json", "apps/**/biome.json", "packages/**/biome.json"]
+    },
+    "//#format:fix": {
+      "cache": false
+    },
+    "//#lint": {
+      "cache": true,
+      "inputs": ["biome.json", "apps/**/biome.json", "packages/**/biome.json"]
+    },
+    "//#lint:fix": {
+      "cache": false
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", "**/.tsbuildinfo/**"],

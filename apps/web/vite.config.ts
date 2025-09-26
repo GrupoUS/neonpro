@@ -7,7 +7,7 @@ try {
   TanStackRouterVite = () => ({ name: 'tanstack-router' })
 }
 // Fallback type declaration to suppress TS2307 for @tanstack/router-plugin/vite
-declare module '@tanstack/router-plugin/vite' {
+declare module '@tanstack/router-plugin' {
   export function TanStackRouterVite(): { name: string }
 }
 

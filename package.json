@@ -51,7 +51,13 @@
     "clean": "turbo clean",
     "deploy": "./scripts/deploy.sh",
     "prepare": "husky",
-    "build:vercel": "pwd; ls -l; echo 'Starting build:vercel'; cd apps/web; pwd; ls -l; bun install; cd ../..; pwd; ls -l; turbo build --filter=@neonpro/web; mkdir -p dist; if [ -d apps/web/dist ]; then cp -r apps/web/dist/* dist/; else echo '<html><body><h1>Build Failed</h1></body></html>' > dist/index.html; fi"
+    "build:vercel": "pwd; ls -l; echo 'Starting build:vercel'; cd apps/web; pwd; ls -l; bun install; bun run build; cd ../..; pwd; ls -l; mkdir -p dist; if [ -d apps/web/dist ]; then cp -r apps/web/dist/* dist/; else echo '<html><body><h1>Build Failed</h1></body></html>' > dist/index.html; fi",
+    "//#biome:check": "biome check .",
+    "//#biome:fix": "biome check --fix .",
+    "//#format": "biome format .",
+    "//#format:fix": "biome format --write .",
+    "//#lint": "biome lint .",
+    "//#lint:fix": "biome lint --fix ."
   },
   "keywords": [
     "neonpro",
