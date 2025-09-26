@@ -541,7 +541,13 @@ export class MultiProfessionalCoordinationService {
       totalTeams: 0,
       activeReferrals: 0,
       completedSessions: 0,
-      collaborationMetrics: {}
+      collaborationMetrics: {
+        teamEfficiency: 0,
+        referralResponseTime: 0,
+        sessionAttendance: 0,
+        communicationFrequency: 0,
+        satisfactionScore: 0
+      }
     }
   }
 

@@ -23,6 +23,63 @@ When you have ANY doubt during development:
 - Check `docs/database-schema/AGENTS.md` for data structure
 - Consult specific guides in `docs/rules/coding-standards.md` for coding standards, best practices, and design patterns
 
+## Project Context
+
+### Project Overview
+
+NeonPro is a modern, edge-optimized healthcare platform designed for aesthetic clinics in Brazil. It is a monorepo built with Turborepo and pnpm workspaces, encompassing a web application, an API, and several shared packages. The platform is designed to be compliant with Brazilian healthcare regulations, including LGPD, CFM, and ANVISA.
+
+### Tech Stack
+
+*   **Monorepo:** Turborepo, pnpm workspaces
+*   **Frontend:** React, Vite, TypeScript, Tailwind CSS
+*   **Backend:** Hono, tRPC, Prisma, Supabase
+*   **Database:** PostgreSQL (via Supabase)
+*   **Testing:** Vitest, Playwright
+*   **Linting & Formatting:** OXLint, BiomeJS, ESLint, dprint
+*   **Deployment:** Vercel
+
+### Monorepo Structure
+
+The project is organized into `apps` and `packages`:
+
+*   `apps`: Contains the main applications.
+    *   `web`: The main web application.
+    *   `api`: The backend API.
+*   `packages`: Contains shared code and libraries.
+    *   `ai-services`: Services related to AI.
+    *   `database`: Prisma schema and database utilities.
+    *   `healthcare-core`: Core healthcare-related functionality.
+    *   `security`: Security-related utilities.
+    *   `shared`: Shared utilities and types.
+    *   `types`: Shared TypeScript types.
+    *   `ui`: React component library.
+    *   `utils`: General utility functions.
+
+### Key Commands
+
+The following commands are available at the root of the monorepo:
+
+*   `pnpm dev`: Start the development servers for all apps.
+*   `pnpm build`: Build all apps and packages.
+
+#### Testing
+
+*   `pnpm test`: Run all tests (unit and integration).
+*   `pnpm test:watch`: Run all tests in watch mode.
+*   `pnpm test:coverage`: Run all tests and generate a code coverage report.
+*   `pnpm test:e2e`: Run all end-to-end tests with Playwright.
+*   `pnpm test:e2e:ui`: Run all end-to-end tests with the Playwright UI.
+
+#### Linting and Formatting
+
+*   `pnpm lint`: Lint the entire codebase with OXLint.
+*   `pnpm lint:fix`: Lint and automatically fix issues with OXLint.
+
+#### Other
+
+*   `pnpm type-check`: Run TypeScript type checking for the entire project.
+
 ## 🎯 CORE PRINCIPLES & MISSION
 
 ```yaml

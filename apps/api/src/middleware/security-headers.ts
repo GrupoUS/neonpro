@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Context, Next } from 'hono'
 
 interface Logger {
   logSystemEvent(event: string, data: any): void
@@ -29,15 +29,11 @@ export class SecurityHeadersMiddleware {
     this.logger = logger
   }
 
-  public middleware(): (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => void {
-    return (req: Request, res: Response, next: NextFunction) => {
+  public middleware(): (c: Context, next: Next) => Promise<void> {
+    return async (c: Context, next: Next) => {
       try {
         // HSTS (HTTP Strict Transport Security)
-        if (this.config.enableHSTS && req.secure) {
+        if (this.config.enableHSTS && c.req.url.startsWith('https://')) {
           const hstsValue = [
             `max-age=${this.config.hstsMaxAge}`,
             this.config.hstsIncludeSubDomains ? 'includeSubDomains' : '',
@@ -46,20 +42,20 @@ export class SecurityHeadersMiddleware {
             .filter(Boolean)
             .join('; ')
 
-          res.setHeader('Strict-Transport-Security', hstsValue)
+          c.header('Strict-Transport-Security', hstsValue)
 
           this.logger.logSystemEvent('hsts_header_applied', {
             maxAge: this.config.hstsMaxAge,
             includeSubDomains: this.config.hstsIncludeSubDomains,
             preload: this.config.hstsPreload,
-            url: req.url,
+            url: c.req.url,
             timestamp: new Date().toISOString(),
           })
         }
 
         // Content Security Policy
         if (this.config.enableCSP && this.config.contentSecurityPolicy) {
-          res.setHeader(
+          c.header(
             'Content-Security-Policy',
             this.config.contentSecurityPolicy,
           )
@@ -67,25 +63,25 @@ export class SecurityHeadersMiddleware {
 
         // X-Frame-Options (Clickjacking protection)
         if (this.config.enableFrameGuard) {
-          res.setHeader('X-Frame-Options', 'DENY')
+          c.header('X-Frame-Options', 'DENY')
         }
 
         // X-Content-Type-Options (MIME sniffing protection)
         if (this.config.enableContentTypeSniffingProtection) {
-          res.setHeader('X-Content-Type-Options', 'nosniff')
+          c.header('X-Content-Type-Options', 'nosniff')
         }
 
         // X-XSS-Protection
         if (this.config.enableXSSProtection) {
-          res.setHeader('X-XSS-Protection', '1; mode=block')
+          c.header('X-XSS-Protection', '1; mode=block')
         }
 
         // Referrer Policy
-        res.setHeader('Referrer-Policy', this.config.referrerPolicy)
+        c.header('Referrer-Policy', this.config.referrerPolicy)
 
         // Permissions Policy
         if (this.config.permissionsPolicy) {
-          res.setHeader('Permissions-Policy', this.config.permissionsPolicy)
+          c.header('Permissions-Policy', this.config.permissionsPolicy)
         }
 
         // Remove server information
@@ -93,18 +89,18 @@ export class SecurityHeadersMiddleware {
 
         // Add security-related custom headers
         if (this.config.customHeaders) {
-          Object.entries(this.config.customHeaders).forEach(([key, _value]) => {
-            res.setHeader(key, value)
+          Object.entries(this.config.customHeaders).forEach(([key, value]) => {
+            c.header(key, value)
           })
         }
 
         // Add additional security headers
-        this.addAdditionalSecurityHeaders(res, req)
+        this.addAdditionalSecurityHeaders(c)
 
         this.logger.logSystemEvent('security_headers_applied', {
-          url: req.url,
-          method: req.method,
-          isSecure: req.secure,
+          url: c.req.url,
+          method: c.req.method,
+          isSecure: c.req.url.startsWith('https://'),
           headersApplied: [
             'Strict-Transport-Security',
             'Content-Security-Policy',
@@ -113,62 +109,63 @@ export class SecurityHeadersMiddleware {
             'X-XSS-Protection',
             'Referrer-Policy',
             'Permissions-Policy',
-          ].filter(header => res.getHeader(header)),
+          ].filter(header => c.res.headers.get(header)),
           timestamp: new Date().toISOString(),
         })
 
         next()
-      } catch {
+      } catch (error) {
         this.logger.logError('security_headers_middleware_error', {
           error: error instanceof Error ? error.message : 'Unknown error',
-          url: req.url,
+          url: c.req.url,
           timestamp: new Date().toISOString(),
         })
-        next(error)
+        throw error
       }
     }
   }
 
-  private addAdditionalSecurityHeaders(res: Response, req: Request): void {
+  private addAdditionalSecurityHeaders(c: Context): void {
+    const url = new URL(c.req.url)
     // Prevent caching of sensitive information
-    if (req.path.startsWith('/api/') || req.path.startsWith('/auth/')) {
-      res.setHeader(
+    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/auth/')) {
+      c.header(
         'Cache-Control',
         'no-store, no-cache, must-revalidate, proxy-revalidate',
       )
-      res.setHeader('Pragma', 'no-cache')
-      res.setHeader('Expires', '0')
+      c.header('Pragma', 'no-cache')
+      c.header('Expires', '0')
     }
 
     // Cross-origin resource sharing for API endpoints
-    if (req.path.startsWith('/api/')) {
-      res.setHeader(
+    if (url.pathname.startsWith('/api/')) {
+      c.header(
         'Access-Control-Allow-Origin',
         process.env.ALLOWED_ORIGINS || '*',
       )
-      res.setHeader(
+      c.header(
         'Access-Control-Allow-Methods',
         'GET, POST, PUT, DELETE, OPTIONS',
       )
-      res.setHeader(
+      c.header(
         'Access-Control-Allow-Headers',
         'Content-Type, Authorization, X-Requested-With',
       )
-      res.setHeader('Access-Control-Max-Age', '86400') // 24 hours
+      c.header('Access-Control-Max-Age', '86400') // 24 hours
 
       // Handle preflight requests
-      if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
+      if (c.req.method === 'OPTIONS') {
+        c.header('Access-Control-Allow-Credentials', 'true')
       }
     }
 
     // Anti-clickjacking for specific routes
-    if (req.path.startsWith('/admin/') || req.path.includes('/settings')) {
-      res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+    if (url.pathname.startsWith('/admin/') || url.pathname.includes('/settings')) {
+      c.header('X-Frame-Options', 'SAMEORIGIN')
     }
 
     // Add timing headers for monitoring
-    res.setHeader('X-Response-Time', Date.now().toString())
+    c.header('X-Response-Time', Date.now().toString())
   }
 
   public generateCSPForChatInterface(): string {
@@ -328,29 +325,24 @@ export class SecurityHeadersMiddleware {
 }
 
 // HTTPS Redirect Middleware
-export function httpsRedirectMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export async function httpsRedirectMiddleware(c: Context, next: Next): Promise<void> {
+  const url = new URL(c.req.url)
+  const isHttps = url.protocol === 'https:'
+  const forwardedProto = c.req.header('x-forwarded-proto')
+
   if (
     process.env.NODE_ENV === 'production' &&
-    !req.secure &&
-    req.get('x-forwarded-proto') !== 'https'
+    !isHttps &&
+    forwardedProto !== 'https'
   ) {
-    const httpsUrl = `https://${req.get('host')}${req.url}`
-    res.redirect(301, httpsUrl)
-    return
+    const httpsUrl = `https://${url.host}${url.pathname}${url.search}`
+    return c.redirect(httpsUrl, 301)
   }
-  next()
+  await next()
 }
 
 // Healthcare Security Headers Middleware
-export function healthcareSecurityHeadersMiddleware(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export async function healthcareSecurityHeadersMiddleware(c: Context, next: Next): Promise<void> {
   const logger: Logger = {
     logSystemEvent: (event: string, data: any) => console.warn(`[${event}]`, data),
     logError: (event: string, data: any) => console.error(`[${event}]`, data),
@@ -377,5 +369,5 @@ export function healthcareSecurityHeadersMiddleware(
   }
 
   const middleware = new SecurityHeadersMiddleware(config, logger)
-  middleware.middleware()(req, res, next)
+  await middleware.middleware()(c, next)
 }

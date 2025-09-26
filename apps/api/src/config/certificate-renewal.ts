@@ -52,8 +52,8 @@ function parseCertificate(certPath: string): CertificateInfo | null {
       daysUntilExpiry,
       serialNumber: cert.serialNumber,
     }
-  } catch {
-    logger.error('Failed to parse certificate', { error: error.message })
+  } catch (error) {
+    logger.error('Failed to parse certificate', { error: error instanceof Error ? error.message : String(error) })
     return null
   }
 }
@@ -113,9 +113,9 @@ async function triggerCertificateRenewal(config: RenewalConfig): Promise<void> {
       logger.warn('Manual certificate renewal required')
       await notifyManualRenewalRequired(config)
     }
-  } catch {
-    logger.error('Certificate renewal failed', { error: error.message })
-    await notifyRenewalFailure(error as Error)
+  } catch (error) {
+    logger.error('Certificate renewal failed', { error: error instanceof Error ? error.message : String(error) })
+    await notifyRenewalFailure(error instanceof Error ? error : new Error(String(error)))
   }
 }
 

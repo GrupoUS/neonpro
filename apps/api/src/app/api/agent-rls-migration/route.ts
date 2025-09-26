@@ -1,7 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/client'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   let error: Error | null = null
   try {
     // Get admin client

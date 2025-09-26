@@ -115,7 +115,7 @@ export class MockEnhancedSessionManager {
 
 // Mock Session Cookie Utils
 export const SessionCookieUtils = {
-  validateSessionCookies: (cookieHeader: string, secretKey: string, sessionManager: any) => {
+  validateSessionCookies: (cookieHeader: string, _secretKey: string, _sessionManager: any) => {
     if (cookieHeader && cookieHeader.includes('session-123')) {
       return {
         isValid: true,

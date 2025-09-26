@@ -2,34 +2,30 @@
 import { BaseEntity } from './common.js'
 
 // Estende o User do Supabase com dados específicos do healthcare
-export interface AuthUser {
-  id: string
+export interface AuthUser extends BaseEntity {
   email: string
   phone?: string
   emailVerified: boolean
   phoneVerified: boolean
-  
+
   // Dados pessoais (LGPD compliant)
   firstName?: string
   lastName?: string
   displayName?: string
   avatar?: string
-  
+
   // Dados profissionais específicos do healthcare
   profession?: ProfessionType
   license?: string // CRM, CRO, etc.
   clinic?: string
-  
+
   // Configurações de privacidade (LGPD)
-  lgpdConsent: AuthLGPDConsent
-  dataRetention: AuthDataRetentionPolicy
-  
+  lgpdConsent: HealthcareLGPDConsent
+  dataRetention: HealthcareDataRetentionPolicy
+
   // Configurações de usuário
   preferences: UserPreferences
-  
-  // Timestamps
-  createdAt: Date
-  updatedAt: Date
+
   lastLoginAt?: Date
 }
 
@@ -92,7 +88,7 @@ export interface UserPreferences {
   }
 }
 
-export interface AuthLGPDConsent {
+export interface HealthcareLGPDConsent {
   version: string
   acceptedAt: Date
   ipAddress: string
@@ -105,7 +101,7 @@ export interface AuthLGPDConsent {
   }
 }
 
-export interface AuthDataRetentionPolicy {
+export interface HealthcareDataRetentionPolicy {
   retentionDays: number
   autoDeleteAt?: Date
   lastReviewedAt: Date

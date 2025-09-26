@@ -591,13 +591,13 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       await this.$queryRaw`SELECT 1`
 
       // Test healthcare-specific tables
-      const _testQuery = await this.clinic.count()
+      await this.clinic.count()
 
       this.connectionPool.healthStatus = 'healthy'
       this.connectionPool.lastHealthCheck = new Date()
 
       return true
-    } catch {
+    } catch (error) {
       console.error('Database connection validation failed:', error)
       this.connectionPool.healthStatus = 'unhealthy'
       this.connectionPool.lastHealthCheck = new Date()
@@ -647,7 +647,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           timestamp: new Date().toISOString(),
         },
       }
-    } catch {
+    } catch (error) {
       console.error('Health metrics collection failed:', error)
       throw new Error(`Failed to collect health metrics: ${error}`)
     }
@@ -708,12 +708,12 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       return result
-    } catch {
+    } catch (error) {
       // Log errors for monitoring
       console.error('Prisma operation failed:', {
         action: params.action,
         model: params.model,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         context: healthcarePrisma.currentContext,
       })
 

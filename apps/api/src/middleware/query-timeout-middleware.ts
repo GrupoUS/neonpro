@@ -3,7 +3,7 @@
  * Ensures all queries complete within <2s healthcare compliance requirement
  */
 
-import { NextFunction, Request, Response } from 'express'
+import { Context, Next } from 'hono'
 // Use global performance API available in Node.js
 declare const performance: {
   now(): number
@@ -218,11 +218,11 @@ export class QueryTimeoutMiddleware {
   private extractUserId(req: Request): string | undefined {
     // Extract user ID from various possible sources
     return (
-      (req.headers['x-user-id'] as string) ||
-      (req.headers['user-id'] as string) ||
-      (req.query?.userId as string) ||
-      (req.body?.userId as string) ||
-      req.user?.id
+      req.headers.get('x-user-id') ||
+      req.headers.get('user-id') ||
+      req.query?.userId ||
+      (req.body as any)?.userId ||
+      (req.user as any)?.id
     )
   }
 
@@ -350,7 +350,7 @@ export class QueryTimeoutMiddleware {
         longestQuery = {
           queryId,
           duration,
-          route: query.req.path,
+          route: new URL(query.req.url).pathname,
         }
       }
     }
@@ -386,7 +386,7 @@ export class QueryTimeoutMiddleware {
           queryId,
           duration,
           timeout: query.timeout,
-          route: query.req.path,
+          route: new URL(query.req.url).pathname,
         })
       }
     }
@@ -423,7 +423,7 @@ export class QueryTimeoutMiddleware {
           queryId: id,
           duration: performance.now() - query.startTime,
           timeout: query.timeout,
-          route: query.req.path,
+          route: new URL(query.req.url).pathname,
           method: query.req.method,
           percentageUsed: ((performance.now() - query.startTime) / query.timeout) * 100,
         }),
@@ -481,6 +481,20 @@ export class QueryTimeoutMiddleware {
 
     return recommendations
   }
+
+  /**
+   * Get query ID from context
+   */
+  getQueryId(c: Context): string | undefined {
+    return c.get('queryId')
+  }
+
+  /**
+   * Get query timeout from context
+   */
+  getQueryTimeout(c: Context): number | undefined {
+    return c.get('queryTimeout')
+  }
 }
 
 /**
@@ -503,5 +517,13 @@ declare global {
       queryId?: string
       queryTimeout?: number
     }
+  }
+}
+
+// Extend Hono Context for our custom properties
+declare module 'hono' {
+  interface Context {
+    getQueryId(): string | undefined
+    getQueryTimeout(): number | undefined
   }
 }

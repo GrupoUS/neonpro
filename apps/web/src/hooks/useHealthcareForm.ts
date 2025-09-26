@@ -407,17 +407,15 @@ export function withHealthcareForm<T extends Record<string, any>>(
   }>,
   options: UseHealthcareFormOptions<T>
 ) {
-  return function HealthcareFormComponent(props: any) {
+  return function HealthcareFormComponent(props: Record<string, any>) {
     const accessibility = useAccessibility()
     const form = useHealthcareForm(options)
 
-    return (
-      <Component
-        {...props}
-        form={form}
-        accessibility={accessibility}
-      />
-    )
+    return React.createElement(Component, {
+      ...props,
+      form: form,
+      accessibility: accessibility
+    })
   }
 }
 

@@ -347,14 +347,18 @@ export class PatientEngagementService {
   }
 
   async getCommunicationHistory(patientId: string, clinicId: string, limit: number): Promise<CommunicationHistory[]> {
+    const types: ('email' | 'sms' | 'whatsapp' | 'phone_call')[] = ['email', 'sms', 'whatsapp']
+    const subjects = ['Appointment Reminder', 'Treatment Update', 'Follow-up Required']
+    const contents = ['Please remember your appointment tomorrow', 'Your treatment progress looks good', 'Schedule your follow-up consultation']
+    
     return Array.from({ length: Math.min(limit, 5) }, (_, i) => ({
       id: `comm_${i}`,
       patientId,
       clinicId,
-      type: ['email', 'sms', 'whatsapp'][i % 3],
+      type: types[i % types.length] as 'email' | 'sms' | 'whatsapp' | 'phone_call',
       status: 'sent' as 'sent' | 'delivered' | 'failed' | 'opened' | 'clicked',
-      subject: ['Appointment Reminder', 'Treatment Update', 'Follow-up Required'][i % 3],
-      content: ['Please remember your appointment tomorrow', 'Your treatment progress looks good', 'Schedule your follow-up consultation'][i % 3],
+      subject: subjects[i % subjects.length],
+      content: contents[i % contents.length] || '',
       sentAt: new Date(Date.now() - i * 86400000),
       deliveredAt: i > 0 ? new Date(Date.now() - i * 86400000 + 3600000) : undefined,
       openedAt: i > 1 ? new Date(Date.now() - i * 86400000 + 7200000) : undefined
@@ -397,10 +401,12 @@ export class PatientEngagementService {
   // Patient Journey
   async updatePatientJourneyStage(data: UpdatePatientJourneyStageInput): Promise<PatientJourney> {
     return {
-      id: `journey_${Date.now()}`,
-      ...data,
-      updatedAt: new Date()
-    } as PatientJourney
+      patientId: data.patientId,
+      clinicId: data.clinicId,
+      currentStage: data.currentStage,
+      stages: data.stages,
+      lastUpdated: new Date()
+    }
   }
 
   async getPatientJourney(patientId: string, clinicId: string): Promise<PatientJourney> {
@@ -412,7 +418,8 @@ export class PatientEngagementService {
         { stage: 'initial_consultation', date: new Date(Date.now() - 30 * 86400000) },
         { stage: 'treatment_planning', date: new Date(Date.now() - 15 * 86400000) },
         { stage: 'active_treatment', date: new Date() }
-      ]
+      ],
+      lastUpdated: new Date()
     }
   }
 
@@ -426,11 +433,15 @@ export class PatientEngagementService {
   }
 
   async getPatientEngagementActions(patientId: string, clinicId: string, limit: number): Promise<EngagementAction[]> {
+    const actions = ['appointment_booked', 'treatment_completed', 'feedback_given']
+    const channels = ['app', 'email', 'sms']
+    
     return Array.from({ length: Math.min(limit, 3) }, (_, i) => ({
       id: `action_${i}`,
       patientId,
       clinicId,
-      action: ['appointment_booked', 'treatment_completed', 'feedback_given'][i],
+      action: actions[i] as string,
+      channel: channels[i] as string,
       createdAt: new Date(Date.now() - i * 86400000)
     }))
   }
@@ -450,8 +461,11 @@ export class PatientEngagementService {
         id: 'loyalty_1',
         clinicId,
         name: 'Programa Fidelidade Estética',
+        description: 'Programa de fidelidade para clientes da clínica',
         pointsPerReal: 1,
-        redemptionRate: 100
+        redemptionRate: 100,
+        isActive: true,
+        createdAt: new Date()
       }
     ]
   }
@@ -462,17 +476,20 @@ export class PatientEngagementService {
       clinicId,
       balance: 1250,
       totalEarned: 1500,
-      totalRedeemed: 250
+      totalRedeemed: 250,
+      lastUpdated: new Date()
     }
   }
 
   async updatePatientPoints(patientId: string, clinicId: string, pointsToAdd: number): Promise<PatientPointsBalance> {
+    const newBalance = 1250 + pointsToAdd
     return {
       patientId,
       clinicId,
-      newBalance: 1250 + pointsToAdd,
-      pointsAdded: pointsToAdd,
-      updatedAt: new Date()
+      balance: newBalance,
+      totalEarned: 1500 + pointsToAdd,
+      totalRedeemed: 250,
+      lastUpdated: new Date()
     }
   }
 
@@ -491,7 +508,15 @@ export class PatientEngagementService {
         id: 'survey_1',
         clinicId,
         title: 'Avaliação de Tratamento',
-        questions: ['Satisfação geral', 'Resultado obtido', 'Recomendaria?']
+        description: 'Pesquisa de satisfação pós-tratamento',
+        questions: [
+          { id: 'q1', text: 'Satisfação geral', type: 'rating' as const, required: true },
+          { id: 'q2', text: 'Resultado obtido', type: 'rating' as const, required: true },
+          { id: 'q3', text: 'Recomendaria?', type: 'yes_no' as const, required: true }
+        ],
+        targetAudience: 'all_patients',
+        isActive: true,
+        createdAt: new Date()
       }
     ]
   }
@@ -519,8 +544,13 @@ export class PatientEngagementService {
         id: 'campaign_1',
         clinicId,
         name: 'Campanha de Verão',
-        status: 'active',
-        targetAudience: 'all_patients'
+        description: 'Promoções especiais para tratamentos de verão',
+        type: 'promotion',
+        targetAudience: 'all_patients',
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 90 * 86400000),
+        isActive: true,
+        createdAt: new Date()
       }
     ]
   }
@@ -540,18 +570,30 @@ export class PatientEngagementService {
         id: 'trigger_1',
         clinicId,
         type: 'missed_appointment',
+        condition: 'no_show',
+        action: 'follow_up_call',
+        priority: 'medium' as const,
         status,
-        patientId: 'patient_1'
+        patientId: 'patient_1',
+        isActive: true,
+        createdAt: new Date()
       }
     ]
   }
 
-  async updateReengagementTrigger(triggerId: string, status: string, actionTaken: string, outcome: Record<string, unknown>): Promise<ReengagementTrigger> {
+  async updateReengagementTrigger(triggerId: string, status: string, actionTaken: string, _outcome: Record<string, unknown>): Promise<ReengagementTrigger> {
     return {
-      triggerId,
+      id: triggerId,
+      clinicId: 'clinic_1',
+      type: 'missed_appointment',
+      condition: 'no_show',
+      action: actionTaken,
+      priority: 'medium' as const,
       status,
-      actionTaken,
-      outcome,
+      patientId: 'patient_1',
+      isActive: true,
+      createdAt: new Date(),
+      lastTriggered: new Date(),
       updatedAt: new Date()
     } as ReengagementTrigger
   }
@@ -573,7 +615,10 @@ export class PatientEngagementService {
       clinicId,
       engagementScore: 8.5,
       lastActivity: new Date(),
-      preferredChannel: 'whatsapp'
+      preferredChannel: 'whatsapp',
+      communicationFrequency: 3,
+      responseRate: 0.75,
+      loyaltyStatus: 'gold'
     }
   }
 
