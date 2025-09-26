@@ -51,7 +51,13 @@
     "quality": "pnpm lint && pnpm lint:security && pnpm type-check",
     "quality:fix": "pnpm lint:fix && pnpm lint:security",
     "clean": "turbo clean",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test:healthcare-compliance": "vitest run --config vitest.config.ts --reporter=verbose packages/healthcare-core/src/__tests__/",
+    "test:security-compliance": "vitest run --config vitest.config.ts --reporter=verbose packages/security/src/__tests__/",
+    "test:regulatory-compliance": "vitest run --config vitest.config.ts --reporter=verbose apps/api/src/__tests__/services/",
+    "test:compliance-report": "vitest run --config vitest.config.ts --reporter=verbose --coverage.dir=coverage-compliance",
+    "test:audit-compliance": "vitest run --config vitest.config.ts --reporter=verbose",
+    "test:all-compliance": "pnpm test:healthcare-compliance && pnpm test:security-compliance && pnpm test:regulatory-compliance"
   },
   "keywords": [
     "neonpro",

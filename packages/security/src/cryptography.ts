@@ -1,10 +1,11 @@
+/* eslint-disable no-restricted-imports */
+import * as crypto from 'crypto'
+
 /**
  * Cryptography Manager for NeonPro healthcare platform
  * Provides cryptographic operations for audit logging and security
  * @version 1.0.0
  */
-
-import * as crypto from 'crypto'
 
 export interface CryptographyManager {
   generateSecureBytes(length: number): Buffer
@@ -49,11 +50,11 @@ export class CryptographyManagerImpl implements CryptographyManager {
       // Multi-iteration hash with salt for security
       const salt = crypto.randomBytes(16).toString('hex')
       let hash = data
-      
+
       for (let i = 0; i < options.iterations; i++) {
         hash = crypto.createHash('sha256').update(hash + salt, 'utf8').digest('hex')
       }
-      
+
       return {
         hash,
         salt

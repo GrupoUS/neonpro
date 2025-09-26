@@ -23,6 +23,28 @@ export interface AIMetrics {
   auditEvents: number
 }
 
+export interface PerformanceStats {
+  p50: number
+  p95: number
+  p99: number
+  average: number
+  count: number
+}
+
+export interface ComplianceStats {
+  piiDetectionRate: number
+  consentValidationRate: number
+  auditCoverage: number
+  totalInteractions: number
+}
+
+export interface RateLimitingStats {
+  hitRate: number
+  averageRemaining: number
+  totalHits: number
+  lastHit?: string
+}
+
 export interface MetricEvent {
   timestamp: string
   _userId?: string
@@ -36,7 +58,7 @@ export interface MetricEvent {
     | 'error'
     | 'success'
   metrics: Partial<AIMetrics>
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export class AIChatMetrics {
@@ -221,13 +243,7 @@ export class AIChatMetrics {
   /**
    * Get performance percentiles
    */
-  getPerformanceStats(clinicId?: string): {
-    p50: number
-    p95: number
-    p99: number
-    average: number
-    count: number
-  } {
+  getPerformanceStats(clinicId?: string): PerformanceStats {
     const events = clinicId
       ? this.events.filter(e => e.clinicId === clinicId)
       : this.events
@@ -258,12 +274,7 @@ export class AIChatMetrics {
   /**
    * Get compliance metrics summary
    */
-  getComplianceStats(clinicId?: string): {
-    piiDetectionRate: number
-    consentValidationRate: number
-    auditCoverage: number
-    totalInteractions: number
-  } {
+  getComplianceStats(clinicId?: string): ComplianceStats {
     const events = clinicId
       ? this.events.filter(e => e.clinicId === clinicId)
       : this.events
@@ -295,12 +306,7 @@ export class AIChatMetrics {
   /**
    * Get rate limiting analysis
    */
-  getRateLimitingStats(clinicId?: string): {
-    hitRate: number
-    averageRemaining: number
-    totalHits: number
-    lastHit?: string
-  } {
+  getRateLimitingStats(clinicId?: string): RateLimitingStats {
     const events = clinicId
       ? this.events.filter(e => e.clinicId === clinicId)
       : this.events
@@ -338,9 +344,9 @@ export class AIChatMetrics {
   exportMetrics(): {
     timestamp: string
     systemMetrics: AIMetrics
-    performanceStats: any
-    complianceStats: any
-    rateLimitingStats: any
+    performanceStats: PerformanceStats
+    complianceStats: ComplianceStats
+    rateLimitingStats: RateLimitingStats
     clinicMetrics: Array<{ clinicId: string; metrics: AIMetrics }>
   } {
     const clinicMetrics = Array.from(this.metrics.entries()).map(

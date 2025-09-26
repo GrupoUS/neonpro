@@ -49,6 +49,8 @@
   "references": [
     { "path": "../../packages/utils" },
     { "path": "../../packages/database" },
-    { "path": "../../packages/security" }
+    { "path": "../../packages/security" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/types" }
   ]
 }

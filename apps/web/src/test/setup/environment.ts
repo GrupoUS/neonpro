@@ -1,4 +1,5 @@
 import { JSDOM } from 'jsdom'
+import { vi } from 'vitest'
 
 /**
  * Consolidated DOM Environment Setup for Tests
@@ -21,7 +22,7 @@ console.warn('🔧 JSDOM created successfully')
 // Comprehensive DOM object assignment for both global and globalThis
 const domObjects = {
   document: dom.window.document,
-  window: dom.window,
+  window: dom.window as any,
   navigator: dom.window.navigator,
   location: dom.window.location,
   history: dom.window.history,
@@ -51,32 +52,32 @@ const domObjects = {
 // Assign to global scope with proper handling of read-only properties
 if (typeof global !== 'undefined') {
   console.warn('🔧 Setting up global scope...')
-  
+
   // Use Object.defineProperty for read-only properties
   Object.defineProperty(global, 'navigator', {
     value: domObjects.navigator,
     writable: false,
     configurable: true,
   })
-  
+
   Object.defineProperty(global, 'location', {
     value: domObjects.location,
     writable: false,
     configurable: true,
   })
-  
+
   Object.defineProperty(global, 'localStorage', {
     value: domObjects.localStorage,
     writable: false,
     configurable: true,
   })
-  
+
   Object.defineProperty(global, 'sessionStorage', {
     value: domObjects.sessionStorage,
     writable: false,
     configurable: true,
   })
-  
+
   // Direct assignment for writable properties
   global.document = domObjects.document
   global.window = domObjects.window
@@ -100,39 +101,39 @@ if (typeof global !== 'undefined') {
   global.FetchEvent = domObjects.FetchEvent
   global.ServiceWorkerGlobalScope = domObjects.ServiceWorkerGlobalScope
   global.WorkerGlobalScope = domObjects.WorkerGlobalScope
-  
+
   console.warn('🔧 Global scope setup complete')
 }
 
 // Assign to globalThis scope
 if (typeof globalThis !== 'undefined') {
   console.warn('🔧 Setting up globalThis scope...')
-  
+
   // Use Object.defineProperty for read-only properties
   Object.defineProperty(globalThis, 'navigator', {
     value: domObjects.navigator,
     writable: false,
     configurable: true,
   })
-  
+
   Object.defineProperty(globalThis, 'location', {
     value: domObjects.location,
     writable: false,
     configurable: true,
   })
-  
+
   Object.defineProperty(globalThis, 'localStorage', {
     value: domObjects.localStorage,
     writable: false,
     configurable: true,
   })
-  
+
   Object.defineProperty(globalThis, 'sessionStorage', {
     value: domObjects.sessionStorage,
     writable: false,
     configurable: true,
   })
-  
+
   // Direct assignment for writable properties
   globalThis.document = domObjects.document
   globalThis.window = domObjects.window
@@ -156,7 +157,7 @@ if (typeof globalThis !== 'undefined') {
   globalThis.FetchEvent = domObjects.FetchEvent
   globalThis.ServiceWorkerGlobalScope = domObjects.ServiceWorkerGlobalScope
   globalThis.WorkerGlobalScope = domObjects.WorkerGlobalScope
-  
+
   console.warn('🔧 globalThis scope setup complete')
 }
 
@@ -172,26 +173,40 @@ if (!global.WebSocket) {
 // Mock performance API for healthcare timing measurements
 if (!global.performance) {
   global.performance = {
-    now: () => Date.now(),
+    now: vi.fn(() => Date.now()),
     mark: vi.fn(),
     measure: vi.fn(),
     getEntriesByName: vi.fn(() => []),
     getEntriesByType: vi.fn(() => []),
     clearMarks: vi.fn(),
     clearMeasures: vi.fn(),
-  }
+    eventCounts: {},
+    navigation: null as any,
+    onresourcetimingbufferfull: null as any,
+    timeOrigin: Date.now(),
+  } as any
 }
 
 // Mock crypto API for healthcare data encryption
 if (!global.crypto) {
   global.crypto = {
     getRandomValues: vi.fn(arr => arr),
+    randomUUID: vi.fn(() => '12345678-1234-1234-1234-123456789abc'),
     subtle: {
       digest: vi.fn(),
       encrypt: vi.fn(),
       decrypt: vi.fn(),
-    },
-  }
+      deriveBits: vi.fn(),
+      deriveKey: vi.fn(),
+      exportKey: vi.fn(),
+      generateKey: vi.fn(),
+      importKey: vi.fn(),
+      sign: vi.fn(),
+      unwrapKey: vi.fn(),
+      verify: vi.fn(),
+      wrapKey: vi.fn(),
+    } as any,
+  } as any
 }
 
 console.warn('🔧 DOM environment setup complete')

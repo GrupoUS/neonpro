@@ -13,6 +13,7 @@
     "types": ["node", "vitest", "vitest/globals"],
     "exactOptionalPropertyTypes": false,
     "noPropertyAccessFromIndexSignature": false,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -41,7 +42,8 @@
       "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"],
       "@tests/*": ["./tools/tests/*"]
-    }
+    },
+    "useDefineForClassFields": true
   },
   "include": ["src/**/*", "tools/tests/**/*", "*.ts", "*.tsx", "types/**/*"],
   "exclude": ["node_modules", "dist", "**/dist/**", "**/*.js", "**/*.test.tsx", "**/__tests__/**"],

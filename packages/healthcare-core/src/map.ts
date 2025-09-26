@@ -17,7 +17,7 @@ export interface MappedError {
   statusCode: number
   logLevel: 'error' | 'warn' | 'info'
   shouldLog: boolean
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 }
 
 export class ErrorMapper {
@@ -201,7 +201,7 @@ export class ErrorMapper {
   }
 
   private static mapUnknownError(
-    error: any,
+    error: Error | unknown,
     _context?: ErrorContext,
     timestamp?: string,
   ): MappedError {

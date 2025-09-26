@@ -91,7 +91,7 @@ export async function migrateData(): Promise<void> {
   } catch (error) {
     const { createLogger } = await import('@neonpro/utils')
     const logger = createLogger('migration')
-    logger.error('Data migration error', { component: 'migration' }, error as Error)
+    logger.error(`Data migration error: ${error instanceof Error ? error.message : String(error)}`, { component: 'migration' })
     throw error
   }
 }
@@ -165,7 +165,7 @@ export async function backupData(): Promise<string> {
   } catch (error) {
     const { createLogger } = await import('@neonpro/utils')
     const logger = createLogger('migration')
-    logger.error('Backup error', { component: 'migration', action: 'backup' }, error as Error)
+    logger.error(`Backup error: ${error instanceof Error ? error.message : String(error)}`, { component: 'migration', action: 'backup' })
     throw error
   }
 }
@@ -200,10 +200,10 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
   } catch (error) {
     const { createLogger } = await import('@neonpro/utils')
     const logger = createLogger('migration')
-    logger.error('Error ensuring migrations table', {
+    logger.error(`Error ensuring migrations table: ${error instanceof Error ? error.message : String(error)}`, {
       component: 'migration',
       action: 'ensure_table',
-    }, error as Error)
+    })
     throw error
   }
 }
@@ -220,10 +220,10 @@ async function getCurrentSchemaVersion(prisma: PrismaClient): Promise<string> {
   } catch (error) {
     const { createLogger } = await import('@neonpro/utils')
     const logger = createLogger('migration')
-    logger.error('Error getting current schema version', {
+    logger.error(`Error getting current schema version: ${error instanceof Error ? error.message : String(error)}`, {
       component: 'migration',
       action: 'get_version',
-    }, error as Error)
+    })
     return '0.0.0'
   }
 }
@@ -249,10 +249,10 @@ async function recordMigration(
   } catch (error) {
     const { createLogger } = await import('@neonpro/utils')
     const logger = createLogger('migration')
-    logger.error('Error recording migration', {
+    logger.error(`Error recording migration: ${error instanceof Error ? error.message : String(error)}`, {
       component: 'migration',
       action: 'record_migration',
-    }, error as Error)
+    })
     throw error
   }
 }

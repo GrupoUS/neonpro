@@ -1,0 +1,69 @@
+{
+  "name": "@neonpro/types",
+  "version": "1.0.0",
+  "description": "Shared TypeScript types and interfaces for NeonPro healthcare platform",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./api": {
+      "import": "./dist/api.js",
+      "types": "./dist/api.d.ts"
+    },
+    "./database": {
+      "import": "./dist/database.js",
+      "types": "./dist/database.d.ts"
+    },
+    "./healthcare": {
+      "import": "./dist/healthcare.js",
+      "types": "./dist/healthcare.d.ts"
+    },
+    "./common": {
+      "import": "./dist/common.js",
+      "types": "./dist/common.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
+    "type-check": "tsc --noEmit",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.13.0",
+    "@typescript-eslint/parser": "^8.13.0",
+    "eslint": "^9.15.0",
+    "rimraf": "^5.0.1",
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "files": [
+    "dist",
+    "src/**/*"
+  ],
+  "keywords": [
+    "types",
+    "typescript",
+    "healthcare",
+    "interfaces",
+    "lgpd",
+    "anvisa",
+    "brazil",
+    "compliance"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

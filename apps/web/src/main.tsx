@@ -3,6 +3,7 @@ import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { TanStackQueryProvider } from './components/stubs/TanStackQueryProvider.js'
 import { TRPCProvider } from './components/stubs/TRPCProvider.js'
+import { AuthProvider } from './contexts/AuthContext.js'
 import { routeTree } from './routeTree.gen.js'
 
 // Import PWA Styles
@@ -164,7 +165,9 @@ root.render(
   <React.StrictMode>
     <TanStackQueryProvider>
       <TRPCProvider>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </TRPCProvider>
     </TanStackQueryProvider>
   </React.StrictMode>,

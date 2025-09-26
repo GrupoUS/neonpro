@@ -74,25 +74,22 @@ export async function validateSchema(): Promise<boolean> {
         if (missingColumns.length > 0) {
           const { createLogger } = await import('@neonpro/utils')
           const logger = createLogger('database-validation')
-          logger.error(
-            `Required columns missing from table ${tableSpec.name}: ${missingColumns.join(', ')}`,
-            {
+          logger.error(`Required columns missing from table ${tableSpec.name}: ${missingColumns.join(', ')}`, {
               component: 'database-validation',
               table: tableSpec.name,
               missingColumns,
               action: 'check_columns',
-            },
-          )
+            })
           return false
         }
       } catch (error) {
         const { createLogger } = await import('@neonpro/utils')
         const logger = createLogger('database-validation')
-        logger.error(`Error checking table ${tableSpec.name}`, {
+        logger.error(`Error checking table ${tableSpec.name}: ${error instanceof Error ? error.message : String(error)}`, {
           component: 'database-validation',
           table: tableSpec.name,
           action: 'check_table_error',
-        }, error as Error)
+        })
         return false
       }
     }
@@ -102,10 +99,10 @@ export async function validateSchema(): Promise<boolean> {
   } catch (error) {
     const { createLogger } = await import('@neonpro/utils')
     const logger = createLogger('database-validation')
-    logger.error('Schema validation error', {
+    logger.error(`Schema validation error: ${error instanceof Error ? error.message : String(error)}`, {
       component: 'database-validation',
       action: 'validate_schema_error',
-    }, error instanceof Error ? error : new Error(String(error)))
+    })
     return false
   }
 }
@@ -147,11 +144,11 @@ export async function checkTablesExist(
       if (error) {
         const { createLogger } = await import('@neonpro/utils')
         const logger = createLogger('database-validation')
-        logger.error(`Table ${tableSpec.name} validation failed`, {
+        logger.error(`Table ${tableSpec.name} validation failed: ${error instanceof Error ? error.message : String(error)}`, {
           component: 'database-validation',
           table: tableSpec.name,
           action: 'table_validation_failed',
-        }, error as Error)
+        })
         return false
       }
 
@@ -161,15 +158,11 @@ export async function checkTablesExist(
         if (!row) {
           const { createLogger } = await import('@neonpro/utils')
           const logger = createLogger('database-validation')
-          logger.error(
-            `No data returned from table ${tableSpec.name}`,
-            {
+          logger.error(`No data returned from table ${tableSpec.name}`, {
               component: 'database-validation',
               table: tableSpec.name,
               action: 'no_data_returned',
-            },
-            error as Error
-          )
+            })
           return false
         }
         const missingColumns = tableSpec.requiredColumns.filter(
@@ -185,8 +178,7 @@ export async function checkTablesExist(
               table: tableSpec.name,
               missingColumns,
               action: 'check_response_columns',
-            },
-            error as Error
+            }
           )
           return false
         }
@@ -199,7 +191,8 @@ export async function checkTablesExist(
     logger.error('Schema validation error', {
       component: 'database-validation',
       action: 'check_tables_error',
-    }, error instanceof Error ? error : new Error(String(error)))
+      error: error instanceof Error ? error.message : String(error)
+    })
     return false
   }
 }

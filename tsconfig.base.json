@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "Node16",
     "moduleResolution": "node16",
+    "useDefineForClassFields": true,
     "lib": ["ES2022"],
     "allowJs": true,
     "checkJs": false,
@@ -14,7 +15,6 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -43,6 +43,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      // Core packages with critical shared and types
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/types/*": ["./packages/types/src/*"],
       // Core 6-package architecture paths
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
@@ -65,10 +70,12 @@
     "disableSizeLimit": false,
     "disableReferencedProjectLoad": false,
     "disableSolutionSearching": false,
-    "useDefineForClassFields": true
   },
   "exclude": ["node_modules", "dist", "build", "**/*.d.ts"],
   "references": [
+    // Critical packages first
+    { "path": "./packages/types" },
+    { "path": "./packages/shared" },
     // Core 6-package architecture
     { "path": "./packages/database" },
     { "path": "./packages/ai-services" },

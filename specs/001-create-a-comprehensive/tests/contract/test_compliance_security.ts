@@ -2,7 +2,7 @@
 // TDD RED Phase: These tests MUST FAIL initially
 
 import { beforeAll, describe, expect, it } from 'vitest';
-import { ComplianceSecurityValidator } from '../../../packages/security/src/compliance';
+import { ComplianceSecurityValidator } from '@neonpro/security/src/compliance';
 
 describe('Healthcare Compliance & Security Preservation Tests', () => {
   let validator: ComplianceSecurityValidator;

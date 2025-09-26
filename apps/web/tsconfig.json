@@ -42,27 +42,6 @@
     "**/*.test.tsx",
     "**/__tests__/**",
     "src/test/**",
-    "src/test-setup.ts",
-    "src/routes/**",
-    "src/services/pwa/**",
-    "src/lib/trpc.ts",
-    "src/lib/trpc/**",
-    // Temporarily exclude complex components until APIs/types are stabilized
-    "src/lib/accessibility-validation.ts",
-    "src/components/aesthetic-scheduling/**",
-    "src/components/ai-clinical-support/**",
-    "src/components/chat/agents/**",
-    "src/components/chat/NeonProLGPDCompliance.tsx",
-    "src/components/chat/NeonProChatProvider.tsx",
-    // Broader temporary excludes to unblock type-check quickly (Option A)
-    "src/components/ai-scheduling/**",
-    "src/components/chat/**",
-    "src/components/pwa/**",
-    "src/components/clients/**",
-    // Newly added temporary excludes to unblock type-check
-    "src/components/providers/**",
-    "src/components/ui/**",
-    "src/components/healthcare/**",
-    "src/hooks/**"
+    "src/test-setup.ts"
   ]
 }

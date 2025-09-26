@@ -1,9 +1,9 @@
 /**
  * Enhanced Authentication Middleware Integration Tests
- * 
+ *
  * Comprehensive integration tests for enhanced authentication middleware
  * with JWT validation, session management, RBAC, and healthcare compliance.
- * 
+ *
  * Security: Critical - Enhanced authentication middleware tests
  * Test Coverage: Enhanced Authentication Middleware
  * Compliance: OWASP, LGPD, ANVISA, CFM
@@ -56,7 +56,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset services
     authMiddleware = EnhancedAuthenticationMiddleware
     jwtService = JWTSecurityService
@@ -91,7 +91,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -101,7 +101,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       })
 
       // Mock session validation
-      vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
+      vi.spyOn(sessionService.prototype, 'validateSession').mockResolvedValueOnce({
         isValid: true,
         session: {
           id: 'session-123',
@@ -138,7 +138,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation failure
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: false,
         error: 'Invalid token signature',
       })
@@ -166,7 +166,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation with expired token
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: false,
         error: 'Token expired',
       })
@@ -196,7 +196,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock session validation
-      vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
+      vi.spyOn(sessionService.prototype, 'validateSession').mockResolvedValueOnce({
         isValid: true,
         session: {
           id: 'session-123',
@@ -231,7 +231,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock session validation failure
-      vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
+      vi.spyOn(sessionService.prototype, 'validateSession').mockResolvedValueOnce({
         isValid: false,
         error: 'Session not found',
       })
@@ -262,13 +262,13 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation failure
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: false,
         error: 'Invalid JWT',
       })
 
       // Mock session validation success
-      vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
+      vi.spyOn(sessionService.prototype, 'validateSession').mockResolvedValueOnce({
         isValid: true,
         session: {
           id: 'session-123',
@@ -303,12 +303,12 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock both JWT and session validation failures
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: false,
         error: 'Invalid JWT',
       })
 
-      vi.spyOn(sessionService, 'validateSession').mockResolvedValueOnce({
+      vi.spyOn(sessionService.prototype, 'validateSession').mockResolvedValueOnce({
         isValid: false,
         error: 'Invalid session',
       })
@@ -338,7 +338,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation with admin role
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'admin',
@@ -372,7 +372,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation with basic user role
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'patient',
@@ -408,7 +408,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation with required permissions
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -442,7 +442,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation without required permissions
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -478,7 +478,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation with healthcare provider
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -517,7 +517,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation without LGPD consent
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -552,7 +552,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -561,7 +561,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       })
 
       // Mock security validation
-      vi.spyOn(validationService, 'validateRequestSecurity').mockResolvedValueOnce({
+      vi.spyOn(validationService.prototype, 'validateRequestSecurity').mockResolvedValueOnce({
         isValid: true,
         securityScore: 95,
         threats: [],
@@ -592,7 +592,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -601,7 +601,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       })
 
       // Mock security validation with threats
-      vi.spyOn(validationService, 'validateRequestSecurity').mockResolvedValueOnce({
+      vi.spyOn(validationService.prototype, 'validateRequestSecurity').mockResolvedValueOnce({
         isValid: false,
         securityScore: 25,
         threats: ['suspicious_user_agent', 'rate_limit_exceeded'],
@@ -619,7 +619,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
     })
 
     it('should log authentication attempts for audit trail', async () => {
-      const spy = vi.spyOn(auditService, 'logSecurityEvent')
+      const spy = vi.spyOn(auditService.prototype, 'logSecurityEvent')
 
       const c = createMockContext({
         req: {
@@ -634,7 +634,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -675,7 +675,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: true,
         userId: 'user-123',
         userRole: 'healthcare_professional',
@@ -729,7 +729,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT service failure
-      vi.spyOn(jwtService, 'validateToken').mockRejectedValueOnce(
+      vi.spyOn(jwtService.prototype, 'validateToken').mockRejectedValueOnce(
         new Error('JWT service unavailable')
       )
 
@@ -756,7 +756,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
       const next = createMockNext()
 
       // Mock JWT validation with detailed error
-      vi.spyOn(jwtService, 'validateToken').mockResolvedValueOnce({
+      vi.spyOn(jwtService.prototype, 'validateToken').mockResolvedValueOnce({
         isValid: false,
         error: 'Invalid token signature: verification failed',
         errorCode: 'INVALID_SIGNATURE',

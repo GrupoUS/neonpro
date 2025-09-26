@@ -354,7 +354,7 @@ deploy_application() {
             # Final fallback: list recent deployments
             if [ -z "$DEPLOY_URL" ]; then
                 log_warning "Could not parse DEPLOY_URL from JSON; attempting fallback via vercel ls --json"
-                DEPLOY_URL=$(npx vercel ls --cwd apps/web --json 2>/dev/null | grep -oE 'https?://[^" ]+\.vercel\.app' | head -n1 || true)
+                DEPLOY_URL=$(npx vercel ls --cwd apps/web --json 2>/dev/null | jq -r '.[0].url // empty' || true)
             fi
             if [ -z "$DEPLOY_URL" ]; then
                 log_warning "Fallback via plain vercel ls parsing"
@@ -398,7 +398,7 @@ deploy_application() {
             
             if [ -z "$DEPLOY_URL" ]; then
                 log_warning "Could not parse DEPLOY_URL from JSON; attempting fallback via vercel ls --json"
-                DEPLOY_URL=$(npx vercel ls --cwd apps/web --json 2>/dev/null | grep -oE 'https?://[^" ]+\.vercel\.app' | head -n1 || true)
+                DEPLOY_URL=$(npx vercel ls --cwd apps/web --json 2>/dev/null | jq -r '.[0].url // empty' || true)
             fi
             
             if [ -z "$DEPLOY_URL" ]; then

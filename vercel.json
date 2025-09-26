@@ -92,12 +92,16 @@
           "value": "max-age=31536000; includeSubDomains; preload"
         },
         {
-          "key": "X-LGPD-Compliant",
-          "value": "true"
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         },
         {
-          "key": "X-Data-Residency",
-          "value": "brazil-only"
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
         }
       ]
     }

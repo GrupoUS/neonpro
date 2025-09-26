@@ -1,0 +1,213 @@
+{
+  "prioritization_metadata": {
+    "analysis_date": "2025-09-26T21:55:00Z",
+    "phase": "FASE 5 - Documentation Phase",
+    "task": "T020a - Synthesize analysis results and prioritize issues",
+    "methodology": "Impact vs Complexity matrix with healthcare compliance weighting",
+    "data_sources": [
+      "compiled-analysis-results.json",
+      "quality-orchestration-report.md",
+      "All FASE 4 validation outputs"
+    ]
+  },
+  "issue_classification": {
+    "critical_issues": [
+      {
+        "id": "CRIT-001",
+        "title": "Missing @neonpro/shared package",
+        "description": "Web app cannot share UI components, causing code duplication and maintenance issues",
+        "impact": "HIGH",
+        "complexity": "MEDIUM",
+        "priority_score": 95,
+        "affected_areas": ["apps/web", "ui consistency", "maintenance"],
+        "business_impact": "Development velocity reduction, inconsistent UX",
+        "technical_debt": "High - code duplication across components"
+      },
+      {
+        "id": "CRIT-002",
+        "title": "Missing @neonpro/types package",
+        "description": "TypeScript type definitions not shared, causing type safety gaps",
+        "impact": "HIGH",
+        "complexity": "MEDIUM",
+        "priority_score": 92,
+        "affected_areas": ["type safety", "development experience", "refactoring"],
+        "business_impact": "Higher bug risk, slower development",
+        "technical_debt": "High - type inconsistencies"
+      },
+      {
+        "id": "CRIT-003",
+        "title": "Web app package integration failure",
+        "description": "apps/web not importing any @neonpro/* packages, breaking monorepo benefits",
+        "impact": "HIGH",
+        "complexity": "LOW",
+        "priority_score": 90,
+        "affected_areas": ["apps/web", "package utilization", "code reuse"],
+        "business_impact": "Monorepo advantages not realized",
+        "technical_debt": "Critical - isolation breaks architecture"
+      }
+    ],
+    "high_priority_issues": [
+      {
+        "id": "HIGH-001",
+        "title": "Unused packages evaluation needed",
+        "description": "@neonpro/ai-services and @neonpro/ui packages unused",
+        "impact": "MEDIUM",
+        "complexity": "LOW",
+        "priority_score": 75,
+        "affected_areas": ["package management", "build performance", "maintenance"],
+        "business_impact": "Unnecessary maintenance overhead",
+        "technical_debt": "Medium - dead code"
+      },
+      {
+        "id": "HIGH-002",
+        "title": "Missing Architectural Decision Records",
+        "description": "Package structure decisions not documented in ADRs",
+        "impact": "MEDIUM",
+        "complexity": "LOW",
+        "priority_score": 70,
+        "affected_areas": ["documentation", "knowledge management", "onboarding"],
+        "business_impact": "Harder team onboarding, decision tracking",
+        "technical_debt": "Medium - knowledge debt"
+      },
+      {
+        "id": "HIGH-003",
+        "title": "Performance monitoring gaps",
+        "description": "Some code quality metrics need measurement",
+        "impact": "MEDIUM",
+        "complexity": "MEDIUM",
+        "priority_score": 68,
+        "affected_areas": ["monitoring", "performance", "quality gates"],
+        "business_impact": "Performance regressions may go unnoticed",
+        "technical_debt": "Low - monitoring gaps"
+      },
+      {
+        "id": "HIGH-004",
+        "title": "Dependency vulnerability scanning",
+        "description": "Automated dependency scanning not implemented",
+        "impact": "MEDIUM",
+        "complexity": "LOW",
+        "priority_score": 65,
+        "affected_areas": ["security", "ci/cd", "compliance"],
+        "business_impact": "Security vulnerabilities may be introduced",
+        "technical_debt": "Low - security gap"
+      }
+    ],
+    "medium_priority_issues": [
+      {
+        "id": "MED-001",
+        "title": "Caching strategy assessment needed",
+        "description": "Load balancing and caching strategies need evaluation",
+        "impact": "LOW",
+        "complexity": "MEDIUM",
+        "priority_score": 45,
+        "affected_areas": ["scalability", "performance"],
+        "business_impact": "Scaling bottlenecks in future growth",
+        "technical_debt": "Low - optimization opportunity"
+      },
+      {
+        "id": "MED-002",
+        "title": "Strategy and observer patterns missing",
+        "description": "Some design patterns not implemented where appropriate",
+        "impact": "LOW",
+        "complexity": "MEDIUM",
+        "priority_score": 40,
+        "affected_areas": ["architecture", "maintainability"],
+        "business_impact": "Slightly harder maintenance",
+        "technical_debt": "Low - minor architectural debt"
+      },
+      {
+        "id": "MED-003",
+        "title": "Offline sync completion",
+        "description": "Mobile offline capabilities 70% complete",
+        "impact": "LOW",
+        "complexity": "HIGH",
+        "priority_score": 35,
+        "affected_areas": ["mobile", "user experience"],
+        "business_impact": "Limited mobile functionality in poor connectivity",
+        "technical_debt": "Medium - incomplete feature"
+      }
+    ],
+    "low_priority_issues": [
+      {
+        "id": "LOW-001",
+        "title": "Dependency updates available",
+        "description": "2 packages have newer security patches available",
+        "impact": "LOW",
+        "complexity": "LOW",
+        "priority_score": 25,
+        "affected_areas": ["security", "maintenance"],
+        "business_impact": "Minimal - non-critical security patches",
+        "technical_debt": "Very low - routine maintenance"
+      },
+      {
+        "id": "LOW-002",
+        "title": "Content Security Policy headers",
+        "description": "CSP headers could be more restrictive",
+        "impact": "LOW",
+        "complexity": "LOW",
+        "priority_score": 20,
+        "affected_areas": ["security", "browser compatibility"],
+        "business_impact": "Minimal - defense in depth improvement",
+        "technical_debt": "Very low - security hardening"
+      }
+    ]
+  },
+  "prioritization_matrix": {
+    "impact_categories": {
+      "business_critical": ["CRIT-001", "CRIT-002", "CRIT-003"],
+      "development_velocity": ["HIGH-001", "HIGH-002", "HIGH-003"],
+      "security_compliance": ["HIGH-004", "LOW-001", "LOW-002"],
+      "scalability_performance": ["MED-001", "HIGH-003"],
+      "user_experience": ["MED-003"],
+      "technical_debt": ["HIGH-001", "HIGH-002", "MED-002"]
+    },
+    "complexity_assessment": {
+      "low_complexity": ["CRIT-003", "HIGH-001", "HIGH-002", "HIGH-004", "LOW-001", "LOW-002"],
+      "medium_complexity": ["CRIT-001", "CRIT-002", "HIGH-003", "MED-001", "MED-002"],
+      "high_complexity": ["MED-003"]
+    }
+  },
+  "severity_distribution": {
+    "critical": {
+      "count": 3,
+      "percentage": "25%",
+      "estimated_effort": "3-5 days"
+    },
+    "high": {
+      "count": 4,
+      "percentage": "33%",
+      "estimated_effort": "4-6 days"
+    },
+    "medium": {
+      "count": 3,
+      "percentage": "25%",
+      "estimated_effort": "2-4 days"
+    },
+    "low": {
+      "count": 2,
+      "percentage": "17%",
+      "estimated_effort": "1-2 days"
+    }
+  },
+  "healthcare_compliance_impact": {
+    "lgpd_affected_issues": 0,
+    "anvisa_affected_issues": 0,
+    "cfm_affected_issues": 0,
+    "security_affected_issues": 2,
+    "compliance_risk": "MINIMAL - no regulatory compliance issues identified"
+  },
+  "prioritization_summary": {
+    "total_issues": 12,
+    "blocking_issues": 3,
+    "quick_wins": 6,
+    "major_investments": 3,
+    "estimated_total_effort": "10-17 days",
+    "recommended_order": [
+      "Phase 1: Critical issues (CRIT-001, CRIT-002, CRIT-003)",
+      "Phase 2: High priority quick wins (HIGH-001, HIGH-002, HIGH-004)",
+      "Phase 3: Performance monitoring (HIGH-003)",
+      "Phase 4: Medium priority optimization (MED-001, MED-002)",
+      "Phase 5: Low priority maintenance (LOW-001, LOW-002, MED-003)"
+    ]
+  }
+}

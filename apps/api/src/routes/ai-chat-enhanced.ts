@@ -10,7 +10,7 @@ import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
 
 // Import semantic caching components
 import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction'
-import AIProviderRouterService, { ProviderConfig, ProviderHealthCheck, RoutingRequest, RoutingResponse } from '@/services/ai-provider-router'
+import AIProviderRouterService from '@/services/ai-provider-router'
 import { AuditTrailService } from '@/services/audit-trail'
 import { CacheKeyGenerator, SemanticCacheService } from '@/services/semantic-cache'
 

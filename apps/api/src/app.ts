@@ -1,20 +1,20 @@
 import { trpcServer } from '@hono/trpc-server'
 import { cors } from 'hono/cors'
-import { errorHandler } from './middleware/error-handler.ts'
-import { errorSanitizationMiddleware } from './middleware/error-sanitization.ts'
-import aiRouter from './routes/ai/index.ts'
-import financialCopilotRouter from './routes/ai/financial-copilot.ts'
-import copilotBridge from './routes/ai/copilot-bridge.ts'
-import appointmentsRouter from './routes/appointments.ts'
-import { billing } from './routes/billing.ts'
-import chatRouter from './routes/chat.ts'
-import { medicalRecords } from './routes/medical-records.ts'
-import patientsRouter from './routes/patients.ts'
-import v1Router from './routes/v1.ts'
-import aiSessionsCleanup from './routes/api/cleanup/ai-sessions.ts'
-import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions.ts'
-import { Context } from './trpc/context.ts'
-import { appRouter } from './trpc/router.ts'
+import { errorHandler } from './middleware/error-handler'
+import { errorSanitizationMiddleware } from './middleware/error-sanitization'
+import aiRouter from './routes/ai/index'
+import financialCopilotRouter from './routes/ai/financial-copilot'
+import copilotBridge from './routes/ai/copilot-bridge'
+import appointmentsRouter from './routes/appointments'
+import { billing } from './routes/billing'
+import chatRouter from './routes/chat'
+import { medicalRecords } from './routes/medical-records'
+import patientsRouter from './routes/patients'
+import v1Router from './routes/v1'
+import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
+import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
+import { Context } from './trpc/context'
+import { appRouter } from './trpc/router'
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
@@ -23,7 +23,7 @@ import { errorTracker } from './services/error-tracking-bridge'
 import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init'
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator'
-import { cspViolationHandler, healthcareCSPMiddleware } from './lib/security/csp'
+import { cspViolationHandler } from './lib/security/csp'
 import {
   errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
   globalErrorHandler,
@@ -104,7 +104,7 @@ app.use(
           ]
 
       // Check if origin is allowed
-      return allowedOrigins.includes(origin) ? origin : false
+      return allowedOrigins.includes(origin) ? origin : null
     },
     credentials: true,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -263,6 +263,10 @@ app.route('/api/copilotkit', copilotBridge)
 // Mount V1 API routes under /api/v1
 app.route('/api/v1', v1Router)
 
+// Mount AI agents cleanup and monitoring routes
+app.route('/api/cleanup/ai-sessions', aiSessionsCleanup)
+app.route('/api/cleanup/expired-predictions', expiredPredictionsCleanup)
+
 // Mount tRPC router under /trpc for type-safe API access
 const tRPCHandle = trpcServer({
   router: appRouter,
@@ -286,12 +290,8 @@ const tRPCHandle = trpcServer({
   },
 })
 
-// Mount AI agents cleanup and monitoring routes
-app.route('/api/cleanup/ai-sessions', aiSessionsCleanup)
-app.route('/api/cleanup/expired-predictions', expiredPredictionsCleanup)
-
 // Mount tRPC router with healthcare compliance
-app.mount('/trpc', tRPCHandle)
+app.use('/trpc/*', tRPCHandle)
 
 // Basic health endpoints with enhanced monitoring
 app.get('/health', c => {
@@ -575,6 +575,6 @@ app.notFound(c => {
 setupHealthcareSwaggerUI(app)
 
 // Global error handler
-app.onError(globalErrorHandler())
+app.onError(globalErrorHandler)
 
 export default app

@@ -21,6 +21,70 @@ import {
   CFMCompliance
 } from '../../types/clinical-decision-support';
 
+// Additional interfaces for type safety
+export interface PatientAssessment {
+  skinTypeAnalysis: {
+    fitzpatrickType: FitzpatrickScale;
+    sensitivity: 'low' | 'medium' | 'high';
+    conditions: string[];
+  };
+  medicalHistory: {
+    allergies: string[];
+    medications: string[];
+    previousTreatments: string[];
+    chronicConditions: string[];
+  };
+  aestheticGoals: string[];
+  riskFactors: string[];
+  overallHealth: 'excellent' | 'good' | 'fair' | 'poor';
+}
+
+export interface SkinTypeAnalysis {
+  fitzpatrickType: FitzpatrickScale;
+  sensitivity: 'low' | 'medium' | 'high';
+  recommendedTreatments: string[];
+  contraindicatedTreatments: string[];
+  sunProtectionLevel: 'minimal' | 'moderate' | 'high' | 'very high';
+}
+
+export interface RiskAssessment {
+  overallRisk: 'low' | 'medium' | 'high';
+  specificRisks: {
+    type: string;
+    severity: 'mild' | 'moderate' | 'severe';
+    probability: 'low' | 'medium' | 'high';
+    mitigation: string;
+  }[];
+  recommendations: string[];
+}
+
+export interface TreatmentProtocol {
+  preparation: string[];
+  procedureSteps: string[];
+  settings: Record<string, string | number | boolean>;
+  postTreatment: string[];
+}
+
+export interface CostEstimate {
+  baseCost: number;
+  additionalFees: number;
+  totalCost: number;
+  currency: string;
+  paymentOptions: string[];
+}
+
+export interface RecoveryProfile {
+  expectedDowntime: string;
+  recoveryPhases: {
+    phase: string;
+    duration: string;
+    symptoms: string[];
+    careInstructions: string[];
+  }[];
+  restrictions: string[];
+  followUpSchedule: string[];
+}
+
 /**
  * Specialized AI advisor for aesthetic medicine consultations
  */
@@ -285,7 +349,7 @@ export class AestheticTreatmentAdvisor {
     protocol: {
       preparation: string[];
       procedureSteps: string[];
-      settings: Record<string, any>;
+      settings: Record<string, string | number | boolean>;
       postTreatment: string[];
     };
     expectedTimeline: string;
@@ -315,7 +379,7 @@ export class AestheticTreatmentAdvisor {
 
   // Private helper methods
 
-  private async assessPatientProfile(patientProfile: AestheticPatientProfile): Promise<any> {
+  private async assessPatientProfile(patientProfile: AestheticPatientProfile): Promise<PatientAssessment> {
     const assessmentPrompt = this.buildPatientAssessmentPrompt(patientProfile);
     
     const response = await this.aiProvider.generateCompletion(assessmentPrompt, {
@@ -713,7 +777,7 @@ Provide:
   }
 
   // Parsing methods for AI responses
-  private parsePatientAssessment(_response: string): any {
+  private parsePatientAssessment(_response: string): PatientAssessment {
     // Parse AI response into structured assessment
     return {
       overallSuitability: 'good',
@@ -724,7 +788,7 @@ Provide:
     };
   }
 
-  private parseRecommendations(_response: string): any[] {
+  private parseRecommendations(_response: string): TreatmentRecommendation[] {
     // Parse AI response into recommendation objects
     return [
       {
@@ -741,7 +805,7 @@ Provide:
     ];
   }
 
-  private parseSkinTypeAnalysis(_response: string): any {
+  private parseSkinTypeAnalysis(_response: string): SkinTypeAnalysis {
     // Parse AI skin type analysis response
     return {
       skinType: 'III' as FitzpatrickScale,
@@ -752,7 +816,7 @@ Provide:
     };
   }
 
-  private parseContraindicationAnalysis(_response: string): any {
+  private parseContraindicationAnalysis(_response: string): RiskAssessment {
     // Parse AI contraindication analysis
     return {
       canProceed: true,
@@ -764,7 +828,7 @@ Provide:
     };
   }
 
-  private parseOutcomePrediction(_response: string): any {
+  private parseOutcomePrediction(_response: string): { predictedOutcome: string; confidence: number; timeline: string } {
     // Parse AI outcome prediction
     return {
       overallSuccess: 0.85,
@@ -786,7 +850,7 @@ Provide:
     };
   }
 
-  private parseComplianceDocumentation(_response: string): any {
+  private parseComplianceDocumentation(_response: string): { lgpd: LGPDCompliance; anvisa: ANVISACompliance; cfm: CFMCompliance } {
     // Parse AI compliance documentation
     return {
       lgpd: {
@@ -811,7 +875,7 @@ Provide:
     };
   }
 
-  private parseTreatmentProtocol(_response: string): any {
+  private parseTreatmentProtocol(_response: string): TreatmentProtocol {
     // Parse AI treatment protocol
     return {
       protocol: {
@@ -872,7 +936,7 @@ Provide:
     return Math.max(0.1, Math.min(1.0, suitabilityScore));
   }
 
-  private assessProcedureRisks(procedure: AestheticProcedure, _patientProfile: AestheticPatientProfile): any[] {
+  private assessProcedureRisks(procedure: AestheticProcedure, _patientProfile: AestheticPatientProfile): RiskAssessment['specificRisks'] {
     return procedure.safetyProfile.commonRisks.map(risk => ({
       type: 'common',
       description: risk,
@@ -905,7 +969,7 @@ Provide:
     return alternatives[procedure.id] || [];
   }
 
-  private calculateTreatmentCost(procedure: AestheticProcedure, _recommendation: any): any {
+  private calculateTreatmentCost(procedure: AestheticProcedure, _recommendation: TreatmentRecommendation): CostEstimate {
     return {
       estimate: procedure.cost.base,
       currency: procedure.cost.currency,
@@ -914,7 +978,7 @@ Provide:
     };
   }
 
-  private assessRecoveryNeeds(procedure: AestheticProcedure): any {
+  private assessRecoveryNeeds(procedure: AestheticProcedure): RecoveryProfile {
     return {
       downtime: procedure.recovery.downtime,
       restrictions: procedure.recovery.activityRestrictions,
@@ -940,7 +1004,7 @@ Provide:
     return (avgConfidence + avgSafety) / 2;
   }
 
-  private generateNextSteps(recommendations: TreatmentRecommendation[], riskAssessment: any): string[] {
+  private generateNextSteps(recommendations: TreatmentRecommendation[], riskAssessment: RiskAssessment): string[] {
     const nextSteps: string[] = [];
     
     if (riskAssessment.overall === 'high') {
@@ -1260,7 +1324,7 @@ Professional Declaration: "I have explained all aspects of the procedure and ans
     ];
   }
 
-  private async logConsultationEvent(event: string, data: any): Promise<void> {
+  private async logConsultationEvent(event: string, data: Record<string, unknown>): Promise<void> {
     try {
       const logEntry = {
         timestamp: new Date().toISOString(),

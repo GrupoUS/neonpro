@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { beforeAll, afterAll, afterEach } from 'vitest'
@@ -70,10 +71,20 @@ beforeAll(() => {
     Object.defineProperty(global, 'crypto', {
       value: {
         getRandomValues: vi.fn(arr => arr),
+        randomUUID: vi.fn(() => '12345678-1234-1234-1234-123456789abc'),
         subtle: {
           digest: vi.fn(),
           encrypt: vi.fn(),
           decrypt: vi.fn(),
+          deriveBits: vi.fn(),
+          deriveKey: vi.fn(),
+          exportKey: vi.fn(),
+          generateKey: vi.fn(),
+          importKey: vi.fn(),
+          sign: vi.fn(),
+          unwrapKey: vi.fn(),
+          verify: vi.fn(),
+          wrapKey: vi.fn(),
         },
       },
       writable: true,
@@ -82,10 +93,20 @@ beforeAll(() => {
   } else {
     global.crypto = {
       getRandomValues: vi.fn(arr => arr),
+      randomUUID: vi.fn(() => 'test-uuid'),
       subtle: {
         digest: vi.fn(),
         encrypt: vi.fn(),
         decrypt: vi.fn(),
+        deriveBits: vi.fn(),
+        deriveKey: vi.fn(),
+        exportKey: vi.fn(),
+        generateKey: vi.fn(),
+        importKey: vi.fn(),
+        sign: vi.fn(),
+        unwrapKey: vi.fn(),
+        verify: vi.fn(),
+        wrapKey: vi.fn(),
       },
     }
   }
@@ -93,62 +114,18 @@ beforeAll(() => {
   // Setup healthcare-specific global mocks
   global.HEALTHCARE_TEST_MODE = true
   global.LGPD_COMPLIANCE_ENABLED = true
-  
+
   // Mock healthcare-specific APIs
-  global.HealthcareDataEncoder = vi.fn((data) => JSON.stringify(data))
-  global.HealthcareDataDecoder = vi.fn((encoded) => JSON.parse(encoded))
-  
+  global.HealthcareDataEncoder = vi.fn((data: unknown) => JSON.stringify(data))
+  global.HealthcareDataDecoder = vi.fn((encoded: string) => JSON.parse(encoded))
+
   // Mock healthcare audit trail
   global.AuditTrail = {
-    log: vi.fn((event) => {
-      console.warn(`🏥 Audit: ${event.type} - ${event.timestamp}`)
+    log: vi.fn((event: unknown) => {
+      console.warn(`🏥 Audit: ${event}`)
     }),
     getEvents: vi.fn(() => []),
     clear: vi.fn(),
-  }
-
-  // Mock vi if not available (fallback for edge cases)
-  if (typeof vi === 'undefined') {
-    global.vi = {
-      fn: (impl?: Function) => {
-        const mockFn = impl || (() => {})
-        mockFn.mock = {
-          calls: [],
-          instances: [],
-          invocationCallOrder: [],
-          results: [],
-          reset: () => {
-            mockFn.mock.calls = []
-            mockFn.mock.instances = []
-            mockFn.mock.invocationCallOrder = []
-            mockFn.mock.results = []
-          },
-          mockClear: () => {
-            mockFn.mock.calls = []
-            mockFn.mock.instances = []
-          },
-          mockImplementation: (newImpl: Function) => {
-            return Object.assign(mockFn, newImpl)
-          },
-          mockReturnValue: (value: any) => {
-            return Object.assign(mockFn, () => value)
-          },
-          mockResolvedValue: (value: any) => {
-            return Object.assign(mockFn, async () => value)
-          },
-          mockRejectedValue: (value: any) => {
-            return Object.assign(mockFn, async () => {
-              throw value
-            })
-          },
-        }
-        return mockFn
-      },
-      clearAllMocks: () => {},
-      resetAllMocks: () => {},
-      restoreAllMocks: () => {},
-      spyOn: () => vi.fn(),
-    }
   }
 
   console.warn('🧪 Global setup complete - Healthcare test environment ready')
@@ -196,7 +173,7 @@ vi.mock('@trpc/react-query', () => ({
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children, ...props }: any) => React.createElement('a', props, children),
+  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => React.createElement('a', props, children),
   useNavigate: vi.fn(() => vi.fn()),
   useLocation: vi.fn(() => ({ pathname: '/' })),
   useSearch: vi.fn(() => ({})),
@@ -210,7 +187,7 @@ vi.mock('@tanstack/react-router', () => ({
     subscribe: vi.fn(),
     navigate: vi.fn(),
   })),
-  RouterProvider: ({ router, children }: { router?: any; children: React.ReactNode }) => 
+  RouterProvider: ({ router, children }: { router?: unknown; children: React.ReactNode }) =>
     React.createElement('div', { 'data-testid': 'router-provider' }, children),
   createFileRoute: vi.fn(),
   createLazyRoute: vi.fn(),
@@ -252,7 +229,7 @@ vi.mock('react-hook-form', () => ({
     reset: vi.fn(),
     trigger: vi.fn(),
   })),
-  Controller: ({ render }: any) => render({ field: {} }),
+  Controller: ({ render }: { render: (props: unknown) => React.ReactNode }) => render({ field: {} }),
 }))
 
 vi.mock('sonner', () => ({
@@ -358,7 +335,7 @@ vi.mock('@/utils/healthcare', () => ({
   validateCPF: vi.fn(() => true),
   validatePhone: vi.fn(() => true),
   formatHealthcareDate: vi.fn(() => '01/01/2024'),
-  anonymizePatientData: vi.fn((data) => data),
+  anonymizePatientData: vi.fn((data: unknown) => data),
   generateAuditTrail: vi.fn(() => ({ id: 'audit-123', timestamp: new Date().toISOString() })),
 }))
 
@@ -366,7 +343,6 @@ vi.mock('@/utils/healthcare', () => ({
 global.describe = describe
 global.it = it
 global.test = test
-global.expect = expect
 global.vi = vi
 
 // Setup global test timeout for healthcare operations
