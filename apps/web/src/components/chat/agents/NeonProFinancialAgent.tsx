@@ -15,9 +15,9 @@ import React from 'react'
 import { useNeonProChat } from '../NeonProChatProvider'
 // Removed unused NeonProMessage import
 // Removed unused Button import
-import { Alert, AlertDescription } from '../../ui/alert'
-import { Badge } from '../../ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
+import { Alert, AlertDescription } from '@neonpro/ui/alert'
+import { Badge } from '@neonpro/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui/card'
 // Removed unused Input import
 // Removed unused Label import
 // Removed unused Textarea import

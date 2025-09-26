@@ -980,13 +980,13 @@ export class EnhancedSessionManager {
       confidence += 40
       
       // Check if IP change is within mobile subnet tolerance
-      if (!this.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+      if (session.ipAddress && attempt.ipAddress && !this.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
         confidence += 30
       }
     }
 
-    // User agent mismatch
-    if (session.userAgent !== attempt.userAgent) {
+    // User agent mismatch - only consider mismatch if both are defined and different
+    if (session.userAgent !== undefined && attempt.userAgent !== undefined && session.userAgent !== attempt.userAgent) {
       evidence.push('user_agent_mismatch')
       confidence += 30
     }

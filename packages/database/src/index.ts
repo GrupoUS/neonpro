@@ -12,6 +12,9 @@ export { prisma } from './client-full.js'
 // Health check utilities
 export { checkDatabaseHealth, closeDatabaseConnections } from './client-full.js'
 
+// Database types
+export type { Database } from './types/supabase'
+
 // Minimal BaseService implementation for API routes
 export class BaseService {
   protected logger: any

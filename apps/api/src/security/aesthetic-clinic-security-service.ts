@@ -17,7 +17,7 @@
 
 import { SupabaseClient } from '@supabase/supabase-js'
 import { logger } from "@/utils/healthcare-errors"
-import { AuditService } from '../services/audit-service'
+import { AuditService } from '@/services/audit-service'
 import { EnhancedSessionManager } from './enhanced-session-manager'
 import { createCryptographyManager } from '../../utils/security/cryptography'
 

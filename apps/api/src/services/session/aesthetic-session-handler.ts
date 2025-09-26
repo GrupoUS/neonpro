@@ -524,10 +524,14 @@ export class AestheticSessionHandler {
       aestheticSession.updatedAt = new Date()
       this.aestheticSessions.set(sessionId, aestheticSession)
 
+      // Get user ID from enhanced session for compliance logging
+      const enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId)
+      const userId = enhancedSession?.userId || ''
+
       // Log step completion for compliance
       await this.complianceService.logDataAccess({
         dataType: 'treatment_workflow_step',
-        userId: '', // TODO: Get from session
+        userId,
         sessionId,
         timestamp: new Date(),
         purpose: `workflow_step_${stepId}`,
@@ -610,10 +614,14 @@ export class AestheticSessionHandler {
         photos: [photoRecord],
       })
 
+      // Get user ID from enhanced session for compliance logging
+      const enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId)
+      const userId = enhancedSession?.userId || ''
+
       // Log photo upload for compliance
       await this.complianceService.logDataAccess({
         dataType: 'treatment_photo_upload',
-        userId: '', // TODO: Get from session
+        userId,
         sessionId,
         timestamp: new Date(),
         purpose: 'treatment_documentation',
@@ -723,10 +731,14 @@ export class AestheticSessionHandler {
         skinAssessment: assessmentResult,
       })
 
+      // Get user ID from enhanced session for compliance logging
+      const enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId)
+      const userId = enhancedSession?.userId || ''
+
       // Log assessment for compliance
       await this.complianceService.logDataAccess({
         dataType: 'client_assessment',
-        userId: '', // TODO: Get from session
+        userId,
         sessionId,
         timestamp: new Date(),
         purpose: `assessment_${formId}`,
@@ -857,10 +869,14 @@ export class AestheticSessionHandler {
       aestheticSession.updatedAt = new Date()
       this.aestheticSessions.set(sessionId, aestheticSession)
 
+      // Get user ID from enhanced session for compliance logging
+      const enhancedSession = await this.enhancedSessionService.getEnhancedSession(sessionId)
+      const userId = enhancedSession?.userId || ''
+
       // Log consent action for compliance
       await this.complianceService.logDataAccess({
         dataType: 'consent_management',
-        userId: '', // TODO: Get from session
+        userId,
         sessionId,
         timestamp: new Date(),
         purpose: `consent_${consentAction.type}`,

@@ -7,8 +7,8 @@ import { ComplianceLevel, type HealthcareAIContext } from '@neonpro/shared'
 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { endTimerMs, logMetric, startTimer } from '../services/metrics'
-import { SemanticCacheService } from '../services/semantic-cache'
+import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
+import { SemanticCacheService } from '@/services/semantic-cache'
 
 // Request validation schemas
 const ChatMessageSchema = z.object({

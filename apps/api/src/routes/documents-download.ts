@@ -16,7 +16,7 @@ import { HTTPException } from 'hono/http-exception'
 
 import { requireAuth } from '../middleware/auth'
 import { PatientDocumentService } from '../services/patient-document-service'
-import { auditLogger } from '../utils/audit-logger'
+import { auditLogger } from '@/utils/audit-logger'
 
 // Type definitions
 interface DocumentDownloadContext {

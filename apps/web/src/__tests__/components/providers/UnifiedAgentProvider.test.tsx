@@ -5,7 +5,7 @@
 
 import { render, screen, waitFor } from '@testing-library/react'
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { UnifiedAgentProvider } from '../../../components/copilotkit/UnifiedAgentProvider'
+import { UnifiedAgentProvider } from '@/components/copilotkit/UnifiedAgentProvider'
 
 // Mock the dependencies to isolate the import error test
 vi.mock('@copilotkit/react-core', () => ({
@@ -52,7 +52,7 @@ describe('UnifiedAgentProvider Import Error - RED Phase', () => {
     // This test verifies that the current import pattern is incorrect
     expect(() => {
       // This should fail because useCoAgent is imported as default but should be named
-      require('../../../components/copilotkit/UnifiedAgentProvider')
+      require('@/components/copilotkit/UnifiedAgentProvider')
     }).toThrow()
   })
 

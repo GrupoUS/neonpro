@@ -7,11 +7,11 @@
 import { trpcServer } from '@hono/trpc-server'
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
-import { appRouter } from '../../../trpc/router'
+import { appRouter } from '@/trpc/router'
 
 // Import middleware and utilities
-import { requireAIAccess, requireAuth } from '../../../middleware/auth'
-import { getServices } from '../../../services/shared-services'
+import { requireAIAccess, requireAuth } from '@/middleware/auth'
+import { getServices } from '@/services/shared-services'
 
 // Request validation schema - matches the 3-step flow
 const crudRequestSchema = z.object({

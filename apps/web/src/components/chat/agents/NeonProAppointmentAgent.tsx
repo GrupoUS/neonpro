@@ -12,8 +12,8 @@
 
 import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
 import React, { useCallback } from 'react'
-import { Button } from '../../ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card'
+import { Button } from '@neonpro/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui/card'
 import { NeonProAppointmentCard } from '../NeonProChatComponents'
 import { useNeonProChat } from '../NeonProChatProvider'
 // Removed unused Badge import
