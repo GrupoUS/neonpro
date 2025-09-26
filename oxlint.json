@@ -1,0 +1,40 @@
+{
+  "$schema": "https://oxc.rs/docs/schemas/oxlint.json",
+  "plugins": ["react", "typescript", "import", "jsdoc"],
+  "rules": {
+    "react/*": "error",
+    "typescript/*": "error",
+    "import/*": "error",
+    "jsdoc/*": "warn"
+  },
+  "ignores": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/test-results/**",
+    "**/.turbo/**",
+    "**/*.test.{ts,tsx,js,jsx}",
+    "**/*.spec.{ts,tsx,js,jsx}",
+    "**/tools/tests/**",
+    "**/tools/reports/**",
+    "**/tools/test-rules/**",
+    "vitest.config.*",
+    "playwright.config.*",
+    "vite.config.*",
+    "tailwind.config.*",
+    "dprint.json",
+    "*.config.js",
+    "*.config.ts",
+    "**/.qoder/**",
+    "**/.claude/**"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import": {
+      "ignore": ["^react$", "^react-dom$"]
+    }
+  }
+}

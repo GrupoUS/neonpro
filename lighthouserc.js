@@ -78,10 +78,7 @@ module.exports = {
         // Network Resource Budgets (for clinic bandwidth efficiency)
         'resource-summary:document:size': ['error', { maxNumericValue: 50000 }], // 50KB HTML
         'resource-summary:script:size': ['error', { maxNumericValue: 500000 }], // 500KB JS total
-        'resource-summary:stylesheet:size': [
-          'error',
-          { maxNumericValue: 100000 },
-        ], // 100KB CSS total
+        'resource-summary:stylesheet:size': ['error', { maxNumericValue: 100000 }], // 100KB CSS total
         'resource-summary:image:size': ['error', { maxNumericValue: 300000 }], // 300KB images total
         'resource-summary:font:size': ['warn', { maxNumericValue: 150000 }], // 150KB fonts
         'resource-summary:other:size': ['warn', { maxNumericValue: 100000 }], // 100KB other assets

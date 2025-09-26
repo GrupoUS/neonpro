@@ -12,12 +12,7 @@ export default defineConfig({
         singleThread: true,
       },
     },
-    include: [
-      'tools/tests/**/*.{test,spec}.{js,ts}',
-    ],
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-    ],
+    include: ['tools/tests/**/*.{test,spec}.{js,ts}'],
+    exclude: ['**/node_modules/**', '**/dist/**'],
   },
 })

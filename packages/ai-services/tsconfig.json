@@ -19,17 +19,7 @@
     "declarationMap": true,
     "sourceMap": true
   },
-  "include": [
-    "src/index.ts"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ],
-  "references": [
-    { "path": "../healthcare-core" },
-    { "path": "../database" }
-  ]
+  "include": ["src/index.ts"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [{ "path": "../healthcare-core" }, { "path": "../database" }]
 }

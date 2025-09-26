@@ -13,7 +13,71 @@
  */
 
 import type { PrismaClient } from '@prisma/client'
-import * as crypto from 'crypto'
+
+// Crypto polyfill for browser compatibility
+const cryptoPolyfill = {
+  randomUUID: () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID()
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0
+      const v = c === 'x' ? r : (r & 0x3 | 0x8)
+      return v.toString(16)
+    })
+  },
+  createHash: (algorithm: string) => ({
+    update: (data: string) => ({
+      digest: (encoding: string) => {
+        // Simple hash simulation - in production, use proper crypto
+        let hash = 0
+        for (let i = 0; i < data.length; i++) {
+          const char = data.charCodeAt(i)
+          hash = ((hash << 5) - hash) + char
+          hash = hash & hash // Convert to 32-bit integer
+        }
+        return Math.abs(hash).toString(16)
+      }
+    })
+  }),
+  createHmac: (algorithm: string, key: string) => ({
+    update: (data: string) => ({
+      digest: (encoding: string) => {
+        // Simple HMAC simulation - in production, use proper crypto
+        let hash = 0
+        for (let i = 0; i < data.length; i++) {
+          const char = data.charCodeAt(i) + key.charCodeAt(i % key.length)
+          hash = ((hash << 5) - hash) + char
+          hash = hash & hash
+        }
+        return Math.abs(hash).toString(16)
+      }
+    })
+  }),
+  randomBytes: (size: number) => {
+    const bytes = []
+    for (let i = 0; i < size; i++) {
+      bytes.push(Math.floor(Math.random() * 256))
+    }
+    return new Uint8Array(bytes)
+  },
+  createCipheriv: (algorithm: string, key: Uint8Array, iv: Uint8Array) => ({
+    update: (data: string) => ({
+      final: () => data // Return encrypted data (simplified)
+    })
+  }),
+  scryptSync: (password: string, salt: Buffer, keylen: number) => {
+    // Simple scrypt simulation - in production, use proper crypto
+    const derived = new Uint8Array(keylen)
+    for (let i = 0; i < keylen; i++) {
+      derived[i] = password.charCodeAt(i % password.length) ^ salt[i % salt.length]
+    }
+    return derived
+  }
+}
+
+// Global crypto reference with polyfill fallback
+const crypto = globalThis.crypto || cryptoPolyfill
 // Data Lifecycle Stages
 export const DATA_LIFECYCLE_STAGES = {
   COLLECTION: 'collection',

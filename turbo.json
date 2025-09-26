@@ -2,22 +2,22 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json"],
   "globalEnv": [
-    "NODE_ENV", 
-    "VERCEL", 
-    "VERCEL_ENV", 
-    "EDGE_RUNTIME", 
+    "NODE_ENV",
+    "VERCEL",
+    "VERCEL_ENV",
+    "EDGE_RUNTIME",
     "CI",
     "VERCEL_URL",
     "VERCEL_PROJECT_URL",
-    "HEALTHCARE_MODE",
     "LGPD_COMPLIANCE",
-    "ANVISA_COMPLIANCE",
-    "CFM_COMPLIANCE"
+    "DATA_RESIDENCY",
+    "CLIENT_DATA_PROTECTION",
+    "AUDIT_LOGGING"
   ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "**/.tsbuildinfo/**"],
+      "outputs": ["dist/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false,
       "env": ["NODE_ENV", "CI", "VERCEL_ENV"],
@@ -25,20 +25,27 @@
     },
     "build:vercel": {
       "dependsOn": ["^build", "build:core"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "outputs": ["dist/**"],
       "cache": true,
       "persistent": false,
-      "env": ["VERCEL_ENV", "NODE_ENV"]
+      "env": ["VERCEL_ENV", "NODE_ENV", "TURBO_REMOTE_CACHE_SIGNATURE"]
     },
-    "build:healthcare": {
+    "build:lgpd": {
       "dependsOn": ["build", "build:core"],
       "outputs": ["dist/**", "compliance-reports/**"],
       "cache": true,
       "persistent": false,
-      "env": ["HEALTHCARE_MODE", "LGPD_COMPLIANCE", "ANVISA_COMPLIANCE"]
+      "env": ["LGPD_COMPLIANCE", "DATA_RESIDENCY", "CLIENT_DATA_PROTECTION"]
     },
     "build:core": {
-      "dependsOn": ["@neonpro/healthcare-core#build", "@neonpro/utils#build", "@neonpro/security#build", "@neonpro/database#build", "@neonpro/ai-services#build", "@neonpro/ui#build"],
+      "dependsOn": [
+        "@neonpro/healthcare-core#build",
+        "@neonpro/utils#build",
+        "@neonpro/security#build",
+        "@neonpro/database#build",
+        "@neonpro/ai-services#build",
+        "@neonpro/ui#build"
+      ],
       "outputs": ["dist/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false
@@ -70,7 +77,7 @@
       "outputs": ["compliance-reports/**"],
       "cache": true,
       "persistent": false,
-      "env": ["HEALTHCARE_MODE", "LGPD_COMPLIANCE", "ANVISA_COMPLIANCE"]
+      "env": ["LGPD_COMPLIANCE", "DATA_RESIDENCY", "CLIENT_DATA_PROTECTION"]
     },
     "test:security": {
       "dependsOn": ["build"],
@@ -85,12 +92,14 @@
     "deploy:staging": {
       "dependsOn": ["build:vercel", "test:compliance"],
       "cache": false,
-      "persistent": false
+      "persistent": false,
+      "env": ["VERCEL_ENV", "LGPD_COMPLIANCE"]
     },
     "deploy:production": {
       "dependsOn": ["build:vercel", "test:compliance", "test:security"],
       "cache": false,
-      "persistent": false
+      "persistent": false,
+      "env": ["VERCEL_ENV", "LGPD_COMPLIANCE", "DATA_RESIDENCY"]
     }
   },
   "remoteCache": {

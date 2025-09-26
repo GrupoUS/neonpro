@@ -1,14 +1,38 @@
-// @ts-ignore - Module not available in current environment
-const TanStackRouterVite = () => ({ name: 'tanstack-router' })
-import react from '@vitejs/plugin-react'
-import path from 'path'
+// @ts-expect-error - Module not available in current environment
+let TanStackRouterVite: () => { name: string }
+try {
+  // @ts-expect-error
+  TanStackRouterVite = require('@tanstack/router-plugin/vite').TanStackRouterVite
+} catch {
+  TanStackRouterVite = () => ({ name: 'tanstack-router' })
+}
+// Fallback type declaration to suppress TS2307 for @tanstack/router-plugin/vite
+declare module '@tanstack/router-plugin/vite' {
+  export function TanStackRouterVite(): { name: string }
+}
 
-// Define config without importing vite to avoid dependency resolution issues
-export default {
+import react from '@vitejs/plugin-react'
+
+// @ts-expect-error - Module not available in current environment
+let path: { resolve: (from: string, to: string) => string }
+try {
+  // @ts-expect-error
+  path = require('path')
+} catch {
+  path = { resolve: (from: string, to: string) => from + '/' + to }
+}
+// Fallback type declaration to suppress TS2307 for path
+declare module 'path' {
+  export function resolve(from: string, to: string): string
+}
+
+import { defineConfig } from 'vite'
+
+export default defineConfig({
   plugins: [
-    // @ts-ignore - Ignore TanStackRouterVite type mismatch due to monorepo version differences
+    // @ts-expect-error - Ignore TanStackRouterVite type mismatch due to monorepo version differences
     TanStackRouterVite(),
-    // @ts-ignore - Ignore react plugin type mismatch due to monorepo version differences
+    // @ts-expect-error - Ignore react plugin type mismatch due to monorepo version differences
     react(),
   ],
   root: '.',
@@ -31,6 +55,16 @@ export default {
     outDir: 'dist',
     sourcemap: true,
     target: 'esnext',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['@tanstack/react-router'],
+          query: ['@tanstack/react-query'],
+          ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
+        },
+      },
+    },
   },
   optimizeDeps: {
     include: [
@@ -53,4 +87,4 @@ export default {
       '@copilotkit/react-ui',
     ],
   },
-}
+})

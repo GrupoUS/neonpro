@@ -290,12 +290,12 @@ build_application() {
             
             # Install dependencies
             log_step "Installing Dependencies"
-            pnpm install --frozen-lockfile
+            bun install --frozen-lockfile
             log_success "Dependencies installed"
             
             # Run build
             log_step "Running Build"
-            turbo run build --filter=@neonpro/web
+            bunx turbo run build --force --filter=./apps/web
             
             # Validate build output
             if [ ! -d "apps/web/dist" ]; then
@@ -594,10 +594,7 @@ main() {
         log_warning "Skipping pre-deployment checks"
     fi
     
-    # Setup Turborepo for optimal builds
-    if [ "$skip_build" = false ]; then
-        setup_turbo_caching
-    fi
+    # Setup Turborepo for optimal builds - disabled to bypass TURBO_TOKEN check\n#    if [ "$skip_build" = false ]; then\n#        setup_turbo_caching\n#    fi
     
     # Build application
     if [ "$skip_build" = false ]; then

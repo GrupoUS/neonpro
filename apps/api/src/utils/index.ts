@@ -2,9 +2,9 @@
 // Centralized exports for all API utility modules
 
 // Healthcare validation and helpers
-export { BrazilianHealthcareValidator } from './brazilian-healthcare-validation';
+export { BrazilianHealthcareSchemas } from './brazilian-healthcare-validation';
 export { HealthcareAppointmentHelper } from './healthcare-helpers';
-export { LGPDComplianceHelper } from './lgpd-compliance-validator';
+export { LGPDComplianceValidator } from './lgpd-compliance-validator';
 export { PatientDataHelper } from './healthcare-helpers';
 
 // LGPD compliance exports
@@ -19,7 +19,7 @@ export {
 } from './lgpd-compliance-validator';
 
 // Security and privacy utilities
-export { CryptoAudit } from './crypto-audit';
+export { CryptographicAuditLogger as CryptoAudit, cryptographicAuditLogger } from './crypto-audit';
 export { PrivacyAlgorithms } from './privacy-algorithms';
 export { SecureLogger } from './secure-logger';
 export { HealthcareLogger as HealthcareErrorLogger } from './healthcare-errors';
@@ -52,9 +52,9 @@ export type { ApiResponseFormat } from './responses';
 // Helper functions for response creation
 export const createSuccessResponse = (data: any, status: number = 200) => ({ data, status });
 export const createErrorResponse = (code: string, message: string, details?: any) => ({ error: { code, message, details } });
-export { QueryOptimizer } from './query-optimizer';
-export { BundleOptimizer } from './bundle-optimizer';
-export { HealthcarePerformance } from './healthcare-performance';
+export { QueryPerformanceMonitor as QueryOptimizer, queryMonitor, poolOptimizer, healthcareOptimizer } from './query-optimizer';
+export { HealthcareBundleAnalyzer as BundleOptimizer, healthcareBundleAnalyzer, healthcarePerformanceMonitor } from './bundle-optimizer';
+export { HealthcareQueryOptimizer as HealthcarePerformance, ConnectionPoolMonitor, InMemoryQueryCache } from './healthcare-performance';
 
 // Data handling and sanitization
 export { sanitizeForAI } from './sanitize';
@@ -117,9 +117,9 @@ export type { HealthcareErrorDetails } from './healthcare-errors';
 
 // Utility collections for easy import
 export const HealthcareUtils = {
-  validation: BrazilianHealthcareValidator,
+  validation: BrazilianHealthcareSchemas,
   helpers: HealthcareAppointmentHelper,
-  compliance: LGPDComplianceHelper,
+  compliance: LGPDComplianceValidator,
   errors: HealthcareError,
   performance: HealthcarePerformance,
   logger: HealthcareErrorLogger,

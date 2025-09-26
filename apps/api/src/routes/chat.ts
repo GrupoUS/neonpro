@@ -175,8 +175,8 @@ app.post(
             outcome: auditEvent.outcome,
             latency_ms: auditEvent.latencyMs,
           })
-        } catch {
-          console.warn('Audit DB insert failed', e)
+        } catch (error) {
+          console.warn('Audit DB insert failed', error)
         }
       } else {
         console.warn('AuditEvent', auditEvent)
@@ -213,8 +213,8 @@ app.post(
             outcome: 'refusal',
             latency_ms: Date.now() - t0,
           })
-        } catch {
-          console.warn('Audit DB insert failed', e)
+        } catch (error) {
+          console.warn('Audit DB insert failed', error)
         }
       } else {
         console.warn('AuditEvent', {
@@ -347,8 +347,8 @@ app.post(
             outcome: 'success',
             latency_ms: Date.now() - t0,
           })
-        } catch {
-          console.warn('Audit DB insert failed', e)
+        } catch (error) {
+          console.warn('Audit DB insert failed', error)
         }
       } else {
         console.warn('AuditEvent', {
@@ -382,8 +382,8 @@ app.post(
             outcome: 'error',
             latency_ms: Date.now() - t0,
           })
-        } catch {
-          console.warn('Audit DB insert failed', e)
+        } catch (error) {
+          console.warn('Audit DB insert failed', error)
         }
       } else {
         console.warn('AuditEvent', {
@@ -466,8 +466,8 @@ app.get('/session/:id', async c => {
         },
         200,
       )
-    } catch {
-      console.warn('Session DB operation failed, falling back to mock:', e)
+    } catch (error) {
+      console.warn('Session DB operation failed, falling back to mock:', error)
     }
   }
 
@@ -568,8 +568,8 @@ app.post('/explanation', async c => {
           outcome: 'success',
           latency_ms: Date.now() - t0,
         })
-      } catch {
-        console.warn('Audit DB insert failed', e)
+      } catch (error) {
+        console.warn('Audit DB insert failed', error)
       }
     }
 

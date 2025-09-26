@@ -8,7 +8,7 @@ import { logger } from "@/utils/healthcare-errors"
 export async function errorHandler(c: Context, next: Next) {
   try {
     await next()
-  } catch {
+  } catch (error) {
     // Log the error
     logger.error('Unhandled error in API', {
       error: error instanceof Error ? error.message : String(error),
@@ -44,3 +44,5 @@ export async function errorHandler(c: Context, next: Next) {
     )
   }
 }
+
+export { errorHandler as GlobalErrorHandler }

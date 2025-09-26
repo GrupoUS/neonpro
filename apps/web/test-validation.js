@@ -39,11 +39,7 @@ testFiles.forEach(file => {
 
 // Test 2: Check test configuration files
 console.warn('\n⚙️  Checking configuration files...')
-const configFiles = [
-  'vitest.config.ts',
-  'src/test-setup.ts',
-  'src/test/global-setup.ts',
-]
+const configFiles = ['vitest.config.ts', 'src/test-setup.ts', 'src/test/global-setup.ts']
 
 configFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file)

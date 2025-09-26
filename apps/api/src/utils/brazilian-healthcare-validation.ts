@@ -328,3 +328,57 @@ export const checkAppointmentConflict = (
     return newStart < aptEnd && newEnd > aptStart
   })
 }
+
+// Validator class for object-oriented usage
+export class BrazilianHealthcareValidator {
+  static validatePatient(data: unknown) {
+    return validateBrazilianHealthcareData.patient(data)
+  }
+
+  static validateProfessional(data: unknown) {
+    return validateBrazilianHealthcareData.professional(data)
+  }
+
+  static validateClinic(data: unknown) {
+    return validateBrazilianHealthcareData.clinic(data)
+  }
+
+  static validateAppointment(data: unknown) {
+    return validateBrazilianHealthcareData.appointment(data)
+  }
+
+  static validateFinancialTransaction(data: unknown) {
+    return validateBrazilianHealthcareData.financialTransaction(data)
+  }
+
+  static validateCPF(cpf: string): boolean {
+    return validateCPF(cpf)
+  }
+
+  static validatePhone(phone: string): boolean {
+    return validatePhone(phone)
+  }
+
+  static validateMedicalLicense(license: string): boolean {
+    return validateMedicalLicense(license)
+  }
+
+  static validateCNPJ(cnpj: string): boolean {
+    return validateCNPJ(cnpj)
+  }
+
+  static checkAppointmentConflict(
+    appointments: Array<{
+      professional_id: string
+      scheduled_at: string
+      duration_hours: number
+    }>,
+    newAppointment: {
+      professional_id: string
+      scheduled_at: string
+      duration_hours: number
+    },
+  ): boolean {
+    return checkAppointmentConflict(appointments, newAppointment)
+  }
+}

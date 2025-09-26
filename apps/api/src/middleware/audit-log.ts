@@ -328,3 +328,6 @@ export function authAuditMiddleware() {
  * @deprecated Use specific audit middleware instead
  */
 export const _auditLog = auditLogMiddleware
+
+// Export alias for backward compatibility
+export const auditLog = auditLogMiddleware

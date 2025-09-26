@@ -11,6 +11,7 @@
 
 // Core circuit breaker service
 export {
+  CircuitBreakerService as CircuitBreaker,
   CircuitBreakerConfig,
   CircuitBreakerEvent,
   CircuitBreakerMetrics,

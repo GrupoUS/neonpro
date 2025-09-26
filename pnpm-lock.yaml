@@ -292,6 +292,9 @@ importers:
       '@prisma/client':
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
+      '@sentry/browser':
+        specifier: 10.12.0
+        version: 10.12.0
       '@sentry/node':
         specifier: ^8.55.0
         version: 8.55.0
@@ -6175,6 +6178,20 @@ packages:
       - encoding
     dev: false
 
+  /@sentry-internal/browser-utils@10.12.0:
+    resolution: {integrity: sha512-dozbx389jhKynj0d657FsgbBVOar7pX3mb6GjqCxslXF0VKpZH2Xks0U32RgDY/nK27O+o095IWz7YvjVmPkDw==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sentry/core': 10.12.0
+    dev: false
+
+  /@sentry-internal/feedback@10.12.0:
+    resolution: {integrity: sha512-0+7ceO6yQPPqfxRc9ue/xoPHKcnB917ezPaehGQNfAFNQB9PNTG1y55+8mRu0Fw+ANbZeCt/HyoCmXuRdxmkpg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sentry/core': 10.12.0
+    dev: false
+
   /@sentry-internal/node-cpu-profiler@2.2.0:
     resolution: {integrity: sha512-oLHVYurqZfADPh5hvmQYS5qx8t0UZzT2u6+/68VXsFruQEOnYJTODKgU3BVLmemRs3WE6kCJjPeFdHVYOQGSzQ==}
     engines: {node: '>=18'}
@@ -6182,6 +6199,38 @@ packages:
     dependencies:
       detect-libc: 2.1.1
       node-abi: 3.77.0
+    dev: false
+
+  /@sentry-internal/replay-canvas@10.12.0:
+    resolution: {integrity: sha512-W/z1/+69i3INNfPjD1KuinSNaRQaApjzwb37IFmiyF440F93hxmEYgXHk3poOlYYaigl2JMYbysGPWOiXnqUXA==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sentry-internal/replay': 10.12.0
+      '@sentry/core': 10.12.0
+    dev: false
+
+  /@sentry-internal/replay@10.12.0:
+    resolution: {integrity: sha512-/1093gSNGN5KlOBsuyAl33JkzGiG38kCnxswQLZWpPpR6LBbR1Ddb18HjhDpoQNNEZybJBgJC3a5NKl43C2TSQ==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sentry-internal/browser-utils': 10.12.0
+      '@sentry/core': 10.12.0
+    dev: false
+
+  /@sentry/browser@10.12.0:
+    resolution: {integrity: sha512-lKyaB2NFmr7SxPjmMTLLhQ7xfxaY3kdkMhpzuRI5qwOngtKt4+FtvNYHRuz+PTtEFv4OaHhNNbRn6r91gWguQg==}
+    engines: {node: '>=18'}
+    dependencies:
+      '@sentry-internal/browser-utils': 10.12.0
+      '@sentry-internal/feedback': 10.12.0
+      '@sentry-internal/replay': 10.12.0
+      '@sentry-internal/replay-canvas': 10.12.0
+      '@sentry/core': 10.12.0
+    dev: false
+
+  /@sentry/core@10.12.0:
+    resolution: {integrity: sha512-Jrf0Yo7DvmI/ZQcvBnA0xKNAFkJlVC/fMlvcin+5IrFNRcqOToZ2vtF+XqTgjRZymXQNE8s1QTD7IomPHk0TAw==}
+    engines: {node: '>=18'}
     dev: false
 
   /@sentry/core@10.15.0:

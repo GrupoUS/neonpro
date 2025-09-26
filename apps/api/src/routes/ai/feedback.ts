@@ -466,3 +466,4 @@ app.get('/ai/feedback/health', async c => {
 })
 
 export const POST = handle(app)
+export default handle(app)

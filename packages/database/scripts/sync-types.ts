@@ -4,11 +4,10 @@
  * Run with: npx tsx scripts/sync-types.ts
  */
 
-import fs from 'fs'
-import path from 'path'
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
 import { HealthcareSecurityLogger } from '@neonpro/security'
+import fs from 'fs'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 // Global healthcare security logger instance
 let healthcareLogger: HealthcareSecurityLogger | null = null
@@ -36,19 +35,13 @@ const dirname = dirname(__filename)
 // Read Prisma schema and generate basic Supabase types
 const _prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma')
 void _prismaSchemaPath
-const typesOutputPath = path.join(
-  __dirname,
-  '..',
-  'src',
-  'types',
-  'supabase-generated.ts',
-)
+const typesOutputPath = path.join(__dirname, '..', 'src', 'types', 'supabase-generated.ts')
 
 function generateSupabaseTypes() {
   const logger = getHealthcareLogger()
   logger.info('🔄 Synchronizing Supabase types with Prisma schema...', {
     action: 'sync_types_start',
-    component: 'database_sync'
+    component: 'database_sync',
   })
 
   // Ensure the types directory exists
@@ -698,12 +691,12 @@ export type Enums<T extends keyof Database['public']['Enums']> = Database['publi
   logger.info('✅ Supabase types synchronized successfully!', {
     action: 'sync_types_complete',
     component: 'database_sync',
-    outputPath: typesOutputPath
+    outputPath: typesOutputPath,
   })
   logger.info(`📁 Generated: ${typesOutputPath}`, {
     action: 'sync_types_output',
     component: 'database_sync',
-    outputPath: typesOutputPath
+    outputPath: typesOutputPath,
   })
 }
 

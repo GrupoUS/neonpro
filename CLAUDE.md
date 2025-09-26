@@ -36,6 +36,7 @@ CORE_STANDARDS:
   preserve_context: "Maintain complete context across all agent and thinking transitions"
   incorporate_always: "Incorporate what we already have, avoid creating new files, enhance the existing structure"
   pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
+  always_audit: "Never assume the error is fixed, always audit and validate"
 ```
 
 ## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
@@ -135,7 +136,7 @@ CONSTITUTIONAL_PRINCIPLES:
 
 - **MANDATORY**: Start with `sequential-thinking` to analyze requirements
 - Use `archon` to check project context and create/update tasks
-- Use `serena` (NEVER native) to understand current codebase
+- Use `serena` to understand current codebase
 - Break down feature into smaller components
 - Identify complexities, dependencies, and constraints
 - **Complexity ≥7 or Stuck >3x**: consult official docs and best practices with context7 → tavily
@@ -163,9 +164,8 @@ RESEARCH_EXECUTION_FRAMEWORK:
   process:
     - "Understand requirements completely with constitutional analysis"
     - "Identify constraints and dependencies with multi-perspective evaluation"
-    - "Assess complexity level (1-10) with domain-specific triggers"
     - "Define strategic approach with agent coordination planning"
-    - "Break down into manageable components with quality gate definition"
+    - "Break down into manageable components and atomic subtasks with quality gate definition"
   deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
   purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
   intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
@@ -282,24 +282,6 @@ validation:
       - "Test coverage ≥90% with comprehensive testing protocols"
   verification_rule: "Never assume changes complete without explicit verification"
 ```
-
-### 6. **Memory Documentation Protocol** 📝
-
-**🔧 MCP**: desktop-commander + archon
-
-- Use `archon` to create/update project documents and knowledge base
-- Create `mistakes/[error-category].md` if mistakes corrected
-- Create `features/[feature-name].md` for new features or modified behavior
-- **Test Documentation**: Document new test patterns, mocks, utilities
-- Store learnings in archon knowledge base for future retrieval
-- Confirmation: Explicitly note in your thoughts whether updates were made or not.
-
-**Specific Memory File Management**
-
-- `docs/mistakes/[error-category].md` — Problem, wrong approach, correct solution, root cause, prevention, related files.
-- `docs/features/[feature-name].md` — Overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, last updated.
-- `docs/database-schema/*.md` — DDL/relationships/RLS changes recorded alongside migrations.
-- `docs/apis/*.md` — Endpoint docs: path, method, purpose, request/response, auth, file path.
 
 ## Important Notes
 

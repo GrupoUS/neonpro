@@ -21,9 +21,7 @@
     "jsx": "react-jsx",
     "lib": ["dom", "dom.iterable", "esnext"]
   },
-  "include": [
-    "src/index.ts"
-  ],
+  "include": ["src/index.ts"],
   "exclude": [
     "dist",
     "node_modules",
@@ -32,7 +30,5 @@
     "**/*.test.tsx",
     "**/*.spec.tsx"
   ],
-  "references": [
-    { "path": "../healthcare-core" }
-  ]
+  "references": [{ "path": "../healthcare-core" }]
 }
