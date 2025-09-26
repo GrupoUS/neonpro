@@ -1,39 +1,39 @@
-import { defineConfig } from 'vitest/config'
-import { resolve } from 'path'
+import { resolve } from "path"
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   test: {
     globals: false,
-    environment: 'node',
+    environment: "node",
     isolate: true,
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         singleThread: true,
       },
     },
     include: [
-      '**/*.tdd.test.{ts,tsx}',
-      '**/*.red-phase.test.{ts,tsx}',
-      '**/backend/unit/**/*.test.{ts,tsx}',
+      "**/*.tdd.test.{ts,tsx}",
+      "**/*.red-phase.test.{ts,tsx}",
+      "**/backend/unit/**/*.test.{ts,tsx}",
     ],
     exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/e2e/**',
-      '**/ai/**',
-      '**/integration/**',
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/e2e/**",
+      "**/ai/**",
+      "**/integration/**",
     ],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'lcov'],
+      provider: "v8",
+      reporter: ["text", "lcov"],
       exclude: [
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/test-results/**',
-        '**/coverage/**',
-        '**/*.config.*',
-        '**/*.setup.*',
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/test-results/**",
+        "**/coverage/**",
+        "**/*.config.*",
+        "**/*.setup.*",
       ],
       thresholds: {
         global: {
@@ -57,8 +57,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, '../..'),
-      '@tests': resolve(__dirname, '.'),
+      "@": resolve(__dirname, "../.."),
+      "@tests": resolve(__dirname, "."),
     },
   },
 })

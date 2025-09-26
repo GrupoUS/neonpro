@@ -1,35 +1,35 @@
-import { defineConfig } from 'vitest/config'
-import { resolve } from 'path'
+import { resolve } from "path"
+import { defineConfig } from "vitest/config"
 
 export default defineConfig({
   test: {
     globals: false,
-    environment: 'node',
+    environment: "node",
     isolate: true,
-    pool: 'threads',
+    pool: "threads",
     include: [
-      '**/*.unit.test.{ts,tsx}',
-      '**/*.unit.spec.{ts,tsx}',
-      'categories/**/*.test.{ts,tsx}',
+      "**/*.unit.test.{ts,tsx}",
+      "**/*.unit.spec.{ts,tsx}",
+      "categories/**/*.test.{ts,tsx}",
     ],
     exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/e2e/**',
-      '**/*.integration.test.{ts,tsx}',
-      '**/*.e2e.test.{ts,tsx}',
-      '**/*.api.test.{ts,tsx}',
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/e2e/**",
+      "**/*.integration.test.{ts,tsx}",
+      "**/*.e2e.test.{ts,tsx}",
+      "**/*.api.test.{ts,tsx}",
     ],
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       exclude: [
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/test-results/**',
-        '**/coverage/**',
-        '**/*.config.*',
-        '**/*.setup.*',
+        "**/node_modules/**",
+        "**/dist/**",
+        "**/test-results/**",
+        "**/coverage/**",
+        "**/*.config.*",
+        "**/*.setup.*",
       ],
       thresholds: {
         global: {
@@ -46,8 +46,8 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, '../../..'),
-      '@tests': resolve(__dirname, '..'),
+      "@": resolve(__dirname, "../../.."),
+      "@tests": resolve(__dirname, ".."),
     },
   },
 })

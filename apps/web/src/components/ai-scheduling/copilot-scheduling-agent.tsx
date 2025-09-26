@@ -16,7 +16,7 @@ import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns
 import { ptBR } from 'date-fns/locale'
 import React, { useCallback, useEffect, useState } from 'react'
 
-import { AIAppointmentSchedulingService } from '../../../api/src/services/ai-appointment-scheduling-service'
+import { AIAppointmentSchedulingService } from '@neonpro/healthcare-core'
 
 // Types
 interface SchedulingAgentState {

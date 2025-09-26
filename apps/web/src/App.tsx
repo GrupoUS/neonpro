@@ -148,7 +148,7 @@ function App() {
       window.removeEventListener('offline', handleOffline)
 
       // Full cleanup for development
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         cleanupAppEventListeners()
       }
     }

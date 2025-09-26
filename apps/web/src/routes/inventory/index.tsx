@@ -13,8 +13,9 @@ import {
   TrendingUp,
   Truck,
 } from 'lucide-react'
-import * as React from 'react'
 import { useState } from 'react'
+import { logger } from '@/utils/logger'
+
 
 export const Route = createFileRoute('/inventory/')({
   component: InventoryDashboard,
@@ -69,7 +70,7 @@ function InventoryDashboard() {
       setStats(statsResponse)
       setProducts(productsResponse)
     } catch (error) {
-      console.error('Error loading inventory data:', error)
+      await logger.error('Error loading inventory data:')
     } finally {
       setLoading(false)
     }

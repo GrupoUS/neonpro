@@ -4,7 +4,7 @@
  */
 
 import { Hono } from 'hono'
-import { logger } from '../../../../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { aiAgentHealthMonitor } from '@/services/monitoring/ai-agent-health-monitor'
 
 const app = new Hono()

@@ -13,6 +13,7 @@ export default {
   root: '.',
   publicDir: 'public',
   resolve: {
+    preserveSymlinks: true,
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
@@ -45,6 +46,7 @@ export default {
       'date-fns',
       'sonner',
       '@radix-ui/react-slot',
+      '@radix-ui/react-progress',
       'class-variance-authority',
       '@copilotkit/react-core',
       '@copilotkit/react-ui',

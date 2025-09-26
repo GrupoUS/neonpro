@@ -7,10 +7,16 @@
 - **Frontend**: React 19 + Vite + TanStack Router + TypeScript strict
 - **Backend**: Hono + Node 20 + TypeScript strict + Security middleware
 - **Data**: Supabase + Prisma ORM + Row Level Security + Audit logging
-- **QA & Testing**: Testes consolidados em /tools/tests-consolidated, Vitest, Playwright, Oxlint, TypeScript strict, TDD orchestration
+- **QA & Testing**: Testes consolidados em /tools/tests, Vitest, Playwright, Oxlint, TypeScript strict, TDD orchestration
 - **Quality Gates**: Multi-agent validation, automated testing, security scanning
 - **Agent Coordination**: TDD workflow orchestration, multi-agent collaboration
 - **Error Recovery**: Rollback strategies, emergency procedures, state restoration
+
+> Migration note (Consolidation): The former tools/tests-consolidated has been merged into tools/tests. Wherever this document previously referenced tools/tests-consolidated, use tools/tests instead. Run tests via the tools/tests package scripts (pnpm run ...) rather than bun. Canonical examples:
+>
+> - cd tools/tests && pnpm run test:run
+> - cd tools/tests && pnpm run test:coverage
+> - cd tools/tests && pnpm run lint
 
 ## Error Categories
 
@@ -195,13 +201,12 @@ RESOURCE_MANAGEMENT:
 
 ```bash
 # Iterative test execution with systematic validation using consolidated tests
-cd tools/tests-consolidated && bun run test:unit     # Testes unitários consolidados
-cd tools/tests-consolidated && bun run test:integration # Testes de integração consolidados
-cd tools/tests-consolidated && bun run test:coverage    # Cobertura consolidada
+cd tools/tests && pnpm run test:run         # Testes unitários/integrados consolidados
+cd tools/tests && pnpm run test:coverage    # Cobertura consolidada
 
 # Continuous validation during implementation using consolidated tests
 @tdd-orchestrator "monitor test success throughout GREEN phase implementation"
-cd tools/tests-consolidated && bun run test:watch # Execução contínua com feedback
+cd tools/tests && pnpm run test:watch       # Execução contínua com feedback
 ```
 
 #### **2.3 Quality Gate: Implementation Validation with TDD Compliance**
@@ -238,8 +243,8 @@ cd tools/tests-consolidated && bun run test:watch # Execução contínua com fee
 @architect-review "improve architecture patterns with test-driven validation"
 
 # Continuous test validation during refactoring
-cd tools/tests-consolidated && pnpm test:unit     # Validação unitária contínua
-cd tools/tests-consolidated && pnpm test:integration # Validação de integração
+cd tools/tests && pnpm run test:run         # Validação contínua
+cd tools/tests && pnpm run test:coverage    # Cobertura integrada
 ```
 
 #### **3.3 Quality Gate: Code Excellence with TDD Integrity**
@@ -258,10 +263,9 @@ cd tools/tests-consolidated && pnpm test:integration # Validação de integraç�
 ```bash
 # Full test suite execution with TDD orchestrator oversight using consolidated tests
 @tdd-orchestrator "coordinate comprehensive validation across all test categories"
-cd tools/tests-consolidated && pnpm test           # Suite completa consolidada
-cd tools/tests-consolidated && pnpm test:e2e       # Testes E2E com Playwright
-cd tools/tests-consolidated && pnpm test:coverage  # Cobertura integrada
-cd tools/tests-consolidated && pnpm lint           # Validação de código
+cd tools/tests && pnpm run test:run         # Suite completa consolidada
+cd tools/tests && pnpm run test:coverage    # Cobertura integrada
+cd tools/tests && pnpm run lint             # Validação de código
 ```
 
 #### **4.2 Standards Compliance Validation with Multi-Agent Coordination**
@@ -732,13 +736,12 @@ pnpm --filter @neonpro/web test:refactor:tdd     # Web refactoring with TDD orch
 ```bash
 # Automated quality gates with TDD orchestrator coordination using consolidated tests
 @tdd-orchestrator "coordinate comprehensive quality gate execution with systematic validation"
-cd tools/tests-consolidated && pnpm validate      # Validação completa
-cd tools/tests-consolidated && pnpm ci            # Pipeline CI completa
+cd tools/tests && pnpm run test:run         # Validação completa
 
 # Specific gate categories with TDD integration
 @tdd-orchestrator "coordinate specific quality gate categories with systematic validation"
-cd tools/tests-consolidated && pnpm lint          # Gates de qualidade de código
-cd tools/tests-consolidated && pnpm test:coverage # Gates de cobertura
+cd tools/tests && pnpm run lint             # Gates de qualidade de código
+cd tools/tests && pnpm run test:coverage    # Gates de cobertura
 ```
 
 #### **Multi-Agent Quality Review with TDD Orchestrator Leadership**

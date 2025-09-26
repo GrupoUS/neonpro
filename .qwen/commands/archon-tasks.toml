@@ -1,7 +1,7 @@
 title = "Archon Pipeline Orchestrator — Automação MCP"
 last_updated = 2025-09-17
 form = "automation-prompt"
-tags = ["archon", "mcp", "devops", "pipeline", "automation", "kanban", "orchestration"]
+tags = ["archon", "mcp", "devops", "pipeline", "automation", "kanban"]
 related = [
   "../../docs/agents/AGENTS.md",
   "../../docs/architecture/source-tree.md",

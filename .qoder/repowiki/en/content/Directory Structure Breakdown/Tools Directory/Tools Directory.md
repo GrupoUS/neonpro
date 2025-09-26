@@ -293,13 +293,13 @@ Orchestration -.-> workflow-engine
 
 **Diagram sources**
 
-- [package.json](file://tools/shared/package.json)
+- [DEPRECATED] tools/shared removed; shared utilities consolidated into tools/tests (e.g., agent-utils)
 - [package.json](file://tools/quality/package.json)
 - [package.json](file://tools/orchestration/package.json)
 
 **Section sources**
 
-- [package.json](file://tools/shared/package.json)
+- [DEPRECATED] tools/shared removed; shared utilities consolidated into tools/tests (e.g., agent-utils)
 
 ## Performance Considerations
 

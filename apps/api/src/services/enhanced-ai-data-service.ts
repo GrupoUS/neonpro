@@ -23,7 +23,7 @@ import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
 import { createHash } from 'crypto'
 import { AIDataService } from './ai-data-service'
 import { aiCacheInvalidationManager } from './ai-cache-invalidation-service'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Cache configuration for AI data queries

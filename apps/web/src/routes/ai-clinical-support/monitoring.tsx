@@ -2,7 +2,8 @@ import { ProgressMonitoring } from '@/components/ai-clinical-support/ProgressMon
 import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface ProgressMonitoringLoaderData {
@@ -49,7 +50,7 @@ function ProgressMonitoringPage() {
           const result = await api.aiClinicalSupport.addProgressUpdate(update)
           return result
         } catch (error) {
-          console.error('Error updating progress:', error)
+          await logger.error('Error updating progress:')
           throw error
         }
       }}

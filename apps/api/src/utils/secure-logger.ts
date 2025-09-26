@@ -1,12 +1,15 @@
 /**
- * 🔒 SECURE LOGGER - LGPD Compliant Logging System
+ * 🔒 SECURE LOGGER - Enhanced LGPD Compliant Logging System
  *
  * Features:
- * - Automatic sensitive data masking
- * - LGPD compliance built-in
- * - Edge runtime compatible
- * - Environment-based log levels
- * - Audit trail support
+ * - Automatic sensitive data masking with advanced pattern detection
+ * - LGPD compliance built-in with audit trail integration
+ * - Edge runtime compatible with performance optimization
+ * - Environment-based log levels with granular control
+ * - Audit trail support with structured logging
+ * - Performance metrics and monitoring integration
+ * - Context-aware logging with correlation IDs
+ * - Structured output for better observability
  */
 
 // LGPD Sensitive Data Patterns
@@ -41,11 +44,17 @@ const SENSITIVE_KEYS = [
 ]
 
 interface LoggerConfig {
-  level?: string
+  level?: 'debug' | 'info' | 'warn' | 'error' | 'silent'
   maskSensitiveData?: boolean
   lgpdCompliant?: boolean
   auditTrail?: boolean
+  enableMetrics?: boolean
+  enableStructuredOutput?: boolean
+  enableCorrelationIds?: boolean
   _service?: string
+  environment?: 'development' | 'staging' | 'production'
+  version?: string
+  enablePerformanceTracking?: boolean
 }
 
 interface LogContext {
@@ -59,10 +68,29 @@ interface LogContext {
   correlationId?: string
   auditType?: string
   compliance?: string
+  duration?: number
+  memoryUsage?: number
+  requestMethod?: string
+  requestPath?: string
+  statusCode?: number
+  errorCode?: string
+  performanceMetrics?: {
+    responseTime?: number
+    memoryUsed?: number
+    cpuUsage?: number
+  }
 }
 
 class SecureLogger {
   private config: Required<LoggerConfig>
+  private metrics: {
+    logsCount: number
+    errorCount: number
+    warningCount: number
+    averageResponseTime: number
+    memoryUsage: number[]
+  }
+  private performanceTracker: Map<string, number> = new Map()
 
   constructor(config: LoggerConfig = {}) {
     this.config = {
@@ -71,7 +99,22 @@ class SecureLogger {
       maskSensitiveData: config.maskSensitiveData ?? true,
       lgpdCompliant: config.lgpdCompliant ?? true,
       auditTrail: config.auditTrail ?? true,
+      enableMetrics: config.enableMetrics ?? true,
+      enableStructuredOutput: config.enableStructuredOutput ?? true,
+      enableCorrelationIds: config.enableCorrelationIds ?? true,
       _service: config._service || 'neonpro-api',
+      environment: config.environment || process.env.NODE_ENV || 'development',
+      version: config.version || '1.0.0',
+      enablePerformanceTracking: config.enablePerformanceTracking ?? true,
+    }
+
+    // Initialize metrics tracking
+    this.metrics = {
+      logsCount: 0,
+      errorCount: 0,
+      warningCount: 0,
+      averageResponseTime: 0,
+      memoryUsage: [],
     }
   }
 
@@ -218,6 +261,183 @@ class SecureLogger {
     const currentLevelIndex = levels.indexOf(this.config.level)
     const messageLevelIndex = levels.indexOf(level)
     return messageLevelIndex >= currentLevelIndex
+  }
+
+  /**
+   * Enhanced logging with performance tracking and metrics
+   */
+  logWithMetrics(level: string, message: string, _context?: LogContext & { duration?: number }): void {
+    if (!this.shouldLog(level)) return
+
+    const enrichedContext = this.enrichContext(_context)
+    const startTime = this.performanceTracker.get(message) || Date.now()
+
+    if (enrichedContext.duration) {
+      this.updateResponseTimeMetrics(enrichedContext.duration)
+    }
+
+    // Add performance metrics
+    if (this.config.enablePerformanceTracking) {
+      enrichedContext.performanceMetrics = {
+        responseTime: enrichedContext.duration,
+        memoryUsed: process.memoryUsage ? process.memoryUsage().heapUsed : 0,
+        cpuUsage: this.getCPUUsage(),
+      }
+    }
+
+    this.formatLog(level, message, enrichedContext)
+    this.updateMetrics(level)
+  }
+
+  /**
+   * Start tracking operation performance
+   */
+  startTracking(operation: string): string {
+    const trackingId = `${operation}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    this.performanceTracker.set(trackingId, Date.now())
+    return trackingId
+  }
+
+  /**
+   * End tracking and log performance metrics
+   */
+  endTracking(trackingId: string, level: string = 'info', context?: LogContext): void {
+    const startTime = this.performanceTracker.get(trackingId)
+    if (!startTime) return
+
+    const duration = Date.now() - startTime
+    this.performanceTracker.delete(trackingId)
+
+    this.logWithMetrics(level, `Operation completed`, {
+      ...context,
+      duration,
+      operation: trackingId.split('_')[0],
+    })
+  }
+
+  /**
+   * Log HTTP request with enhanced metrics
+   */
+  logHttpRequest(_context: {
+    method: string
+    path: string
+    statusCode: number
+    duration: number
+    _userId?: string
+    userAgent?: string
+    ip?: string
+    responseSize?: number
+  }): void {
+    const level = this.getHttpLogLevel(_context.statusCode)
+    const message = `${_context.method} ${_context.path} - ${_context.statusCode}`
+
+    this.logWithMetrics(level, message, {
+      _userId: _context._userId,
+      requestMethod: _context.method,
+      requestPath: _context.path,
+      statusCode: _context.statusCode,
+      duration: _context.duration,
+      userAgent: _context.userAgent,
+      ip: _context.ip,
+      performanceMetrics: {
+        responseTime: _context.duration,
+        memoryUsed: process.memoryUsage ? process.memoryUsage().heapUsed : 0,
+      },
+    })
+  }
+
+  /**
+   * Log database operations with performance tracking
+   */
+  logDatabaseOperation(operation: string, query: string, duration: number, context?: LogContext): void {
+    this.logWithMetrics(duration > 1000 ? 'warn' : 'info', `Database ${operation}`, {
+      ...context,
+      operation,
+      duration,
+      query: this.config.maskSensitiveData ? this.maskSensitiveData(query) : query,
+    })
+  }
+
+  /**
+   * Get current logger metrics
+   */
+  getMetrics(): {
+    logsCount: number
+    errorCount: number
+    warningCount: number
+    averageResponseTime: number
+    memoryUsage: {
+      current: number
+      average: number
+      max: number
+    }
+    uptime: number
+  } {
+    return {
+      logsCount: this.metrics.logsCount,
+      errorCount: this.metrics.errorCount,
+      warningCount: this.metrics.warningCount,
+      averageResponseTime: this.metrics.averageResponseTime,
+      memoryUsage: {
+        current: process.memoryUsage ? process.memoryUsage().heapUsed : 0,
+        average: this.metrics.memoryUsage.length > 0
+          ? this.metrics.memoryUsage.reduce((a, b) => a + b, 0) / this.metrics.memoryUsage.length
+          : 0,
+        max: this.metrics.memoryUsage.length > 0 ? Math.max(...this.metrics.memoryUsage) : 0,
+      },
+      uptime: process.uptime ? process.uptime() : 0,
+    }
+  }
+
+  /**
+   * Reset metrics (useful for testing)
+   */
+  resetMetrics(): void {
+    this.metrics = {
+      logsCount: 0,
+      errorCount: 0,
+      warningCount: 0,
+      averageResponseTime: 0,
+      memoryUsage: [],
+    }
+    this.performanceTracker.clear()
+  }
+
+  // Private helper methods
+  private updateMetrics(level: string): void {
+    this.metrics.logsCount++
+
+    if (level === 'error') this.metrics.errorCount++
+    if (level === 'warn') this.metrics.warningCount++
+
+    // Track memory usage
+    if (process.memoryUsage) {
+      const memoryUsed = process.memoryUsage().heapUsed
+      this.metrics.memoryUsage.push(memoryUsed)
+
+      // Keep only last 100 measurements
+      if (this.metrics.memoryUsage.length > 100) {
+        this.metrics.memoryUsage = this.metrics.memoryUsage.slice(-100)
+      }
+    }
+  }
+
+  private updateResponseTimeMetrics(duration: number): void {
+    const current = this.metrics.averageResponseTime
+    this.metrics.averageResponseTime = current === 0 ? duration : (current + duration) / 2
+  }
+
+  private getHttpLogLevel(statusCode: number): string {
+    if (statusCode >= 500) return 'error'
+    if (statusCode >= 400) return 'warn'
+    if (statusCode >= 300) return 'info'
+    return 'debug'
+  }
+
+  private getCPUUsage(): number {
+    // Simple CPU usage estimation
+    const usage = process.cpuUsage ? process.cpuUsage() : { user: 0, system: 0 }
+    return usage.user + usage.system
   }
 
   // LGPD Compliance Methods

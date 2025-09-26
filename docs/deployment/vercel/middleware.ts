@@ -74,7 +74,7 @@ export function middleware(request: NextRequest) {
   if (
     sensitivePaths.some(path => request.nextUrl.pathname.startsWith(path))
   ) {
-    console.log(
+    console.warn(
       `[AUDIT] ${
         new Date().toISOString()
       } - ${request.method} ${request.nextUrl.pathname} - ${request.ip}`,

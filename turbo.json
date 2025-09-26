@@ -1,15 +1,41 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json"],
-  "globalEnv": ["NODE_ENV", "VERCEL", "VERCEL_ENV", "EDGE_RUNTIME", "CI"],
+  "globalEnv": [
+    "NODE_ENV", 
+    "VERCEL", 
+    "VERCEL_ENV", 
+    "EDGE_RUNTIME", 
+    "CI",
+    "VERCEL_URL",
+    "VERCEL_PROJECT_URL",
+    "HEALTHCARE_MODE",
+    "LGPD_COMPLIANCE",
+    "ANVISA_COMPLIANCE",
+    "CFM_COMPLIANCE"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false,
-      "env": ["NODE_ENV", "CI"],
-      "inputs": ["tsconfig*.json", "package.json", "pnpm-lock.yaml"]
+      "env": ["NODE_ENV", "CI", "VERCEL_ENV"],
+      "inputs": ["tsconfig*.json", "package.json", "pnpm-lock.yaml", "vercel.json"]
+    },
+    "build:vercel": {
+      "dependsOn": ["^build", "build:core"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "cache": true,
+      "persistent": false,
+      "env": ["VERCEL_ENV", "NODE_ENV"]
+    },
+    "build:healthcare": {
+      "dependsOn": ["build", "build:core"],
+      "outputs": ["dist/**", "compliance-reports/**"],
+      "cache": true,
+      "persistent": false,
+      "env": ["HEALTHCARE_MODE", "LGPD_COMPLIANCE", "ANVISA_COMPLIANCE"]
     },
     "build:core": {
       "dependsOn": ["@neonpro/healthcare-core#build", "@neonpro/utils#build", "@neonpro/security#build", "@neonpro/database#build", "@neonpro/ai-services#build", "@neonpro/ui#build"],
@@ -39,12 +65,35 @@
       "cache": true,
       "persistent": false
     },
+    "test:compliance": {
+      "dependsOn": ["build"],
+      "outputs": ["compliance-reports/**"],
+      "cache": true,
+      "persistent": false,
+      "env": ["HEALTHCARE_MODE", "LGPD_COMPLIANCE", "ANVISA_COMPLIANCE"]
+    },
+    "test:security": {
+      "dependsOn": ["build"],
+      "outputs": ["security-scans/**"],
+      "cache": true,
+      "persistent": false
+    },
     "clean": {
       "cache": false,
       "outputs": []
+    },
+    "deploy:staging": {
+      "dependsOn": ["build:vercel", "test:compliance"],
+      "cache": false,
+      "persistent": false
+    },
+    "deploy:production": {
+      "dependsOn": ["build:vercel", "test:compliance", "test:security"],
+      "cache": false,
+      "persistent": false
     }
   },
   "remoteCache": {
-    "enabled": false
+    "enabled": true
   }
 }

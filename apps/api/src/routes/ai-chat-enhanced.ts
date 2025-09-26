@@ -9,11 +9,12 @@ import { endTimerMs, logMetric, startTimer } from '../services/metrics'
 
 // Import semantic caching components
 import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction'
-import { AIProviderResponse, AIProviderRouter } from '../services/ai-provider-router-new'
+import AIProviderRouterService, { ProviderConfig, ProviderHealthCheck, RoutingRequest, RoutingResponse } from '../services/ai-provider-router'
+import { AuditTrailService } from '../services/audit-trail'
 import { CacheKeyGenerator, SemanticCacheService } from '../services/semantic-cache'
 
 // Import healthcare compliance utilities
-import { HealthcareComplianceContext, LGPDComplianceValidator } from '../middleware/lgpd-compliance'
+import { LGPDComplianceValidator } from '../utils/lgpd-compliance-validator'
 
 // Import OpenTelemetry for performance monitoring
 import { SpanStatusCode, trace } from '@opentelemetry/api'
@@ -53,7 +54,10 @@ const app = new Hono()
 // Initialize services
 const semanticCache = new SemanticCacheService()
 const piiSanitizer = new HealthcareDataSanitizer(PIIRedactionLevel.HEALTHCARE)
-const aiRouter = new AIProviderRouter()
+const aiRouter = new AIProviderRouterService(
+  new SemanticCacheService(),
+  new AuditTrailService()
+)
 const lgpdValidator = new LGPDComplianceValidator()
 
 // Enable CORS for browser requests

@@ -10,6 +10,7 @@ export class FinancialManagementService {
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
     this.supabaseUrl = config.supabaseUrl
     this.supabaseKey = config.supabaseKey
+    console.log('FinancialManagementService initialized with:', config.supabaseUrl)
   }
 
   // Revenue Management

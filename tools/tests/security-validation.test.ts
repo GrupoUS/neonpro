@@ -4,40 +4,40 @@
  * Following KISS and YAGNI principles - only essential security checks
  */
 
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from "vitest"
 
-describe('Essential Security Validation', () => {
-  describe('Input Validation Patterns', () => {
-    it('should detect missing input sanitization', () => {
+describe("Essential Security Validation", () => {
+  describe("Input Validation Patterns", () => {
+    it("should detect missing input sanitization", () => {
       const vulnerableCode = `
         function setUserContent(element: HTMLElement, content: string) {
           element.innerHTML = content // XSS vulnerability
         }
       `
-      
+
       const hasInnerHTML = /innerHTML\s*=/.test(vulnerableCode)
       expect(hasInnerHTML).toBe(true)
     })
 
-    it('should detect proper input sanitization', () => {
+    it("should detect proper input sanitization", () => {
       const secureCode = `
         function setUserContent(element: HTMLElement, content: string) {
           element.textContent = content // Safe alternative
         }
       `
-      
+
       const hasTextContent = /textContent\s*=/.test(secureCode)
       expect(hasTextContent).toBe(true)
     })
 
-    it('should detect SQL injection patterns', () => {
+    it("should detect SQL injection patterns", () => {
       const vulnerableCode = `
         function getUserById(id: string) {
           const query = "SELECT * FROM users WHERE id = '" + id + "'"
           return executeQuery(query)
         }
       `
-      
+
       const hasStringConcatenation = /\+\s*id/.test(vulnerableCode)
       const hasSqlInQuery = /SELECT.*FROM.*WHERE/.test(vulnerableCode)
       expect(hasStringConcatenation).toBe(true)
@@ -45,28 +45,28 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('Authentication and Authorization', () => {
-    it('should detect password handling patterns', () => {
+  describe("Authentication and Authorization", () => {
+    it("should detect password handling patterns", () => {
       const authCode = `
         function verifyPassword(password: string, hash: string) {
           return bcrypt.compare(password, hash)
         }
       `
-      
+
       const hasPasswordParam = /password/.test(authCode)
       const hasHashing = /bcrypt|hash|compare/.test(authCode)
       expect(hasPasswordParam).toBe(true)
       expect(hasHashing).toBe(true)
     })
 
-    it('should detect session management', () => {
+    it("should detect session management", () => {
       const sessionCode = `
         function createUserSession(user: User) {
           const token = jwt.sign({ userId: user.id }, SECRET_KEY)
           return { token, user: user }
         }
       `
-      
+
       const hasJwtUsage = /jwt\.(sign|verify)/.test(sessionCode)
       const hasTokenGeneration = /token/.test(sessionCode)
       expect(hasJwtUsage).toBe(true)
@@ -74,22 +74,22 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('Data Protection', () => {
-    it('should detect sensitive data exposure', () => {
+  describe("Data Protection", () => {
+    it("should detect sensitive data exposure", () => {
       const exposedDataCode = `
         function logUser(user: User) {
           console.log('User:', user.password, user.creditCard) // Exposing sensitive data
           console.log('User data:', user)
         }
       `
-      
+
       const hasSensitiveLogging = /console\.log.*password/.test(exposedDataCode)
       const hasFullUserLogging = /console\.log.*User/.test(exposedDataCode)
       expect(hasSensitiveLogging).toBe(true)
       expect(hasFullUserLogging).toBe(true)
     })
 
-    it('should detect data encryption patterns', () => {
+    it("should detect data encryption patterns", () => {
       const encryptionCode = `
         function encryptData(data: string): string {
           const algorithm = 'aes-256-cbc'
@@ -101,7 +101,7 @@ describe('Essential Security Validation', () => {
           return encrypted
         }
       `
-      
+
       const hasEncryption = /(encrypt|cipher|crypto)/.test(encryptionCode)
       const hasKeyGeneration = /key.*=/.test(encryptionCode)
       expect(hasEncryption).toBe(true)
@@ -109,8 +109,8 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('API Security', () => {
-    it('should detect CORS configuration', () => {
+  describe("API Security", () => {
+    it("should detect CORS configuration", () => {
       const corsCode = `
         app.use(cors({
           origin: 'https://trusted-domain.com',
@@ -118,14 +118,14 @@ describe('Essential Security Validation', () => {
           methods: ['GET', 'POST', 'PUT', 'DELETE']
         }))
       `
-      
+
       const hasCorsOrigin = /origin:\s*['"]/.test(corsCode)
       const hasCorsConfig = /cors\(/.test(corsCode)
       expect(hasCorsOrigin).toBe(true)
       expect(hasCorsConfig).toBe(true)
     })
 
-    it('should detect rate limiting', () => {
+    it("should detect rate limiting", () => {
       const rateLimitCode = `
         const limiter = rateLimit({
           windowMs: 15 * 60 * 1000, // 15 minutes
@@ -134,7 +134,7 @@ describe('Essential Security Validation', () => {
         
         app.use('/api/', limiter)
       `
-      
+
       const hasRateLimit = /rateLimit/.test(rateLimitCode)
       const hasWindowMs = /windowMs/.test(rateLimitCode)
       expect(hasRateLimit).toBe(true)
@@ -142,22 +142,22 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('File System Security', () => {
-    it('should detect path traversal patterns', () => {
+  describe("File System Security", () => {
+    it("should detect path traversal patterns", () => {
       const vulnerableCode = `
         function readFile(filename: string) {
           const filePath = '/app/data/' + filename
           return fs.readFileSync(filePath, 'utf8')
         }
       `
-      
+
       const hasPathConcatenation = /\+\s*filename/.test(vulnerableCode)
       const hasFileAccess = /fs\.(readFile|readFileSync)/.test(vulnerableCode)
       expect(hasPathConcatenation).toBe(true)
       expect(hasFileAccess).toBe(true)
     })
 
-    it('should detect safe file access patterns', () => {
+    it("should detect safe file access patterns", () => {
       const safeCode = `
         function readFile(filename: string) {
           const safeFilename = path.basename(filename)
@@ -168,7 +168,7 @@ describe('Essential Security Validation', () => {
           return fs.readFileSync(filePath, 'utf8')
         }
       `
-      
+
       const hasPathSanitization = /path\.basename/.test(safeCode)
       const hasPathValidation = /startsWith/.test(safeCode)
       expect(hasPathSanitization).toBe(true)
@@ -176,8 +176,8 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('Environment and Configuration', () => {
-    it('should detect environment variable usage', () => {
+  describe("Environment and Configuration", () => {
+    it("should detect environment variable usage", () => {
       const envCode = `
         const dbUrl = process.env.DATABASE_URL
         const apiKey = process.env.API_KEY
@@ -187,14 +187,14 @@ describe('Essential Security Validation', () => {
           throw new Error('Missing required environment variables')
         }
       `
-      
+
       const hasEnvUsage = /process\.env\./.test(envCode)
-      const hasEnvValidation = /if.*\!/.test(envCode)
+      const hasEnvValidation = /if.*!/.test(envCode)
       expect(hasEnvUsage).toBe(true)
       expect(hasEnvValidation).toBe(true)
     })
 
-    it('should detect configuration validation', () => {
+    it("should detect configuration validation", () => {
       const configCode = `
         interface Config {
           database: {
@@ -211,7 +211,7 @@ describe('Essential Security Validation', () => {
           return !!(config.database.url && config.security.bcryptRounds >= 10)
         }
       `
-      
+
       const hasConfigInterface = /interface\s+Config/.test(configCode)
       const hasConfigValidation = /validateConfig/.test(configCode)
       expect(hasConfigInterface).toBe(true)
@@ -219,8 +219,8 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('Error Handling Security', () => {
-    it('should detect secure error handling', () => {
+  describe("Error Handling Security", () => {
+    it("should detect secure error handling", () => {
       const secureErrorHandling = `
         function handleApiError(error: Error) {
           // Log error for debugging
@@ -233,14 +233,14 @@ describe('Essential Security Validation', () => {
           }
         }
       `
-      
+
       const hasErrorLogging = /logger\.(error|warn)/.test(secureErrorHandling)
       const hasGenericErrorResponse = /Internal server error/.test(secureErrorHandling)
       expect(hasErrorLogging).toBe(true)
       expect(hasGenericErrorResponse).toBe(true)
     })
 
-    it('should detect error information disclosure', () => {
+    it("should detect error information disclosure", () => {
       const vulnerableErrorHandling = `
         function handleError(error: Error) {
           return res.status(500).json({
@@ -250,7 +250,7 @@ describe('Essential Security Validation', () => {
           })
         }
       `
-      
+
       const hasStackExposure = /stack.*error\.stack/.test(vulnerableErrorHandling)
       const hasFullErrorExposure = /details.*error/.test(vulnerableErrorHandling)
       expect(hasStackExposure).toBe(true)
@@ -258,8 +258,8 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('HTTP Security Headers', () => {
-    it('should detect security headers configuration', () => {
+  describe("HTTP Security Headers", () => {
+    it("should detect security headers configuration", () => {
       const headersCode = `
         app.use(helmet({
           contentSecurityPolicy: {
@@ -275,7 +275,7 @@ describe('Essential Security Validation', () => {
           }
         }))
       `
-      
+
       const hasHelmetUsage = /helmet/.test(headersCode)
       const hasCspConfig = /contentSecurityPolicy/.test(headersCode)
       const hasHstsConfig = /hsts/.test(headersCode)
@@ -285,8 +285,8 @@ describe('Essential Security Validation', () => {
     })
   })
 
-  describe('Cryptographic Practices', () => {
-    it('should detect secure random generation', () => {
+  describe("Cryptographic Practices", () => {
+    it("should detect secure random generation", () => {
       const secureRandomCode = `
         function generateSecureToken(length: number): string {
           const buffer = crypto.randomBytes(length)
@@ -297,14 +297,14 @@ describe('Essential Security Validation', () => {
           return crypto.randomBytes(32).toString('base64')
         }
       `
-      
+
       const hasSecureRandom = /crypto\.randomBytes/.test(secureRandomCode)
       const hasTokenGeneration = /generate.*Token/.test(secureRandomCode)
       expect(hasSecureRandom).toBe(true)
       expect(hasTokenGeneration).toBe(true)
     })
 
-    it('should detect weak random patterns', () => {
+    it("should detect weak random patterns", () => {
       const weakRandomCode = `
         function generateId() {
           return Math.random().toString(36).substr(2, 9) // Weak random
@@ -314,7 +314,7 @@ describe('Essential Security Validation', () => {
           return Date.now().toString(36) + Math.random().toString(36)
         }
       `
-      
+
       const hasMathRandom = /Math\.random/.test(weakRandomCode)
       const hasDateBasedToken = /Date\.now/.test(weakRandomCode)
       expect(hasMathRandom).toBe(true)

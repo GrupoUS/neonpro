@@ -7,7 +7,7 @@ Testes simples e funcionais que os agentes @.claude/agents/code-review/ podem ut
 ### 1. Importar as utilidades
 
 ```typescript
-import { validateFile, validateCodeQuality, validateSecurity } from './agent-utils'
+import { validateCodeQuality, validateFile, validateSecurity } from "./agent-utils"
 ```
 
 ### 2. Validar um arquivo de código
@@ -20,7 +20,7 @@ const code = `
   }
 `
 
-const result = validateFile(code, 'example.ts')
+const result = validateFile(code, "example.ts")
 console.log(result.qualityScore) // Score de 0-100
 console.log(result.recommendations) // Lista de melhorias
 ```
@@ -41,6 +41,7 @@ const hasPerformanceIssues = validatePerformance.hasMemoryLeaks(code)
 ## 📋 Estrutura dos Testes
 
 ### Arquivos
+
 - `agent-helpers.test.ts` - Testes de helpers para agents
 - `basic-functionality.test.ts` - Testes de funcionalidade básica
 - `security-validation.test.ts` - Testes de segurança essencial
@@ -49,23 +50,27 @@ const hasPerformanceIssues = validatePerformance.hasMemoryLeaks(code)
 ### Categorias de Validação
 
 #### Qualidade de Código
+
 - Detecção de console statements
 - Identificação de TODO/FIXME comments
 - Verificação de interfaces e tipos
 - Análise de complexidade de funções
 
 #### Segurança
+
 - Detecção de vulnerabilidades XSS
 - Identificação de eval() usage
 - Verificação de segredos hardcoded
 - Análise de SQL injection patterns
 
 #### Performance
+
 - Detecção de memory leaks
 - Identificação de loops ineficientes
 - Análise de funções muito grandes
 
 #### Domínio Healthcare
+
 - Detecção de dados de pacientes
 - Identificação de padrões de autenticação
 - Verificação de dados sensíveis

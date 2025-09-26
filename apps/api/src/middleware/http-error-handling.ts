@@ -1,6 +1,6 @@
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 /**
  * HTTP error handling middleware with enhanced error processing

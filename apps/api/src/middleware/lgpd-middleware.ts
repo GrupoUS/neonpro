@@ -1,7 +1,7 @@
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 /**
  * LGPD (Lei Geral de Proteção de Dados) compliance middleware

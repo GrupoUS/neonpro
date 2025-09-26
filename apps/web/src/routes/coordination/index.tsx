@@ -15,7 +15,6 @@ import {
   Users,
   Video,
 } from 'lucide-react'
-import * as React from 'react'
 import { useEffect, useState } from 'react'
 
 export const Route = createFileRoute('/coordination/')({

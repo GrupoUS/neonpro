@@ -2,7 +2,8 @@ import { TreatmentPackageScheduler } from '@/components/aesthetic-scheduling/Tre
 import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 export const Route = createFileRoute('/aesthetic-scheduling/packages')({
   component: TreatmentPackageSchedulerPage,
@@ -35,7 +36,7 @@ function TreatmentPackageSchedulerPage() {
           const result = await api.aestheticScheduling.scheduleTreatmentPackage(data)
           return result
         } catch (error) {
-          console.error('Error scheduling treatment package:', error)
+          await logger.error('Error scheduling treatment package:')
           throw error
         }
       }}

@@ -17,7 +17,6 @@ import {
   TrendingUp,
   Users,
 } from 'lucide-react'
-import * as React from 'react'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/financial-management/')({

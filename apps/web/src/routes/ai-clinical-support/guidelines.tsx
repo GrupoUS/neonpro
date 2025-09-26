@@ -2,7 +2,8 @@ import { TreatmentGuidelinesViewer } from '@/components/ai-clinical-support/Trea
 import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface TreatmentGuidelinesLoaderData {
@@ -47,10 +48,10 @@ function TreatmentGuidelinesPage() {
       onGuidelineSelect={async guideline => {
         try {
           // Handle guideline selection (e.g., track usage, bookmark, etc.)
-          console.warn('Guideline selected:', guideline)
+          await logger.warn('Guideline selected:')
           return guideline
         } catch (error) {
-          console.error('Error selecting guideline:', error)
+          await logger.error('Error selecting guideline:')
           throw error
         }
       }}

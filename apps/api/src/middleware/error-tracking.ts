@@ -4,7 +4,7 @@
  * Global error handlers and tracking setup for the API
  */
 
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Setup global error handlers for unhandled errors

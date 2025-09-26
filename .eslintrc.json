@@ -57,6 +57,12 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": ["tools/tests/**/*.{ts,tsx,js}"],
+      "rules": {
+        "no-console": "off"
+      }
     }
   ],
 

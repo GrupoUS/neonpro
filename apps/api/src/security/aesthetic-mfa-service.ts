@@ -14,7 +14,7 @@ import crypto from 'crypto'
 import { qrcode } from 'qrcode'
 import { speakeasy } from 'speakeasy'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { EnhancedSessionManager } from './enhanced-session-manager'
 
 // TOTP Configuration

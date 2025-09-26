@@ -1,8 +1,9 @@
 import { api } from '@/lib/api'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Plus, Save, Trash2, X } from 'lucide-react'
-import * as React from 'react'
 import { useState } from 'react'
+import { logger } from '@/utils/logger'
+
 
 export const Route = createFileRoute('/inventory/new-product')({
   component: NewProduct,
@@ -77,7 +78,7 @@ function NewProduct() {
       const response = await api.inventory.getCategories.query()
       setCategories(response)
     } catch (error) {
-      console.error('Error loading categories:', error)
+      await logger.error('Error loading categories:')
     }
   }
 
@@ -89,13 +90,13 @@ function NewProduct() {
       await api.inventory.createProduct.mutate(formData)
       navigate({ to: '/inventory' })
     } catch (error) {
-      console.error('Error creating product:', error)
+      await logger.error('Error creating product:')
     } finally {
       setLoading(false)
     }
   }
 
-  const handleInputChange = (field: keyof ProductFormData, value: any) => {
+  const handleInputChange = <T extends keyof ProductFormData>(field: T, value: ProductFormData[T]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 

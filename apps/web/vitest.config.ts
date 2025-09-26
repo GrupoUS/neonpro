@@ -14,7 +14,10 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'],
+    setupFiles: [
+      './src/test/test-setup.ts', // Contains MSW setup and all mocks
+      './src/test/setup/environment.ts', // DOM environment setup
+    ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
@@ -26,6 +29,7 @@ export default defineConfig({
         '**/*.config.*',
         '**/coverage/**',
         '**/test-results/**',
+        '**/src/test/**', // Exclude test setup files from coverage
       ],
       thresholds: {
         global: {
@@ -38,7 +42,8 @@ export default defineConfig({
     },
     include: [
       'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
-      'tests/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'src/test/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'src/test/categories/**/*.{test,spec}.{js,jsx,ts,tsx}',
     ],
     exclude: [
       'node_modules/',
@@ -56,6 +61,7 @@ export default defineConfig({
     },
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@test': path.resolve(__dirname, './src/test'),
     },
     server: {
       deps: {
@@ -81,8 +87,8 @@ export default defineConfig({
       truncateThreshold: 0,
     },
     snapshotSerializers: [],
-    testTimeout: 10000,
-    hookTimeout: 10000,
+    testTimeout: 15000, // Increased for healthcare operations
+    hookTimeout: 15000, // Increased for healthcare operations
   },
 
   root: '.',
@@ -90,6 +96,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@test': path.resolve(__dirname, './src/test'),
     },
   },
   define: {

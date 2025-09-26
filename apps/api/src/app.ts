@@ -18,7 +18,7 @@ import { appRouter } from './trpc/router'
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
-import { initializeLogger, logger } from './lib/logger'
+import { logger } from "./utils/healthcare-errors"
 import { initializeSentry, sentryMiddleware } from './lib/sentry'
 import { errorTracker } from './services/error-tracking-bridge'
 import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init'

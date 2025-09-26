@@ -129,6 +129,7 @@ export class MultiProfessionalCoordinationService {
   constructor({ database, auditService }: { database?: any; auditService?: any } = {}) {
     this.database = database
     this.auditService = auditService
+    console.log('MultiProfessionalCoordinationService initialized with database:', !!database)
   }
 
   // Team Management

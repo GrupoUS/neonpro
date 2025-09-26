@@ -30,12 +30,53 @@ const buttonVariants = cva(
   },
 )
 
+/**
+ * Extended props interface for Button component
+ * @interface ButtonProps
+ * @extends React.ButtonHTMLAttributes<HTMLButtonElement>
+ */
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants>
 {
+  /** When true, renders the component as a Slot component for compound components */
   asChild?: boolean
 }
 
+/**
+ * Button Component
+ * 
+ * A versatile button component built with Radix UI primitives and CVA for
+ * consistent styling across the healthcare application. Supports multiple variants,
+ * sizes, and accessibility features.
+ * 
+ * Features:
+ * - Multiple visual variants (default, destructive, outline, secondary, ghost, link)
+ * - Size variants (default, sm, lg, icon)
+ * - Full accessibility support with ARIA attributes
+ * - Forward ref support for compound components
+ * - Consistent styling with healthcare design system
+ * 
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <Button>Save Patient</Button>
+ * 
+ * // With variant and size
+ * <Button variant="destructive" size="lg">Delete Record</Button>
+ * 
+ * // As a link button
+ * <Button variant="link">View Details</Button>
+ * 
+ * // With accessibility considerations
+ * <Button aria-label="Add new patient">+ Patient</Button>
+ * ```
+ * 
+ * LGPD Compliance Note: Button labels should be clear and descriptive when
+ * handling patient data operations (e.g., "Export Patient Data" vs "Export").
+ * 
+ * @param {ButtonProps} props - Component props
+ * @returns {JSX.Element} Rendered button component
+ */
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button'
@@ -51,3 +92,10 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button'
 
 export { Button, buttonVariants }
+
+/**
+ * Button variants configuration using CVA (Class Variance Authority)
+ * Provides consistent styling variants for different button states and purposes.
+ * 
+ * @type {VariantProps<typeof buttonVariants>}
+ */

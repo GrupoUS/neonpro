@@ -13,7 +13,7 @@
 import { SupabaseClient, createClient } from '@supabase/supabase-js'
 import { Redis } from 'ioredis'
 import { CircuitBreakerService } from './circuit-breaker/circuit-breaker-service'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { EventEmitter } from 'events'
 
 // ============================================================================

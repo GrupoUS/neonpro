@@ -11,8 +11,8 @@ export const AnalyticsConfigurationSchema = z.object({
   description: z.string().optional(),
   configuration: z.record(z.unknown()),
   isActive: z.boolean().default(true),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 })
 
 // Input Schemas
@@ -35,4 +35,4 @@ export const DeleteAnalyticsConfigurationInput = z.object({
 export type AnalyticsConfiguration = z.infer<typeof AnalyticsConfigurationSchema>
 export type CreateAnalyticsConfigurationInputType = z.infer<typeof CreateAnalyticsConfigurationInput>
 export type UpdateAnalyticsConfigurationInputType = z.infer<typeof UpdateAnalyticsConfigurationInput>
-export type DeleteAnalyticsConfigurationInputType = z.infer<typeof DeleteAnalyticsConfigurationInput>
+// export type DeleteAnalyticsConfigurationInputType = z.infer<typeof DeleteAnalyticsConfigurationInput>

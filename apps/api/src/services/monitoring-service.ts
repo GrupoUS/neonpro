@@ -10,7 +10,7 @@
  */
 
 import { RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { WebSocketSecurityMiddleware } from '../middleware/websocket-security-middleware'
 import { getErrorTrackingHealth } from '../services/error-tracking-init'
 import { EnhancedAIDataService } from './enhanced-ai-data-service'

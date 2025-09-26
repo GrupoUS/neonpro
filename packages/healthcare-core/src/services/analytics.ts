@@ -25,6 +25,7 @@ export class AnalyticsService {
     input: CreateAnalyticsConfigurationInputType
   ): Promise<AnalyticsConfiguration> {
     // Mock implementation - replace with actual database logic
+    console.log('Using config:', this.config.supabaseUrl)
     const configuration: AnalyticsConfiguration = {
       id: `config_${Date.now()}`,
       name: input.name,

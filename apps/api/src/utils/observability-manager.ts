@@ -350,12 +350,21 @@ export class ObservabilityManager {
     for (const healthCheck of this.healthChecks.values()) {
       try {
         const startTime = Date.now()
+        let timeoutHandle: NodeJS.Timeout
+
         const result = await Promise.race([
           healthCheck.check(),
-          new Promise<{ healthy: boolean; message: string }>((_, reject) =>
-            setTimeout(() => reject(new Error('Health check timeout')), healthCheck.timeout)
-          )
-        ])
+          new Promise<{ healthy: boolean; message: string }>((_, reject) => {
+            timeoutHandle = setTimeout(() => {
+              reject(new Error('Health check timeout'))
+            }, healthCheck.timeout)
+          })
+        ]).finally(() => {
+          // Always clear timeout to prevent memory leaks in both success and error cases
+          if (timeoutHandle) {
+            clearTimeout(timeoutHandle)
+          }
+        })
         const responseTime = Date.now() - startTime
 
         const isHealthy = result.healthy

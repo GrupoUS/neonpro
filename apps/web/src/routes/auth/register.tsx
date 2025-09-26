@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Building2, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react'
-import * as React from 'react'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/auth/register')({

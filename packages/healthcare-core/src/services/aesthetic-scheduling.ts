@@ -134,7 +134,6 @@ export interface ContraindicationCheck {
 }
 
 export class EnhancedAestheticSchedulingService {
-  private professionalCache = new Map<string, any>()
   private procedureCache = new Map<string, AestheticProcedure>()
 
   constructor() {
@@ -166,6 +165,7 @@ export class EnhancedAestheticSchedulingService {
           id: procedureId,
           name: 'Aesthetic Procedure',
           procedureType: 'facial' as const,
+          category: 'facial',
           baseDuration: 60,
           basePrice: 500,
           recoveryPeriodDays: 7,
@@ -184,7 +184,7 @@ export class EnhancedAestheticSchedulingService {
             sessionNumber: session,
             totalSessions: sessionCount,
             recoveryBuffer: 15,
-            specialEquipment: procedure.specialRequirements,
+            specialEquipment: procedure.specialRequirements || [],
             assistantRequired: procedure.procedureType === 'surgical',
             preProcedureInstructions: ['Jejum de 6 horas', 'Evitar aspirina'],
             postProcedureInstructions: ['Repouso por 24h', 'Aplicar gelo'],

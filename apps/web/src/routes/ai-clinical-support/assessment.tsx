@@ -2,7 +2,8 @@ import { PatientAssessmentForm } from '@/components/ai-clinical-support/PatientA
 import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import * as React from 'react'
+import { logger } from '@/utils/logger'
+
 
 // Define loader data type
 interface PatientAssessmentLoaderData {
@@ -55,7 +56,7 @@ function PatientAssessmentPage() {
           const result = await api.aiClinicalSupport.createPatientAssessment(assessmentData)
           return result
         } catch (error) {
-          console.error('Error submitting patient assessment:', error)
+          await logger.error('Error submitting patient assessment:')
           throw error
         }
       }}

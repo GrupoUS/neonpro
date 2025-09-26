@@ -22,28 +22,76 @@
     "api/v2/ai/realtime.ts": {
       "maxDuration": 300,
       "memory": 1024
+    },
+    "api/healthcare/**/*.ts": {
+      "maxDuration": 30,
+      "memory": 512,
+      "runtime": "nodejs18.x"
+    },
+    "api/compliance/**/*.ts": {
+      "maxDuration": 30,
+      "memory": 512,
+      "runtime": "nodejs18.x"
     }
   },
-  "routes": [
+  "headers": [
     {
-      "src": "/api/v2/ai/(.*)",
-      "dest": "/api/v2/ai/$1",
-      "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "headers": {
-        "Access-Control-Allow-Origin": "https://neonpro.healthcare",
-        "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization,X-API-Key,X-Request-ID"
-      }
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.supabase.com https://vercel.com; font-src 'self' data:; frame-ancestors 'none';"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "X-Healthcare-Compliance",
+          "value": "LGPD-ANVISA-CFM"
+        }
+      ]
     },
     {
-      "src": "/trpc/(.*)",
-      "dest": "/trpc/$1",
-      "methods": ["POST", "GET"],
-      "headers": {
-        "Access-Control-Allow-Origin": "https://neonpro.healthcare",
-        "Access-Control-Allow-Methods": "POST,GET",
-        "Access-Control-Allow-Headers": "Content-Type,Authorization"
-      }
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        }
+      ]
     }
   ],
   "env": {
@@ -53,7 +101,15 @@
     "AI_LGPD_COMPLIANCE": "true",
     "AI_ANALYTICS_ENABLED": "true",
     "AUDIT_LOGGING_ENABLED": "true",
-    "LOG_LEVEL": "info"
+    "LOG_LEVEL": "info",
+    "HEALTHCARE_MODE": "true",
+    "LGPD_COMPLIANCE": "true",
+    "ANVISA_COMPLIANCE": "true",
+    "CFM_COMPLIANCE": "true",
+    "DATA_RESIDENCY": "brazil",
+    "BRAZIL_DATA_RESIDENCY": "true",
+    "PATIENT_DATA_ANONYMIZATION": "true",
+    "HEALTHCARE_BACKUP_RETENTION": "365"
   },
   "build": {
     "env": {
@@ -73,6 +129,14 @@
     {
       "path": "/api/health/ai-agents",
       "schedule": "*/10 * * * *"
+    },
+    {
+      "path": "/api/compliance/audit-daily",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/compliance/lgpd-data-retention",
+      "schedule": "0 4 * * *"
     }
   ]
 }

@@ -12,7 +12,6 @@ import {
   // Heart,
   // FileText
 } from 'lucide-react'
-import * as React from 'react'
 
 export const Route = createFileRoute('/ai-clinical-support/__root')({
   component: AIClinicalSupportLayout,

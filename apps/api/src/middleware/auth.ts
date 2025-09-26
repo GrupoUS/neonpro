@@ -1,6 +1,6 @@
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Basic authentication middleware

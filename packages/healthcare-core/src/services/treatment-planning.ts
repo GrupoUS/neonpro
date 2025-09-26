@@ -10,6 +10,7 @@ export class TreatmentPlanningService {
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
     this.supabaseUrl = config.supabaseUrl
     this.supabaseKey = config.supabaseKey
+    console.log('TreatmentPlanningService initialized with:', config.supabaseUrl)
   }
 
   // Treatment Plan Management

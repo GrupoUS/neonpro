@@ -1,5 +1,4 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router'
-import * as React from 'react'
 import { Toaster } from 'sonner'
 import { ErrorBoundary } from '../components/ErrorBoundary'
 import { TRPCProvider } from '../components/stubs/TRPCProvider'
@@ -11,8 +10,8 @@ export const Route = createRootRoute({
       <TRPCProvider>
         <UnifiedAgentProvider
           config={{
-            clinicId: process.env.NEXT_PUBLIC_CLINIC_ID || 'default-clinic',
-            userId: process.env.NEXT_PUBLIC_USER_ID || 'default-user',
+            clinicId: (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_CLINIC_ID) || 'default-clinic',
+            userId: (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_USER_ID) || 'default-user',
             userRole: 'admin', // Would be determined by auth in real app
             language: 'pt-BR',
             compliance: {

@@ -193,8 +193,8 @@ export class PWAPushManager {
       this.subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(
-          process.env.VITE_VAPID_PUBLIC_KEY ||
-            'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H',
+          import.meta.env.VITE_VAPID_PUBLIC_KEY ||
+            'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H'
         ) as BufferSource,
       })
 

@@ -31,9 +31,9 @@ const unifiedAgentInterface = {
   initialize: async () => {},
   getHealthStatus: async () => ({ success: true, data: {} }),
   createConversation: async (sessionId: string, userId: string, patientId?: string, description?: string, options?: any) => ({ success: true }),
-  processRequest: async (request: UnifiedAgentRequest) => ({ 
-    success: true, 
-    data: { response: { content: 'Mock response', type: 'text' } } 
+  processRequest: async (request: UnifiedAgentRequest) => ({
+    success: true,
+    data: { response: { content: 'Mock response', type: 'text' }, success: true }
   }),
 }
 
@@ -273,7 +273,7 @@ export const UnifiedAgentProvider: React.FC<UnifiedAgentProviderProps> = ({
           return JSON.parse(response.response.content)
         } catch {
           // Return natural language response
-          return { response: response.response.content, success: true } as UnifiedAgentResponse
+          return { response: { content: response.response.content, type: 'text' }, success: true } as UnifiedAgentResponse
         }
       }
 
@@ -386,11 +386,16 @@ export const useUnifiedAgent = () => {
 // Hook to access CopilotKit co-agent functionality
 export const useHealthcareAgent = () => {
   const { currentSession, sendMessage, executeAction } = useUnifiedAgent()
-  
+
   // Get current agent from CopilotKit
   const coAgent = useCoAgent({
     name: 'healthcare-agent',
-    instructions: `Healthcare assistant for ${currentSession?.clinicId || 'NeonPro'}`,
+    initialState: {
+      status: 'idle' as const,
+      lastResponse: '',
+      currentTask: '',
+    },
+    instructions: `Healthcare assistant for ${currentSession?.clinicId || 'NeonPro'}`
   })
 
   return {

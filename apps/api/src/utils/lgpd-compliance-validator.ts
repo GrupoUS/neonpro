@@ -19,7 +19,7 @@ import { type HealthcarePrismaClient } from '../clients/prisma'
 import { LGPDComplianceError } from './healthcare-errors.js'
 
 // LGPD Legal Basis types
-export enum LGPDLegalBasis {
+enum LGPDLegalBasis {
   CONSENT = 'consent',
   LEGAL_OBLIGATION = 'legal_obligation',
   PUBLIC_INTEREST = 'public_interest',
@@ -32,7 +32,7 @@ export enum LGPDLegalBasis {
 }
 
 // LGPD Data Categories
-export enum LGPDDataCategory {
+enum LGPDDataCategory {
   PERSONAL_DATA = 'personal_data',
   SENSITIVE_DATA = 'sensitive_data',
   HEALTH_DATA = 'health_data',
@@ -46,7 +46,7 @@ export enum LGPDDataCategory {
 }
 
 // LGPD Data Subject Rights
-export enum LGPDDataSubjectRights {
+enum LGPDDataSubjectRights {
   ACCESS = 'access', // Art. 18, I
   RECTIFICATION = 'rectification', // Art. 18, III
   DELETION = 'deletion', // Art. 18, VI
@@ -59,7 +59,7 @@ export enum LGPDDataSubjectRights {
 }
 
 // LGPD Processing Purposes
-export enum LGPDProcessingPurpose {
+enum LGPDProcessingPurpose {
   HEALTHCARE_TREATMENT = 'healthcare_treatment',
   PREVENTIVE_MEDICINE = 'preventive_medicine',
   MEDICAL_DIAGNOSIS = 'medical_diagnosis',

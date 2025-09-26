@@ -1,11 +1,39 @@
 import { Loader2 } from 'lucide-react'
 
+/**
+ * Props for the LoadingSpinner component
+ * @interface LoadingSpinnerProps
+ */
 interface LoadingSpinnerProps {
+  /** Size variant of the spinner */
   size?: 'sm' | 'md' | 'lg'
+  /** Optional text to display alongside the spinner */
   text?: string
+  /** Additional CSS classes for styling */
   className?: string
 }
 
+/**
+ * LoadingSpinner Component
+ * 
+ * A configurable loading spinner component for displaying loading states
+ * throughout the healthcare application. Supports multiple sizes and optional text.
+ * 
+ * @example
+ * ```tsx
+ * // Basic usage
+ * <LoadingSpinner />
+ * 
+ * // With custom size and text
+ * <LoadingSpinner size="lg" text="Carregando dados do paciente..." />
+ * 
+ * // With custom styling
+ * <LoadingSpinner className="mt-4" text="Processando LGPD consent" />
+ * ```
+ * 
+ * @param {LoadingSpinnerProps} props - Component props
+ * @returns {JSX.Element} Rendered loading spinner component
+ */
 export function LoadingSpinner({
   size = 'md',
   text,
@@ -25,10 +53,33 @@ export function LoadingSpinner({
   )
 }
 
+/**
+ * Props for the LoadingPage component
+ * @interface LoadingPageProps
+ */
 interface LoadingPageProps {
+  /** Optional custom loading text (defaults to 'Carregando...') */
   text?: string
 }
 
+/**
+ * LoadingPage Component
+ * 
+ * A full-page loading component that displays a centered loading spinner
+ * with optional text. Used for full-page loading states in the healthcare application.
+ * 
+ * @example
+ * ```tsx
+ * // Default usage
+ * <LoadingPage />
+ * 
+ * // With custom text
+ * <LoadingPage text="Carregando sistema de saúde..." />
+ * ```
+ * 
+ * @param {LoadingPageProps} props - Component props
+ * @returns {JSX.Element} Rendered full-page loading component
+ */
 export function LoadingPage({ text = 'Carregando...' }: LoadingPageProps) {
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50'>
@@ -39,11 +90,39 @@ export function LoadingPage({ text = 'Carregando...' }: LoadingPageProps) {
   )
 }
 
+/**
+ * Props for the LoadingCard component
+ * @interface LoadingCardProps
+ */
 interface LoadingCardProps {
+  /** Optional custom loading text (defaults to 'Carregando...') */
   text?: string
+  /** Additional CSS classes for card styling */
   className?: string
 }
 
+/**
+ * LoadingCard Component
+ * 
+ * A card-based loading component that displays a loading spinner within
+ * a styled card container. Used for content-specific loading states in
+ * the healthcare application interface.
+ * 
+ * @example
+ * ```tsx
+ * // Default usage
+ * <LoadingCard />
+ * 
+ * // With custom text and styling
+ * <LoadingCard text="Atualizando prontuário..." className="mt-4" />
+ * ```
+ * 
+ * LGPD Compliance Note: This component does not handle sensitive patient data
+ * and is safe to use in all healthcare contexts.
+ * 
+ * @param {LoadingCardProps} props - Component props
+ * @returns {JSX.Element} Rendered loading card component
+ */
 export function LoadingCard({
   text = 'Carregando...',
   className = '',
