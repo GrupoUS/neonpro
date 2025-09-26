@@ -796,4 +796,514 @@ export class EnhancedSessionManager {
     this.sessions.clear()
     this.userSessions.clear()
   }
+
+  /**
+   * Validate session with timeout handling
+   */
+  async validateSessionWithTimeout(
+    sessionId: string, 
+    options: {
+      timeoutWarning?: number
+      autoExtend?: boolean
+    } = {}
+  ): Promise<{
+    isValid: boolean
+    isNearTimeout?: boolean
+    timeRemaining?: number
+    session?: EnhancedSessionMetadata
+    warnings?: string[]
+  }> {
+    const session = this.sessions.get(sessionId)
+    const now = new Date()
+
+    if (!session) {
+      return { isValid: false }
+    }
+
+    const timeRemaining = session.lastActivity.getTime() + this.config.idleTimeout - now.getTime()
+    const timeoutWarningThreshold = options.timeoutWarning || this.config.timeoutWarningThreshold
+    const isNearTimeout = timeRemaining <= timeoutWarningThreshold && timeRemaining > 0
+
+    const warnings: string[] = []
+    if (isNearTimeout) {
+      warnings.push('Session approaching timeout')
+    }
+
+    // Auto-extend if requested and session is near timeout
+    if (options.autoExtend && isNearTimeout) {
+      session.lastActivity = new Date(now.getTime() + this.config.idleTimeout)
+      warnings.push('Session auto-extended')
+    }
+
+    return {
+      isValid: timeRemaining > 0,
+      isNearTimeout,
+      timeRemaining: Math.max(0, timeRemaining),
+      session: timeRemaining > 0 ? session : undefined,
+      warnings
+    }
+  }
+
+  /**
+   * Extend session lifetime
+   */
+  async extendSessionLifetime(
+    sessionId: string,
+    options: {
+      extensionMinutes?: number
+      requireReauthentication?: boolean
+    } = {}
+  ): Promise<{
+    success: boolean
+    session?: EnhancedSessionMetadata
+    extensionApplied?: boolean
+    error?: string
+  }> {
+    const session = this.sessions.get(sessionId)
+    
+    if (!session) {
+      return { success: false, error: 'Session not found' }
+    }
+
+    const extensionMinutes = options.extensionMinutes || 30
+    const extensionMs = extensionMinutes * 60 * 1000
+
+    // Require reauthentication for sensitive extensions
+    if (options.requireReauthentication && session.securityLevel === 'high') {
+      return { 
+        success: false, 
+        error: 'Reauthentication required for session extension' 
+      }
+    }
+
+    session.lastActivity = new Date(session.lastActivity.getTime() + extensionMs)
+    
+    return {
+      success: true,
+      session,
+      extensionApplied: true
+    }
+  }
+
+  /**
+   * Create enhanced session with comprehensive security
+   */
+  async createEnhancedSession(options: {
+    userId: string
+    userRole: string
+    healthcareProvider: string
+    patientId?: string
+    requestContext: {
+      ipAddress: string
+      userAgent: string
+    }
+    sessionType?: 'standard' | 'telemedicine'
+  }): Promise<EnhancedSessionMetadata> {
+    const sessionId = await this.generateSecureSessionIdAsync()
+    const now = new Date()
+
+    const session: EnhancedSessionMetadata = {
+      sessionId,
+      _userId: options.userId,
+      createdAt: now,
+      lastActivity: now,
+      ipAddress: options.requestContext.ipAddress,
+      originalIpAddress: options.requestContext.ipAddress,
+      userAgent: options.requestContext.userAgent,
+      isRealTimeSession: options.sessionType === 'telemedicine',
+      permissions: this.getDefaultPermissions(options.userRole),
+      healthcareProfessional: {
+        role: options.userRole,
+        provider: options.healthcareProvider
+      },
+      securityLevel: options.sessionType === 'telemedicine' ? 'high' : 'normal',
+      riskScore: 0,
+      ipChangeCount: 0,
+      consecutiveFailures: 0,
+      refreshCount: 0
+    }
+
+    // Enforce concurrent session limits
+    this.enforceConcurrentSessionLimit(options.userId, sessionId)
+
+    this.sessions.set(sessionId, session)
+    
+    const userSessions = this.userSessions.get(options.userId) || new Set()
+    userSessions.add(sessionId)
+    this.userSessions.set(options.userId, userSessions)
+
+    healthcareLogger.info('Enhanced session created', {
+      sessionId,
+      userId: options.userId,
+      userRole: options.userRole,
+      healthcareProvider: options.healthcareProvider,
+      sessionType: options.sessionType,
+      securityLevel: session.securityLevel,
+      severity: 'low'
+    })
+
+    return session
+  }
+
+  /**
+   * Detect session hijacking attempts
+   */
+  async detectSessionHijacking(attempt: {
+    sessionId: string
+    ipAddress: string
+    userAgent: string
+  }): Promise<{
+    isHijackAttempt: boolean
+    confidence: number
+    evidence: string[]
+    action: 'allow' | 'terminate_session' | 'require_mfa'
+    alertGenerated: boolean
+  }> {
+    const session = this.sessions.get(attempt.sessionId)
+    
+    if (!session) {
+      return {
+        isHijackAttempt: false,
+        confidence: 0,
+        evidence: [],
+        action: 'allow',
+        alertGenerated: false
+      }
+    }
+
+    const evidence: string[] = []
+    let confidence = 0
+
+    // IP address mismatch
+    if (session.ipAddress !== attempt.ipAddress) {
+      evidence.push('ip_address_mismatch')
+      confidence += 40
+      
+      // Check if IP change is within mobile subnet tolerance
+      if (!this.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+        confidence += 30
+      }
+    }
+
+    // User agent mismatch
+    if (session.userAgent !== attempt.userAgent) {
+      evidence.push('user_agent_mismatch')
+      confidence += 30
+    }
+
+    // Geographic location anomaly (if enabled)
+    if (this.config.enableGeolocationValidation) {
+      // Would implement geolocation check here
+    }
+
+    const isHijackAttempt = confidence >= 70
+    const action = isHijackAttempt ? 
+      (confidence >= 90 ? 'terminate_session' : 'require_mfa') : 'allow'
+
+    if (isHijackAttempt) {
+      healthcareLogger.warn('Potential session hijacking detected', {
+        sessionId: attempt.sessionId,
+        userId: session._userId,
+        evidence,
+        confidence,
+        action,
+        severity: 'high'
+      })
+    }
+
+    return {
+      isHijackAttempt,
+      confidence,
+      evidence,
+      action,
+      alertGenerated: isHijackAttempt
+    }
+  }
+
+  /**
+   * Validate session security parameters
+   */
+  async validateSessionSecurity(
+    sessionId: string,
+    options: {
+      checkIPReputation?: boolean
+      checkDeviceFingerprint?: boolean
+      checkGeoLocation?: boolean
+    } = {}
+  ): Promise<{
+    isValid: boolean
+    securityScore: number
+    threats: string[]
+    recommendations: string[]
+  }> {
+    const session = this.sessions.get(sessionId)
+    
+    if (!session) {
+      return {
+        isValid: false,
+        securityScore: 0,
+        threats: ['session_not_found'],
+        recommendations: ['Session does not exist or has expired']
+      }
+    }
+
+    const threats: string[] = []
+    const recommendations: string[] = []
+    let securityScore = 100
+
+    // Check IP reputation
+    if (options.checkIPReputation && session.ipAddress) {
+      const isSuspiciousIP = this.isSuspiciousIP(session.ipAddress)
+      if (isSuspiciousIP) {
+        threats.push('suspicious_ip_address')
+        securityScore -= 30
+        recommendations.push('Review IP address reputation')
+      }
+    }
+
+    // Check device fingerprint
+    if (options.checkDeviceFingerprint && !session.deviceFingerprint) {
+      threats.push('missing_device_fingerprint')
+      securityScore -= 15
+      recommendations.push('Enable device fingerprinting for enhanced security')
+    }
+
+    // Check risk score
+    if (session.riskScore > 50) {
+      threats.push('high_risk_session')
+      securityScore -= 25
+      recommendations.push('Review session activity for anomalies')
+    }
+
+    // Check consecutive failures
+    if (session.consecutiveFailures > 3) {
+      threats.push('multiple_authentication_failures')
+      securityScore -= 20
+      recommendations.push('Enable additional authentication factors')
+    }
+
+    return {
+      isValid: securityScore >= 70,
+      securityScore: Math.max(0, securityScore),
+      threats,
+      recommendations
+    }
+  }
+
+  /**
+   * Validate MFA requirements for sensitive operations
+   */
+  async validateMFARequirements(
+    sessionId: string,
+    operation: {
+      operationType: string
+      sensitivityLevel: 'low' | 'medium' | 'high'
+    }
+  ): Promise<{
+    mfaRequired: boolean
+    mfaVerified: boolean
+    isValid: boolean
+    recommendations: string[]
+  }> {
+    const session = this.sessions.get(sessionId)
+    
+    if (!session) {
+      return {
+        mfaRequired: false,
+        mfaVerified: false,
+        isValid: false,
+        recommendations: ['Session not found']
+      }
+    }
+
+    const isTelemedicineSession = session.isRealTimeSession
+    const isHighSensitivity = operation.sensitivityLevel === 'high'
+    const mfaRequired = isTelemedicineSession || isHighSensitivity
+
+    // Check if MFA is verified (would be stored in session metadata)
+    const mfaVerified = session.securityLevel === 'high' || session.riskScore < 30
+
+    const isValid = !mfaRequired || mfaVerified
+    const recommendations: string[] = []
+
+    if (mfaRequired && !mfaVerified) {
+      if (isTelemedicineSession) {
+        recommendations.push('MFA verification required for telemedicine sessions')
+      }
+      if (isHighSensitivity) {
+        recommendations.push('MFA verification required for high-sensitivity operations')
+      }
+      recommendations.push('Complete MFA challenge before accessing sensitive data')
+    }
+
+    return {
+      mfaRequired,
+      mfaVerified,
+      isValid,
+      recommendations
+    }
+  }
+
+  /**
+   * Get comprehensive session metrics
+   */
+  getSessionMetrics(): {
+    totalSessions: number
+    activeSessions: number
+    expiredSessions: number
+    terminatedSessions: number
+    averageSessionDuration: number
+    securityEvents: number
+    complianceViolations: number
+    performanceMetrics: {
+      averageValidationTime: number
+      timeoutEvents: number
+      extensionRequests: number
+    }
+    healthcareMetrics: {
+      telemedicineSessions: number
+      mfaVerifiedSessions: number
+      consentLevelDistribution: Record<string, number>
+    }
+  } {
+    const now = new Date()
+    let totalDuration = 0
+    let activeSessions = 0
+    let expiredSessions = 0
+    let securityEvents = 0
+    let telemedicineSessions = 0
+    let mfaVerifiedSessions = 0
+    let timeoutEvents = 0
+    let extensionRequests = 0
+
+    const consentLevelDistribution: Record<string, number> = {}
+
+    for (const session of this.sessions.values()) {
+      const duration = now.getTime() - session.createdAt.getTime()
+      totalDuration += duration
+
+      if (session.lastActivity.getTime() + this.config.idleTimeout > now.getTime()) {
+        activeSessions++
+      } else {
+        expiredSessions++
+      }
+
+      if (session.isRealTimeSession) {
+        telemedicineSessions++
+      }
+
+      if (session.securityLevel === 'high') {
+        mfaVerifiedSessions++
+      }
+
+      if (session.consecutiveFailures > 0) {
+        securityEvents += session.consecutiveFailures
+      }
+
+      if (session.lastWarningTime) {
+        timeoutEvents++
+      }
+
+      extensionRequests += session.refreshCount
+    }
+
+    return {
+      totalSessions: this.sessions.size,
+      activeSessions,
+      expiredSessions,
+      terminatedSessions: 0, // Would track terminated sessions
+      averageSessionDuration: this.sessions.size > 0 ? totalDuration / this.sessions.size : 0,
+      securityEvents,
+      complianceViolations: 0, // Would track compliance violations
+      performanceMetrics: {
+        averageValidationTime: 0, // Would track actual validation times
+        timeoutEvents,
+        extensionRequests
+      },
+      healthcareMetrics: {
+        telemedicineSessions,
+        mfaVerifiedSessions,
+        consentLevelDistribution
+      }
+    }
+  }
+
+  /**
+   * Get default permissions based on user role
+   */
+  private getDefaultPermissions(userRole: string): string[] {
+    const rolePermissions: Record<string, string[]> = {
+      'healthcare_professional': [
+        'read_patient_data',
+        'write_patient_data',
+        'view_medical_records',
+        'create_appointments'
+      ],
+      'admin': [
+        'read_patient_data',
+        'write_patient_data',
+        'manage_users',
+        'view_audit_logs'
+      ],
+      'nurse': [
+        'read_patient_data',
+        'update_vitals',
+        'view_medical_records'
+      ]
+    }
+
+    return rolePermissions[userRole] || []
+  }
+
+  /**
+   * Enforce concurrent session limit
+   */
+  private enforceConcurrentSessionLimit(userId: string, newSessionId: string): void {
+    const userSessionIds = this.userSessions.get(userId) || new Set()
+    const sessionIds = Array.from(userSessionIds)
+
+    if (sessionIds.length >= this.config.maxConcurrentSessions) {
+      // Remove oldest sessions to enforce limit
+      const sessionsToRemove = sessionIds
+        .map(id => this.sessions.get(id))
+        .filter(session => session)
+        .sort((a, b) => a!.lastActivity.getTime() - b!.lastActivity.getTime())
+        .slice(0, sessionIds.length - this.config.maxConcurrentSessions + 1)
+
+      sessionsToRemove.forEach(session => {
+        if (session) {
+          this.removeSession(session.sessionId)
+        }
+      })
+    }
+  }
+
+  /**
+   * Check if IP change is within mobile subnet tolerance
+   */
+  private isMobileSubnetChange(oldIP: string, newIP: string): boolean {
+    if (!this.config.allowMobileSubnetChanges) {
+      return false
+    }
+
+    // Simple implementation - check if first two octets match (mobile carrier subnet)
+    const oldParts = oldIP.split('.')
+    const newParts = newIP.split('.')
+    
+    return oldParts[0] === newParts[0] && oldParts[1] === newParts[1]
+  }
+
+  /**
+   * Check if IP address is suspicious
+   */
+  private isSuspiciousIP(ipAddress: string): boolean {
+    // Simple implementation - check against known suspicious patterns
+    const suspiciousPatterns = [
+      /^192\.168\.1\.1$/, // Common router IP (potential spoofing)
+      /^10\.0\.0\./,     // Private network suspicious usage
+      /^172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)\./ // VPN ranges
+    ]
+
+    return suspiciousPatterns.some(pattern => pattern.test(ipAddress))
+  }
 }

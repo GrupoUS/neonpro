@@ -580,6 +580,137 @@ export class HealthcareSessionManagementService {
   }
 
   /**
+   * Validate session with comprehensive checks
+   */
+  static async validateSession(sessionId: string): Promise<{
+    isValid: boolean;
+    session?: HealthcareSession;
+    error?: string;
+    metadata?: {
+      validationTimestamp: Date;
+      securityChecksPerformed: string[];
+      riskScore: number;
+      recommendations: string[];
+    };
+  }> {
+    try {
+      // Validate input
+      if (!sessionId || sessionId.trim() === '') {
+        return {
+          isValid: false,
+          error: 'Invalid session ID'
+        }
+      }
+
+      const session = this.sessions.get(sessionId)
+      const now = new Date()
+
+      // Check if session exists
+      if (!session) {
+        return {
+          isValid: false,
+          session: undefined,
+          error: 'Session not found or expired'
+        }
+      }
+
+      // Check if session is expired
+      if (session.expiresAt <= now) {
+        // Clean up expired session
+        this.sessions.delete(sessionId)
+        const userSessions = this.userSessionMap.get(session.userId) || []
+        const index = userSessions.indexOf(sessionId)
+        if (index > -1) {
+          userSessions.splice(index, 1)
+        }
+
+        return {
+          isValid: false,
+          session: undefined,
+          error: 'Session not found or expired'
+        }
+      }
+
+      // MFA validation for sensitive session types
+      if (session.sessionType === 'telemedicine' && !session.mfaVerified) {
+        return {
+          isValid: false,
+          session: undefined,
+          error: 'MFA verification required for telemedicine sessions'
+        }
+      }
+
+      // Update last accessed time for valid sessions
+      session.lastAccessedAt = now
+
+      // Calculate risk score based on various factors
+      let riskScore = 0
+      const securityChecksPerformed: string[] = []
+      const recommendations: string[] = []
+
+      // Session age risk
+      const sessionAge = now.getTime() - session.createdAt.getTime()
+      if (sessionAge > 24 * 60 * 60 * 1000) { // Older than 24 hours
+        riskScore += 20
+        recommendations.push('Consider session renewal for extended access')
+      }
+      securityChecksPerformed.push('session_age_validation')
+
+      // Expiration proximity check
+      const timeToExpiry = session.expiresAt.getTime() - now.getTime()
+      if (timeToExpiry < 5 * 60 * 1000) { // Less than 5 minutes
+        riskScore += 30
+        recommendations.push('Session approaching expiration - renew soon')
+      }
+      securityChecksPerformed.push('expiration_proximity_check')
+
+      // Compliance validation
+      if (!session.complianceFlags.lgpdCompliant) {
+        riskScore += 40
+        recommendations.push('Session not LGPD compliant - immediate attention required')
+      }
+      securityChecksPerformed.push('compliance_validation')
+
+      // Data access pattern analysis
+      const recentAccessCount = session.dataAccessLog.filter(
+        entry => now.getTime() - entry.timestamp.getTime() < 60 * 60 * 1000
+      ).length
+      if (recentAccessCount > 100) {
+        riskScore += 25
+        recommendations.push('High data access frequency detected - review activity')
+      }
+      securityChecksPerformed.push('access_pattern_analysis')
+
+      securityChecksPerformed.push('session_existence')
+      securityChecksPerformed.push('session_expiration')
+      securityChecksPerformed.push('mfa_verification')
+
+      await this.logSessionEvent('SESSION_VALIDATION', session, {
+        isValid: true,
+        riskScore,
+        securityChecksPerformed
+      })
+
+      return {
+        isValid: true,
+        session,
+        metadata: {
+          validationTimestamp: now,
+          securityChecksPerformed,
+          riskScore,
+          recommendations
+        }
+      }
+    } catch (error) {
+      console.error('Session validation error:', error)
+      return {
+        isValid: false,
+        error: 'Session validation failed'
+      }
+    }
+  }
+
+  /**
    * Log session event
    */
   private static async logSessionEvent(

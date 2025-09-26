@@ -1,9 +1,4 @@
 {
-  // Oxlint Configuration for NeonPro Healthcare Platform
-  //
-  // Ultra-fast linter with healthcare compliance rules
-  // 50x faster than ESLint with zero-config defaults
-  // Compatible with ESLint v8 format
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "plugins": [
     "unicorn",
@@ -16,7 +11,6 @@
     "oxc"
   ],
   "rules": {
-    // Type safety and code quality
     "no-unused-vars": "warn",
     "no-console": [
       "warn",
@@ -35,14 +29,12 @@
     "no-var": "error",
     "object-shorthand": "error",
     "no-dupe-keys": "warn",
-    // TypeScript compliance for healthcare applications
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/no-unsafe-assignment": "warn",
     "typescript/no-unsafe-member-access": "warn",
     "typescript/no-unsafe-call": "warn",
     "typescript/no-unsafe-return": "warn",
-    // React best practices for healthcare UI
     "react/jsx-no-target-blank": "error",
     "react/jsx-curly-brace-presence": [
       "error",
@@ -54,10 +46,9 @@
     "react/no-unescaped-entities": "error",
     "react/no-array-index-key": "error",
     "react/no-children-prop": "error",
-    "react/prop-types": "off", // Using TypeScript instead
+    "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
-    // Accessibility rules for healthcare compliance (WCAG 2.1 AA+)
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-is-valid": "error",
     "jsx-a11y/aria-props": "error",
@@ -66,7 +57,6 @@
     "jsx-a11y/role-has-required-aria-props": "error",
     "jsx-a11y/role-supports-aria-props": "error",
     "jsx-a11y/anchor-has-content": "warn",
-    // Import organization and dependency management
     "import/order": [
       "error",
       {
@@ -84,12 +74,9 @@
     "import/namespace": "warn",
     "import/no-unresolved": "off",
     "import/no-extraneous-dependencies": "off",
-    // Promise handling for async operations
     "promise/prefer-await-to-then": "warn",
     "promise/no-return-wrap": "warn",
     "promise/param-names": "warn",
-    // ES6+ features and modern JavaScript
-    // JSDoc for healthcare API documentation
     "jsdoc/require-jsdoc": [
       "warn",
       {
@@ -103,10 +90,8 @@
         }
       }
     ],
-    // Healthcare-specific security rules
     "no-eval": "error",
     "no-implied-eval": "error",
-    // Healthcare data validation rules
     "no-restricted-imports": [
       "warn",
       {
@@ -118,11 +103,14 @@
         ]
       }
     ],
-    // Performance rules for healthcare applications
     "no-warning-comments": [
       "warn",
       {
-        "terms": ["todo", "fixme", "hack"],
+        "terms": [
+          "todo",
+          "fixme",
+          "hack"
+        ],
         "location": "start"
       }
     ]
@@ -370,10 +358,9 @@
     "playwright-report/**",
     ".next/**",
     ".turbo/**",
-    "apps/**",
-    "packages/**",
-    "tools/**/node_modules/**",
+    "**/node_modules/**",
     "tools/tests/**",
+    "tools/reports/**",
     ".serena/**",
     ".specify/**",
     ".oxlint_cache/**",
@@ -381,7 +368,13 @@
     "pnpm-lock.yaml",
     "*.log",
     "*.tmp",
-    "*.cache"
+    "*.cache",
+    "**/*.test.{ts,tsx,js,jsx}",
+    "**/*.spec.{ts,tsx,js,jsx}",
+    "vitest.config.*",
+    "playwright.config.*",
+    "vite.config.*",
+    "tailwind.config.*"  
   ],
   "env": {
     "browser": true,

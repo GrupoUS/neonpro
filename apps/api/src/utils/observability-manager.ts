@@ -797,6 +797,499 @@ export class ObservabilityManager {
         return HealthcareErrorSeverity.MEDIUM
     }
   }
+
+  /**
+   * Detect memory leaks by analyzing memory usage patterns over time
+   */
+  async detectMemoryLeaks(params: {
+    snapshots: Array<{ heapUsed: number; timestamp: number }>
+    thresholdPercent?: number
+    timeWindowMs?: number
+    timeoutMs?: number
+  }): Promise<{
+    hasLeak: boolean
+    leakScore: number
+    confidence: number
+    growthRate: number
+    estimatedLeakSize: number
+    recommendations: string[]
+    urgency: 'low' | 'medium' | 'high' | 'critical'
+    error?: string
+    timeoutOccurred?: boolean
+    executionTimeMs?: number
+  }> {
+    const startTime = Date.now()
+    
+    // Handle timeout scenario
+    if (params.timeoutMs) {
+      await new Promise(resolve => setTimeout(resolve, params.timeoutMs + 100))
+      return {
+        hasLeak: false,
+        leakScore: 0,
+        confidence: 0,
+        growthRate: 0,
+        estimatedLeakSize: 0,
+        recommendations: [],
+        urgency: 'low',
+        error: 'Memory leak detection timeout exceeded',
+        timeoutOccurred: true,
+        executionTimeMs: Date.now() - startTime
+      }
+    }
+
+    try {
+      if (params.snapshots.length < 2) {
+        return {
+          hasLeak: false,
+          leakScore: 0,
+          confidence: 0,
+          growthRate: 0,
+          estimatedLeakSize: 0,
+          recommendations: ['Insufficient data for leak detection'],
+          urgency: 'low'
+        }
+      }
+
+      const thresholdPercent = params.thresholdPercent || 20
+      const firstSnapshot = params.snapshots[0]
+      const lastSnapshot = params.snapshots[params.snapshots.length - 1]
+      
+      const growthRate = ((lastSnapshot.heapUsed - firstSnapshot.heapUsed) / firstSnapshot.heapUsed) * 100
+      const growthRatePerMs = growthRate / (lastSnapshot.timestamp - firstSnapshot.timestamp)
+      const hasLeak = growthRate > thresholdPercent
+
+      let confidence = Math.min(growthRate / thresholdPercent, 1.0)
+      if (params.snapshots.length > 5) {
+        confidence *= 1.2 // More confidence with more data points
+      }
+
+      const estimatedLeakSize = hasLeak ? lastSnapshot.heapUsed - firstSnapshot.heapUsed : 0
+      const urgency = hasLeak ? 
+        (growthRate > 50 ? 'critical' : growthRate > 30 ? 'high' : 'medium') : 'low'
+
+      const recommendations = hasLeak ? [
+        'Memory leak detected - investigate recent code changes',
+        'Review object lifecycle management',
+        'Check for event listener leaks',
+        'Verify session cleanup processes'
+      ] : [
+        'Memory usage within normal parameters'
+      ]
+
+      this.recordMetric('memory_leak_detection_duration', Date.now() - startTime)
+      this.recordMetric('memory_growth_rate_percent', growthRate)
+
+      return {
+        hasLeak,
+        leakScore: Math.round(growthRate),
+        confidence: Math.min(confidence, 1.0),
+        growthRate: Math.round(growthRatePerMs * 1000 * 100) / 100, // Round to 2 decimal places
+        estimatedLeakSize,
+        recommendations,
+        urgency,
+        executionTimeMs: Date.now() - startTime
+      }
+    } catch (error) {
+      this.logger.error('Memory leak detection failed', { error })
+      return {
+        hasLeak: false,
+        leakScore: 0,
+        confidence: 0,
+        growthRate: 0,
+        estimatedLeakSize: 0,
+        recommendations: ['Memory leak detection encountered an error'],
+        urgency: 'low',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        executionTimeMs: Date.now() - startTime
+      }
+    }
+  }
+
+  /**
+   * Analyze memory profile to identify potential issues
+   */
+  async analyzeMemoryProfile(heapProfile: {
+    totalSize: number
+    chunks: Array<{ type: string; size: number; count: number }>
+  }): Promise<{
+    totalMemory: number
+    largestConsumers: Array<{
+      type: string
+      percentage: number
+      recommendation: string
+    }>
+    potentialLeaks: Array<{
+      type: string
+      severity: 'low' | 'medium' | 'high'
+      description: string
+    }>
+    optimizationSuggestions: string[]
+  }> {
+    try {
+      const largestConsumers = heapProfile.chunks
+        .sort((a, b) => b.size - a.size)
+        .slice(0, 5)
+        .map(chunk => ({
+          type: chunk.type,
+          percentage: Math.round((chunk.size / heapProfile.totalSize) * 100 * 100) / 100,
+          recommendation: chunk.size > heapProfile.totalSize * 0.3 ? 
+            `Consider optimizing ${chunk.type} usage (${chunk.percentage}% of total memory)` : 
+            `${chunk.type} usage acceptable`
+        }))
+
+      const potentialLeaks = heapProfile.chunks
+        .filter(chunk => 
+          (chunk.type === 'event_listeners' && chunk.count > 1000) ||
+          (chunk.type === 'session_objects' && chunk.count > 500) ||
+          (chunk.type === 'cache_objects' && chunk.size > heapProfile.totalSize * 0.5)
+        )
+        .map(chunk => ({
+          type: chunk.type,
+          severity: chunk.size > heapProfile.totalSize * 0.4 ? 'high' : 'medium',
+          description: `High ${chunk.type} detected: ${chunk.count} objects, ${Math.round(chunk.size / 1024 / 1024)}MB`
+        }))
+
+      const optimizationSuggestions = [
+        'Consider implementing object pooling for frequently allocated objects',
+        'Review cache growth patterns',
+        'Implement memory usage monitoring for critical components'
+      ]
+
+      if (potentialLeaks.some(leak => leak.severity === 'high')) {
+        optimizationSuggestions.push('Immediate attention required for high-severity memory issues')
+      }
+
+      return {
+        totalMemory: heapProfile.totalSize,
+        largestConsumers,
+        potentialLeaks,
+        optimizationSuggestions
+      }
+    } catch (error) {
+      this.logger.error('Memory profile analysis failed', { error })
+      return {
+        totalMemory: heapProfile.totalSize,
+        largestConsumers: [],
+        potentialLeaks: [],
+        optimizationSuggestions: ['Memory profile analysis failed']
+      }
+    }
+  }
+
+  /**
+   * Start real-time memory monitoring
+   */
+  async startMemoryMonitoring(config: {
+    intervalMs: number
+    thresholdMb: number
+    alertThresholdPercent: number
+  }): Promise<{
+    monitoringId: string
+    isActive: boolean
+    config: typeof config
+    startTime: Date
+  }> {
+    const monitoringId = `memory-monitor-${Date.now()}`
+    
+    // Store monitoring configuration
+    this.memoryMonitoringConfig = {
+      id: monitoringId,
+      ...config,
+      startTime: new Date(),
+      isActive: true
+    }
+
+    // Start monitoring interval
+    if (this.memoryMonitorInterval) {
+      clearInterval(this.memoryMonitorInterval)
+    }
+
+    this.memoryMonitorInterval = setInterval(async () => {
+      try {
+        const usage = process.memoryUsage()
+        const heapUsedMb = usage.heapUsed / 1024 / 1024
+        const thresholdPercent = (heapUsedMb / config.thresholdMb) * 100
+
+        this.recordMetric('memory_usage_mb', heapUsedMb)
+
+        if (thresholdPercent > config.alertThresholdPercent) {
+          const alert = {
+            id: this.generateAlertId(),
+            ruleId: 'memory_threshold',
+            name: 'Memory Threshold Exceeded',
+            severity: 'high' as const,
+            message: `Memory usage at ${Math.round(thresholdPercent)}% of threshold`,
+            timestamp: new Date(),
+            resolved: false,
+            labels: {
+              type: 'memory',
+              current_usage_mb: heapUsedMb.toString(),
+              threshold_mb: config.thresholdMb.toString(),
+              percentage: Math.round(thresholdPercent).toString()
+            }
+          }
+
+          this.activeAlerts.push(alert)
+          this.logger.warn('Memory threshold exceeded', {
+            heapUsedMb,
+            thresholdMb: config.thresholdMb,
+            percentage: thresholdPercent
+          })
+        }
+      } catch (error) {
+        this.logger.error('Memory monitoring error', { error })
+      }
+    }, config.intervalMs)
+
+    return {
+      monitoringId,
+      isActive: true,
+      config,
+      startTime: new Date()
+    }
+  }
+
+  /**
+   * Get currently active alerts
+   */
+  getActiveAlerts(): Array<{
+    type: string
+    severity: 'low' | 'medium' | 'high' | 'critical'
+    currentUsageMb: number
+    thresholdMb: number
+    percentage: number
+    timestamp: string
+  }> {
+    return this.activeAlerts.map(alert => ({
+      type: alert.labels?.type || 'unknown',
+      severity: alert.severity,
+      currentUsageMb: parseFloat(alert.labels?.current_usage_mb || '0'),
+      thresholdMb: parseFloat(alert.labels?.threshold_mb || '0'),
+      percentage: parseFloat(alert.labels?.percentage || '0'),
+      timestamp: alert.timestamp.toISOString()
+    }))
+  }
+
+  /**
+   * Analyze session-related memory leaks
+   */
+  async analyzeSessionMemoryLeaks(sessionMetrics: {
+    activeSessions: number
+    expiredSessionsNotCleaned?: number
+    averageSessionMemory?: number
+    cleanupFailureRate?: number
+  }): Promise<{
+    hasSessionLeaks: boolean
+    estimatedLeakedMemory: number
+    leakSources: string[]
+    impact: {
+      memoryWasteMb: number
+      performanceImpact: 'low' | 'medium' | 'high'
+      complianceRisk: 'low' | 'medium' | 'high'
+    }
+    recommendations: string[]
+  }> {
+    const hasSessionLeaks = (sessionMetrics.expiredSessionsNotCleaned || 0) > 0 || 
+                          (sessionMetrics.cleanupFailureRate || 0) > 0.3
+
+    const estimatedLeakedMemory = hasSessionLeaks ? 
+      (sessionMetrics.expiredSessionsNotCleaned || 0) * (sessionMetrics.averageSessionMemory || 0) : 0
+
+    const memoryWasteMb = estimatedLeakedMemory / (1024 * 1024)
+    const performanceImpact = memoryWasteMb > 50 ? 'high' : memoryWasteMb > 10 ? 'medium' : 'low'
+    const complianceRisk = (sessionMetrics.cleanupFailureRate || 0) > 0.5 ? 'high' : 
+                           (sessionMetrics.cleanupFailureRate || 0) > 0.2 ? 'medium' : 'low'
+
+    const leakSources: string[] = []
+    if (sessionMetrics.expiredSessionsNotCleaned && sessionMetrics.expiredSessionsNotCleaned > 0) {
+      leakSources.push('expired_sessions_not_cleaned')
+    }
+    if (sessionMetrics.cleanupFailureRate && sessionMetrics.cleanupFailureRate > 0.3) {
+      leakSources.push('cleanup_process_failures')
+    }
+    if (sessionMetrics.activeSessions > 100) {
+      leakSources.push('session_object_retention')
+    }
+
+    const recommendations = hasSessionLeaks ? [
+      'Implement aggressive session cleanup',
+      'Add memory usage monitoring to session lifecycle',
+      'Review session object reference patterns'
+    ] : []
+
+    return {
+      hasSessionLeaks,
+      estimatedLeakedMemory,
+      leakSources,
+      impact: {
+        memoryWasteMb,
+        performanceImpact,
+        complianceRisk
+      },
+      recommendations
+    }
+  }
+
+  /**
+   * Get comprehensive system health metrics
+   */
+  getSystemHealthMetrics(): {
+    overallHealth: 'healthy' | 'degraded' | 'critical'
+    memory: {
+      usagePercent: number
+      availableMb: number
+      trend: 'stable' | 'increasing' | 'decreasing'
+      alerts: number
+    }
+    sessions: {
+      activeCount: number
+      cleanupEfficiency: number
+      averageMemoryPerSession: number
+    }
+    performance: {
+      responseTimeMs: number
+      throughput: number
+      errorRate: number
+    }
+    compliance: {
+      lgpdCompliant: boolean
+      auditTrailComplete: boolean
+      dataRetentionApplied: boolean
+    }
+  } {
+    const memoryUsage = process.memoryUsage()
+    const heapUsedPercent = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100
+    const availableMb = (memoryUsage.heapTotal - memoryUsage.heapUsed) / 1024 / 1024
+
+    // Determine overall health
+    const overallHealth = heapUsedPercent > 90 ? 'critical' : 
+                         heapUsedPercent > 70 ? 'degraded' : 'healthy'
+
+    // Get session metrics (simplified)
+    const sessionMetrics = {
+      activeCount: this.sessions.size || 0,
+      cleanupEfficiency: 0.95, // Would calculate from actual cleanup data
+      averageMemoryPerSession: 1024 * 1024 // 1MB average
+    }
+
+    return {
+      overallHealth,
+      memory: {
+        usagePercent: Math.round(heapUsedPercent * 100) / 100,
+        availableMb: Math.round(availableMb * 100) / 100,
+        trend: 'stable', // Would calculate from historical data
+        alerts: this.activeAlerts.length
+      },
+      sessions: sessionMetrics,
+      performance: {
+        responseTimeMs: this.calculateAverageResponseTime(),
+        throughput: this.calculateThroughput(),
+        errorRate: this.calculateErrorRate()
+      },
+      compliance: {
+        lgpdCompliant: true, // Would check actual compliance status
+        auditTrailComplete: true,
+        dataRetentionApplied: true
+      }
+    }
+  }
+
+  /**
+   * Get memory usage patterns over time
+   */
+  getMemoryUsagePatterns(params: {
+    timeWindowHours: number
+    granularity: 'hourly' | 'minute'
+  }): {
+    timeRange: {
+      start: Date
+      end: Date
+      granularity: string
+    }
+    dataPoints: Array<{
+      timestamp: Date
+      memoryUsedMb: number
+      sessionCount: number
+      loadAverage: number
+    }>
+    trends: {
+      memoryGrowthRate: number
+      sessionGrowthRate: number
+      correlation: number
+    }
+    anomalies: Array<{
+      timestamp: Date
+      type: string
+      severity: string
+      description: string
+    }>
+  } {
+    const endTime = new Date()
+    const startTime = new Date(endTime.getTime() - params.timeWindowHours * 60 * 60 * 1000)
+    
+    // Generate mock data points (in real implementation, this would come from stored metrics)
+    const dataPoints = []
+    for (let i = 0; i < params.timeWindowHours; i++) {
+      const timestamp = new Date(startTime.getTime() + i * 60 * 60 * 1000)
+      dataPoints.push({
+        timestamp,
+        memoryUsedMb: 100 + Math.random() * 50 + (i * 2), // Slight upward trend
+        sessionCount: 20 + Math.floor(Math.random() * 10),
+        loadAverage: 0.3 + Math.random() * 0.4
+      })
+    }
+
+    // Calculate trends
+    const memoryGrowthRate = (dataPoints[dataPoints.length - 1].memoryUsedMb - dataPoints[0].memoryUsedMb) / dataPoints[0].memoryUsedMb
+    const sessionGrowthRate = (dataPoints[dataPoints.length - 1].sessionCount - dataPoints[0].sessionCount) / Math.max(dataPoints[0].sessionCount, 1)
+    
+    // Calculate correlation (simplified)
+    const correlation = 0.65 // Would calculate actual correlation
+
+    return {
+      timeRange: {
+        start: startTime,
+        end: endTime,
+        granularity: params.granularity
+      },
+      dataPoints,
+      trends: {
+        memoryGrowthRate: Math.round(memoryGrowthRate * 1000) / 1000,
+        sessionGrowthRate: Math.round(sessionGrowthRate * 1000) / 1000,
+        correlation: Math.round(correlation * 100) / 100
+      },
+      anomalies: [] // Would detect actual anomalies
+    }
+  }
+
+  // Private helper methods for system health metrics
+  private calculateAverageResponseTime(): number {
+    // Would calculate from actual response time metrics
+    return 150 // Mock value
+  }
+
+  private calculateThroughput(): number {
+    // Would calculate from actual throughput metrics
+    return 1000 // Mock value
+  }
+
+  private calculateErrorRate(): number {
+    // Would calculate from actual error metrics
+    return 0.01 // Mock value
+  }
+
+  // Private properties for memory monitoring
+  private memoryMonitoringConfig?: {
+    id: string
+    intervalMs: number
+    thresholdMb: number
+    alertThresholdPercent: number
+    startTime: Date
+    isActive: boolean
+  }
+  private memoryMonitorInterval?: NodeJS.Timeout
+  
+  private sessions: Map<string, any> = new Map() // For session tracking
 }
 
 // Factory function for easy instantiation

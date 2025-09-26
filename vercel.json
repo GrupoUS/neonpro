@@ -2,10 +2,23 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "installCommand": "bun install",
+  "buildCommand": "bun run build",
+  "outputDirectory": "dist",
+  "rootDirectory": "apps/web",
   "devCommand": "turbo run dev",
   "regions": ["gru1"],
+  "framework": null,
+  "functions": {
+    "apps/api/src/index.ts": {
+      "runtime": "nodejs20.x"
+    }
+  },
 
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"

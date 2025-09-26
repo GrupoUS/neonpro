@@ -5,6 +5,7 @@
 /*
 
 # Allow only web app and essential files
+!apps/
 !apps/web/
 !apps/web/**
 !package.json
@@ -47,6 +48,18 @@ scripts/
 **/.nuxt/
 **/coverage/
 **/.nyc_output/
+
+# Ignore large files and directories to reduce payload
+**/*.log
+**/*.tmp
+**/*.temp
+**/tmp/
+**/temp/
+**/.git/
+**/.svn/
+**/.hg/
+**/.DS_Store
+**/Thumbs.db
 
 # Ignore IDE and OS files
 .vscode/
