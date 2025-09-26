@@ -412,9 +412,8 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   })
 
   return (
-    <div
+    <header
       className={bannerClasses}
-      role='banner'
       aria-label='Consentimento LGPD'
     >
       <div className={contentClasses}>
@@ -594,7 +593,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
           </button>
         )}
       </div>
-    </div>
+    </header>
   )
 }
 

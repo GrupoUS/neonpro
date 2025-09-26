@@ -84,6 +84,19 @@ neonpro/
 │           │   └── 📁 clients/           # Client management
 │           ├── 📁 components/            # React components
 │           │   └── 📁 ui/                # shadcn/ui components
+│           ├── 📁 hooks/                 # React hooks
+│           │   ├── 📄 useAuth.ts         # Authentication hooks
+│           │   ├── 📄 usePatients.ts     # Patient management hooks
+│           │   ├── 📄 useScheduling*.ts  # Scheduling-related hooks
+│           │   └── 📁 realtime/          # **Real-time integration hooks**
+│           │       ├── 📄 index.ts       # Central exports for realtime hooks
+│           │       ├── 📄 useRealtimeQuery.ts # TanStack Query + Supabase Realtime integration
+│           │       ├── 📄 useRealtimeMutation.ts # Realtime mutations with auto-invalidation
+│           │       ├── 📄 useTrpcRealtime.ts # tRPC + Realtime specialized hooks
+│           │       ├── 📄 useRealtimeProvider.ts # Global realtime connection management
+│           │       └── 📄 README.md      # Integration guide and examples
+│           ├── 📁 providers/             # **React context providers**
+│           │   └── 📄 RealtimeQueryProvider.tsx # TanStack Query + Supabase Realtime provider
 │           ├── 📁 __tests__/             # Consolidated test directory
 │           │   ├── 📁 contracts/         # Contract tests
 │           │   ├── 📁 e2e/               # End-to-end tests
@@ -215,6 +228,7 @@ graph TD
 | ----------------------- | ----------------------------- | ---------------------------------- |
 | **API Endpoints**       | `apps/api/src/`               | -                                  |
 | **React Components**    | `apps/web/src/components/`    | `packages/shared/src/` (reusable)  |
+| **Real-time Hooks**     | `apps/web/src/hooks/realtime/` | -                                  |
 | **Business Logic**      | `packages/core-services/src/` | `apps/*/src/` (app-specific)       |
 | **Type Definitions**    | `packages/types/src/`         | `apps/*/src/types/` (app-specific) |
 | **Database Schemas**    | `packages/database/src/`      | -                                  |

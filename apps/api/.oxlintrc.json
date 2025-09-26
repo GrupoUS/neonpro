@@ -1,14 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.json"],
-  "plugins": [
-    "typescript",
-    "node",
-    "promise",
-    "import",
-    "jsdoc",
-    "oxc"
-  ],
+  "plugins": ["typescript", "node", "promise", "import", "jsdoc", "oxc"],
   "rules": {
     "node/prefer-global/buffer": "error",
     "node/prefer-global/process": "error",
@@ -30,11 +23,7 @@
     "import/order": [
       "error",
       {
-        "groups": [
-          "builtin",
-          "external",
-          ["internal", "parent", "sibling", "index"]
-        ],
+        "groups": ["builtin", "external", ["internal", "parent", "sibling", "index"]],
         "newlines-between": "always",
         "pathGroups": [
           {

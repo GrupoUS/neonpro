@@ -9,7 +9,13 @@
     "tsBuildInfoFile": "./.tsbuildinfo-security",
     "allowImportingTsExtensions": false
   },
-  "include": ["src/index.ts", "src/utils.ts", "src/console-manager.ts", "src/cryptography.ts", "src/encryption.ts"],
+  "include": [
+    "src/index.ts",
+    "src/utils.ts",
+    "src/console-manager.ts",
+    "src/cryptography.ts",
+    "src/encryption.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist",

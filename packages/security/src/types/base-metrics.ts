@@ -384,8 +384,8 @@ function extractRegion(metadata?: Record<string, unknown>): string | undefined {
   if (!metadata) return undefined
 
   // Extract city/state level information, avoiding specific addresses
-  const location = metadata.location as any
-  if (location?.state && location?.city) {
+  const location = metadata.location as Record<string, unknown> | undefined
+  if (location && typeof location.state === 'string' && typeof location.city === 'string') {
     return `${location.city}, ${location.state}`
   }
 
@@ -399,8 +399,8 @@ function extractCohort(metadata?: Record<string, unknown>): string | undefined {
   if (!metadata) return undefined
 
   // Extract generalized demographic information
-  const demographics = metadata.demographics as any
-  if (demographics?.ageRange) {
+  const demographics = metadata.demographics as Record<string, unknown> | undefined
+  if (demographics && typeof demographics.ageRange === 'string') {
     return `age_${demographics.ageRange}`
   }
 

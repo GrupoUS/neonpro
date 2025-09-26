@@ -102,15 +102,16 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Valibot v0.30.0**: Primary runtime schema validation (75% smaller than Zod)
 - **Zod v4.22.0**: Fallback validation library when Valibot doesn't have specific features
 - **Zustand v4.4.0**: Lightweight state management, TypeScript-first
-- **TanStack Query v5.62.0**: Server state management, caching, background updates
+- **TanStack Query v5.62.0**: Server state management, **real-time data synchronization**, background updates
 
 ### Backend Technology Stack
 
 **tRPC v11.0.0** - End-to-End Type-Safe API Framework
 
 - **Why**: Full TypeScript type safety, automatic client generation, Brazilian aesthetic clinic compliance
-- **Features**: Type-safe procedures, middleware composition, real-time subscriptions, Valibot validation
+- **Features**: Type-safe procedures, middleware composition, **real-time subscriptions**, Valibot validation
 - **Performance**: Zero runtime overhead, edge-compatible, <100ms aesthetic clinic API responses
+- **Real-time Integration**: Seamless integration with Supabase Realtime for automatic query invalidation
 - **Migration**: From Hono.dev for enhanced type safety and developer experience
 
 **Node.js 20+** - Runtime Environment
@@ -121,9 +122,10 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **Supabase v2.45.1** - Backend-as-a-Service Platform
 
-- **Why**: PostgreSQL foundation, real-time capabilities, built-in auth, Brazilian data centers
-- **Features**: PostgreSQL 15+, real-time subscriptions, storage, edge functions
-- **Benefits**: Reduced backend complexity, compliance features
+- **Why**: PostgreSQL foundation, **real-time capabilities**, built-in auth, Brazilian data centers
+- **Features**: PostgreSQL 15+, **real-time subscriptions with TanStack Query integration**, storage, edge functions
+- **Benefits**: Reduced backend complexity, compliance features, **automatic query invalidation**
+- **Real-time Configuration**: 10 events/second rate limiting for healthcare compliance
 
 **PostgreSQL 15+** - Primary Database
 
@@ -345,12 +347,13 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 **Decision**: Supabase PostgreSQL
 **Key Factors**:
 
-- **Real-time**: Built-in subscriptions essential for clinic operations
+- **Real-time**: Built-in subscriptions essential for clinic operations, **integrated with TanStack Query**
 - **Authentication**: Compliant auth system vs custom implementation
 - **Row Level Security**: Database-level isolation for multi-tenant
 - **Developer Experience**: Reduced backend complexity
+- **Real-time Integration**: Automatic query invalidation and optimistic updates
 
-**Impact**: 60% reduction in backend code, built-in compliance features, real-time capabilities
+**Impact**: 60% reduction in backend code, built-in compliance features, **seamless real-time data synchronization**
 
 ### AI Provider: Multi-Provider vs Single Provider
 

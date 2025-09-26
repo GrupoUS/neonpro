@@ -54,7 +54,7 @@ export interface ValidationRule {
   type: 'required' | 'format' | 'range' | 'custom' | 'compliance'
 
   /** Validation parameters */
-  parameters: Record<string, any>
+  parameters: Record<string, unknown>
 
   /** Error handling */
   onError: 'reject' | 'warn' | 'transform' | 'skip'
@@ -83,7 +83,7 @@ export interface TransformationRule {
   type: 'map' | 'aggregate' | 'filter' | 'anonymize' | 'calculate'
 
   /** Transformation logic */
-  logic: Record<string, any>
+  logic: Record<string, unknown>
 
   /** Conditional application */
   condition?: string
@@ -184,7 +184,7 @@ export interface StreamConfig {
   source: {
     type: 'kafka' | 'rabbitmq' | 'websocket' | 'webhook'
     endpoint: string
-    authentication?: Record<string, any>
+    authentication?: Record<string, unknown>
   }
 
   /** Message processing */
@@ -228,7 +228,7 @@ export interface WebhookConfig {
   /** Event filtering */
   triggers: {
     eventTypes: IngestionEventType[]
-    conditions: Record<string, any>
+    conditions: Record<string, unknown>
   }
 
   /** Retry and reliability */
@@ -339,7 +339,7 @@ export interface IngestionError {
   message: string
 
   /** Detailed error information */
-  details?: Record<string, any>
+  details?: Record<string, unknown>
 
   /** Source information */
   source: {
@@ -415,7 +415,7 @@ export interface IngestionMonitoringMetrics {
 /**
  * Check if an object is a valid IngestionEvent
  */
-export function isIngestionEvent(obj: any): obj is IngestionEvent {
+export function isIngestionEvent(obj: unknown): obj is IngestionEvent {
   return (
     obj &&
     typeof obj === 'object' &&
@@ -432,7 +432,7 @@ export function isIngestionEvent(obj: any): obj is IngestionEvent {
 /**
  * Check if an object is a valid IngestionConfig
  */
-export function isIngestionConfig(obj: any): obj is IngestionConfig {
+export function isIngestionConfig(obj: unknown): obj is IngestionConfig {
   return (
     obj &&
     typeof obj === 'object' &&
@@ -448,7 +448,7 @@ export function isIngestionConfig(obj: any): obj is IngestionConfig {
 /**
  * Check if an object is a valid ValidationRule
  */
-export function isValidationRule(obj: any): obj is ValidationRule {
+export function isValidationRule(obj: unknown): obj is ValidationRule {
   return (
     obj &&
     typeof obj === 'object' &&

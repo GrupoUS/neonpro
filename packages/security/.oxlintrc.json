@@ -1,14 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.json"],
-  "plugins": [
-    "typescript",
-    "oxc",
-    "jsdoc",
-    "promise"
-  ],
+  "plugins": ["typescript", "oxc", "jsdoc", "promise"],
   "rules": {
-    // Máxima strictness para segurança
     "typescript/no-explicit-any": "error",
     "typescript/no-unsafe-assignment": "error",
     "typescript/no-unsafe-member-access": "error",
@@ -18,8 +12,6 @@
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/strict-boolean-expressions": "error",
-
-    // Security específico
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-new-func": "error",
@@ -29,8 +21,6 @@
     "no-extend-native": "error",
     "no-global-assign": "error",
     "no-implicit-globals": "error",
-
-    // Crypto específico
     "no-restricted-imports": [
       "error",
       {
@@ -46,8 +36,6 @@
         ]
       }
     ],
-
-    // Promise handling crítico
     "promise/prefer-await-to-then": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
@@ -55,8 +43,6 @@
     "promise/no-nesting": "error",
     "promise/no-promise-in-callback": "error",
     "promise/no-callback-in-promise": "error",
-
-    // Documentação obrigatória
     "jsdoc/require-jsdoc": [
       "error",
       {
@@ -82,8 +68,6 @@
     "jsdoc/check-param-names": "error",
     "jsdoc/check-tag-names": "error",
     "jsdoc/check-types": "error",
-
-    // Variáveis e constantes
     "prefer-const": "error",
     "no-var": "error",
     "no-let-const": "off",
@@ -94,20 +78,14 @@
         "argsIgnorePattern": "^_"
       }
     ],
-
-    // Debugging proibido em produção
     "no-console": "error",
     "no-debugger": "error",
     "no-alert": "error",
-
-    // Performance crítico
     "no-await-in-loop": "error",
     "no-extra-bind": "error",
     "no-extra-label": "error",
     "no-floating-decimal": "error",
     "no-loop-func": "error",
-
-    // Code quality máximo
     "complexity": ["error", 8],
     "max-depth": ["error", 4],
     "max-lines": ["error", 300],

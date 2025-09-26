@@ -7,7 +7,7 @@
  * @version 2.0.0
  */
 
-import { SecurityValidator, SecurityRateLimiter, SecurityConfig, SecurityResult, ValidationContext } from './security-base'
+import { SecurityValidator, SecurityRateLimiter, SecurityConfig, SecurityResult, ValidationContext, SecurityEventLogger } from './security-base'
 
 // Common session interfaces
 export interface SessionMetadata {
@@ -66,7 +66,7 @@ export class BaseSessionManager {
     }
 
     this.securityConfig = {
-      environment: process.env.NODE_ENV as any || 'development',
+      environment: (process.env.NODE_ENV as 'development' | 'staging' | 'production') || 'development',
       enableRateLimiting: true,
       maxAuthAttempts: 100,
       rateLimitWindowMs: 60000,
@@ -80,6 +80,7 @@ export class BaseSessionManager {
 
   /**
    * Generate secure session ID
+   * @returns A cryptographically secure 32-character session ID
    */
   protected generateSessionId(): string {
     return SecurityValidator.generateSecureToken(32)
@@ -87,6 +88,8 @@ export class BaseSessionManager {
 
   /**
    * Validate session ID format
+   * @param sessionId - The session ID to validate
+   * @returns SecurityResult indicating validation success/failure
    */
   protected validateSessionId(sessionId: string): SecurityResult {
     return SecurityValidator.validateSessionId(sessionId)
@@ -94,6 +97,8 @@ export class BaseSessionManager {
 
   /**
    * Check session timeouts
+   * @param session - The session metadata to check for timeouts
+   * @returns Object containing expiration status, reason, time remaining, and warning status
    */
   protected checkSessionTimeouts(session: SessionMetadata): {
     isExpired: boolean
@@ -139,6 +144,9 @@ export class BaseSessionManager {
 
   /**
    * Validate IP binding with mobile network tolerance
+   * @param session - The session metadata containing original IP
+   * @param currentIP - The current IP address to validate against
+   * @returns SecurityResult indicating IP validation success/failure
    */
   protected validateIPBinding(
     session: SessionMetadata,
@@ -272,10 +280,18 @@ export class BaseSessionManager {
     // Manage concurrent sessions
     const concurrentResult = this.manageConcurrentSessions(userId, sessionId)
     if (concurrentResult.metadata?.removedSession) {
-      console.warn('Removed oldest session due to concurrent session limit', {
-        removedSession: concurrentResult.metadata.removedSession,
+      const logger = SecurityEventLogger.getInstance()
+      logger.logEvent('session_limit_enforcement', 'warn', {
         userId,
-        maxSessions: this.config.maxConcurrentSessions,
+        sessionId,
+        action: 'removed_oldest_session',
+        resource: 'session_manager',
+        result: 'success',
+        reason: 'concurrent_session_limit_exceeded',
+        metadata: {
+          removedSession: concurrentResult.metadata.removedSession,
+          maxSessions: this.config.maxConcurrentSessions
+        }
       })
     }
 

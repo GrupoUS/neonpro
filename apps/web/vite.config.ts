@@ -67,9 +67,12 @@ export default defineConfig({
           forms: ['react-hook-form', 'zod', 'valibot'],
           utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
         },
-        chunkFileNames: (chunkInfo) => {
+        chunkFileNames: chunkInfo => {
           const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId.split('/').pop()?.replace(/\.[^/.]+$/, '')
+            ? chunkInfo.facadeModuleId
+                .split('/')
+                .pop()
+                ?.replace(/\.[^/.]+$/, '')
             : 'chunk'
           return `assets/${facadeModuleId}-[hash].js`
         },

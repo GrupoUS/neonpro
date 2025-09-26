@@ -64,7 +64,7 @@ export interface AuthError {
   details?: string
 }
 
-export type ProfessionType = 
+export type ProfessionType =
   | 'medico'
   | 'enfermeiro'
   | 'fisioterapeuta'
@@ -108,11 +108,7 @@ export interface HealthcareDataRetentionPolicy {
 }
 
 // Auth Provider types for OAuth
-export type AuthProvider = 
-  | 'google'
-  | 'facebook'
-  | 'apple'
-  | 'github'
+export type AuthProvider = 'google' | 'facebook' | 'apple' | 'github'
 
 export interface OAuthConfig {
   provider: AuthProvider
@@ -145,22 +141,22 @@ export interface UseAuthReturn {
   isLoading: boolean
   isAuthenticated: boolean
   isEmailVerified: boolean
-  
+
   // Actions
   signUp: (data: SignUpData) => Promise<{ error?: AuthError }>
   signIn: (credentials: AuthCredentials) => Promise<{ error?: AuthError }>
   signOut: () => Promise<{ error?: AuthError }>
-  
+
   // OAuth
   signInWithOAuth: (config: OAuthConfig) => Promise<{ error?: AuthError }>
-  
+
   // Password management
   resetPassword: (request: PasswordResetRequest) => Promise<{ error?: AuthError }>
   updatePassword: (update: PasswordUpdate) => Promise<{ error?: AuthError }>
-  
+
   // Email verification
   resendEmailVerification: (request: EmailVerificationRequest) => Promise<{ error?: AuthError }>
-  
+
   // User management
   updateProfile: (updates: Partial<AuthUser>) => Promise<{ error?: AuthError }>
   deleteAccount: () => Promise<{ error?: AuthError }>
