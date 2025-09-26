@@ -12,6 +12,7 @@
 import crypto from 'crypto'
 import { SessionCookieUtils } from '../security/session-cookie-utils'
 import { EnhancedSessionManager } from '../security/enhanced-session-manager'
+import { createCryptographyManager, type CryptographyManager } from '../utils/security/cryptography'
 
 /**
  * Healthcare session data with compliance tracking
@@ -97,9 +98,29 @@ export class HealthcareSessionManagementService {
     auditLevel: 'comprehensive'
   }
 
+  // Initialize cryptography manager
+  private static cryptoManager: CryptographyManager;
+  private static initializeCrypto() {
+    if (!HealthcareSessionManagementService.cryptoManager) {
+      HealthcareSessionManagementService.cryptoManager = createCryptographyManager();
+      if (!HealthcareSessionManagementService.cryptoManager) {
+        throw new Error('CryptographyManager initialization failed');
+      }
+    }
+  }
+
   private static sessions = new Map<string, HealthcareSession>()
   private static userSessionMap = new Map<string, Set<string>>()
   private static cleanupInterval: NodeJS.Timeout | null = null
+
+  constructor() {
+    this.cryptoManager = createCryptographyManager()
+    if (!this.cryptoManager) {
+      throw new Error('CryptographyManager initialization failed')
+    }
+  }
+
+  private cryptoManager: CryptographyManager
 
   /**
    * Create a new healthcare session
@@ -116,24 +137,25 @@ export class HealthcareSessionManagementService {
       location?: { country: string; region: string; city: string }
     }
   ): Promise<HealthcareSession> {
+    HealthcareSessionManagementService.initializeCrypto();
     const config = { ...this.DEFAULT_OPTIONS, ...options }
-    
+
     // Check concurrent session limit
     await this.enforceConcurrentSessionLimit(userId, config.concurrentSessions)
-    
+
     // Generate secure session ID
     const sessionId = this.generateSecureSessionId()
-    
+
     // Validate geo restrictions
     if (config.geoRestriction && requestContext.location) {
       this.validateGeoRestriction(requestContext.location, config.geoRestriction)
     }
-    
+
     // Validate IP whitelist
     if (config.ipWhitelist) {
       this.validateIPWhitelist(requestContext.ipAddress, config.ipWhitelist)
     }
-    
+
     // Create session
     const session: HealthcareSession = {
       sessionId,
@@ -149,27 +171,27 @@ export class HealthcareSessionManagementService {
       expiresAt: new Date(Date.now() + config.absoluteTimeout * 60 * 1000),
       ipAddress: requestContext.ipAddress,
       userAgent: requestContext.userAgent,
-      deviceFingerprint: requestContext.deviceFingerprint,
-      location: requestContext.location,
+      deviceFingerprint: requestContext.deviceFingerprint || '',
+      location: requestContext.location || { country: '', region: '', city: '' },
       dataAccessLog: [],
       complianceFlags: this.initializeComplianceFlags()
     }
-    
+
     // Store session
     this.sessions.set(sessionId, session)
-    
+
     // Update user session map
     if (!this.userSessionMap.has(userId)) {
       this.userSessionMap.set(userId, new Set())
     }
     this.userSessionMap.get(userId)!.add(sessionId)
-    
+
     // Log session creation
     await this.logSessionEvent('session_created', session, {
       concurrentSessions: this.userSessionMap.get(userId)!.size,
       mfaRequired: config.mfaRequired
     })
-    
+
     return session
   }
 
@@ -178,20 +200,20 @@ export class HealthcareSessionManagementService {
    */
   static getSession(sessionId: string): HealthcareSession | null {
     const session = this.sessions.get(sessionId)
-    
+
     if (!session) {
       return null
     }
-    
+
     // Check if session is expired
     if (session.expiresAt < new Date()) {
       this.destroySession(sessionId)
       return null
     }
-    
+
     // Update last accessed time
     session.lastAccessedAt = new Date()
-    
+
     return session
   }
 
@@ -208,27 +230,27 @@ export class HealthcareSessionManagementService {
     }
   ): Promise<boolean> {
     const session = this.getSession(sessionId)
-    
+
     if (!session) {
       return false
     }
-    
+
     // Validate consent requirements
     if (updates.patientId && updates.consentLevel === 'none') {
       throw new Error('Patient data access requires consent')
     }
-    
+
     // Validate session type requirements
     if (updates.sessionType === 'telemedicine' && !updates.mfaVerified) {
       throw new Error('Telemedicine sessions require MFA verification')
     }
-    
+
     // Update session
     Object.assign(session, updates)
-    
+
     // Log context update
     await this.logSessionEvent('session_context_updated', session, updates)
-    
+
     return true
   }
 
@@ -240,31 +262,31 @@ export class HealthcareSessionManagementService {
     accessEntry: Omit<DataAccessEntry, 'timestamp'>
   ): Promise<boolean> {
     const session = this.getSession(sessionId)
-    
+
     if (!session) {
       return false
     }
-    
+
     // Validate access permissions
     if (!this.validateDataAccess(session, accessEntry)) {
       throw new Error('Unauthorized data access attempt')
     }
-    
+
     // Create audit entry
     const auditEntry: DataAccessEntry = {
       ...accessEntry,
       timestamp: new Date()
     }
-    
+
     // Add to session log
     session.dataAccessLog.push(auditEntry)
-    
+
     // Update compliance flags
     this.updateComplianceFlags(session, auditEntry)
-    
+
     // Log data access event
     await this.logSessionEvent('data_access', session, auditEntry)
-    
+
     return true
   }
 
@@ -277,30 +299,30 @@ export class HealthcareSessionManagementService {
     requiredSessionType: 'standard' | 'telemedicine' | 'emergency' | 'all' = 'all'
   ): { isValid: boolean; session?: HealthcareSession; error?: string } {
     const session = this.getSession(sessionId)
-    
+
     if (!session) {
       return { isValid: false, error: 'Session not found or expired' }
     }
-    
+
     // Check consent level
     const consentLevels = ['none', 'basic', 'full']
     const requiredLevelIndex = consentLevels.indexOf(requiredConsentLevel)
     const currentLevelIndex = consentLevels.indexOf(session.consentLevel)
-    
+
     if (currentLevelIndex < requiredLevelIndex) {
       return { isValid: false, error: 'Insufficient consent level' }
     }
-    
+
     // Check session type
     if (requiredSessionType !== 'all' && session.sessionType !== requiredSessionType) {
       return { isValid: false, error: 'Invalid session type for this access' }
     }
-    
+
     // Check MFA requirement for sensitive operations
     if (requiredConsentLevel !== 'none' && !session.mfaVerified) {
       return { isValid: false, error: 'MFA verification required for this access level' }
     }
-    
+
     return { isValid: true, session }
   }
 
@@ -309,20 +331,20 @@ export class HealthcareSessionManagementService {
    */
   static destroySession(sessionId: string): boolean {
     const session = this.sessions.get(sessionId)
-    
+
     if (!session) {
       return false
     }
-    
+
     // Log session destruction
     this.logSessionEvent('session_destroyed', session, {
       sessionDuration: Date.now() - session.createdAt.getTime(),
       dataAccessCount: session.dataAccessLog.length
     })
-    
+
     // Remove from sessions map
     this.sessions.delete(sessionId)
-    
+
     // Remove from user session map
     const userSessions = this.userSessionMap.get(session.userId)
     if (userSessions) {
@@ -331,7 +353,7 @@ export class HealthcareSessionManagementService {
         this.userSessionMap.delete(session.userId)
       }
     }
-    
+
     return true
   }
 
@@ -343,14 +365,14 @@ export class HealthcareSessionManagementService {
     if (!userSessions) {
       return 0
     }
-    
+
     let destroyedCount = 0
     for (const sessionId of userSessions) {
       if (this.destroySession(sessionId)) {
         destroyedCount++
       }
     }
-    
+
     return destroyedCount
   }
 
@@ -362,7 +384,7 @@ export class HealthcareSessionManagementService {
     if (!userSessionIds) {
       return []
     }
-    
+
     return Array.from(userSessionIds)
       .map(sessionId => this.getSession(sessionId))
       .filter(session => session !== null) as HealthcareSession[]
@@ -374,14 +396,14 @@ export class HealthcareSessionManagementService {
   static cleanupExpiredSessions(): number {
     let cleanedCount = 0
     const now = new Date()
-    
+
     for (const [sessionId, session] of this.sessions.entries()) {
       if (session.expiresAt < now) {
         this.destroySession(sessionId)
         cleanedCount++
       }
     }
-    
+
     return cleanedCount
   }
 
@@ -404,21 +426,21 @@ export class HealthcareSessionManagementService {
       expiredSessions: string[]
     }
   } {
-    const sessions = userId 
+    const sessions = userId
       ? this.getUserSessions(userId)
       : Array.from(this.sessions.values())
-    
+
     const now = new Date()
     const activeSessions = sessions.filter(s => s.expiresAt > now)
     const expiredSessions = sessions.filter(s => s.expiresAt <= now)
-    
+
     const complianceMetrics = {
       lgpdCompliant: sessions.filter(s => s.complianceFlags.lgpdCompliant).length,
       mfaVerified: sessions.filter(s => s.mfaVerified).length,
       consentRequired: sessions.filter(s => s.consentLevel !== 'none').length,
       auditTrailComplete: sessions.filter(s => s.complianceFlags.auditTrailEnabled).length
     }
-    
+
     const riskIndicators = {
       concurrentSessions: Array.from(this.userSessionMap.values())
         .map(sessions => sessions.size)
@@ -428,7 +450,7 @@ export class HealthcareSessionManagementService {
         .map(s => s.sessionId),
       expiredSessions: expiredSessions.map(s => s.sessionId)
     }
-    
+
     return {
       totalSessions: sessions.length,
       activeSessions: activeSessions.length,
@@ -445,7 +467,7 @@ export class HealthcareSessionManagementService {
     if (this.cleanupInterval) {
       return
     }
-    
+
     // Cleanup expired sessions every 5 minutes
     this.cleanupInterval = setInterval(() => {
       this.cleanupExpiredSessions()
@@ -456,7 +478,7 @@ export class HealthcareSessionManagementService {
    * Generate secure session ID
    */
   private static generateSecureSessionId(): string {
-    return crypto.randomBytes(32).toString('hex')
+    return HealthcareSessionManagementService.cryptoManager.generateSecureBytes(32).toString('hex')
   }
 
   /**
@@ -472,7 +494,7 @@ export class HealthcareSessionManagementService {
       'receptionist': ['patient:read:basic', 'appointment:write'],
       'medical-staff': ['patient:read:basic']
     }
-    
+
     return rolePermissions[role] || []
   }
 
@@ -481,15 +503,15 @@ export class HealthcareSessionManagementService {
    */
   private static async enforceConcurrentSessionLimit(userId: string, limit: number): Promise<void> {
     const userSessions = this.getUserSessions(userId)
-    
+
     if (userSessions.length >= limit) {
       // Destroy oldest session
       const oldestSession = userSessions.reduce((oldest, session) =>
         session.createdAt < oldest.createdAt ? session : oldest
       )
-      
+
       this.destroySession(oldestSession.sessionId)
-      
+
       await this.logSessionEvent('session_limit_exceeded', oldestSession, {
         limit,
         activeSessions: userSessions.length
@@ -530,22 +552,22 @@ export class HealthcareSessionManagementService {
       'appointment': 'appointment:write',
       'lab-result': 'medical-record:read'
     }
-    
+
     const requiredPermission = permissionMap[access.resourceType]
     if (!requiredPermission || !session.permissions.includes(requiredPermission)) {
       return false
     }
-    
+
     // Check consent level for patient data
     if (access.resourceType === 'patient' && session.consentLevel === 'none') {
       return false
     }
-    
+
     // Check emergency access
     if (access.legalBasis === 'emergency' && session.sessionType !== 'emergency') {
       return false
     }
-    
+
     return true
   }
 
@@ -573,7 +595,7 @@ export class HealthcareSessionManagementService {
     if (access.action === 'export') {
       session.complianceFlags.anonymizationRequired = true
     }
-    
+
     if (access.resourceType === 'patient' && access.purpose.includes('research')) {
       session.complianceFlags.dataMinimizationApplied = true
     }
@@ -618,10 +640,9 @@ export class HealthcareSessionManagementService {
       if (session.expiresAt <= now) {
         // Clean up expired session
         this.sessions.delete(sessionId)
-        const userSessions = this.userSessionMap.get(session.userId) || []
-        const index = userSessions.indexOf(sessionId)
-        if (index > -1) {
-          userSessions.splice(index, 1)
+        const userSessions = this.userSessionMap.get(session.userId)
+        if (userSessions) {
+          userSessions.delete(sessionId)
         }
 
         return {
@@ -732,7 +753,7 @@ export class HealthcareSessionManagementService {
         userAgent: session.userAgent,
         details
       }
-      
+
       console.info('[SESSION_EVENT]', JSON.stringify(logEntry))
     } catch (error) {
       console.error('Failed to log session event:', error)

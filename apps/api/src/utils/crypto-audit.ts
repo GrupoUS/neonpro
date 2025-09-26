@@ -3,7 +3,7 @@
  * Provides tamper-proof audit logging with hash chaining and digital signatures
  */
 
-import { createHash, createHmac, randomBytes } from 'crypto'
+import { createCryptographyManager } from './security/cryptography'
 
 export interface AuditLogEntry {
   id: string
@@ -37,11 +37,13 @@ export interface AuditChainValidation {
 
 export class CryptographicAuditLogger {
   private static instance: CryptographicAuditLogger
+  private cryptoManager: CryptographyManager
   private secretKey: string
   private lastHash: string | null = null
   private sequenceCounter: number = 0
 
   private constructor() {
+    this.cryptoManager = createCryptographyManager()
     // In production, this should come from secure key management (e.g., AWS KMS, Azure Key Vault)
     this.secretKey = process.env.AUDIT_SECRET_KEY || this.generateSecretKey()
     this.initializeSequenceCounter()
@@ -80,11 +82,11 @@ export class CryptographicAuditLogger {
         timestamp,
         eventType,
         eventData: this.sanitizeEventData(eventData),
-        _userId: context.userId,
-        clinicId: context.clinicId,
-        ipAddress: context.ipAddress,
-        userAgent: context.userAgent,
-        sessionId: context.sessionId,
+        _userId: _context._userId,
+        clinicId: _context.clinicId,
+        ipAddress: _context.ipAddress,
+        userAgent: _context.userAgent,
+        sessionId: _context.sessionId,
         sequenceNumber,
       }
 
@@ -106,7 +108,7 @@ export class CryptographicAuditLogger {
           lgpd_compliant: true,
           rls_enforced: true,
           consent_validated: false,
-          ...context.complianceFlags,
+          ..._context.complianceFlags,
         },
       }
 
@@ -114,7 +116,7 @@ export class CryptographicAuditLogger {
       this.lastHash = dataHash
 
       return auditEntry
-    } catch {
+    } catch (error) {
       console.error('Error creating audit entry:', error)
       throw new Error('Failed to create secure audit entry')
     }
@@ -135,7 +137,7 @@ export class CryptographicAuditLogger {
           timestamp: entry.timestamp,
           eventType: entry.eventType,
           eventData: entry.eventData,
-          _userId: entry.userId,
+          _userId: entry._userId,
           clinicId: entry.clinicId,
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
@@ -156,7 +158,7 @@ export class CryptographicAuditLogger {
           timestamp: entry.timestamp,
           eventType: entry.eventType,
           eventData: entry.eventData,
-          _userId: entry.userId,
+          _userId: entry._userId,
           clinicId: entry.clinicId,
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
@@ -184,7 +186,7 @@ export class CryptographicAuditLogger {
       }
 
       return true
-    } catch {
+    } catch (error) {
       console.error('Error validating audit entry:', error)
       return false
     }
@@ -331,11 +333,13 @@ export class CryptographicAuditLogger {
   // Private helper methods
 
   private generateSecretKey(): string {
-    return randomBytes(32).toString('hex')
+    const bytes = this.cryptoManager.generateSecureBytes(32)
+    return bytes.toString('hex')
   }
 
   private generateAuditId(): string {
-    return `audit_${Date.now()}_${randomBytes(8).toString('hex')}`
+    const bytes = this.cryptoManager.generateSecureBytes(8)
+    return `audit_${Date.now()}_${bytes.toString('hex')}`
   }
 
   private async initializeSequenceCounter(): Promise<void> {
@@ -353,18 +357,20 @@ export class CryptographicAuditLogger {
 
   private calculateDataHash(data: any, previousHash?: string | null): string {
     const dataString = JSON.stringify(data) + (previousHash || '')
-    return createHash('sha256').update(dataString).digest('hex')
+    const hashResult = this.cryptoManager.hash(dataString, { iterations: 1 })
+    return hashResult.hash
   }
 
   private createSignature(data: any, dataHash: string): string {
-    const _payload = JSON.stringify(data) + dataHash
-    return createHmac('sha256', this.secretKey).update(_payload).digest('hex')
+    const payload = JSON.stringify(data) + dataHash
+    const hmacResult = this.cryptoManager.hash(payload, { iterations: 1 })
+    return hmacResult.hash
   }
 
   private signReport(reportData: any): string {
-    return createHmac('sha256', this.secretKey)
-      .update(JSON.stringify(reportData))
-      .digest('hex')
+    const payload = JSON.stringify(reportData)
+    const hmacResult = this.cryptoManager.hash(payload, { iterations: 1 })
+    return hmacResult.hash
   }
 
   private sanitizeEventData(eventData: any): any {
@@ -440,7 +446,7 @@ export class CryptographicAuditLogger {
 
     for (const entry of entries) {
       if (entry._userId) {
-        userAccess[entry.userId] = (userAccess[entry.userId] || 0) + 1
+        userAccess[entry._userId] = (userAccess[entry._userId] || 0) + 1
       }
 
       if (entry.ipAddress) {
@@ -450,7 +456,7 @@ export class CryptographicAuditLogger {
       if (entry.complianceFlags.emergency_access) {
         emergencyAccess.push({
           timestamp: entry.timestamp,
-          _userId: entry.userId,
+          _userId: entry._userId,
           eventType: entry.eventType,
         })
       }

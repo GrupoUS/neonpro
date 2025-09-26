@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "module": "Node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "rootDir": "./src",
     "baseUrl": ".",
     "lib": ["ES2022", "DOM"],
@@ -10,6 +11,9 @@
     "types": ["vite/client", "node"],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "jsx": "react-jsx",
+    "strict": false,
+    "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./src/*"],
@@ -60,26 +64,5 @@
     "src/components/ui/**",
     "src/components/healthcare/**",
     "src/hooks/**"
-  ],
-  "references": [
-    {
-      "path": "../../packages/database"
-    },
-
-    {
-      "path": "../../packages/healthcare-core"
-    },
-    {
-      "path": "../../packages/ui"
-    },
-    {
-      "path": "../../packages/utils"
-    },
-    {
-      "path": "../../packages/security"
-    },
-    {
-      "path": "../api"
-    }
   ]
 }

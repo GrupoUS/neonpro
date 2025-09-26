@@ -11,6 +11,7 @@
 
 import crypto from 'crypto'
 import { logger } from './secure-logger'
+import { createCryptographyManager, type CryptographyManager } from './security/cryptography'
 
 interface SecretConfig {
   provider: 'env' | 'vault' | 'file'
@@ -34,6 +35,7 @@ class SecretManager {
   private secrets: Map<string, string> = new Map()
   private metadata: Map<string, SecretMetadata> = new Map()
   private encryptionKey: Buffer
+  private cryptoManager: CryptographyManager;
 
   constructor(config: SecretConfig) {
     this.config = {
@@ -48,11 +50,15 @@ class SecretManager {
     }
 
     this.encryptionKey = Buffer.from(this.config.encryptionKey, 'hex')
+    this.cryptoManager = createCryptographyManager();
+    if (!this.cryptoManager) {
+      throw new Error('CryptographyManager initialization failed');
+    }
     this.loadSecrets()
   }
 
   private generateEncryptionKey(): string {
-    const key = crypto.randomBytes(32).toString('hex')
+    const key = this.cryptoManager.generateSecureBytes(32).toString('hex')
     logger.warn(
       'Generated new encryption key. Store this securely: SECRET_ENCRYPTION_KEY=' +
         key,
@@ -78,14 +84,9 @@ class SecretManager {
           )
       }
 
-      logger.info('Secrets loaded successfully', {
-        provider: this.config.provider,
-        secretCount: this.secrets.size,
-      })
-    } catch {
-      logger.error('Failed to load secrets', error as Error, {
-        provider: this.config.provider,
-      })
+      logger.info('Secrets loaded successfully')
+    } catch (error) {
+      logger.error('Failed to load secrets', error)
       throw error
     }
   }
@@ -150,16 +151,23 @@ class SecretManager {
     return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted
   }
 
-  private decrypt(encryptedValue: string): string {
+  private decrypt(encryptedValue: string): string | undefined {
     if (!this.config.encryption) return encryptedValue
 
     const parts = encryptedValue.split(':')
+
     if (parts.length !== 3) {
-      throw new Error('Invalid encrypted value format')
+      logger.warn('Invalid encrypted value format')
+      return undefined
     }
 
-    const [ivHex, authTagHex, encrypted] = parts
-    const _iv = Buffer.from(ivHex, 'hex')
+    const [ivHex, authTagHex, encrypted] = parts;
+    if (!ivHex || !authTagHex || !encrypted) {
+      logger.warn('Invalid encrypted value parts')
+      return undefined
+    }
+
+    const iv = Buffer.from(ivHex, 'hex')
     const authTag = Buffer.from(authTagHex, 'hex')
 
     const decipher = crypto.createDecipher('aes-256-gcm', this.encryptionKey)
@@ -195,7 +203,7 @@ class SecretManager {
   public getSecret(name: string, accessedBy?: string): string | undefined {
     const encryptedValue = this.secrets.get(name)
     if (!encryptedValue) {
-      logger.warn('Secret not found', { secretName: name, accessedBy })
+      logger.warn(`Secret not found: ${name}`)
       return undefined
     }
 
@@ -204,7 +212,7 @@ class SecretManager {
     if (metadata) {
       metadata.accessed = new Date()
       metadata.accessCount++
-      metadata.lastAccessedBy = accessedBy
+      metadata.lastAccessedBy = accessedBy ?? undefined
     }
 
     // Audit access
@@ -221,11 +229,8 @@ class SecretManager {
 
     try {
       return this.decrypt(encryptedValue)
-    } catch {
-      logger.error('Failed to decrypt secret', error as Error, {
-        secretName: name,
-        accessedBy,
-      })
+    } catch (error) {
+      logger.error('Failed to decrypt secret', error)
       return undefined
     }
   }
@@ -295,24 +300,18 @@ class SecretManager {
   }
 
   public getApiKey(_service: string): string | undefined {
-    return this.getSecret(
-      `${service.toUpperCase()}_API_KEY`,
-      `${service}-service`,
-    )
+    return this.getSecret(`${_service.toUpperCase()}_API_KEY`, `${_service}-service`)
   }
 
   public getSupabaseKeys(): { serviceRole?: string; anon?: string } {
     return {
-      serviceRole: this.getSecret(
-        'SUPABASE_SERVICE_ROLE_KEY',
-        'supabase-service',
-      ),
-      anon: this.getSecret('SUPABASE_ANON_KEY', 'supabase-client'),
+      serviceRole: this.getSecret('SUPABASE_SERVICE_ROLE_KEY', 'supabase-service') || '',
+      anon: this.getSecret('SUPABASE_ANON_KEY', 'supabase-client') || '',
     }
   }
 
   // Health check method
-  public healthCheck(): { status: 'healthy' | 'unhealthy'; details: any } {
+  public healthCheck(): { status: 'healthy' | 'unhealthy'; details: unknown } {
     const requiredSecrets = ['DATABASE_URL', 'JWT_SECRET']
     const missingSecrets = requiredSecrets.filter(
       secret => !this.hasSecret(secret),

@@ -217,8 +217,9 @@ if (typeof global !== 'undefined') {
 
 // Mock performance API with complete interface
 if (typeof global !== 'undefined') {
+  const performance = global.performance || {}
   global.performance = {
-    ...(global.performance || {}),
+    ...performance,
     now: () => Date.now(),
     clearMarks: () => {},
     clearMeasures: () => {},

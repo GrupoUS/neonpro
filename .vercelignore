@@ -1,65 +1,53 @@
-# Vercel Ignore for Monorepo Deployment - Allowlist Strategy
-# This ensures only the web app is deployed, reducing payload from 6,323 files to ~400 files
-
-# Ignore everything at root
+# Ignore everything at root level
 /*
 
-# Allow only web app and essential files
+# Allow only essential files and directories
 !apps/
 !apps/web/
 !apps/web/**
+
+# Essential config files
 !package.json
 !bun.lockb
-!pnpm-lock.yaml
-!yarn.lock
-!package-lock.json
 !vercel.json
+!tsconfig.json
 !tsconfig.base.json
 
-# Ignore all other apps
+# Ignore everything else in apps except web
 apps/api/
+apps/*/
+!apps/web/
 
-# Ignore all packages
+# Ignore packages and other directories
 packages/
-
-# Ignore documentation and scripts
-docs/
 scripts/
+docs/
+supabase/
+.github/
+.vscode/
 .kilocode/
-.specify/
-.config/
+.qoder/
+.trae/
+.claude/
+.augment/
+.opencode/
+.qwen/
+specs/
 
 # Ignore development files
-*.md
-!README.md
-!apps/web/README.md
-*.env.example
-*.env.local
-*.env.development
-*.env.test
-*.env.production.local
-
-# Ignore build artifacts and cache (except apps/web/dist)
-**/build/
-**/.turbo/
-**/.cache/
-**/node_modules/
-**/.next/
-**/.nuxt/
-**/coverage/
-**/.nyc_output/
-
-# Ignore large files and directories to reduce payload
-**/*.log
-**/*.tmp
-**/*.temp
-**/tmp/
-**/temp/
-**/.git/
-**/.svn/
-**/.hg/
-**/.DS_Store
-**/Thumbs.db
+node_modules/
+.git/
+.turbo/
+.cache/
+coverage/
+.nyc_output/
+build/
+dist/
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
 
 # Ignore IDE and OS files
 .vscode/
@@ -67,28 +55,16 @@ scripts/
 .DS_Store
 Thumbs.db
 
-# Ignore log files
-*.log
-logs/
+# Ignore test files
+*.test.*
+*.spec.*
+__tests__/
+test/
+tests/
 
-# Ignore temporary files
-*.tmp
-*.temp
-*.swp
-*~
-
-# Ignore testing files
-**/*.test.*
-**/*.spec.*
-**/__tests__/
-**/e2e/
-**/playwright-report/
-**/test-results/
-
-# Ignore bundle analysis
-**/bundle-analysis.html
-**/stats.html
-
-# Ignore git files
-.git/
-.gitignore
+# Ignore environment files
+*.env.example
+*.env.local
+*.env.development
+*.env.test
+*.env.production.local

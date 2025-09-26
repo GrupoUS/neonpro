@@ -8,7 +8,8 @@
     "import",
     "promise",
     "jsdoc",
-    "oxc"
+    "oxc",
+    "node"
   ],
   "rules": {
     "no-unused-vars": "warn",
@@ -374,12 +375,17 @@
     "vitest.config.*",
     "playwright.config.*",
     "vite.config.*",
-    "tailwind.config.*"  
+    "tailwind.config.*"
   ],
   "env": {
     "browser": true,
     "node": true,
     "es2022": true
+  },
+  "fixable": {
+    "enable": true,
+    "dangerouslyAllowDangerousFixes": false,
+    "suggestions": true
   },
   "settings": {
     "healthcare": {

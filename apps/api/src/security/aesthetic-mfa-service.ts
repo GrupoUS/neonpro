@@ -16,6 +16,7 @@ import { speakeasy } from 'speakeasy'
 import { createAdminClient } from '../clients/supabase'
 import { logger } from "@/utils/healthcare-errors"
 import { EnhancedSessionManager } from './enhanced-session-manager'
+import { createCryptographyManager } from '../../utils/security/cryptography'
 
 // TOTP Configuration
 const TOTP_CONFIG = {
@@ -119,12 +120,14 @@ export interface MFASecurityEvent {
 export class AestheticMFAService {
   private supabase: SupabaseClient
   private sessionManager: EnhancedSessionManager
+  private cryptoManager: CryptographyManager
   private auditEvents: MFASecurityEvent[] = []
   private activeSessions = new Map<string, MFASession>()
 
   constructor() {
     this.supabase = createAdminClient()
     this.sessionManager = new EnhancedSessionManager()
+    this.cryptoManager = createCryptographyManager()
   }
 
   /**
@@ -671,7 +674,7 @@ export class AestheticMFAService {
   private generateBackupCodes(): string[] {
     const codes: string[] = []
     for (let i = 0; i < BACKUP_CODE_CONFIG.count; i++) {
-      const randomBytes = crypto.randomBytes(BACKUP_CODE_CONFIG.length)
+      const randomBytes = this.cryptoManager.generateSecureBytes(BACKUP_CODE_CONFIG.length)
       const code = randomBytes.toString('hex').toUpperCase()
       codes.push(`${BACKUP_CODE_CONFIG.prefix}${code}`)
     }
@@ -723,7 +726,7 @@ export class AestheticMFAService {
     // Add unique ID
     const eventWithId: MFASecurityEvent = {
       ...event,
-      id: crypto.randomUUID(),
+      id: this.generateSecureUUID(),
     }
 
     // Store in memory (in production, this would be stored in database)
@@ -747,9 +750,16 @@ export class AestheticMFAService {
         details: event.details,
         risk_score: event.riskScore,
       })
-    } catch {
+    } catch (error) {
       logger.error('Failed to log MFA security event', { error })
     }
+  }
+
+  private generateSecureUUID(): string {
+    const bytes = this.cryptoManager.generateSecureBytes(16)
+    bytes[6] = (bytes[6] & 0x0f) | 0x40
+    bytes[8] = (bytes[8] & 0x3f) | 0x80
+    return bytes.toString('hex').replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5')
   }
 
   // Database operations (simplified for this example)

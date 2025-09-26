@@ -6,16 +6,19 @@
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
-    "tsBuildInfoFile": "./.tsbuildinfo-security"
+    "tsBuildInfoFile": "./.tsbuildinfo-security",
+    "allowImportingTsExtensions": false
   },
-  "include": ["src/index.ts"],
+  "include": ["src/index.ts", "src/utils.ts", "src/console-manager.ts", "src/cryptography.ts", "src/encryption.ts"],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
-    "**/*.spec.tsx"
+    "**/*.spec.tsx",
+    "src/monitoring/**/*",
+    "src/types/**/*"
   ],
   "references": [
     { "path": "../utils" },

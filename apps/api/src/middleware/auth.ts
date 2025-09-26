@@ -93,19 +93,19 @@ export function auth() {
 
       logger.debug('User authenticated', {
         _userId: user.id,
-        _role: user.role,
+        _role: user._role,
         path: c.req.path,
         method: c.req.method,
       })
 
       await next()
-    } catch {
-      if (error instanceof HTTPException) {
-        throw error
+    } catch (err) {
+      if (err instanceof HTTPException) {
+        throw err
       }
 
       logger.error('Authentication error', {
-        error: error instanceof Error ? error.message : String(error),
+        error: err instanceof Error ? err.message : String(err),
         path: c.req.path,
         method: c.req.method,
       })

@@ -15,6 +15,7 @@
     "composite": true,
     "module": "Node16",
     "noEmit": false,
+    "allowImportingTsExtensions": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,

@@ -16,10 +16,10 @@
  */
 
 import { SupabaseClient } from '@supabase/supabase-js'
-import crypto from 'crypto'
 import { logger } from "@/utils/healthcare-errors"
 import { AuditService } from '../services/audit-service'
 import { EnhancedSessionManager } from './enhanced-session-manager'
+import { createCryptographyManager } from '../../utils/security/cryptography'
 
 // Security Configuration Types
 export interface AestheticClinicSecurityConfig {
@@ -291,6 +291,7 @@ export class AestheticClinicSecurityService {
   private supabase: SupabaseClient
   private sessionManager: EnhancedSessionManager
   private auditService: AuditService
+  private cryptoManager: CryptographyManager
   private config: AestheticClinicSecurityConfig
   private permissionCache = new Map<string, Set<AestheticClinicPermission>>()
   private securityEvents: AestheticSecurityEvent[] = []
@@ -304,6 +305,7 @@ export class AestheticClinicSecurityService {
     this.supabase = supabase
     this.sessionManager = sessionManager
     this.auditService = auditService
+    this.cryptoManager = createCryptographyManager()
 
     // Default security configuration
     this.config = {
@@ -403,12 +405,12 @@ export class AestheticClinicSecurityService {
   async setupMFA(userId: string): Promise<MFASetup> {
     try {
       // Generate TOTP secret
-      const secret = crypto.randomBytes(20).toString('hex')
+      const secret = this.cryptoManager.generateSecureString(40, 'hex')
 
       // Generate backup codes
       const backupCodes = Array.from(
         { length: this.config.mfa.backupCodeCount },
-        () => crypto.randomBytes(4).toString('hex'),
+        () => this.cryptoManager.generateSecureString(8, 'hex').toUpperCase(),
       )
 
       // Generate QR code URL (mock implementation)
@@ -442,8 +444,8 @@ export class AestheticClinicSecurityService {
         qrCodeUrl,
         backupCodes,
       }
-    } catch {
-      logger.error('MFA setup failed', { userId, error: error.message })
+    } catch (error) {
+      logger.error('MFA setup failed', { userId, error: (error as any).message })
       throw new Error('MFA_SETUP_FAILED')
     }
   }
@@ -557,12 +559,12 @@ export class AestheticClinicSecurityService {
         severity: 'high',
         userId: verification.userId,
         clinicId: await this.getUserClinicId(verification.userId),
-        details: { action: 'mfa_verification_error', error: error.message },
+        details: { action: 'mfa_verification_error', error: (error as any).message },
         actionTaken: 'access_denied',
         resolved: false,
       })
 
-      logger.error('MFA verification failed', { userId, error: error.message })
+      logger.error('MFA verification failed', { userId, error: (error as any).message })
       throw error
     }
   }
@@ -618,7 +620,7 @@ export class AestheticClinicSecurityService {
 
       return permissions.has(permission)
     } catch {
-      logger.error('Permission check failed', { userId, permission, error: error.message })
+      logger.error('Permission check failed', { userId, permission, error: (error as any).message })
       return false
     }
   }
@@ -644,22 +646,17 @@ export class AestheticClinicSecurityService {
       }
 
       // Generate image ID and encryption key
-      const imageId = crypto.randomUUID()
-      const encryptionKey = crypto.randomBytes(32)
-      const iv = crypto.randomBytes(16)
+      const imageId = this.generateSecureUUID()
+      const encryptionKey = this.cryptoManager.generateSecureBytes(32)
+      const iv = this.cryptoManager.generateSecureBytes(16)
 
-      // Encrypt image
-      const encryptedImage = crypto.createCipheriv('aes-256-gcm', encryptionKey, iv)
-      const encryptedBuffer = Buffer.concat([
-        encryptedImage.update(file),
-        encryptedImage.final(),
-      ])
+      // Encrypt image using CryptographyManager
+      const encryptedResult = await this.cryptoManager.encrypt(file, 'medical_image', { imageId, patientId: metadata.patientId })
+      const encryptedBuffer = Buffer.from(encryptedResult.encrypted, 'base64')
 
       // Generate hash for integrity
-      const imageHash = crypto
-        .createHash('sha256')
-        .update(encryptedBuffer)
-        .digest('hex')
+      const hashResult = await this.cryptoManager.hash(encryptedBuffer.toString('base64'), { iterations: 1 })
+      const imageHash = hashResult.hash
 
       // Apply watermark if enabled
       let watermarkSignature: string | undefined
@@ -672,7 +669,7 @@ export class AestheticClinicSecurityService {
       await this.storeEncryptedImage(encryptedPath, encryptedBuffer)
 
       // Store encryption key securely
-      const encryptionKeyId = crypto.randomUUID()
+      const encryptionKeyId = this.generateSecureUUID()
       await this.supabase.from('encryption_keys').insert({
         id: encryptionKeyId,
         key_type: 'medical_image',
@@ -730,11 +727,11 @@ export class AestheticClinicSecurityService {
         encryptedPath,
         watermarkSignature,
       }
-    } catch {
+    } catch (error) {
       logger.error('Medical image upload failed', {
         patientId: metadata.patientId,
         uploadedBy,
-        error: error.message,
+        error: (error as any).message,
       })
 
       await this.logSecurityEvent({
@@ -742,7 +739,7 @@ export class AestheticClinicSecurityService {
         severity: 'high',
         userId: uploadedBy,
         clinicId: metadata.clinicId,
-        details: { action: 'image_upload_failed', error: error.message },
+        details: { action: 'image_upload_failed', error: (error as any).message },
         actionTaken: 'access_denied',
         resolved: false,
       })
@@ -841,7 +838,7 @@ export class AestheticClinicSecurityService {
       logger.error('Financial transaction authorization failed', {
         amount: transaction.amount,
         clinicId: transaction.clinicId,
-        error: error.message,
+        error: (error as any).message,
       })
 
       throw error
@@ -872,7 +869,7 @@ export class AestheticClinicSecurityService {
 
       logger.debug('Security checks completed')
     } catch {
-      logger.error('Security checks failed', { error: error.message })
+      logger.error('Security checks failed', { error: (error as any).message })
     }
   }
 
@@ -884,7 +881,7 @@ export class AestheticClinicSecurityService {
   ): Promise<void> {
     const securityEvent: AestheticSecurityEvent = {
       ...event,
-      id: crypto.randomUUID(),
+      id: this.generateSecureUUID(),
       timestamp: new Date(),
     }
 
@@ -985,10 +982,9 @@ export class AestheticClinicSecurityService {
       purpose: 'aesthetic_medical_record',
     }
 
-    return crypto
-      .createHash('sha256')
-      .update(JSON.stringify(watermarkData))
-      .digest('hex')
+    // Use cryptoManager.hash for secure hashing
+    const hashPromise = this.cryptoManager.hash(JSON.stringify(watermarkData), { iterations: 1 })
+    return hashPromise.then(result => result.hash).catch(() => 'WATERMARK_ERROR')
   }
 
   private async storeEncryptedImage(path: string, data: Buffer): Promise<void> {
@@ -1060,10 +1056,9 @@ export class AestheticClinicSecurityService {
       timestamp: new Date().toISOString(),
     }
 
-    return crypto
-      .createHash('sha256')
-      .update(JSON.stringify(signatureData))
-      .digest('hex')
+    // Use cryptoManager.hash for secure hashing
+    const hashPromise = this.cryptoManager.hash(JSON.stringify(signatureData), { iterations: 1 })
+    return hashPromise.then(result => result.hash).catch(() => 'SIGNATURE_ERROR')
   }
 
   private async detectSuspiciousLogins(): Promise<void> {

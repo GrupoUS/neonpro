@@ -55,6 +55,7 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     target: 'esnext',
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -62,6 +63,15 @@ export default defineConfig({
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
+          copilot: ['@copilotkit/react-core', '@copilotkit/react-ui'],
+          forms: ['react-hook-form', 'zod', 'valibot'],
+          utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
+        },
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId
+            ? chunkInfo.facadeModuleId.split('/').pop()?.replace(/\.[^/.]+$/, '')
+            : 'chunk'
+          return `assets/${facadeModuleId}-[hash].js`
         },
       },
     },

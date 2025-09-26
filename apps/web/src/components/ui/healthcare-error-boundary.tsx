@@ -80,7 +80,7 @@ export const HealthcareErrorBoundary: React.FC<HealthcareErrorBoundaryProps> = (
     )
   }
 
-  return <>{children}</>
+  return children
 }
 
 interface ErrorFallbackProps {

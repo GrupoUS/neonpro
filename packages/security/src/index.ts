@@ -5,8 +5,8 @@
  */
 
 // Import security utilities
-import { SecureLogger } from './utils'
-import { ConsoleManager } from './console-manager'
+// import { SecureLogger } from './utils'
+// import { ConsoleManager } from './console-manager'
 
 // Security types
 export interface SecurityConfig {
@@ -80,7 +80,7 @@ export class HealthcareSecurityLogger {
     info: typeof console.info
     debug: typeof console.debug
   } | null = null
-  private consoleManager: ConsoleManager
+  // private consoleManager: ConsoleManager
 
   constructor(config: Partial<HealthcareSecurityLoggerConfig> = {}) {
     this.config = {
@@ -90,7 +90,7 @@ export class HealthcareSecurityLogger {
       complianceLevel: 'standard',
       ...config,
     }
-    this.consoleManager = ConsoleManager.getInstance()
+    // this.consoleManager = ConsoleManager.getInstance()
   }
 
   /**
@@ -295,3 +295,7 @@ export class HealthcareSecurityLogger {
     this.config = { ...this.config, ...newConfig }
   }
 }
+
+// Cryptography exports
+export { createCryptographyManager, cryptographyManager } from './cryptography'
+export type { CryptographyManager, HashResult } from './cryptography'

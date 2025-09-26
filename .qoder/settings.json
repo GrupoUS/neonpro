@@ -1,0 +1,34 @@
+{
+    "linter": {
+        "enabled": true,
+        "command": "./scripts/oxlint-ide.sh",
+        "args": [],
+        "configFile": ".oxlintrc.json",
+        "rootPath": ".",
+        "includes": [
+            "**/*.ts",
+            "**/*.tsx",
+            "**/*.js",
+            "**/*.jsx"
+        ],
+        "excludes": [
+            "node_modules/**",
+            "dist/**",
+            "build/**",
+            "coverage/**",
+            "**/*.test.*",
+            "**/*.spec.*"
+        ],
+        "realtime": true,
+        "onSave": true,
+        "debounceMs": 300
+    },
+    "typescript": {
+        "enabled": true,
+        "strictMode": true
+    },
+    "formatting": {
+        "enabled": true,
+        "provider": "biome"
+    }
+}

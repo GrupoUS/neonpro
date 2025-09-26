@@ -14,7 +14,7 @@ const getPerformance = () => {
   }
 }
 
-const performance = getPerformance()
+const perf = getPerformance()
 
 // Healthcare Compliance Framework Constants
 const COMPLIANCE_FRAMEWORKS = {
@@ -177,7 +177,7 @@ export class HealthcareLogger {
     compliance?: HealthcareComplianceMetadata,
     security?: SecurityEventContext
   ): OptimizedLogEntry {
-    const startTime = performance.now()
+    const startTime = perf.now()
     
     const entry: OptimizedLogEntry = {
       timestamp: new Date().toISOString(),
@@ -190,7 +190,7 @@ export class HealthcareLogger {
       spanId: this.generateSpanId()
     }
 
-    const processingTime = performance.now() - startTime
+    const processingTime = perf.now() - startTime
     entry.performanceMs = processingTime
     this.processingTimes.push(processingTime)
 

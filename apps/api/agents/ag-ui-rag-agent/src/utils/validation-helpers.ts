@@ -400,7 +400,7 @@ export const ValidationUtils = {
    * Validate phone format (simplified)
    */
   isValidPhone(phone: string): boolean {
-    const phoneRegex = /^\+?[\d\s\-\(\)]{10,}$/
+    const phoneRegex = /^\+?[\d\s\-()]{10,}$/
     return phoneRegex.test(phone)
   },
 

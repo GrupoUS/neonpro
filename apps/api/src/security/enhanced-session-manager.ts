@@ -831,7 +831,7 @@ export class EnhancedSessionManager {
 
     // Auto-extend if requested and session is near timeout
     if (options.autoExtend && isNearTimeout) {
-      session.lastActivity = new Date(now.getTime() + this.config.idleTimeout)
+      session.lastActivity = now
       warnings.push('Session auto-extended')
     }
 

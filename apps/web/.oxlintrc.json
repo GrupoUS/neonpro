@@ -1,0 +1,189 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "plugins": [
+    "typescript",
+    "react",
+    "jsx-a11y",
+    "import",
+    "promise",
+    "oxc"
+  ],
+  "rules": {
+    // React 19 específico
+    "react/jsx-no-target-blank": "error",
+    "react/jsx-curly-brace-presence": [
+      "error",
+      {
+        "props": "never",
+        "children": "never"
+      }
+    ],
+    "react/no-unescaped-entities": "error",
+    "react/no-array-index-key": "error",
+    "react/no-children-prop": "error",
+    "react/prop-types": "off",
+    "react/jsx-key": "error",
+    "react/jsx-no-duplicate-props": "error",
+    "react/jsx-no-undef": "error",
+    "react/jsx-uses-react": "off",
+    "react/jsx-uses-vars": "error",
+    "react/no-direct-mutation-state": "error",
+    "react/no-find-dom-node": "error",
+    "react/no-is-mounted": "error",
+    "react/no-render-return-value": "error",
+    "react/no-string-refs": "error",
+    "react/no-unknown-property": "error",
+    "react/require-render-return": "error",
+
+    // React Hooks específico
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "error",
+
+    // Accessibility WCAG 2.1 AA+ obrigatório
+    "jsx-a11y/alt-text": "error",
+    "jsx-a11y/anchor-is-valid": "error",
+    "jsx-a11y/anchor-has-content": "error",
+    "jsx-a11y/aria-props": "error",
+    "jsx-a11y/aria-proptypes": "error",
+    "jsx-a11y/aria-unsupported-elements": "error",
+    "jsx-a11y/click-events-have-key-events": "error",
+    "jsx-a11y/heading-has-content": "error",
+    "jsx-a11y/html-has-lang": "error",
+    "jsx-a11y/iframe-has-title": "error",
+    "jsx-a11y/img-redundant-alt": "error",
+    "jsx-a11y/interactive-supports-focus": "error",
+    "jsx-a11y/label-has-associated-control": "error",
+    "jsx-a11y/lang": "error",
+    "jsx-a11y/no-access-key": "error",
+    "jsx-a11y/no-autofocus": "error",
+    "jsx-a11y/no-distracting-elements": "error",
+    "jsx-a11y/no-redundant-roles": "error",
+    "jsx-a11y/no-static-element-interactions": "error",
+    "jsx-a11y/role-has-required-aria-props": "error",
+    "jsx-a11y/role-supports-aria-props": "error",
+    "jsx-a11y/scope": "error",
+    "jsx-a11y/tabindex-no-positive": "error",
+
+    // TypeScript para frontend
+    "typescript/prefer-optional-chain": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/no-unsafe-assignment": "warn",
+    "typescript/no-unsafe-member-access": "warn",
+    "typescript/no-unsafe-call": "warn",
+    "typescript/no-unsafe-return": "warn",
+
+    // Import organization para frontend
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          ["internal", "parent", "sibling", "index"]
+        ],
+        "newlines-between": "always",
+        "pathGroups": [
+          {
+            "pattern": "react",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "@neonpro/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "~/components/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "~/hooks/**",
+            "group": "internal",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["react"]
+      }
+    ],
+
+    // Performance para frontend
+    "no-unused-vars": [
+      "warn",
+      {
+        "ignoreRestSiblings": true,
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "prefer-const": "error",
+    "no-var": "error",
+
+    // Console allowed in development
+    "no-console": [
+      "warn",
+      {
+        "allow": ["warn", "error", "info"]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/components/**/*.{tsx,ts}"],
+      "rules": {
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/anchor-is-valid": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-proptypes": "error",
+        "jsx-a11y/aria-unsupported-elements": "error",
+        "jsx-a11y/role-has-required-aria-props": "error",
+        "jsx-a11y/role-supports-aria-props": "error",
+        "jsx-a11y/label-has-associated-control": "error",
+        "react/jsx-no-target-blank": "error",
+        "react/no-unescaped-entities": "error",
+        "react/jsx-key": "error"
+      }
+    },
+    {
+      "files": ["src/routes/**/*.{tsx,ts}"],
+      "rules": {
+        "jsx-a11y/html-has-lang": "error",
+        "jsx-a11y/heading-has-content": "error",
+        "jsx-a11y/iframe-has-title": "error",
+        "react/jsx-no-target-blank": "error"
+      }
+    },
+    {
+      "files": ["src/hooks/**/*.{ts,tsx}"],
+      "rules": {
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error"
+      }
+    },
+    {
+      "files": ["src/**/*.test.{ts,tsx}", "src/**/*.spec.{ts,tsx}"],
+      "rules": {
+        "no-console": "off",
+        "jsx-a11y/alt-text": "off",
+        "jsx-a11y/anchor-is-valid": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "*.min.js",
+    ".turbo/**",
+    ".tanstack/**",
+    "routeTree.gen.ts",
+    "public/**"
+  ]
+}

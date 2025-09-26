@@ -28,6 +28,7 @@ import {
   Stethoscope,
   User,
   XCircle,
+  Trash2,
 } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
 import { Alert, AlertDescription } from '../ui/alert'
@@ -531,12 +532,12 @@ export const NeonProPatientDataCard: React.FC<PatientDataCardProps> = ({
       </CardHeader>
       <CardContent className='space-y-4'>
         <div>
-          <label className='text-sm font-medium text-gray-700'>Nome</label>
-          <p className='text-gray-900'>{patient.name}</p>
+          <label htmlFor="patient-name" className='text-sm font-medium text-gray-700'>Nome</label>
+          <p id="patient-name" className='text-gray-900'>{patient.name}</p>
         </div>
 
         <div>
-          <label className='text-sm font-medium text-gray-700'>Contato</label>
+          <label htmlFor="patient-contact" className='text-sm font-medium text-gray-700'>Contato</label>
           <div className='flex items-center gap-2'>
             {patient.contact.includes('@')
               ? <Mail className='h-4 w-4 text-gray-500' />
@@ -566,7 +567,7 @@ export const NeonProPatientDataCard: React.FC<PatientDataCardProps> = ({
             <label className='text-sm font-medium text-gray-700'>Tratamentos</label>
             <div className='flex flex-wrap gap-1 mt-1'>
               {patient.treatments.map((treatment, index) => (
-                <Badge key={index} variant='outline' className='text-xs'>
+                <Badge key={treatment} variant='outline' className='text-xs'>
                   {treatment}
                 </Badge>
               ))}
