@@ -1,14 +1,11 @@
-import { defineConfig } from 'vitest/config'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [
-    TanStackRouterVite(),
-    react(),
-  ],
-  
+  plugins: [TanStackRouterVite(), react()],
+
   test: {
     globals: false,
     environment: 'jsdom',
@@ -55,7 +52,7 @@ export default defineConfig({
     },
     reporters: ['verbose'],
     outputFile: {
-      'json': 'test-results/unit-test-results.json',
+      json: 'test-results/unit-test-results.json',
     },
     alias: {
       '@': path.resolve(__dirname, './src'),

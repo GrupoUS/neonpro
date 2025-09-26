@@ -1,4 +1,4 @@
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,

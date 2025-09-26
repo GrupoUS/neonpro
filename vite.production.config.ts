@@ -15,12 +15,13 @@ export default defineConfig(({ mode }) => {
   const baseConfig = {
     plugins: [
       react(),
-      visualizer && visualizer({
-        filename: 'bundle-analysis.html',
-        open: false,
-        gzipSize: true,
-        brotliSize: true,
-      }),
+      visualizer &&
+        visualizer({
+          filename: 'bundle-analysis.html',
+          open: false,
+          gzipSize: true,
+          brotliSize: true,
+        }),
     ].filter(Boolean),
     root: './apps/web',
     publicDir: './public',
@@ -34,17 +35,11 @@ export default defineConfig(({ mode }) => {
       alias: [
         {
           find: '@sentry/react',
-          replacement: path.resolve(
-            __dirname,
-            './apps/web/src/shims/sentry-react.ts',
-          ),
+          replacement: path.resolve(__dirname, './apps/web/src/shims/sentry-react.ts'),
         },
         {
           find: '@sentry/tracing',
-          replacement: path.resolve(
-            __dirname,
-            './apps/web/src/shims/sentry-tracing.ts',
-          ),
+          replacement: path.resolve(__dirname, './apps/web/src/shims/sentry-tracing.ts'),
         },
         {
           find: /^@\//,
@@ -84,10 +79,7 @@ export default defineConfig(({ mode }) => {
         },
         {
           find: /^file-saver(\/.*)?$/,
-          replacement: path.resolve(
-            __dirname,
-            './apps/web/src/shims/file-saver/index.ts',
-          ),
+          replacement: path.resolve(__dirname, './apps/web/src/shims/file-saver/index.ts'),
         },
       ],
       extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],

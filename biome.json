@@ -1,0 +1,213 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
+  "files": {
+    "maxSize": 1048576,
+    "ignoreUnknown": true,
+    "includes": [
+      "apps/**/*.{js,jsx,ts,tsx,json}",
+      "packages/**/*.{js,jsx,ts,tsx,json}",
+      "scripts/**/*.{js,ts,sh}",
+      "*.{js,ts,json}",
+      "vercel.json",
+      "apps/**/vercel.json",
+      "turbo.json",
+      "tsconfig*.json",
+      "*.config.{js,ts}",
+      "**/*.config.{js,ts}"
+    ],
+    "experimentalScannerIgnores": [
+      "node_modules",
+      "dist",
+      "build",
+      ".next",
+      ".turbo",
+      "coverage",
+      "test-results",
+      "playwright-report",
+      ".oxlint_cache",
+      ".qoder",
+      ".claude",
+      ".git",
+      "bun.lock",
+      "pnpm-lock.yaml",
+      "package-lock.json",
+      "*.log",
+      "*.tmp",
+      "*.cache",
+      "*.min.js",
+      "*.min.css",
+      "*.d.ts.map",
+      "*.js.map",
+      "*.css.map",
+      "public",
+      "tools/reports"
+    ]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noUselessFragments": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noUnusedImports": "error",
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "error"
+      },
+      "style": {
+        "noNegationElse": "off",
+        "noParameterAssign": "warn",
+        "useConst": "error",
+        "useTemplate": "warn"
+      },
+      "suspicious": {
+        "noArrayIndexKey": "error",
+        "noConsole": "warn",
+        "noDebugger": "error",
+        "noExplicitAny": "warn"
+      },
+      "a11y": {
+        "noAccessKey": "error",
+        "noAriaUnsupportedElements": "error",
+        "noAutofocus": "error",
+        "noDistractingElements": "error",
+        "noInteractiveElementToNoninteractiveRole": "error",
+        "noNoninteractiveElementToInteractiveRole": "error",
+        "noPositiveTabindex": "error",
+        "noRedundantAlt": "error",
+        "useAltText": "error",
+        "useAnchorContent": "error",
+        "useAriaPropsForRole": "error",
+        "useButtonType": "error",
+        "useHeadingContent": "error",
+        "useHtmlLang": "error",
+        "useIframeTitle": "error",
+        "useKeyWithClickEvents": "error",
+        "useKeyWithMouseEvents": "error",
+        "useMediaCaption": "error",
+        "useValidAnchor": "error",
+        "useValidAriaProps": "error",
+        "useValidAriaRole": "error",
+        "useValidAriaValues": "error",
+        "useValidLang": "error"
+      }
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "single",
+      "quoteProperties": "asNeeded",
+      "trailingCommas": "es5",
+      "semicolons": "asNeeded",
+      "arrowParentheses": "asNeeded",
+      "bracketSpacing": true,
+      "bracketSameLine": false
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2,
+      "trailingCommas": "none"
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.test.{ts,tsx,js,jsx}", "**/*.spec.{ts,tsx,js,jsx}"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.config.{js,ts}", "**/scripts/**/*.{js,ts}"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "warn"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/src/compliance/**/*.{ts,tsx}",
+        "**/src/patient-data/**/*.{ts,tsx}",
+        "**/src/medical-records/**/*.{ts,tsx}",
+        "**/src/appointments/**/*.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "error",
+            "noExplicitAny": "error"
+          },
+          "correctness": {
+            "noUnusedVariables": "error"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "**/logging/**/*.{ts,js}",
+        "**/logger/**/*.{ts,js}",
+        "**/console-manager.ts",
+        "**/healthcare-logger.ts"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "vercel.json",
+        "**/vercel.json",
+        "turbo*.json",
+        "build-*.sh",
+        "deploy*.sh",
+        "**/deploy*.sh",
+        "scripts/**/*.sh"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noConsole": "off",
+            "noDuplicateObjectKeys": "error"
+          },
+          "correctness": {
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ]
+}

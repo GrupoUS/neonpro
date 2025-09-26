@@ -9,7 +9,7 @@ export const AnalyticsConfigurationSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional(),
-  configuration: z.record(z.unknown()),
+  configuration: z.record(z.string(), z.unknown()),
   isActive: z.boolean().default(true),
   createdAt: z.string(),
   updatedAt: z.string(),
@@ -19,12 +19,12 @@ export const AnalyticsConfigurationSchema = z.object({
 export const CreateAnalyticsConfigurationInput = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
-  configuration: z.record(z.unknown()),
+  configuration: z.record(z.string(), z.unknown()),
 })
 
 export const UpdateAnalyticsConfigurationInput = z.object({
   id: z.string(),
-  configuration: z.record(z.unknown()),
+  configuration: z.record(z.string(), z.unknown()),
 })
 
 export const DeleteAnalyticsConfigurationInput = z.object({
@@ -35,4 +35,4 @@ export const DeleteAnalyticsConfigurationInput = z.object({
 export type AnalyticsConfiguration = z.infer<typeof AnalyticsConfigurationSchema>
 export type CreateAnalyticsConfigurationInputType = z.infer<typeof CreateAnalyticsConfigurationInput>
 export type UpdateAnalyticsConfigurationInputType = z.infer<typeof UpdateAnalyticsConfigurationInput>
-// export type DeleteAnalyticsConfigurationInputType = z.infer<typeof DeleteAnalyticsConfigurationInput>
+export type DeleteAnalyticsConfigurationInputType = z.infer<typeof DeleteAnalyticsConfigurationInput>

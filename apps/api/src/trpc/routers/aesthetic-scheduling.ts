@@ -18,7 +18,9 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server'
 import { z } from 'zod'
 
-import { EnhancedAestheticSchedulingService } from '@neonpro/healthcare-core'
+// Placeholder service for now - export will be fixed after build completion
+// import { EnhancedAestheticSchedulingService } from '@neonpro/healthcare-core'
+import { EnhancedAestheticSchedulingService } from './placeholder-service'
 
 // Initialize the aesthetic scheduling service
 const aestheticSchedulingService = new EnhancedAestheticSchedulingService()

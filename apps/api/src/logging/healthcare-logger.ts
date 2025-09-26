@@ -1,4 +1,20 @@
-import { performance } from 'perf_hooks'
+// Browser-compatible performance API
+const getPerformance = () => {
+  if (typeof performance !== 'undefined') {
+    return performance
+  }
+  // Fallback for Node.js environments
+  try {
+    return require('perf_hooks').performance
+  } catch {
+    // Minimal fallback
+    return {
+      now: () => Date.now()
+    }
+  }
+}
+
+const performance = getPerformance()
 
 // Healthcare Compliance Framework Constants
 const COMPLIANCE_FRAMEWORKS = {

@@ -289,3 +289,4 @@ app.get('/ai/sessions/health', async c => {
 })
 
 export const GET = handle(app)
+export default handle(app)

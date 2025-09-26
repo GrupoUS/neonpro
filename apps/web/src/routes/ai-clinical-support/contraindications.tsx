@@ -1,5 +1,5 @@
 import { ContraindicationAnalysis } from '@/components/ai-clinical-support/ContraindicationAnalysis'
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 import { logger } from '@/utils/logger'

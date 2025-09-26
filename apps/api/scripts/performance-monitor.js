@@ -50,7 +50,7 @@ class HealthcarePerformanceMonitor {
     console.warn('🏥 Starting Healthcare Edge Runtime Performance Monitor...')
     console.warn(`Monitoring URL: ${this.baseUrl}`)
     console.warn(
-      `SLA Requirements: <${HEALTHCARE_SLA.maxResponseTime}ms response, ${HEALTHCARE_SLA.minAvailability}% availability\n`,
+      `SLA Requirements: <${HEALTHCARE_SLA.maxResponseTime}ms response, ${HEALTHCARE_SLA.minAvailability}% availability\n`
     )
 
     this.isRunning = true
@@ -94,22 +94,18 @@ class HealthcarePerformanceMonitor {
     console.warn(`🔍 Performing health check at ${new Date().toISOString()}`)
 
     const results = await Promise.allSettled(
-      COMPLIANCE_ENDPOINTS.map(endpoint => this.checkEndpoint(endpoint)),
+      COMPLIANCE_ENDPOINTS.map(endpoint => this.checkEndpoint(endpoint))
     )
 
     // Calculate metrics
-    const successfulChecks = results.filter(
-      result => result.status === 'fulfilled',
-    ).length
+    const successfulChecks = results.filter(result => result.status === 'fulfilled').length
     const totalChecks = results.length
 
     this.metrics.availability = (successfulChecks / totalChecks) * 100
     this.metrics.errorRate = ((totalChecks - successfulChecks) / totalChecks) * 100
 
     // Log results
-    console.warn(
-      `✅ Health check completed: ${successfulChecks}/${totalChecks} endpoints healthy`,
-    )
+    console.warn(`✅ Health check completed: ${successfulChecks}/${totalChecks} endpoints healthy`)
     console.warn(`📊 Availability: ${this.metrics.availability.toFixed(1)}%`)
     console.warn(`❌ Error rate: ${this.metrics.errorRate.toFixed(2)}%`)
 
@@ -152,14 +148,12 @@ class HealthcarePerformanceMonitor {
             this.metrics.responseTime.shift()
           }
 
-          console.warn(
-            `  ${endpoint}: ${responseTime}ms (${response.statusCode})`,
-          )
+          console.warn(`  ${endpoint}: ${responseTime}ms (${response.statusCode})`)
 
           // Check healthcare SLA compliance
           if (responseTime > HEALTHCARE_SLA.maxResponseTime) {
             console.warn(
-              `    ⚠️  WARNING: Response time exceeds healthcare SLA (${HEALTHCARE_SLA.maxResponseTime}ms)`,
+              `    ⚠️  WARNING: Response time exceeds healthcare SLA (${HEALTHCARE_SLA.maxResponseTime}ms)`
             )
           }
 
@@ -169,7 +163,7 @@ class HealthcarePerformanceMonitor {
             statusCode: response.statusCode,
             success: response.statusCode >= 200 && response.statusCode < 300,
           })
-        },
+        }
       )
 
       request.on('error', error => {
@@ -192,10 +186,7 @@ class HealthcarePerformanceMonitor {
   async checkBundleSize() {
     try {
       // Try to read bundle analysis report
-      const reportPath = path.join(
-        __dirname,
-        '../../../healthcare-bundle-report.json',
-      )
+      const reportPath = path.join(__dirname, '../../../healthcare-bundle-report.json')
 
       if (fs.existsSync(reportPath)) {
         const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'))
@@ -213,9 +204,7 @@ class HealthcarePerformanceMonitor {
           if (bundleSize > HEALTHCARE_SLA.maxBundleSize) {
             console.warn('🚨 ALERT: Bundle size exceeds edge runtime limit!')
           } else if (bundleSize > HEALTHCARE_SLA.maxBundleSize * 0.9) {
-            console.warn(
-              '⚠️  WARNING: Bundle size approaching edge runtime limit',
-            )
+            console.warn('⚠️  WARNING: Bundle size approaching edge runtime limit')
           }
         }
       } else {
@@ -231,9 +220,7 @@ class HealthcarePerformanceMonitor {
    */
   async checkComplianceStatus() {
     try {
-      const complianceResult = await this.checkEndpoint(
-        '/api/compliance/report',
-      )
+      const complianceResult = await this.checkEndpoint('/api/compliance/report')
 
       if (complianceResult.success) {
         console.warn('🏥 Healthcare compliance: All standards met')
@@ -264,40 +251,31 @@ class HealthcarePerformanceMonitor {
    * Generate real-time performance report
    */
   generatePerformanceReport() {
-    const avgResponseTime = this.metrics.responseTime.length > 0
-      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
-        this.metrics.responseTime.length
-      : 0
+    const avgResponseTime =
+      this.metrics.responseTime.length > 0
+        ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
+          this.metrics.responseTime.length
+        : 0
 
     console.warn('\n📊 HEALTHCARE PERFORMANCE SUMMARY')
     console.warn('================================')
     console.warn(
-      `Average Response Time: ${
-        Math.round(
-          avgResponseTime,
-        )
-      }ms (target: <${HEALTHCARE_SLA.maxResponseTime}ms)`,
+      `Average Response Time: ${Math.round(
+        avgResponseTime
+      )}ms (target: <${HEALTHCARE_SLA.maxResponseTime}ms)`
     )
     console.warn(
-      `Availability: ${
-        this.metrics.availability.toFixed(
-          1,
-        )
-      }% (target: >${HEALTHCARE_SLA.minAvailability}%)`,
+      `Availability: ${this.metrics.availability.toFixed(
+        1
+      )}% (target: >${HEALTHCARE_SLA.minAvailability}%)`
     )
     console.warn(
-      `Error Rate: ${
-        this.metrics.errorRate.toFixed(
-          2,
-        )
-      }% (target: <${HEALTHCARE_SLA.maxErrorRate}%)`,
+      `Error Rate: ${this.metrics.errorRate.toFixed(2)}% (target: <${HEALTHCARE_SLA.maxErrorRate}%)`
     )
     console.warn(
-      `Bundle Size: ${this.formatBytes(this.metrics.bundleSize)} (limit: ${
-        this.formatBytes(
-          HEALTHCARE_SLA.maxBundleSize,
-        )
-      })`,
+      `Bundle Size: ${this.formatBytes(this.metrics.bundleSize)} (limit: ${this.formatBytes(
+        HEALTHCARE_SLA.maxBundleSize
+      )})`
     )
 
     // SLA compliance status
@@ -306,13 +284,11 @@ class HealthcarePerformanceMonitor {
     const errorRateCompliant = this.metrics.errorRate <= HEALTHCARE_SLA.maxErrorRate
     const bundleSizeCompliant = this.metrics.bundleSize <= HEALTHCARE_SLA.maxBundleSize
 
-    const overallCompliant = responseTimeCompliant &&
-      availabilityCompliant &&
-      errorRateCompliant &&
-      bundleSizeCompliant
+    const overallCompliant =
+      responseTimeCompliant && availabilityCompliant && errorRateCompliant && bundleSizeCompliant
 
     console.warn(
-      `\nSLA Compliance: ${overallCompliant ? '✅ MEETING' : '❌ FAILING'} healthcare requirements`,
+      `\nSLA Compliance: ${overallCompliant ? '✅ MEETING' : '❌ FAILING'} healthcare requirements`
     )
 
     if (!overallCompliant) {
@@ -327,9 +303,7 @@ class HealthcarePerformanceMonitor {
       }
     }
 
-    console.warn(
-      `\nNext check in ${this.monitoringInterval / 1000} seconds...\n`,
-    )
+    console.warn(`\nNext check in ${this.monitoringInterval / 1000} seconds...\n`)
   }
 
   /**
@@ -337,10 +311,10 @@ class HealthcarePerformanceMonitor {
    */
   generateFinalReport() {
     const totalChecks = this.metrics.responseTime.length
-    const avgResponseTime = totalChecks > 0
-      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
-        totalChecks
-      : 0
+    const avgResponseTime =
+      totalChecks > 0
+        ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) / totalChecks
+        : 0
 
     const report = {
       timestamp: new Date().toISOString(),
@@ -358,10 +332,7 @@ class HealthcarePerformanceMonitor {
     }
 
     // Save final report
-    const reportPath = path.join(
-      __dirname,
-      '../healthcare-performance-final-report.json',
-    )
+    const reportPath = path.join(__dirname, '../healthcare-performance-final-report.json')
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2))
 
     console.warn('\n📋 FINAL HEALTHCARE PERFORMANCE REPORT')
@@ -371,9 +342,7 @@ class HealthcarePerformanceMonitor {
     console.warn(`Average response time: ${report.summary.averageResponseTime}`)
     console.warn(`Final availability: ${report.summary.finalAvailability}`)
     console.warn(
-      `Healthcare SLA compliance: ${
-        report.summary.healthcareSlaCompliance ? '✅ PASS' : '❌ FAIL'
-      }`,
+      `Healthcare SLA compliance: ${report.summary.healthcareSlaCompliance ? '✅ PASS' : '❌ FAIL'}`
     )
     console.warn(`\nDetailed report saved to: ${reportPath}`)
   }
@@ -382,10 +351,11 @@ class HealthcarePerformanceMonitor {
    * Check overall healthcare SLA compliance
    */
   isHealthcareSlaCompliant() {
-    const avgResponseTime = this.metrics.responseTime.length > 0
-      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
-        this.metrics.responseTime.length
-      : 0
+    const avgResponseTime =
+      this.metrics.responseTime.length > 0
+        ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
+          this.metrics.responseTime.length
+        : 0
 
     return (
       avgResponseTime <= HEALTHCARE_SLA.maxResponseTime &&
@@ -423,7 +393,7 @@ class HealthcarePerformanceMonitor {
     const k = 1024
     const sizes = ['B', 'KB', 'MB', 'GB']
     const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
+    return `${parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`
   }
 }
 

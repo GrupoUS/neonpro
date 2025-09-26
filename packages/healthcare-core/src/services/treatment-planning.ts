@@ -4,12 +4,12 @@
  */
 
 export class TreatmentPlanningService {
-  private supabaseUrl: string
-  private supabaseKey: string
+  // private supabaseUrl: string
+  // private supabaseKey: string
 
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
-    this.supabaseUrl = config.supabaseUrl
-    this.supabaseKey = config.supabaseKey
+    // this.supabaseUrl = config.supabaseUrl
+    // this.supabaseKey = config.supabaseKey
     console.log('TreatmentPlanningService initialized with:', config.supabaseUrl)
   }
 

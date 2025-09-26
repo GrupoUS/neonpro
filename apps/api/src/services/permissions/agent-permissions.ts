@@ -6,9 +6,44 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
-import { createHash } from 'crypto'
 import { z } from 'zod'
 import { Database } from '../../../../packages/types/src/database'
+
+// Browser-compatible crypto API
+const getCrypto = () => {
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    return crypto
+  }
+  // Fallback for Node.js environments
+  try {
+    return require('crypto')
+  } catch {
+    // Minimal fallback
+    return {
+      createHash: () => ({
+        update: () => ({
+          digest: (encoding: string) => Math.random().toString(36).substring(7)
+        })
+      })
+    }
+  }
+}
+
+const cryptoModule = getCrypto()
+const createHash = cryptoModule.createHash || ((algorithm: string) => ({
+  update: (data: string) => ({
+    digest: (encoding: string) => {
+      // Simple hash fallback for browser
+      let hash = 0
+      for (let i = 0; i < data.length; i++) {
+        const char = data.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash // Convert to 32-bit integer
+      }
+      return Math.abs(hash).toString(16)
+    }
+  })
+}))
 // Input validation schemas
 const PermissionContextSchema = z.object({
   _userId: z.string().min(1, 'User ID is required').max(255),

@@ -1,16 +1,16 @@
-import { defineConfig } from 'vitest/config'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [
-    // @ts-ignore - Ignore TanStackRouterVite type mismatch due to monorepo version differences
+    // @ts-expect-error - Ignore TanStackRouterVite type mismatch due to monorepo version differences
     TanStackRouterVite(),
-    // @ts-ignore - Ignore react plugin type mismatch due to monorepo version differences
+    // @ts-expect-error - Ignore react plugin type mismatch due to monorepo version differences
     react(),
   ],
-  
+
   test: {
     globals: true,
     environment: 'jsdom',
@@ -56,8 +56,8 @@ export default defineConfig({
     ],
     reporters: ['verbose', 'json', 'html'],
     outputFile: {
-      'json': 'test-results/test-results.json',
-      'html': 'test-results/test-results.html',
+      json: 'test-results/test-results.json',
+      html: 'test-results/test-results.html',
     },
     alias: {
       '@': path.resolve(__dirname, './src'),

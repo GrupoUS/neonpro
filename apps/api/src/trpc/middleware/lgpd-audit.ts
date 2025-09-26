@@ -12,7 +12,8 @@
 
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import { createHash, createHmac } from 'crypto'
+// Crypto functions will be handled at runtime only
+// import { createHash, createHmac } from 'crypto'
 
 // LGPD Data Categories for audit classification
 const LGPD_DATA_CATEGORIES = {
@@ -63,7 +64,7 @@ function generateCryptographicProof(
   integrityChecksum: string
 } {
   const dataString = JSON.stringify(data, Object.keys(data).sort())
-  const combinedData = `${dataString}:${userId}:${timestamp.toISOString()}`
+  const combinedData = `${dataString}:${_userId}:${timestamp.toISOString()}`
 
   // SHA-256 hash for data integrity
   const hash = createHash('sha256').update(combinedData).digest('hex')
@@ -181,11 +182,11 @@ export const lgpdAuditMiddleware = async ({
 
   try {
     // Skip audit for health checks and non-sensitive operations
-    if (path === 'health' || path.startsWith('public.')) {
+    if (_path === 'health' || _path.startsWith('public.')) {
       return next()
     }
 
-    const dataCategory = classifyDataCategory(path, input)
+    const dataCategory = classifyDataCategory(_path, _input)
     const isPatientData = path.includes('patient') || path.includes('appointment')
     const isSensitiveData = dataCategory === LGPD_DATA_CATEGORIES.HEALTH ||
       dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
@@ -194,16 +195,16 @@ export const lgpdAuditMiddleware = async ({
     let cryptographicProof = null
     if (isSensitiveData && ctx._userId) {
       cryptographicProof = generateCryptographicProof(
-        { path, type, input: input || {} },
-        ctx.userId,
+        { path: _path, type, input: _input || {} },
+        ctx._userId,
         new Date(),
       )
     }
 
     // Pre-execution audit entry creation
-    if (ctx.userId && (isPatientData || isSensitiveData)) {
+    if (ctx._userId && (isPatientData || isSensitiveData)) {
       auditEntry = {
-        _userId: ctx.userId,
+        _userId: ctx._userId,
         clinicId: ctx.clinicId,
         action: type === 'query' ? AuditAction.VIEW : AuditAction.CREATE,
         resource: path,
@@ -231,7 +232,7 @@ export const lgpdAuditMiddleware = async ({
     const result = await next()
 
     // Apply data minimization to response
-    const operationType = determineOperationType(path, type)
+    const operationType = determineOperationType(_path, type)
     const minimizedResult = applyDataMinimization(
       result,
       operationType,

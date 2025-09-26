@@ -1,5 +1,5 @@
 import { MultiSessionScheduler } from '@/components/aesthetic-scheduling/MultiSessionScheduler'
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { logger } from '@/utils/logger'

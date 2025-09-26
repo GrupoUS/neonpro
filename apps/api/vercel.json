@@ -1,40 +1,25 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "name": "neonpro-healthcare-api",
+  "name": "neonpro-aesthetic-api",
   "alias": ["api.neonpro.com.br"],
-  "regions": ["sao1", "gru1"],
-  "projectSettings": {
-    "devCommand": "bun run dev",
-    "buildCommand": "bun run build",
-    "outputDirectory": ".next",
-    "installCommand": "bun install"
-  },
-  "env": {
-    "NODE_ENV": "production",
-    "VERCEL_REGION": "sao1",
-    "HEALTHCARE_COMPLIANCE_MODE": "brazil",
-    "LGPD_ENFORCEMENT": "strict",
-    "CFM_VALIDATION": "enabled",
-    "ANVISA_REPORTING": "enabled"
-  },
+  "regions": ["gru1"],
+  "buildCommand": "cd ../.. && bun install --frozen-lockfile && cd apps/api && bun run build",
+  "installCommand": "cd ../.. && bun install --frozen-lockfile",
+  "framework": null,
   "build": {
     "env": {
-      "NEXT_TELEMETRY_DISABLED": "1",
-      "SKIP_BUILD_STATIC_GENERATION": "false"
+      "TURBO_REMOTE_CACHE_SIGNATURE": "true",
+      "VERCEL_ANALYTICS_ID": "${VERCEL_ANALYTICS_ID}",
+      "NODE_OPTIONS": "--max-old-space-size=2048"
     }
   },
   "functions": {
-    "apps/api/src/pages/api/**/*.ts": {
-      "runtime": "edge",
-      "regions": ["sao1", "gru1"],
-      "memory": 128,
-      "maxDuration": 10
-    },
-    "apps/api/src/app/api/**/*.ts": {
-      "runtime": "edge",
-      "regions": ["sao1", "gru1"],
-      "memory": 256,
-      "maxDuration": 15
+    "vercel/**/*.ts": {
+      "runtime": "nodejs20.x",
+      "regions": ["gru1"],
+      "memory": 1024,
+      "maxDuration": 60
     }
   },
   "headers": [
@@ -58,8 +43,8 @@
           "value": "brazil-only"
         },
         {
-          "key": "X-Healthcare-Grade",
-          "value": "medical"
+          "key": "X-Application-Type",
+          "value": "aesthetic-clinic"
         },
         {
           "key": "Strict-Transport-Security",
@@ -87,7 +72,19 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' wss: ws:; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+          "value": "default-src 'self'; script-src 'self' *.vercel-analytics.com; style-src 'self' *.googleapis.com; img-src 'self' data: https:; font-src 'self' data: *.gstatic.com; connect-src 'self' https://api.supabase.com *.supabase.co wss: ws:; media-src 'self' blob:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;"
+        },
+        {
+          "key": "X-Rate-Limit-Limit",
+          "value": "1000"
+        },
+        {
+          "key": "X-Rate-Limit-Window",
+          "value": "3600"
+        },
+        {
+          "key": "X-Aesthetic-Service",
+          "value": "true"
         }
       ]
     },
@@ -96,11 +93,15 @@
       "headers": [
         {
           "key": "X-Data-Classification",
-          "value": "sensitive"
+          "value": "client-sensitive"
         },
         {
-          "key": "X-LGPD-Basis",
-          "value": "health-protection"
+          "key": "X-LGPD-Processing-Basis",
+          "value": "client-consent"
+        },
+        {
+          "key": "X-Data-Retention",
+          "value": "365-days"
         },
         {
           "key": "Cache-Control",
@@ -112,16 +113,24 @@
       "source": "/api/telemedicine/(.*)",
       "headers": [
         {
-          "key": "X-CFM-Standard",
-          "value": "Resolution-2314-2022"
+          "key": "X-LGPD-Processing-Basis",
+          "value": "client-consent"
         },
         {
-          "key": "X-Medical-Grade",
+          "key": "X-Aesthetic-Grade",
           "value": "true"
         },
         {
           "key": "X-Session-Encryption",
           "value": "AES-256-GCM"
+        },
+        {
+          "key": "X-Rate-Limit-Limit",
+          "value": "100"
+        },
+        {
+          "key": "X-Rate-Limit-Window",
+          "value": "3600"
         }
       ]
     },
@@ -129,12 +138,12 @@
       "source": "/api/adverse-events/(.*)",
       "headers": [
         {
-          "key": "X-ANVISA-Standard",
-          "value": "RDC-657-2022"
+          "key": "X-Data-Protection-Officer",
+          "value": "dpo@neonpro.com.br"
         },
         {
-          "key": "X-Medical-Device-Reporting",
-          "value": "enabled"
+          "key": "X-Client-Data-Protection",
+          "value": "enhanced"
         }
       ]
     }
@@ -142,39 +151,50 @@
   "redirects": [
     {
       "source": "/health",
-      "destination": "/api/health",
+      "destination": "/health",
       "permanent": false
     },
     {
-      "source": "/compliance",
-      "destination": "/api/compliance/report",
+      "source": "/docs",
+      "destination": "/openapi.json",
       "permanent": false
+    },
+    {
+      "source": "/swagger",
+      "destination": "/docs",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
       "source": "/api/v1/(.*)",
       "destination": "/api/$1"
+    },
+    {
+      "source": "/v1/(.*)",
+      "destination": "/api/v1/$1"
     }
   ],
   "crons": [
     {
-      "path": "/api/health/check",
+      "path": "/health",
       "schedule": "*/5 * * * *"
     },
     {
-      "path": "/api/compliance/audit",
+      "path": "/api/cleanup/ai-sessions",
       "schedule": "0 2 * * *"
     },
     {
-      "path": "/api/performance/metrics",
-      "schedule": "*/1 * * * *"
+      "path": "/api/cleanup/expired-predictions",
+      "schedule": "0 3 * * *"
     },
     {
-      "path": "/api/anvisa/adverse-events/sync",
-      "schedule": "0 */6 * * *"
+      "path": "/metrics",
+      "schedule": "0 0 * * *"
     }
   ],
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "outputDirectory": "dist",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
 }

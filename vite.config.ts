@@ -24,17 +24,11 @@ export default defineConfig({
       // Temporary shims to unblock Vercel build where @sentry/react fails to resolve
       {
         find: '@sentry/react',
-        replacement: path.resolve(
-          __dirname,
-          './apps/web/src/shims/sentry-react.ts',
-        ),
+        replacement: path.resolve(__dirname, './apps/web/src/shims/sentry-react.ts'),
       },
       {
         find: '@sentry/tracing',
-        replacement: path.resolve(
-          __dirname,
-          './apps/web/src/shims/sentry-tracing.ts',
-        ),
+        replacement: path.resolve(__dirname, './apps/web/src/shims/sentry-tracing.ts'),
       },
       // App path aliases
       {
@@ -77,10 +71,7 @@ export default defineConfig({
       // File-saver: force alias to local shim (match bare and subpath imports)
       {
         find: /^file-saver(\/.*)?$/,
-        replacement: path.resolve(
-          __dirname,
-          './apps/web/src/shims/file-saver/index.ts',
-        ),
+        replacement: path.resolve(__dirname, './apps/web/src/shims/file-saver/index.ts'),
       },
     ],
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],

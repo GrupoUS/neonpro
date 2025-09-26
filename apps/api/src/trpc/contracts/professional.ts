@@ -3,14 +3,181 @@
  * Healthcare professional management with license validation and scheduling
  */
 
-import {
-  CreateProfessionalRequestSchema,
-  HealthcareTRPCError,
-  PaginationSchema,
-  ProfessionalResponseSchema,
-  ProfessionalsListResponseSchema,
-  UpdateProfessionalRequestSchema,
-} from '@neonpro/types/api/contracts'
+import { z } from 'zod'
+import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+import { protectedProcedure, router } from '../trpc'
+
+// Professional schema definitions
+
+export const CreateProfessionalRequestSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  taxId: z.string().min(11), // CPF
+  licenseNumber: z.string().min(1),
+  licenseType: z.enum(['CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']),
+  licenseState: z.string().length(2),
+  licenseExpiry: z.string().optional(), // ISO string
+  specialties: z.array(z.string()).min(1),
+  clinicId: z.string(),
+  services: z.array(z.string()).default([]),
+  schedule: z.object({
+    workingDays: z.array(z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])),
+    startTime: z.string(), // HH:mm
+    endTime: z.string(), // HH:mm
+    lunchBreak: z.object({
+      start: z.string().optional(),
+      end: z.string().optional(),
+    }).optional(),
+    maxAppointmentsPerDay: z.number().min(1).default(20),
+    appointmentDuration: z.number().min(15).default(30),
+  }).optional(),
+  profile: z.object({
+    bio: z.string().max(1000).optional(),
+    education: z.array(z.object({
+      institution: z.string(),
+      degree: z.string(),
+      year: z.number().min(1900).max(new Date().getFullYear()),
+    })).optional(),
+    experience: z.array(z.object({
+      position: z.string(),
+      institution: z.string(),
+      startDate: z.string(),
+      endDate: z.string().optional(),
+    })).optional(),
+    certifications: z.array(z.object({
+      name: z.string(),
+      issuedBy: z.string(),
+      issuedDate: z.string(),
+      expiryDate: z.string().optional(),
+    })).optional(),
+  }).optional(),
+  settings: z.object({
+    enableTelemedicine: z.boolean().default(true),
+    enableOnlineBooking: z.boolean().default(true),
+    requiresConfirmation: z.boolean().default(true),
+    advanceNoticeRequired: z.number().default(24), // hours
+    maxCancellationNotice: z.number().default(24), // hours
+  }).optional(),
+})
+
+export const UpdateProfessionalRequestSchema = CreateProfessionalRequestSchema.partial().extend({
+  id: z.string(),
+})
+
+export const PaginationSchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(20),
+  sortBy: z.enum(['name', 'specialty', 'createdAt', 'rating']).default('name'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  search: z.string().optional(),
+  filters: z.object({
+    clinicId: z.string().optional(),
+    specialty: z.string().optional(),
+    licenseType: z.enum(['CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']).optional(),
+    isActive: z.boolean().optional(),
+    availableToday: z.boolean().optional(),
+  }).optional(),
+})
+
+export const ProfessionalResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  taxId: z.string(),
+  licenseNumber: z.string(),
+  licenseType: z.enum(['CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']),
+  licenseState: z.string(),
+  licenseExpiry: z.string().nullable(),
+  specialties: z.array(z.string()),
+  clinicId: z.string(),
+  services: z.array(z.string()),
+  isActive: z.boolean(),
+  rating: z.number().min(0).max(5).nullable(),
+  totalReviews: z.number().default(0),
+  totalAppointments: z.number().default(0),
+  completedAppointments: z.number().default(0),
+  cancelledAppointments: z.number().default(0),
+  noShowRate: z.number().min(0).max(1).default(0),
+  schedule: z.object({
+    workingDays: z.array(z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])),
+    startTime: z.string(),
+    endTime: z.string(),
+    lunchBreak: z.object({
+      start: z.string().nullable(),
+      end: z.string().nullable(),
+    }),
+    maxAppointmentsPerDay: z.number(),
+    appointmentDuration: z.number(),
+  }),
+  profile: z.object({
+    bio: z.string().nullable(),
+    education: z.array(z.object({
+      institution: z.string(),
+      degree: z.string(),
+      year: z.number(),
+    })),
+    experience: z.array(z.object({
+      position: z.string(),
+      institution: z.string(),
+      startDate: z.string(),
+      endDate: z.string().nullable(),
+    })),
+    certifications: z.array(z.object({
+      name: z.string(),
+      issuedBy: z.string(),
+      issuedDate: z.string(),
+      expiryDate: z.string().nullable(),
+    })),
+  }),
+  settings: z.object({
+    enableTelemedicine: z.boolean(),
+    enableOnlineBooking: z.boolean(),
+    requiresConfirmation: z.boolean(),
+    advanceNoticeRequired: z.number(),
+    maxCancellationNotice: z.number(),
+  }),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  clinic: z.object({
+    id: z.string(),
+    name: z.string(),
+  }).optional(),
+  availability: z.object({
+    today: z.object({
+      availableSlots: z.number(),
+      totalSlots: z.number(),
+      nextAvailable: z.string().nullable(),
+    }),
+    thisWeek: z.object({
+      availableSlots: z.number(),
+      totalSlots: z.number(),
+      utilization: z.number(),
+    }),
+  }).optional(),
+})
+
+export const ProfessionalsListResponseSchema = z.object({
+  professionals: z.array(ProfessionalResponseSchema),
+  pagination: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    pages: z.number(),
+    hasNext: z.boolean(),
+    hasPrev: z.boolean(),
+  }),
+  summary: z.object({
+    total: z.number(),
+    active: z.number(),
+    inactive: z.number(),
+    bySpecialty: z.record(z.string(), z.number()),
+    byLicenseType: z.record(z.string(), z.number()),
+    averageRating: z.number().nullable(),
+    totalAppointments: z.number(),
+  }),
+})
 import { protectedProcedure, router } from '../trpc'
 
 export const professionalRouter = router({

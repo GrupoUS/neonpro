@@ -5,68 +5,30 @@
     "module": "Node16",
     "rootDir": "./src",
     "baseUrl": ".",
-    "lib": [
-      "ES2022",
-      "DOM"
-    ],
+    "lib": ["ES2022", "DOM"],
     "tsBuildInfoFile": "./.tsbuildinfo",
-    "types": [
-      "vite/client",
-      "node"
-    ],
+    "types": ["vite/client", "node"],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "~/*": [
-        "./src/*"
-      ],
-      "@neonpro/*": [
-        "../../packages/*/src"
-      ],
-      "@neonpro/database": [
-        "../../packages/database/src"
-      ],
-      "@neonpro/database/*": [
-        "../../packages/database/src/*"
-      ],
-      
-      "@neonpro/healthcare-core": [
-        "../../packages/healthcare-core/src"
-      ],
-      "@neonpro/healthcare-core/*": [
-        "../../packages/healthcare-core/src/*"
-      ],
-  
-      "@neonpro/ui": [
-        "../../packages/ui/src"
-      ],
-      "@neonpro/ui/*": [
-        "../../packages/ui/src/*"
-      ],
-      "@neonpro/utils": [
-        "../../packages/utils/src"
-      ],
-      "@neonpro/utils/*": [
-        "../../packages/utils/src/*"
-      ],
-      "@neonpro/security": [
-        "../../packages/security/src"
-      ],
-      "@neonpro/security/*": [
-        "../../packages/security/src/*"
-      ]
+      "@/*": ["./src/*"],
+      "~/*": ["./src/*"],
+      "@neonpro/*": ["../../packages/*/src"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+
+      "@neonpro/healthcare-core": ["../../packages/healthcare-core/src"],
+      "@neonpro/healthcare-core/*": ["../../packages/healthcare-core/src/*"],
+
+      "@neonpro/ui": ["../../packages/ui/src"],
+      "@neonpro/ui/*": ["../../packages/ui/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "vite-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.d.ts"
-  ],
+  "include": ["src/**/*", "vite-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -103,7 +65,7 @@
     {
       "path": "../../packages/database"
     },
-    
+
     {
       "path": "../../packages/healthcare-core"
     },

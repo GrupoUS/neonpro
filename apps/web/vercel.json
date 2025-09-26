@@ -1,8 +1,157 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "bun install",
+  "name": "neonpro-aesthetic-web",
+  "alias": ["app.neonpro.com.br"],
+  "regions": ["gru1"],
+  "trailingSlash": false,
+  "cleanUrls": true,
+  "installCommand": "bun install --frozen-lockfile",
   "buildCommand": "bun run build:vercel",
   "outputDirectory": "dist",
-  "framework": null
+  "framework": null,
+  "projectSettings": {
+    "devCommand": "turbo run dev --filter=web",
+    "buildCommand": "turbo run build:vercel --filter=web",
+    "outputDirectory": "dist",
+    "installCommand": "bun install --frozen-lockfile"
+  },
+  "env": {
+    "NODE_ENV": "production",
+    "VERCEL_REGION": "gru1",
+    "LGPD_ENFORCEMENT": "strict",
+    "DATA_RESIDENCY": "brazil",
+    "CLIENT_DATA_PROTECTION": "enabled",
+    "AUDIT_LOGGING": "enabled"
+  },
+  "build": {
+    "env": {
+      "NEXT_TELEMETRY_DISABLED": "1",
+      "SKIP_BUILD_STATIC_GENERATION": "false",
+      "TURBO_REMOTE_CACHE_SIGNATURE": "true"
+    }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+        },
+        {
+          "key": "X-LGPD-Compliant",
+          "value": "true"
+        },
+        {
+          "key": "X-Data-Residency",
+          "value": "brazil-only"
+        },
+        {
+          "key": "X-Application-Type",
+          "value": "aesthetic-clinic-web"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "X-API-Rate-Limit-Limit",
+          "value": "1000"
+        },
+        {
+          "key": "X-API-Rate-Limit-Window",
+          "value": "3600"
+        }
+      ]
+    },
+    {
+      "source": "/client/(.*)",
+      "headers": [
+        {
+          "key": "X-Client-Data-Protection",
+          "value": "enhanced"
+        },
+        {
+          "key": "X-LGPD-Processing-Basis",
+          "value": "client-consent"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "private, no-store"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/dashboard",
+      "destination": "/client/dashboard",
+      "permanent": false
+    },
+    {
+      "source": "/agendamento",
+      "destination": "/client/scheduling",
+      "permanent": false
+    },
+    {
+      "source": "/tratamentos",
+      "destination": "/client/treatments",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/v1/(.*)",
+      "destination": "/api/$1"
+    }
+  ],
+  "functions": {
+    "app/api/**/*.ts": {
+      "runtime": "edge",
+      "regions": ["gru1"],
+      "memory": 256,
+      "maxDuration": 30
+    }
+  },
+  "analytics": {
+    "enabled": true
+  },
+  "experimental": {
+    "turbo": {
+      "remoteCache": {
+        "enabled": true,
+        "signatureVerification": true
+      }
+    }
+  }
 }

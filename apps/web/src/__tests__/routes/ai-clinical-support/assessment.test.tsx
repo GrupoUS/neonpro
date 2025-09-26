@@ -2,6 +2,7 @@ import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { vi } from 'vitest'
 
 // Mock the PatientAssessmentForm component
 vi.mock('@/components/ai-clinical-support/PatientAssessmentForm', () => ({
@@ -27,17 +28,28 @@ vi.mock('@/components/ai-clinical-support/PatientAssessmentForm', () => ({
   ),
 }))
 
-// Mock the API
-vi.mock('@/lib/api', () => ({
-  api: {
-    patients: {
-      getById: vi.fn(),
-    },
-    aiClinicalSupport: {
-      getPatientTreatmentHistory: vi.fn(),
-      createPatientAssessment: vi.fn(),
-    },
+// Mock the API methods needed for this test
+const mockApi = {
+  patients: {
+    getById: vi.fn(),
   },
+  aiClinicalSupport: {
+    getPatientTreatmentHistory: vi.fn(),
+    createPatientAssessment: vi.fn(),
+  },
+}
+
+vi.mock('@/lib/api', () => ({
+  trpcClient: {
+    query: vi.fn(),
+    mutation: vi.fn(),
+  },
+  apiClient: {
+    query: vi.fn(),
+    mutation: vi.fn(),
+  },
+  // Mock API structure for test compatibility
+  api: mockApi,
 }))
 
 describe('PatientAssessment Route', () => {
@@ -63,14 +75,12 @@ describe('PatientAssessment Route', () => {
       // This test expects patient ID validation in the loader
       // Currently failing because validation may not be comprehensive
       
-      const { api } = require('@/lib/api')
-      
-      api.patients.getById.mockResolvedValue({ 
+      mockApi.patients.getById.mockResolvedValue({ 
         id: 'patient-123', 
         name: 'John Doe' 
       })
       
-      api.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({
+      mockApi.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({
         treatments: [
           { id: 'treatment-1', date: '2024-01-01' },
           { id: 'treatment-2', date: '2024-01-02' },
@@ -135,10 +145,8 @@ describe('PatientAssessment Route', () => {
       // This test expects proper handling of optional assessment ID
       // Currently failing because optional parameter handling may not be robust
       
-      const { api } = require('@/lib/api')
-      
-      api.patients.getById.mockResolvedValue({ id: 'patient-123' })
-      api.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({ treatments: [] })
+      mockApi.patients.getById.mockResolvedValue({ id: 'patient-123' })
+      mockApi.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({ treatments: [] })
       
       const route = {
         id: '/ai-clinical-support/assessment',
@@ -174,7 +182,7 @@ describe('PatientAssessment Route', () => {
       // This test expects LGPD compliance for patient data access
       // Currently failing because LGPD compliance is not enforced
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockImplementation((patientId) => {
         // Should validate LGPD compliance before accessing patient data
@@ -214,7 +222,7 @@ describe('PatientAssessment Route', () => {
       // This test expects medical professional credential validation
       // Currently failing because credential validation is not implemented
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ id: 'patient-123' })
       api.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({ treatments: [] })
@@ -250,7 +258,7 @@ describe('PatientAssessment Route', () => {
       // This test expects comprehensive audit trail for AI assessments
       // Currently failing because audit trail is not comprehensive
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ id: 'patient-123' })
       api.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({ treatments: [] })
@@ -303,7 +311,7 @@ describe('PatientAssessment Route', () => {
       // This test expects AI assessment engine integration
       // Currently failing because AI integration is not complete
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ 
         id: 'patient-123', 
@@ -359,7 +367,7 @@ describe('PatientAssessment Route', () => {
       // This test expects real-time clinical decision support
       // Currently failing because real-time support is not implemented
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ id: 'patient-123' })
       api.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({ treatments: [] })
@@ -398,7 +406,7 @@ describe('PatientAssessment Route', () => {
       // This test expects optimized AI model loading
       // Currently failing because AI model loading is not optimized
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       // Mock slow AI model loading
       api.patients.getById.mockImplementation(() => {
@@ -439,7 +447,7 @@ describe('PatientAssessment Route', () => {
       // This test expects AI analysis result caching
       // Currently failing because AI analysis caching is not implemented
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ id: 'patient-123' })
       api.aiClinicalSupport.getPatientTreatmentHistory.mockResolvedValue({ treatments: [] })
@@ -482,7 +490,7 @@ describe('PatientAssessment Route', () => {
       // This test expects encryption of sensitive medical data
       // Currently failing because encryption is not implemented
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ 
         id: 'patient-123', 
@@ -521,7 +529,7 @@ describe('PatientAssessment Route', () => {
       // This test expects healthcare data integrity validation
       // Currently failing because data integrity validation is not implemented
       
-      const { api } = require('@/lib/api')
+      const api = mockApi
       
       api.patients.getById.mockResolvedValue({ 
         id: 'patient-123', 

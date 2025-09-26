@@ -15,25 +15,51 @@
 
 /**
  * Sanitizes data for AI processing by removing PII and sensitive healthcare information
- * 
+ *
  * Automatically detects and removes or masks personally identifiable information
  * to ensure compliance with LGPD when sending data to AI services for analysis.
- * 
+ *
  * @function sanitizeForAI
  * @param {string} text - Input text containing potentially sensitive information
  * @returns {string} Sanitized text with PII removed or masked
- * 
+ *
  * @example
  * ```typescript
  * const sensitiveText = 'Paciente João Silva (CPF: 123.456.789-00) precisa de tratamento';
  * const sanitized = sanitizeForAI(sensitiveText);
  * // Returns: 'Paciente [NOME_REMOVIDO] ([CPF_REMOVIDO]) precisa de tratamento'
  * ```
- * 
+ *
  * LGPD Compliance: Essential for AI processing of healthcare data to prevent
  * unauthorized exposure of sensitive patient information.
  */
-export { sanitizeForAI } from '@neonpro/database'
+export function sanitizeForAI(text: string): string {
+  const patterns = [
+    // CPF
+    { pattern: /\d{3}\.\d{3}\.\d{3}-\d{2}/g, replacement: '[CPF_REMOVIDO]' },
+    // Phone numbers
+    { pattern: /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, replacement: '[TELEFONE_REMOVIDO]' },
+    // Email
+    { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REMOVIDO]' },
+    // Full names (Brazilian pattern)
+    { pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g, replacement: '[NOME_REMOVIDO]' },
+    // RG
+    { pattern: /\d{2}\.\d{3}\.\d{3}-\d{1}/g, replacement: '[RG_REMOVIDO]' },
+    // Medical license numbers
+    { pattern: /CRM\/\w{2}\s*\d{4,6}/gi, replacement: '[CRM_REMOVIDO]' },
+    // Addresses
+    { pattern: /\d{3,5}[-\s]?\d{3}/g, replacement: '[CEP_REMOVIDO]' },
+    // Birth dates
+    { pattern: /\d{2}\/\d{2}\/\d{4}/g, replacement: '[DATA_NASCIMENTO_REMOVIDA]' },
+  ]
+
+  let sanitizedText = text
+  for (const { pattern, replacement } of patterns) {
+    sanitizedText = sanitizedText.replace(pattern, replacement)
+  }
+
+  return sanitizedText
+}
 
 /**
  * Redacts sensitive information from data objects and text
@@ -68,7 +94,28 @@ export { sanitizeForAI } from '@neonpro/database'
  * - Audit logging for all redaction operations
  * - Supports both synchronous and asynchronous redaction
  */
-export { redact } from '@neonpro/shared'
+/**
+ * Redact sensitive information from text data
+ * Mock implementation to replace @neonpro/shared import
+ */
+export function redact(text: string, patterns?: Array<{ pattern: RegExp; replacement: string }>): string {
+  const defaultPatterns = [
+    { pattern: /\d{3}\.\d{3}\.\d{3}-\d{2}/g, replacement: '[CPF_REDACTED]' },
+    { pattern: /\d{2}\.\d{3}\.\d{3}-\d{1}/g, replacement: '[RG_REDACTED]' },
+    { pattern: /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, replacement: '[PHONE_REDACTED]' },
+    { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REDACTED]' },
+    { pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g, replacement: '[NAME_REDACTED]' },
+  ]
+
+  const redactionPatterns = patterns || defaultPatterns
+  let redactedText = text
+
+  for (const { pattern, replacement } of redactionPatterns) {
+    redactedText = redactedText.replace(pattern, replacement)
+  }
+
+  return redactedText
+}
 
 /**
  * Data sanitization configuration interface

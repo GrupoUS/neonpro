@@ -200,7 +200,7 @@ billing.put(
       const result = await billingService.updateInvoice(
         invoiceId,
         updateData,
-        userId,
+        _userId,
       )
 
       if (!result.success) {
@@ -277,7 +277,7 @@ billing.post(
       const result = await billingService.processPayment(
         invoiceId,
         paymentData,
-        userId,
+        _userId,
       )
 
       if (!result.success) {
@@ -352,7 +352,7 @@ billing.get(
 
       const result = await billingService.generateFinancialReport(
         params,
-        userId,
+        _userId,
       )
 
       if (!result.success) {
@@ -382,7 +382,7 @@ billing.get('/dashboard/stats', async c => {
 
     const result = await billingService.getBillingStats(
       clinicId,
-      userId,
+      _userId,
       period,
     )
 

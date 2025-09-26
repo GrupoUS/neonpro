@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       lib: {
-        entry: 'src/index.ts',
+        entry: 'src/browser.ts',
         name: 'NeonProAPI',
         fileName: format => `index.${format}${isEdge ? '.edge' : ''}`,
         formats: ['es'],
@@ -25,6 +25,36 @@ export default defineConfig(({ mode }) => {
       // Code splitting for better performance
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
+        external: [
+          '@sentry/node',
+          '@sentry/profiling-node',
+          '@opentelemetry/api',
+          '@opentelemetry/auto-instrumentations-node',
+          '@opentelemetry/exporter-prometheus',
+          '@opentelemetry/resources',
+          '@opentelemetry/sdk-node',
+          '@opentelemetry/semantic-conventions',
+          'node:fs',
+          'node:path',
+          'node:os',
+          'node:util',
+          'node:crypto',
+          'node:buffer',
+          'node:stream',
+          'node:http',
+          'node:https',
+          'node:zlib',
+          'fs',
+          'path',
+          'os',
+          'util',
+          'crypto',
+          'buffer',
+          'stream',
+          'http',
+          'https',
+          'zlib',
+        ],
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
@@ -37,6 +67,7 @@ export default defineConfig(({ mode }) => {
               if (id.includes('supabase')) return 'vendor-auth'
               if (id.includes('ai-sdk')) return 'vendor-ai'
               if (id.includes('opentelemetry')) return 'vendor-monitoring'
+              if (id.includes('@sentry')) return 'vendor-sentry'
               return 'vendor'
             }
           },
@@ -50,7 +81,6 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: [
         'hono',
-        '@hono/node-server',
         '@hono/trpc-server',
         '@trpc/server',
         'zod',
@@ -58,7 +88,7 @@ export default defineConfig(({ mode }) => {
         'date-fns',
         'nanoid',
       ],
-      exclude: ['@prisma/client'],
+      exclude: ['@prisma/client', '@hono/node-server'],
     },
     esbuild: {
       target: isEdge ? 'es2022' : 'node18',

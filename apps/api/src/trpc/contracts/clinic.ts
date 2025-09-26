@@ -3,14 +3,142 @@
  * Multi-tenant clinic management with compliance tracking
  */
 
-import {
-  ClinicResponseSchema,
-  ClinicsListResponseSchema,
-  CreateClinicRequestSchema,
-  HealthcareTRPCError,
-  PaginationSchema,
-  UpdateClinicRequestSchema,
-} from '@neonpro/types'
+import { z } from 'zod'
+import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+import { protectedProcedure, router } from '../trpc'
+
+// Clinic schema definitions
+
+export const CreateClinicRequestSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  address: z.object({
+    street: z.string().min(1),
+    number: z.string().min(1),
+    complement: z.string().optional(),
+    neighborhood: z.string().min(1),
+    city: z.string().min(1),
+    state: z.string().length(2),
+    zipCode: z.string().min(8).max(9),
+    country: z.string().default('Brasil'),
+  }),
+  taxId: z.string().min(11), // CNPJ
+  licenseNumber: z.string().min(1),
+  licenseType: z.enum(['ANVISA', 'MUNICIPAL', 'ESTADUAL']),
+  licenseExpiry: z.string().optional(), // ISO string
+  specializations: z.array(z.string()).default([]),
+  settings: z.object({
+    timezone: z.string().default('America/Sao_Paulo'),
+    currency: z.string().default('BRL'),
+    language: z.string().default('pt-BR'),
+    appointmentDuration: z.number().default(30),
+    maxAdvanceBooking: z.number().default(90), // days
+    cancellationPolicy: z.string().default('24h'),
+    requiresPrepayment: z.boolean().default(false),
+    enableTelemedicine: z.boolean().default(true),
+    enableOnlineBooking: z.boolean().default(true),
+  }).optional(),
+  contacts: z.array(z.object({
+    name: z.string(),
+    role: z.string(),
+    email: z.string().email().optional(),
+    phone: z.string().optional(),
+  })).optional(),
+})
+
+export const UpdateClinicRequestSchema = CreateClinicRequestSchema.partial().extend({
+  id: z.string(),
+})
+
+export const PaginationSchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(20),
+  sortBy: z.enum(['name', 'createdAt', 'email', 'city']).default('name'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  search: z.string().optional(),
+  filters: z.object({
+    state: z.string().optional(),
+    city: z.string().optional(),
+    licenseType: z.enum(['ANVISA', 'MUNICIPAL', 'ESTADUAL']).optional(),
+    isActive: z.boolean().optional(),
+  }).optional(),
+})
+
+export const ClinicResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  phone: z.string(),
+  address: z.object({
+    street: z.string(),
+    number: z.string(),
+    complement: z.string().nullable(),
+    neighborhood: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z.string(),
+    country: z.string(),
+  }),
+  taxId: z.string(),
+  licenseNumber: z.string(),
+  licenseType: z.enum(['ANVISA', 'MUNICIPAL', 'ESTADUAL']),
+  licenseExpiry: z.string().nullable(),
+  specializations: z.array(z.string()),
+  isActive: z.boolean(),
+  settings: z.object({
+    timezone: z.string(),
+    currency: z.string(),
+    language: z.string(),
+    appointmentDuration: z.number(),
+    maxAdvanceBooking: z.number(),
+    cancellationPolicy: z.string(),
+    requiresPrepayment: z.boolean(),
+    enableTelemedicine: z.boolean(),
+    enableOnlineBooking: z.boolean(),
+  }),
+  contacts: z.array(z.object({
+    name: z.string(),
+    role: z.string(),
+    email: z.string().email().nullable(),
+    phone: z.string().nullable(),
+  })),
+  compliance: z.object({
+    lgpdCompliant: z.boolean(),
+    anvisaCompliant: z.boolean(),
+    cfmCompliant: z.boolean(),
+    lastAudit: z.string().nullable(),
+    nextAudit: z.string().nullable(),
+    certificates: z.array(z.object({
+      type: z.string(),
+      number: z.string(),
+      expiryDate: z.string(),
+      status: z.enum(['active', 'expired', 'pending']),
+    })),
+  }),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+
+export const ClinicsListResponseSchema = z.object({
+  clinics: z.array(ClinicResponseSchema),
+  pagination: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    pages: z.number(),
+    hasNext: z.boolean(),
+    hasPrev: z.boolean(),
+  }),
+  summary: z.object({
+    total: z.number(),
+    active: z.number(),
+    inactive: z.number(),
+    anvisaLicensed: z.number(),
+    municipalLicensed: z.number(),
+    estadualLicensed: z.number(),
+  }),
+})
 import { z } from 'zod'
 import { protectedProcedure, router } from '../trpc'
 

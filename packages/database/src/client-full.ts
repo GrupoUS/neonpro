@@ -254,8 +254,11 @@ export const closeDatabaseConnections = async () => {
     const logger = createLogger('database-client')
     logger.error(
       'Error closing database connections',
-      { component: 'database-client', action: 'close_connections_error' },
-      error instanceof Error ? error : new Error(String(error)),
+      { 
+        component: 'database-client', 
+        action: 'close_connections_error',
+        error: error instanceof Error ? error : new Error(String(error))
+      },
     )
   }
 }

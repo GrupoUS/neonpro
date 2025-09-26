@@ -1,15 +1,23 @@
+import path from 'path'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
-    globals: false,
-    environment: 'node',
-    pool: 'threads',
+    globals: true,
+    environment: 'jsdom',
     include: ['**/*.{test,spec}.{ts,tsx}'],
-    exclude: ['**/node_modules/**', '**/dist/**'],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/build/**',
+      '**/coverage/**',
+      '**/test-results/**',
+      '**/.turbo/**',
+      '**/tools/tests/**',
+    ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html', 'lcov'],
+      reporter: ['text', 'html'],
       thresholds: {
         global: {
           branches: 80,
@@ -18,6 +26,16 @@ export default defineConfig({
           statements: 80,
         },
       },
+    },
+    setupFiles: [],
+    testTimeout: 10000,
+    hookTimeout: 10000,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '.'),
+      '@/apps': path.resolve(__dirname, 'apps'),
+      '@/packages': path.resolve(__dirname, 'packages'),
     },
   },
 })

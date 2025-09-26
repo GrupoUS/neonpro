@@ -161,8 +161,8 @@ export class EnhancedAestheticSchedulingService {
 
       for (let i = 0; i < request.procedures.length; i++) {
         const procedureId = request.procedures[i]
-        const procedure = this.procedureCache.get(procedureId) || {
-          id: procedureId,
+        const procedure = this.procedureCache.get(procedureId || '') || {
+          id: procedureId || 'default_procedure',
           name: 'Aesthetic Procedure',
           procedureType: 'facial' as const,
           category: 'facial',
@@ -229,7 +229,7 @@ export class EnhancedAestheticSchedulingService {
     packageId: string,
     patientId: string,
     startDate: Date,
-    preferences: any = {}
+    // preferences: any = {}
   ): Promise<SchedulingResult> {
     try {
       // Mock treatment package scheduling
@@ -276,6 +276,8 @@ export class EnhancedAestheticSchedulingService {
             sessionNumber: session,
             totalSessions: packageProcedure.sessions,
             recoveryBuffer: 15,
+            specialEquipment: procedure.specialRequirements || [],
+            assistantRequired: procedure.procedureType === 'surgical',
             postProcedureInstructions: ['Evitar sol por 24h', 'Hidratar a pele'],
           }
           appointments.push(appointment)
@@ -317,7 +319,7 @@ export class EnhancedAestheticSchedulingService {
    * Validate professional certifications for aesthetic procedures
    */
   async validateProfessionalCertifications(
-    professionalId: string,
+    // professionalId: string,
     procedureIds: string[]
   ): Promise<ProfessionalValidation> {
     try {
@@ -720,7 +722,7 @@ export class EnhancedAestheticSchedulingService {
   /**
    * Get Brazilian healthcare compliance status
    */
-  getBrazilianComplianceStatus(procedureId: string): {
+  getBrazilianComplianceStatus(/*procedureId: string*/): {
     anvisaCompliant: boolean
     cfmCompliant: boolean
     lgpdCompliant: boolean

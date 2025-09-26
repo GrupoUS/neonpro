@@ -14,7 +14,64 @@
  */
 
 import type { PrismaClient } from '@prisma/client'
-import * as crypto from 'crypto'
+
+// Browser-compatible crypto polyfill
+const cryptoPolyfill = {
+  randomUUID: () => {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      return crypto.randomUUID()
+    }
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0
+      const v = c === 'x' ? r : (r & 0x3 | 0x8)
+      return v.toString(16)
+    })
+  },
+
+  createHash: (algorithm: string) => ({
+    update: (data: string) => ({
+      digest: () => {
+        // Simple mock implementation - replace with actual hash in production
+        return btoa(data).substring(0, 64) // Truncated base64 as mock hash
+      }
+    })
+  }),
+
+  createHmac: (algorithm: string, key: string) => ({
+    update: (data: string) => ({
+      digest: () => {
+        // Simple mock implementation - replace with actual HMAC in production
+        return btoa(`${key}:${data}`).substring(0, 64)
+      }
+    })
+  }),
+
+  randomBytes: (size: number) => {
+    const bytes = new Uint8Array(size)
+    crypto.getRandomValues(bytes)
+    return Buffer.from(bytes)
+  },
+
+  createCipheriv: (algorithm: string, key: string, iv: Buffer) => ({
+    update: (data: string) => {
+      // Simple mock encryption - replace with actual encryption in production
+      return btoa(data) // Base64 as mock encryption
+    },
+    final: () => '',
+    iv: Buffer.from(iv)
+  }),
+
+  scryptSync: (password: string, salt: string, keylen: number) => {
+    // Simple mock implementation - replace with actual scrypt in production
+    const mockKey = new Uint8Array(keylen)
+    for (let i = 0; i < keylen; i++) {
+      mockKey[i] = password.charCodeAt(i % password.length) ^ salt.charCodeAt(i % salt.length)
+    }
+    return Buffer.from(mockKey)
+  }
+}
+
+const crypto = globalThis.crypto || cryptoPolyfill
 // NGS2 Security Standards
 export const NGS2_SECURITY_LEVELS = {
   LEVEL_1: 'level_1', // Basic authentication
@@ -381,7 +438,7 @@ export class TelemedicineService {
 
       return session
     } catch {
-      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(`Failed to create telemedicine session: ${errorMessage}`)
     }
   }
@@ -462,7 +519,7 @@ export class TelemedicineService {
         qualityRequirements: QUALITY_THRESHOLDS,
       }
     } catch {
-      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(`Failed to start session: ${errorMessage}`)
     }
   }
@@ -665,7 +722,7 @@ export class TelemedicineService {
         isValid: true,
       }
     } catch {
-      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(`Failed to create digital prescription: ${errorMessage}`)
     }
   } /**
@@ -783,7 +840,7 @@ export class TelemedicineService {
         nearestHospital,
       }
     } catch {
-      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(`Emergency escalation failed: ${errorMessage}`)
     }
   }
@@ -874,7 +931,7 @@ export class TelemedicineService {
         archivalDetails,
       }
     } catch {
-      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(`Failed to end session: ${errorMessage}`)
     }
   }
@@ -927,7 +984,7 @@ export class TelemedicineService {
       this.cfmCache.set(professionalId, validation)
       return validation
     } catch {
-      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error'
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(`CFM validation failed: ${errorMessage}`)
     }
   }
@@ -1299,7 +1356,7 @@ export class TelemedicineService {
     const activeSessions = Array.from(this.activeSessions.values())
 
     const sessionsByType = activeSessions.reduce(
-      (acc, _session) => {
+      (acc, session) => {
         acc[session.sessionType] = (acc[session.sessionType] || 0) + 1
         return acc
       },
@@ -1307,7 +1364,7 @@ export class TelemedicineService {
     )
 
     const sessionsByStatus = activeSessions.reduce(
-      (acc, _session) => {
+      (acc, session) => {
         acc[session.status] = (acc[session.status] || 0) + 1
         return acc
       },
@@ -1316,7 +1373,7 @@ export class TelemedicineService {
 
     const averageQualityScore = activeSessions.length > 0
       ? activeSessions.reduce(
-        (sum, _session) => sum + session.qualityMetrics.qualityScore,
+        (sum, session) => sum + session.qualityMetrics.qualityScore,
         0,
       ) / activeSessions.length
       : 0

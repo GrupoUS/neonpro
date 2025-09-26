@@ -204,8 +204,14 @@ vi.mock('@tanstack/react-router', () => ({
   createRoute: vi.fn(),
   createRouter: vi.fn(),
   createRootRoute: vi.fn(),
-  createMemoryRouter: vi.fn(),
-  RouterProvider: ({ children }: { children: React.ReactNode }) => children,
+  createMemoryRouter: vi.fn((routes) => ({
+    routes,
+    state: { location: { pathname: '/' }, matches: [] },
+    subscribe: vi.fn(),
+    navigate: vi.fn(),
+  })),
+  RouterProvider: ({ router, children }: { router?: any; children: React.ReactNode }) => 
+    React.createElement('div', { 'data-testid': 'router-provider' }, children),
   createFileRoute: vi.fn(),
   createLazyRoute: vi.fn(),
   createLazyFileRoute: vi.fn(),
@@ -302,6 +308,7 @@ vi.mock('@/lib/api', () => ({
       create: vi.fn(() => Promise.resolve({ data: { id: 'patient-123' } })),
       update: vi.fn(() => Promise.resolve({ data: { id: 'patient-123' } })),
       delete: vi.fn(() => Promise.resolve({ success: true })),
+      getById: vi.fn(() => Promise.resolve({ data: { id: 'patient-123' } })),
     },
     professionals: {
       list: vi.fn(() => Promise.resolve({ data: [], total: 0 })),
@@ -314,6 +321,10 @@ vi.mock('@/lib/api', () => ({
       create: vi.fn(() => Promise.resolve({ data: { id: 'product-123' } })),
       update: vi.fn(() => Promise.resolve({ data: { id: 'product-123' } })),
       delete: vi.fn(() => Promise.resolve({ success: true })),
+    },
+    aiClinicalSupport: {
+      getPatientTreatmentHistory: vi.fn(() => Promise.resolve({ treatments: [] })),
+      createPatientAssessment: vi.fn(() => Promise.resolve({ success: true })),
     },
     healthcare: {
       assessments: {

@@ -105,6 +105,10 @@ export interface ComplianceCategory {
   name: string
   description: string
   framework: string
+  regulatoryBody?: string
+  isActive?: boolean
+  version?: string
+  lastUpdated?: Date
   createdAt: Date
   updatedAt: Date
   deletedAt?: Date | null
@@ -113,8 +117,18 @@ export interface ComplianceCategory {
 export interface ComplianceRequirement {
   id: string
   categoryId: string
+  title?: string
   description: string
+  requirementType?: string
+  mandatory?: boolean
+  frequency?: string
+  assessmentMethod?: string
+  riskLevel?: string
   status: 'met' | 'pending' | 'failed'
+  priority?: string
+  dueDate?: Date
+  documentationRequired?: boolean
+  isActive?: boolean
   createdAt: Date
   updatedAt: Date
   deletedAt?: Date | null
@@ -124,7 +138,16 @@ export interface ComplianceAssessment {
   id: string
   requirementId: string
   assessorId: string
+  clinicId?: string
   score: number
+  assessmentType?: string
+  status?: string
+  assessedAt?: Date
+  assessedBy?: string
+  nextAssessmentDate?: Date
+  findings?: string[]
+  recommendations?: string[]
+  evidenceUrls?: string[]
   date: Date
   createdAt: Date
   updatedAt: Date
@@ -146,8 +169,17 @@ export interface DataConsentRecord {
 export interface DataSubjectRequest {
   id: string
   userId: string
+  clientId?: string
+  clinicId?: string
   type: 'access' | 'deletion' | 'correction'
-  status: 'pending' | 'processed'
+  requestType?: string
+  requestText?: string
+  requestDescription?: string
+  requestedData?: string[]
+  status: 'pending' | 'processed' | 'in_progress' | 'completed' | 'rejected'
+  responseText?: string
+  processedBy?: string
+  processedAt?: Date
   requestedAt: Date
   createdAt: Date
   updatedAt: Date

@@ -11,6 +11,7 @@
 
 // Core circuit breaker service
 export {
+  CircuitBreakerService as CircuitBreaker,
   CircuitBreakerConfig,
   CircuitBreakerEvent,
   CircuitBreakerMetrics,
@@ -49,9 +50,7 @@ export {
   withCircuitBreakerProtection,
 } from './integration-example'
 
-// Default exports
-export { default as CircuitBreakerService } from './circuit-breaker-service'
-export { default as ExternalServiceHealthChecker } from './health-checker'
+
 
 // Package version and info
 export const CIRCUIT_BREAKER_VERSION = '1.0.0'

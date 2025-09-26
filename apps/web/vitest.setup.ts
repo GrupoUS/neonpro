@@ -13,17 +13,18 @@ global.console = {
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query: string): MediaQueryList =>
-    ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(), // deprecated
-      removeListener: vi.fn(), // deprecated
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList)
+  value: vi.fn().mockImplementation(
+    (query: string): MediaQueryList =>
+      ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(), // deprecated
+        removeListener: vi.fn(), // deprecated
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }) as unknown as MediaQueryList
   ),
 })
 
@@ -51,7 +52,10 @@ vi.mock('@supabase/supabase-js', () => ({
       getUser: vi.fn(() => ({ data: { user: null }, error: null })),
       signIn: vi.fn(() => ({ data: { user: null }, error: null })),
       signOut: vi.fn(() => ({ error: null })),
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } }, error: null })),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+        error: null,
+      })),
     },
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -74,7 +78,12 @@ vi.mock('@trpc/react-query', () => ({
     Provider: ({ children }: { children: React.ReactNode }) => children,
     useQuery: vi.fn(() => ({ data: null, isLoading: false, error: null })),
     useMutation: vi.fn(() => ({ mutate: vi.fn(), isLoading: false, error: null })),
-    useInfiniteQuery: vi.fn(() => ({ data: null, isLoading: false, error: null, fetchNextPage: vi.fn() })),
+    useInfiniteQuery: vi.fn(() => ({
+      data: null,
+      isLoading: false,
+      error: null,
+      fetchNextPage: vi.fn(),
+    })),
   })),
 }))
 
@@ -99,10 +108,16 @@ vi.mock('@tanstack/react-query', () => ({
     invalidateQueries: vi.fn(),
     refetchQueries: vi.fn(),
   })),
-  QueryClientProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+  QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children),
   useQuery: vi.fn(() => ({ data: null, isLoading: false, error: null })),
   useMutation: vi.fn(() => ({ mutate: vi.fn(), isLoading: false, error: null })),
-  useInfiniteQuery: vi.fn(() => ({ data: null, isLoading: false, error: null, fetchNextPage: vi.fn() })),
+  useInfiniteQuery: vi.fn(() => ({
+    data: null,
+    isLoading: false,
+    error: null,
+    fetchNextPage: vi.fn(),
+  })),
 }))
 
 // Mock React Hook Form
@@ -186,5 +201,3 @@ vi.setConfig({
   testTimeout: 10000,
   hookTimeout: 10000,
 })
-
-export {}

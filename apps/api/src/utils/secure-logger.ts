@@ -103,7 +103,7 @@ class SecureLogger {
       enableStructuredOutput: config.enableStructuredOutput ?? true,
       enableCorrelationIds: config.enableCorrelationIds ?? true,
       _service: config._service || 'neonpro-api',
-      environment: config.environment || process.env.NODE_ENV || 'development',
+      environment: (config.environment || process.env.NODE_ENV || 'development') as 'development' | 'staging' | 'production',
       version: config.version || '1.0.0',
       enablePerformanceTracking: config.enablePerformanceTracking ?? true,
     }
@@ -270,7 +270,6 @@ class SecureLogger {
     if (!this.shouldLog(level)) return
 
     const enrichedContext = this.enrichContext(_context)
-    const startTime = this.performanceTracker.get(message) || Date.now()
 
     if (enrichedContext.duration) {
       this.updateResponseTimeMetrics(enrichedContext.duration)
@@ -354,8 +353,14 @@ class SecureLogger {
       ...context,
       operation,
       duration,
-      query: this.config.maskSensitiveData ? this.maskSensitiveData(query) : query,
     })
+    // Log query separately with masking
+    if (this.config.maskSensitiveData) {
+      const maskedQuery = this.maskSensitiveData(query)
+      this.formatLog('debug', `Database ${operation} query: ${maskedQuery}`)
+    } else {
+      this.formatLog('debug', `Database ${operation} query: ${query}`)
+    }
   }
 
   /**
@@ -453,7 +458,7 @@ class SecureLogger {
     if (!this.config.auditTrail) return
 
     this.formatLog('info', 'LGPD_DATA_ACCESS_AUDIT', {
-      ...context,
+      ..._context,
       auditType: 'data_access',
       timestamp: new Date().toISOString(),
       compliance: 'LGPD',
@@ -471,7 +476,7 @@ class SecureLogger {
     if (!this.config.auditTrail) return
 
     this.formatLog('info', 'LGPD_DATA_MODIFICATION_AUDIT', {
-      ...context,
+      ..._context,
       auditType: 'data_modification',
       timestamp: new Date().toISOString(),
       compliance: 'LGPD',
@@ -488,7 +493,7 @@ class SecureLogger {
     if (!this.config.auditTrail) return
 
     this.formatLog('info', 'LGPD_CONSENT_CHANGE_AUDIT', {
-      ...context,
+      ..._context,
       auditType: 'consent_change',
       timestamp: new Date().toISOString(),
       compliance: 'LGPD',

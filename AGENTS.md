@@ -1,11 +1,7 @@
----
-applyTo: "**/*"
----
-
 # Development Workflow
 
-> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
-> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
+> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow this workflow systematically.
+> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and/or `tavily` for official docs and best practices. Don't keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
 > **ALWAYS** Execute Tasks, tools and Agents in parallel when possible to optimize time and efficiency.
 
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
@@ -31,17 +27,16 @@ When you have ANY doubt during development:
 
 ```yaml
 CORE_STANDARDS:
-  mantra: "Think → Research → Decompose → Plan → Implement → Validate"
+  mantra: "Think → Research → Plan → Decompose with atomic tasks → Implement → Validate"
   mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
   research_driven: "Multi-source validation for all complex implementations"
-  research_excellence: "Context7 → Tavily → Archon → Sequential Thinking chain"
-  cognitive_authority: "Automated thinking activation with complexity-based routing"
+  research_excellence: "Context7 → Tavily → Archon Knowledge base → Sequential Thinking chain"
   vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
   core_principle: "Simple systems that work over complex systems that don't"
-  archon_first_rule: "MANDATORY Archon MCP integration for all task management"
   preserve_context: "Maintain complete context across all agent and thinking transitions"
-  incremental_excellence: "Build quality progressively through workflow phases with cognitive enhancement"
+  incorporate_always: "Incorporate what we already have, avoid creating new files, enhance the existing structure"
   pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
+  always_audit: "Never assume the error is fixed, always audit and validate"
 ```
 
 ## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
@@ -102,80 +97,6 @@ CONSTITUTIONAL_PRINCIPLES:
   right_tool_selection: "Understand full context before implementation"
 ```
 
-## 🛠️ NEONPRO TESTING INFRASTRUCTURE
-
-### **Comprehensive Testing Stack**
-
-**Root-Level Configuration**
-- **Vitest Workspace**: Unified testing configuration at `/vitest.config.ts`
-- **Playwright Testing**: Multi-browser E2E testing at `/playwright.config.ts`
-- **Healthcare Compliance**: Built-in LGPD, ANVISA, CFM validation
-- **MCP Integration**: Enhanced testing with AI-powered validation
-
-**Specialized Testing Configurations**
-- **Unit Testing**: `tools/tests/configs/vitest.unit.config.ts` (85% coverage threshold)
-- **Integration Testing**: `tools/tests/configs/vitest.integration.config.ts` (80% coverage threshold)
-- **AI Testing**: `tools/tests/vitest.ai.config.ts` (75% coverage threshold)
-- **TDD Testing**: `tools/tests/vitest.tdd-only.config.ts` (90% coverage threshold)
-- **E2E Testing**: `tools/tests/configs/playwright.e2e.config.ts`
-
-### **MCP-Powered Testing Utilities**
-
-**Agent Utils Integration** (`tools/tests/agent-utils.ts`)
-- **Sequential Thinking MCP**: Complex test scenario analysis
-- **Archon MCP**: Task management for testing workflows
-- **Serena MCP**: Codebase analysis and coverage validation
-- **Context7 MCP**: Documentation lookup and best practices
-- **Desktop Commander MCP**: File operations and test execution
-
-**Healthcare Compliance Validation**
-- **LGPD Compliance**: Patient data handling validation
-- **ANVISA Standards**: Medical device software compliance
-- **CFM Guidelines**: Professional medical practice validation
-- **WCAG 2.1 AA+**: Accessibility compliance for healthcare
-- **Security Scanning**: Enhanced security validation for healthcare apps
-
-### **Testing Execution Workflow**
-
-**Mandatory Testing Process**
-1. **Unit Tests**: Validate individual components with 85% coverage
-2. **Integration Tests**: Test service interactions with 80% coverage
-3. **E2E Tests**: Full user journey testing with healthcare compliance
-4. **Accessibility Tests**: WCAG 2.1 AA+ compliance validation
-5. **Security Tests**: Healthcare-specific security validation
-6. **Performance Tests**: Load and response time validation
-
-**Quality Gates**
-- **Coverage Requirements**: ≥80% global, ≥85% unit, ≥90% TDD
-- **Healthcare Compliance**: 100% LGPD, ANVISA, CFM validation
-- **Security Validation**: Zero critical vulnerabilities
-- **Accessibility**: WCAG 2.1 AA+ compliance
-- **Performance**: Core Web Vitals compliance
-
-### **Tools/Tests Directory Structure**
-
-```
-tools/tests/
-├── configs/                 # Specialized testing configurations
-│   ├── vitest.unit.config.ts
-│   ├── vitest.integration.config.ts
-│   └── playwright.e2e.config.ts
-├── setup/                   # Global setup and teardown
-│   ├── global-setup.ts
-│   ├── global-teardown.ts
-│   ├── integration.setup.ts
-│   └── ai.global-setup.ts
-├── fixtures/               # Test fixtures and mocks
-├── e2e/                    # End-to-end tests
-├── categories/             # Test categorization
-├── coverage/               # Coverage reports
-├── test-results/           # Test execution results
-├── agent-utils.ts          # MCP-powered testing utilities
-├── vitest.config.ts        # Base vitest configuration
-├── vitest.ai.config.ts     # AI-specific testing
-└── vitest.tdd-only.config.ts # TDD-focused testing
-```
-
 ## 🔧 MCP TOOL INTEGRATION
 
 ### **⚡ Mandatory Sequence**
@@ -215,7 +136,7 @@ tools/tests/
 
 - **MANDATORY**: Start with `sequential-thinking` to analyze requirements
 - Use `archon` to check project context and create/update tasks
-- Use `serena` (NEVER native) to understand current codebase
+- Use `serena` to understand current codebase
 - Break down feature into smaller components
 - Identify complexities, dependencies, and constraints
 - **Complexity ≥7 or Stuck >3x**: consult official docs and best practices with context7 → tavily
@@ -243,9 +164,8 @@ RESEARCH_EXECUTION_FRAMEWORK:
   process:
     - "Understand requirements completely with constitutional analysis"
     - "Identify constraints and dependencies with multi-perspective evaluation"
-    - "Assess complexity level (1-10) with domain-specific triggers"
     - "Define strategic approach with agent coordination planning"
-    - "Break down into manageable components with quality gate definition"
+    - "Break down into manageable components and atomic subtasks with quality gate definition"
   deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
   purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
   intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
@@ -309,7 +229,6 @@ phase_3_planning_design:
   - **🔧 MCP**: serena → desktop-commander (+shadcn-ui for UI)
   - Use `serena` for codebase analysis (get_symbols_overview → find_symbol)
   - Use `desktop-commander` for file operations (chunked 25-30 lines max)
-  - Use `shadcn-ui` to check component availability before custom development
   - Follow established code patterns, naming conventions, and project standards
   - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
   - **Complexity ≥7**: Add context7 → tavily for deep understanding and best practices
@@ -364,24 +283,6 @@ validation:
   verification_rule: "Never assume changes complete without explicit verification"
 ```
 
-### 6. **Memory Documentation Protocol** 📝
-
-**🔧 MCP**: desktop-commander + archon
-
-- Use `archon` to create/update project documents and knowledge base
-- Create `mistakes/[error-category].md` if mistakes corrected
-- Create `features/[feature-name].md` for new features or modified behavior
-- **Test Documentation**: Document new test patterns, mocks, utilities
-- Store learnings in archon knowledge base for future retrieval
-- Confirmation: Explicitly note in your thoughts whether updates were made or not.
-
-**Specific Memory File Management**
-
-- `docs/mistakes/[error-category].md` — Problem, wrong approach, correct solution, root cause, prevention, related files.
-- `docs/features/[feature-name].md` — Overview, architecture, key components, APIs, DB schema, configuration, common issues, testing strategy, last updated.
-- `docs/database-schema/*.md` — DDL/relationships/RLS changes recorded alongside migrations.
-- `docs/apis/*.md` — Endpoint docs: path, method, purpose, request/response, auth, file path.
-
 ## Important Notes
 
 - **🚫 Never skip steps** unless explicitly told by the user
@@ -390,5 +291,3 @@ validation:
 - **🔄 Iterate** until all quality checks pass
 - **📝 Document everything** for future reference using `archon` knowledge base
 - **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives using official docs and best practices with context7 → tavily
-
----

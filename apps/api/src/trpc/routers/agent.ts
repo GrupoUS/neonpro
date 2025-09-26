@@ -5,9 +5,22 @@
  * Full LGPD/ANVISA/CFM compliance for healthcare data interactions
  */
 
-import { HealthcareTRPCError } from '@neonpro/shared/healthcare-errors'
+import { z } from 'zod'
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
+
+// Custom healthcare error handling (temporary implementation)
+class HealthcareTRPCError extends Error {
+  constructor(
+    public code: string,
+    public message: string,
+    public type: string,
+    public context?: Record<string, unknown>
+  ) {
+    super(message)
+    this.name = 'HealthcareTRPCError'
+  }
+}
 import {
   AgentMessageResponseSchema,
   AgentSessionResponseSchema,

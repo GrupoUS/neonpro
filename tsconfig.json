@@ -4,21 +4,13 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "noEmit": true,
     "composite": false,
     "incremental": true,
     "downlevelIteration": true,
     "outDir": "./dist",
-    "types": [
-      "node",
-      "vitest",
-      "vitest/globals"
-    ],
+    "types": ["node", "vitest", "vitest/globals"],
     "exactOptionalPropertyTypes": false,
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
@@ -34,7 +26,7 @@
       "@neonpro/config/*": ["./packages/config/src/*"],
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
-      
+
       "@neonpro/integrations": ["./packages/integrations/src"],
       "@neonpro/integrations/*": ["./packages/integrations/src/*"],
       "@neonpro/workflows": ["./packages/workflows/src"],
@@ -51,21 +43,8 @@
       "@tests/*": ["./tools/tests/*"]
     }
   },
-  "include": [
-    "src/**/*",
-    "tools/tests/**/*",
-    "*.ts",
-    "*.tsx",
-    "types/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/dist/**",
-    "**/*.js",
-    "**/*.test.tsx",
-    "**/__tests__/**"
-  ],
+  "include": ["src/**/*", "tools/tests/**/*", "*.ts", "*.tsx", "types/**/*"],
+  "exclude": ["node_modules", "dist", "**/dist/**", "**/*.js", "**/*.test.tsx", "**/__tests__/**"],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"

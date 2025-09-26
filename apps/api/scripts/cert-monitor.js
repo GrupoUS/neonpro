@@ -12,9 +12,7 @@ const CHECK_INTERVAL = process.env.CERT_CHECK_INTERVAL || 6 * 60 * 60 * 1000 // 
 const RUN_ONCE = process.argv.includes('--once')
 
 async function runCertificateCheck() {
-  console.warn(
-    `[${new Date().toISOString()}] Starting certificate monitoring check`,
-  )
+  console.warn(`[${new Date().toISOString()}] Starting certificate monitoring check`)
 
   try {
     // Run the periodic check
@@ -28,9 +26,8 @@ async function runCertificateCheck() {
     console.warn(`  Certificates Checked: ${healthStatus.certificates.length}`)
 
     healthStatus.certificates.forEach(cert => {
-      const daysText = cert.daysRemaining !== undefined
-        ? ` (${cert.daysRemaining} days remaining)`
-        : ''
+      const daysText =
+        cert.daysRemaining !== undefined ? ` (${cert.daysRemaining} days remaining)` : ''
       console.warn(`    ${cert.domain}: ${cert.status}${daysText}`)
     })
 
@@ -43,10 +40,7 @@ async function runCertificateCheck() {
       process.exit(0)
     }
   } catch (error) {
-    console.error(
-      `[${new Date().toISOString()}] Certificate monitoring failed:`,
-      error.message,
-    )
+    console.error(`[${new Date().toISOString()}] Certificate monitoring failed:`, error.message)
     process.exit(3)
   }
 }
@@ -57,9 +51,7 @@ async function startMonitoring() {
     await runCertificateCheck()
   } else {
     // Run continuously (for daemon mode)
-    console.warn(
-      `[${new Date().toISOString()}] Starting certificate monitoring daemon`,
-    )
+    console.warn(`[${new Date().toISOString()}] Starting certificate monitoring daemon`)
     console.warn(`Check interval: ${CHECK_INTERVAL / 1000 / 60} minutes`)
 
     // Run initial check
@@ -70,25 +62,18 @@ async function startMonitoring() {
       try {
         await runCertificateCheck()
       } catch (error) {
-        console.error(
-          `[${new Date().toISOString()}] Monitoring error:`,
-          error.message,
-        )
+        console.error(`[${new Date().toISOString()}] Monitoring error:`, error.message)
       }
     }, CHECK_INTERVAL)
 
     // Keep the process running
     process.on('SIGTERM', () => {
-      console.warn(
-        `[${new Date().toISOString()}] Received SIGTERM, shutting down gracefully`,
-      )
+      console.warn(`[${new Date().toISOString()}] Received SIGTERM, shutting down gracefully`)
       process.exit(0)
     })
 
     process.on('SIGINT', () => {
-      console.warn(
-        `[${new Date().toISOString()}] Received SIGINT, shutting down gracefully`,
-      )
+      console.warn(`[${new Date().toISOString()}] Received SIGINT, shutting down gracefully`)
       process.exit(0)
     })
   }
@@ -101,20 +86,12 @@ process.on('uncaughtException', error => {
 })
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error(
-    `[${new Date().toISOString()}] Unhandled rejection at:`,
-    promise,
-    'reason:',
-    reason,
-  )
+  console.error(`[${new Date().toISOString()}] Unhandled rejection at:`, promise, 'reason:', reason)
   process.exit(5)
 })
 
 // Start monitoring
 startMonitoring().catch(error => {
-  console.error(
-    `[${new Date().toISOString()}] Failed to start monitoring:`,
-    error.message,
-  )
+  console.error(`[${new Date().toISOString()}] Failed to start monitoring:`, error.message)
   process.exit(6)
 })

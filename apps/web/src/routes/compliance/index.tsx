@@ -23,7 +23,7 @@ import {
   X,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { logger } from '@/utils/logger'
 
 export const Route = createFileRoute('/compliance/')({

@@ -2,38 +2,16 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "installCommand": "bun install",
-  "buildCommand": "bun run build:vercel",
-  "outputDirectory": "dist",
-  "framework": null,
-  "regions": ["gru1", "iad1"],
-  "functions": {
-    "api/**/*.ts": {
-      "maxDuration": 60,
-      "memory": 1024
-    },
-    "api/v2/ai/copilot.ts": {
-      "maxDuration": 120,
-      "memory": 2048
-    },
-    "api/v2/ai/chat.ts": {
-      "maxDuration": 90,
-      "memory": 1536
-    },
-    "api/v2/ai/realtime.ts": {
-      "maxDuration": 300,
-      "memory": 1024
-    },
-    "api/healthcare/**/*.ts": {
-      "maxDuration": 30,
-      "memory": 512,
-      "runtime": "nodejs18.x"
-    },
-    "api/compliance/**/*.ts": {
-      "maxDuration": 30,
-      "memory": 512,
-      "runtime": "nodejs18.x"
+  "devCommand": "turbo run dev",
+  "regions": ["gru1"],
+
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
-  },
+  ],
+
   "headers": [
     {
       "source": "/api/(.*)",
@@ -56,7 +34,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://api.supabase.com https://vercel.com; font-src 'self' data:; frame-ancestors 'none';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         },
         {
           "key": "Referrer-Policy",
@@ -64,11 +42,19 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
         },
         {
-          "key": "X-Healthcare-Compliance",
-          "value": "LGPD-ANVISA-CFM"
+          "key": "X-LGPD-Compliant",
+          "value": "true"
+        },
+        {
+          "key": "X-Data-Residency",
+          "value": "brazil-only"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
         }
       ]
     },
@@ -90,48 +76,64 @@
         {
           "key": "Strict-Transport-Security",
           "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-LGPD-Compliant",
+          "value": "true"
+        },
+        {
+          "key": "X-Data-Residency",
+          "value": "brazil-only"
         }
       ]
     }
   ],
+
   "env": {
-    "NEXT_PUBLIC_APP_ENV": "production",
-    "NEXT_PUBLIC_DEPLOYMENT_ENV": "vercel",
+    "VITE_APP_ENV": "production",
+    "VITE_DEPLOYMENT_ENV": "vercel",
+    "VITE_APP_VERSION": "1.0.0",
     "AI_AGENT_ENABLED": "true",
     "AI_LGPD_COMPLIANCE": "true",
     "AI_ANALYTICS_ENABLED": "true",
     "AUDIT_LOGGING_ENABLED": "true",
     "LOG_LEVEL": "info",
-    "HEALTHCARE_MODE": "true",
     "LGPD_COMPLIANCE": "true",
-    "ANVISA_COMPLIANCE": "true",
-    "CFM_COMPLIANCE": "true",
     "DATA_RESIDENCY": "brazil",
     "BRAZIL_DATA_RESIDENCY": "true",
-    "PATIENT_DATA_ANONYMIZATION": "true",
-    "HEALTHCARE_BACKUP_RETENTION": "365"
+    "CLIENT_DATA_PROTECTION": "true",
+    "CLIENT_DATA_ANONYMIZATION": "true",
+    "DATA_RETENTION_DAYS": "365",
+    "TURBO_REMOTE_CACHE_ENABLED": "true",
+    "VERCEL_ANALYTICS_ENABLED": "true"
   },
+
   "build": {
     "env": {
-      "NEXT_PUBLIC_APP_VERSION": "1.0.0",
-      "BUILD_TIME": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+      "BUILD_TIME": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+      "TURBO_REMOTE_CACHE_SIGNATURE": "true"
     }
   },
+
+  "git": {
+    "deploymentEnabled": true
+  },
+
   "crons": [
     {
       "path": "/api/cleanup/ai-sessions",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     },
     {
-      "path": "/api/cleanup/expired-predictions",
+      "path": "/api/cleanup/expired-data",
       "schedule": "0 2 * * *"
     },
     {
-      "path": "/api/health/ai-agents",
-      "schedule": "*/10 * * * *"
+      "path": "/api/health/system",
+      "schedule": "0 0 * * *"
     },
     {
-      "path": "/api/compliance/audit-daily",
+      "path": "/api/compliance/daily-audit",
       "schedule": "0 3 * * *"
     },
     {

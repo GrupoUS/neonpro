@@ -685,5 +685,6 @@ class AestheticProfessionalsService {
   }
 }
 
-// Export singleton instance
+// Export class and singleton instance
+export { AestheticProfessionalsService }
 export const aestheticProfessionalsService = new AestheticProfessionalsService()

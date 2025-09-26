@@ -3,15 +3,166 @@
  * Comprehensive patient management with LGPD compliance
  */
 
-import {
-  CreatePatientRequestSchema,
-  GetPatientRequestSchema,
-  HealthcareTRPCError,
-  ListPatientsRequestSchema,
-  PatientResponseSchema,
-  PatientsListResponseSchema,
-  UpdatePatientRequestSchema,
-} from '@neonpro/types/api/contracts'
+import { z } from 'zod'
+import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+import { protectedProcedure, router } from '../trpc'
+
+// Patient schema definitions
+
+export const CreatePatientRequestSchema = z.object({
+  name: z.string().min(1).max(200),
+  email: z.string().email().optional().or(z.literal('')),
+  phone: z.string().min(10),
+  dateOfBirth: z.string(), // ISO string
+  gender: z.enum(['male', 'female', 'other']),
+  taxId: z.string().min(11).optional(), // CPF
+  rg: z.string().optional(),
+  address: z.object({
+    street: z.string().min(1),
+    number: z.string().min(1),
+    complement: z.string().optional(),
+    neighborhood: z.string().min(1),
+    city: z.string().min(1),
+    state: z.string().length(2),
+    zipCode: z.string().min(8).max(9),
+    country: z.string().default('Brasil'),
+  }).optional(),
+  emergencyContact: z.object({
+    name: z.string().min(1),
+    relationship: z.string().min(1),
+    phone: z.string().min(10),
+  }).optional(),
+  medicalHistory: z.object({
+    allergies: z.array(z.string()).default([]),
+    medications: z.array(z.string()).default([]),
+    conditions: z.array(z.string()).default([]),
+    surgeries: z.array(z.string()).default([]),
+    familyHistory: z.string().optional(),
+    bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+  }).optional(),
+  lgpdConsent: z.object({
+    dataProcessing: z.boolean(),
+    marketing: z.boolean().default(false),
+    clinicalResearch: z.boolean().default(false),
+    consentDate: z.string(), // ISO string
+    consentVersion: z.string().default('1.0'),
+  }),
+  clinicId: z.string(),
+  referredBy: z.string().optional(),
+  notes: z.string().max(1000).optional(),
+})
+
+export const UpdatePatientRequestSchema = CreatePatientRequestSchema.partial().extend({
+  id: z.string(),
+})
+
+export const GetPatientRequestSchema = z.object({
+  id: z.string(),
+})
+
+export const ListPatientsRequestSchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(20),
+  sortBy: z.enum(['name', 'createdAt', 'lastVisit']).default('name'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  search: z.string().optional(),
+  filters: z.object({
+    clinicId: z.string().optional(),
+    isActive: z.boolean().optional(),
+    hasUpcomingAppointment: z.boolean().optional(),
+    dateOfBirthFrom: z.string().optional(),
+    dateOfBirthTo: z.string().optional(),
+    gender: z.enum(['male', 'female', 'other']).optional(),
+  }).optional(),
+})
+
+export const PatientResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email().nullable(),
+  phone: z.string(),
+  dateOfBirth: z.string(),
+  age: z.number(),
+  gender: z.enum(['male', 'female', 'other']),
+  taxId: z.string().nullable(),
+  rg: z.string().nullable(),
+  address: z.object({
+    street: z.string(),
+    number: z.string(),
+    complement: z.string().nullable(),
+    neighborhood: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zipCode: z.string(),
+    country: z.string(),
+  }).nullable(),
+  emergencyContact: z.object({
+    name: z.string(),
+    relationship: z.string(),
+    phone: z.string(),
+  }).nullable(),
+  medicalHistory: z.object({
+    allergies: z.array(z.string()),
+    medications: z.array(z.string()),
+    conditions: z.array(z.string()),
+    surgeries: z.array(z.string()),
+    familyHistory: z.string().nullable(),
+    bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).nullable(),
+  }),
+  lgpdConsent: z.object({
+    dataProcessing: z.boolean(),
+    marketing: z.boolean(),
+    clinicalResearch: z.boolean(),
+    consentDate: z.string(),
+    consentVersion: z.string(),
+  }),
+  clinicId: z.string(),
+  isActive: z.boolean(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  lastVisit: z.string().nullable(),
+  totalVisits: z.number().default(0),
+  upcomingAppointments: z.number().default(0),
+  completedAppointments: z.number().default(0),
+  cancelledAppointments: z.number().default(0),
+  noShowRate: z.number().min(0).max(1).default(0),
+  clinic: z.object({
+    id: z.string(),
+    name: z.string(),
+  }).optional(),
+  nextAppointment: z.object({
+    id: z.string(),
+    scheduledDate: z.string(),
+    type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
+    professional: z.object({
+      id: z.string(),
+      name: z.string(),
+      specialty: z.string(),
+    }),
+  }).optional(),
+})
+
+export const PatientsListResponseSchema = z.object({
+  patients: z.array(PatientResponseSchema),
+  pagination: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    pages: z.number(),
+    hasNext: z.boolean(),
+    hasPrev: z.boolean(),
+  }),
+  summary: z.object({
+    total: z.number(),
+    active: z.number(),
+    inactive: z.number(),
+    byGender: z.record(z.string(), z.number()),
+    averageAge: z.number().nullable(),
+    totalVisits: z.number(),
+    upcomingAppointments: z.number(),
+  }),
+})
 import { protectedProcedure, router } from '../trpc'
 
 export const patientRouter = router({

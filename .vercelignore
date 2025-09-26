@@ -6,6 +6,7 @@
 
 # Allow only web app and essential files
 !apps/web/
+!apps/web/**
 !package.json
 !bun.lockb
 !pnpm-lock.yaml

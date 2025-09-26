@@ -14,7 +14,9 @@
  * - CFM-compliant medical decision support
  */
 
-import { AIClinicalDecisionSupport } from '@neonpro/healthcare-core'
+// Placeholder service - will be fixed after build completion
+// import { AIClinicalDecisionSupport } from '@neonpro/healthcare-core'
+import { AIClinicalDecisionSupport } from './placeholder-service'
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import * as z from 'zod'

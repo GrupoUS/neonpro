@@ -168,6 +168,7 @@ export async function checkTablesExist(
               table: tableSpec.name,
               action: 'no_data_returned',
             },
+            error as Error
           )
           return false
         }
@@ -185,6 +186,7 @@ export async function checkTablesExist(
               missingColumns,
               action: 'check_response_columns',
             },
+            error as Error
           )
           return false
         }
