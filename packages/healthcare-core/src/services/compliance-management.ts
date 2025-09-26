@@ -10,46 +10,12 @@
  * - Automated Compliance Checks
  */
 
-export interface ComplianceCategory {
-  id: string
-  name: string
-  description: string
-  regulatoryBody: 'LGPD' | 'ANVISA' | 'CRM' | 'COREN' | 'CFF' | 'CNEP'
-  isActive: boolean
-  version: string
-  lastUpdated: Date
-}
-
-export interface ComplianceRequirement {
-  id: string
-  categoryId: string
-  title: string
-  description: string
-  requirementType: 'legal' | 'technical' | 'administrative' | 'security'
-  mandatory: boolean
-  frequency: 'one_time' | 'monthly' | 'quarterly' | 'annually'
-  assessmentMethod: 'automated' | 'manual' | 'external_audit'
-  riskLevel: 'low' | 'medium' | 'high' | 'critical'
-  documentationRequired: boolean
-  isActive: boolean
-}
-
-export interface ComplianceAssessment {
-  id: string
-  clinicId: string
-  requirementId: string
-  assessmentType: 'automated' | 'manual' | 'external_audit'
-  status: 'pending' | 'in_progress' | 'passed' | 'failed' | 'requires_action'
-  score?: number
-  findings?: string[]
-  recommendations?: string[]
-  evidenceUrls?: string[]
-  assessedBy?: string
-  assessedAt?: Date
-  nextAssessmentDate?: Date
-  createdAt: Date
-  updatedAt: Date
-}
+// Import base interfaces from healthcare module
+import type { 
+  ComplianceCategory, 
+  ComplianceRequirement, 
+  ComplianceAssessment 
+} from '../healthcare'
 
 export interface DataConsent {
   id: string
@@ -66,19 +32,8 @@ export interface DataConsent {
   withdrawalReason?: string
 }
 
-export interface DataSubjectRequest {
-  id: string
-  clientId: string
-  clinicId: string
-  requestType: 'access' | 'rectification' | 'erasure' | 'portability' | 'objection'
-  requestDescription?: string
-  requestedData?: string[]
-  status: 'pending' | 'in_progress' | 'completed' | 'rejected'
-  responseText?: string
-  processedBy?: string
-  processedAt?: Date
-  createdAt: Date
-}
+// Import DataSubjectRequest from healthcare module
+import type { DataSubjectRequest } from '../healthcare'
 
 export interface DataBreachIncident {
   id: string
@@ -164,7 +119,12 @@ export class ComplianceManagementService {
   private cache = new Map<string, any>()
   private cacheExpiry = 300000 // 5 minutes
 
-  constructor(private supabase?: any) {}
+  constructor(private supabase?: any) {
+  // Initialize with Supabase client if provided
+  if (supabase) {
+    console.log('ComplianceManagementService initialized with Supabase client');
+  }
+}
 
   /**
    * Get compliance categories by regulatory body

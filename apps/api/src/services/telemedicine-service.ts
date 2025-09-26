@@ -5,7 +5,7 @@
 
 import { WebRTCSessionService } from '@neonpro/database'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { HealthcareProfessionalAuthorizationService } from './healthcare-professional-authorization'
 
 export interface TelemedicineSessionInput {

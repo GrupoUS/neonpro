@@ -5,7 +5,7 @@
  * Integrates with the HTTPSMonitoringService for real-time performance tracking.
  */
 
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service'
 
 export interface TLSHandshakeInfo {

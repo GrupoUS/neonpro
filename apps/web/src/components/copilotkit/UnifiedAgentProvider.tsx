@@ -386,11 +386,16 @@ export const useUnifiedAgent = () => {
 // Hook to access CopilotKit co-agent functionality
 export const useHealthcareAgent = () => {
   const { currentSession, sendMessage, executeAction } = useUnifiedAgent()
-  
+
   // Get current agent from CopilotKit
   const coAgent = useCoAgent({
     name: 'healthcare-agent',
-    instructions: `Healthcare assistant for ${currentSession?.clinicId || 'NeonPro'}`,
+    initialState: {
+      status: 'idle' as const,
+      lastResponse: '',
+      currentTask: '',
+    },
+    instructions: `Healthcare assistant for ${currentSession?.clinicId || 'NeonPro'}`
   })
 
   return {

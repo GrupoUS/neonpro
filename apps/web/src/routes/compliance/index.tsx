@@ -22,7 +22,6 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import * as React from 'react'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/api'
 import { logger } from '@/utils/logger'

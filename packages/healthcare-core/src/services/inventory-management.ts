@@ -10,6 +10,7 @@ export class InventoryManagementService {
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
     this.supabaseUrl = config.supabaseUrl
     this.supabaseKey = config.supabaseKey
+    console.log('InventoryManagementService initialized with:', config.supabaseUrl)
   }
 
   // Categories Management

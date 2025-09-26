@@ -10,7 +10,7 @@ import type { Context, Next } from 'hono'
 import { cors } from 'hono/cors'
 import { streamText } from 'hono/streaming'
 import { z } from 'zod'
-import { logger } from '../../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { AnomalyDetectionService } from '../../services/financial-ai-agent/anomaly-detection'
 import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent'
 import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics'

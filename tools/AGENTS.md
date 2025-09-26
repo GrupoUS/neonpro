@@ -209,11 +209,8 @@ pnpm --filter @neonpro/tools-frontend-tests test:e2e:ui
 
 ### Common Issues
 
-- **Issue**: `Cannot find module '@neonpro/tools-shared'`
-  **Solution**: Run `pnpm install` from the root directory
-
-- **Issue**: `Module resolution failed`
-  **Solution**: Build shared package: `cd tools/shared && bun run build`
+- **Issue**: Legacy references to `@neonpro/tools-shared`
+  **Solution**: Shared utilities have been consolidated into `tools/tests` (e.g., `agent-utils`). Update or remove any `@neonpro/tools-shared` imports; no separate build step is required.
 
 - **Issue**: `Healthcare compliance failed`
   **Solution**: Check environment variables for compliance keys

@@ -9,7 +9,7 @@ import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import * as fs from 'fs'
 import * as path from 'path'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 export interface OttomatorQuery {
   _query: string

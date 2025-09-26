@@ -13,7 +13,7 @@
 
 import { PrismaClient } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 export interface ProfessionalAuthorizationResult {
   isAuthorized: boolean

@@ -7,7 +7,7 @@ import { Hono } from 'hono'
 import type { Context, Next } from 'hono'
 import { cors } from 'hono/cors'
 import { streamText } from 'hono/streaming'
-import { logger } from '../../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 // Create dedicated router for CopilotKit bridge
 const copilotBridge = new Hono()

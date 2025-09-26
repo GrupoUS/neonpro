@@ -33,7 +33,7 @@ export const isValidEmail = (value: unknown): value is string =>
   isString(value) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 
 export const isValidPhone = (value: unknown): value is string =>
-  isString(value) && /^\+?[\d\s\-()]{10,}$/.test(value)
+  isString(value) && /^\+?[\d\s-()]{10,}$/.test(value)
 
 export const isValidDate = (value: unknown): value is Date =>
   value instanceof Date && !isNaN(value.getTime())

@@ -4,7 +4,7 @@
  */
 
 import { readFileSync } from 'fs'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 interface CertificateInfo {
   cert: string

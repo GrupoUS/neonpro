@@ -1,5 +1,5 @@
 import { Context, Next } from 'hono'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Server-Sent Events (SSE) middleware and utilities

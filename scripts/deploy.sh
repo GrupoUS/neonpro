@@ -14,7 +14,19 @@ set -euo pipefail
 # Source utility functions
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/config.sh"
-source "$SCRIPT_DIR/utils/logging.sh"
+# Simple logging functions to reduce dependency overhead
+log_info() { echo "[INFO] $1" >&2; }
+log_success() { echo "[SUCCESS] $1" >&2; }
+log_warning() { echo "[WARNING] $1" >&2; }
+log_error() { echo "[ERROR] $1" >&2; }
+log_debug() { echo "[DEBUG] $1" >&2; }
+log_step() { echo "[STEP] $1" >&2; }
+log_healthcare() { echo "[HEALTHCARE] $1" >&2; }
+log_security() { echo "[SECURITY] $1" >&2; }
+log_performance() { echo "[PERFORMANCE] $1" >&2; }
+log_section() { echo "=================== $1 ===================" >&2; }
+log_script_start() { echo "=== Starting $(basename "$0") ===" >&2; }
+log_script_end() { local exit_code="${1:-0}"; echo "=== Script ended with code $exit_code ===" >&2; }
 source "$SCRIPT_DIR/utils/validation.sh"
 
 # ==============================================
@@ -130,13 +142,15 @@ validate_environment() {
         exit 1
     fi
     
-    # GLOBAL CONFIGURATION
-    # ==============================================
-    
-    export VERCEL_ORG_ID="team_bjVDLqo42Gb3p28RelxJia6x"
-    export VERCEL_PROJECT_ID="prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY"
-    
-    npx vercel link --yes
+    # Environment-based Vercel configuration
+    if [ -z "${VERCEL_ORG_ID:-}" ]; then
+        log_warning "VERCEL_ORG_ID not set. Using automatic project detection."
+        npx vercel link --yes
+    else
+        log_info "Using configured Vercel organization: $VERCEL_ORG_ID"
+        export VERCEL_ORG_ID
+        npx vercel link --yes
+    fi
     log_success "Linked to Vercel project: $PROJECT_NAME"
     
     # Pull production environment variables
@@ -147,12 +161,62 @@ validate_environment() {
     log_success "Environment variables loaded"
     
     # Validate required environment variables
-    validate_required_env_vars "DATABASE_URL" "SUPABASE_SERVICE_ROLE_KEY" "SUPABASE_ANON_KEY" "VERCEL_ORG_ID" "VERCEL_PROJECT_ID"
+    validate_required_env_vars "DATABASE_URL" "SUPABASE_SERVICE_ROLE_KEY" "SUPABASE_ANON_KEY"
+    
+    # Validate Vercel configuration if provided
+    if [ -n "${VERCEL_ORG_ID:-}" ]; then
+        validate_required_env_vars "VERCEL_PROJECT_ID"
+    fi
     
     # Validate URLs
     validate_url "$PRODUCTION_URL" "production URL"
     
     log_success "Environment validation completed"
+}
+
+# ==============================================
+# HEALTHCARE COMPLIANCE VALIDATION
+# ==============================================
+
+validate_healthcare_compliance() {
+    log_step "Healthcare Compliance Validation"
+    
+    # Check LGPD compliance
+    if [[ "${LGPD_COMPLIANCE:-false}" != "true" ]]; then
+        log_warning "LGPD compliance not enabled"
+    else
+        log_success "LGPD compliance enabled"
+    fi
+    
+    # Check ANVISA compliance
+    if [[ "${ANVISA_COMPLIANCE:-false}" != "true" ]]; then
+        log_warning "ANVISA compliance not enabled"
+    else
+        log_success "ANVISA compliance enabled"
+    fi
+    
+    # Check CFM compliance
+    if [[ "${CFM_COMPLIANCE:-false}" != "true" ]]; then
+        log_warning "CFM compliance not enabled"
+    else
+        log_success "CFM compliance enabled"
+    fi
+    
+    # Check data residency
+    if [[ "${BRAZIL_DATA_RESIDENCY:-false}" == "true" ]]; then
+        log_success "Brazil data residency enabled"
+    else
+        log_warning "Brazil data residency not enforced"
+    fi
+    
+    # Check audit logging
+    if [[ "${AUDIT_LOGGING_ENABLED:-false}" == "true" ]]; then
+        log_success "Audit logging enabled"
+    else
+        log_warning "Audit logging not enabled"
+    fi
+    
+    log_success "Healthcare compliance validation completed"
 }
 
 # ==============================================
@@ -163,15 +227,15 @@ setup_turbo_caching() {
     log_step "Configuring Turborepo remote caching"
     require_command "turbo" "Install Turborepo: npm install -g turbo"
     
-    if [ -z \"${TURBO_TOKEN:-}\" ]; then
+    if [ -z "${TURBO_TOKEN:-}" ]; then
         log_error "TURBO_TOKEN not set. Required for non-interactive remote caching."
         exit 1
     fi
     
-    export TURBO_TEAM=\"grupous\"
-    log_info \"Using non-interactive Turbo caching with TURBO_TOKEN and TURBO_TEAM=grupous\"
+    export TURBO_TEAM="grupous"
+    log_info "Using non-interactive Turbo caching with TURBO_TOKEN and TURBO_TEAM=grupous"
     
-    log_success \"Turborepo remote caching configured with team $TURBO_TEAM\"
+    log_success "Turborepo remote caching configured with team $TURBO_TEAM"
 }
 
 # ==============================================
@@ -226,7 +290,7 @@ build_application() {
             
             # Install dependencies
             log_step "Installing Dependencies"
-            bun install --frozen-lockfile || { log_warning "Bun failed, using npm"; npm ci --no-audit; }
+            pnpm install --frozen-lockfile
             log_success "Dependencies installed"
             
             # Run build
@@ -291,6 +355,10 @@ deploy_application() {
             
             # Additional production checks
             log_step "Production Safety Checks"
+            
+            # Verify healthcare compliance
+            log_info "Validating healthcare compliance for production"
+            validate_healthcare_compliance
             
             # Verify all health checks pass
             log_info "Running comprehensive health checks"
@@ -515,6 +583,9 @@ main() {
     
     # Validate environment
     validate_environment
+    
+    # Validate healthcare compliance
+    validate_healthcare_compliance
     
     # Pre-deployment checks
     if [ "$skip_checks" = false ]; then

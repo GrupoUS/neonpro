@@ -1,4 +1,4 @@
-import { logger } from '@/lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { AguiService } from '@/services/agui-protocol/service'
 import { CopilotRequest } from '@/services/agui-protocol/types'
 import { Context } from 'hono'

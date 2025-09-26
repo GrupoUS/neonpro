@@ -5,7 +5,7 @@
  * authentication, DDoS protection, and healthcare compliance features.
  */
 
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 export interface WebSocketSecurityConfig {
   maxConnectionsPerIP: number

@@ -22,7 +22,7 @@ export {
 export { CryptoAudit } from './crypto-audit';
 export { PrivacyAlgorithms } from './privacy-algorithms';
 export { SecureLogger } from './secure-logger';
-export { HealthcareLogger } from './healthcare-errors';
+export { HealthcareLogger as HealthcareErrorLogger } from './healthcare-errors';
 
 // Error handling and responses
 export { badRequest, unauthorized, forbidden, notFound, serverError, success, ok, created } from './responses';
@@ -122,7 +122,7 @@ export const HealthcareUtils = {
   compliance: LGPDComplianceHelper,
   errors: HealthcareError,
   performance: HealthcarePerformance,
-  logger: HealthcareLogger,
+  logger: HealthcareErrorLogger,
 };
 
 export const SecurityUtils = {

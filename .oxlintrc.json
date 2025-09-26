@@ -359,6 +359,9 @@
   ],
   "ignorePatterns": [
     "node_modules/**",
+    "**/node_modules/**",
+    "node_modules/",
+    "**/node_modules/",
     "dist/**",
     "build/**",
     "coverage/**",
@@ -372,7 +375,13 @@
     "tools/**/node_modules/**",
     "tools/tests/**",
     ".serena/**",
-    ".specify/**"
+    ".specify/**",
+    ".oxlint_cache/**",
+    "bun.lock",
+    "pnpm-lock.yaml",
+    "*.log",
+    "*.tmp",
+    "*.cache"
   ],
   "env": {
     "browser": true,

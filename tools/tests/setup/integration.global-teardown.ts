@@ -1,7 +1,13 @@
-import fs from "fs"
-import path from "path"
+import * as fs from "fs"
+import * as path from "path"
 
-import type { GlobalTeardownContext } from "vitest/node"
+// Using any for vitest context as GlobalTeardownContext might not be available in current version
+type GlobalTeardownContext = {
+  testFiles?: string[]
+  config?: {
+    projects?: Array<{ name: string }>
+  }
+}
 
 export default async function globalTeardown(context: GlobalTeardownContext) {
   console.log("🧹 Global integration teardown starting")

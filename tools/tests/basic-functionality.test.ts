@@ -159,8 +159,8 @@ describe("Basic System Functionality", () => {
 
     it("should handle date formatting", () => {
       const date = new Date("2023-01-01T00:00:00.000Z")
-      const year = date.getFullYear()
-      const month = date.getMonth()
+      const year = date.getUTCFullYear()
+      const month = date.getUTCMonth()
 
       expect(year).toBe(2023)
       expect(month).toBe(0) // January is 0 (0-indexed)

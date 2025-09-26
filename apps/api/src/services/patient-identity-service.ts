@@ -15,7 +15,7 @@
 
 import { z } from 'zod'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { sanitizeForAI } from './ai-security-service'
 
 // LGPD Consent Types

@@ -167,12 +167,11 @@ orchestration_setup:
 
 ```yaml
 preflight_tasks:
-  build_shared: "pnpm --filter @neonpro/tools-shared build"
   build_orchestrator: "pnpm --filter @neonpro/tools-orchestration build"
   rationale:
-    - "Ensures dist artifacts exist for @neonpro/tools-shared before orchestration"
     - "Prevents ERR_MODULE_NOT_FOUND when executing @neonpro/tools-orchestration"
     - "Automatically invoked by orchestration scripts, but run manually after clean installs"
+    - "Shared utilities have been consolidated into tools/tests; no separate build is needed"
 
 agent_assignment:
   audit_consolidated:

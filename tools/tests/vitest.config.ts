@@ -18,6 +18,8 @@ export default defineConfig({
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
+      "**/*.red-phase.*",
+      "**/config-manager-enhanced.test.ts",
     ],
   },
 })

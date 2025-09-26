@@ -2,7 +2,6 @@ import { CertificationValidator } from '@/components/aesthetic-scheduling/Certif
 import { api } from '@/lib/api'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import * as React from 'react'
 import { logger } from '@/utils/logger'
 
 

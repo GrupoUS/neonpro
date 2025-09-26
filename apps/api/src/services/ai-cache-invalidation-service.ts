@@ -18,7 +18,7 @@ import {
 } from '@neonpro/shared/src/services/cache-management'
 import { RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend'
 import { PermissionContext, QueryIntent } from '@neonpro/types'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { EventEmitter } from 'events'
 
 // ============================================================================

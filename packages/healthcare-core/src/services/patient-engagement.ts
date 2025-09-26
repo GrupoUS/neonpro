@@ -10,6 +10,7 @@ export class PatientEngagementService {
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
     this.supabaseUrl = config.supabaseUrl
     this.supabaseKey = config.supabaseKey
+    console.log('PatientEngagementService initialized with:', config.supabaseUrl)
   }
 
   // Communication Preferences

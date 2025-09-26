@@ -208,7 +208,7 @@ export class PWAOfflineManager {
     })
   }
 
-  private handleOnline(): void {
+  private async handleOnline(): Promise<void> {
     this.isOnline = true
     await logger.info('Device online - starting sync process')
 
@@ -217,7 +217,7 @@ export class PWAOfflineManager {
     }
   }
 
-  private handleOffline(): void {
+  private async handleOffline(): Promise<void> {
     this.isOnline = false
     await logger.info('Device offline - enabling offline mode')
   }

@@ -11,7 +11,7 @@
 
 import { z } from 'zod'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 
 // ============================================================================
 // VALIDATION SCHEMAS

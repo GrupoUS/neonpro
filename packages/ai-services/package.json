@@ -59,7 +59,6 @@
     "compliance-check": "tsx scripts/compliance-check.ts"
   },
   "dependencies": {
-    
     "@neonpro/utils": "workspace:*",
     "@anthropic-ai/sdk": "^0.63.1",
     "@google/generative-ai": "^0.24.1",
@@ -77,6 +76,10 @@
     "rimraf": "^5.0.1"
   },
   "peerDependencies": {
+    "@neonpro/security": "workspace:*",
+    "@neonpro/database": "workspace:*"
+  },
+  "optionalDependencies": {
     "@neonpro/security": "workspace:*",
     "@neonpro/database": "workspace:*"
   },

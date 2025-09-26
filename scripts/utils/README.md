@@ -20,18 +20,16 @@ Comprehensive validation functions for environment variables, numeric values, UR
 - `validate_db_connection_string()` - Validate database connection strings
 - `validate_batch()` - Run multiple validations and collect results
 
-### logging.sh
-Standardized logging functions with color coding, icons, log levels, and formatted output.
+### logging.sh (REMOVED)
+The logging.sh utility has been removed to reduce token consumption and complexity. Scripts now use simple built-in logging functions or direct echo statements.
 
-**Key Functions:**
-- `log_info()`, `log_success()`, `log_warning()`, `log_error()` - Standard logging levels
-- `log_debug()` - Debug messages with log level control
-- `log_step()` - Process step indicators
-- `log_healthcare()`, `log_security()`, `log_performance()` - Domain-specific logging
-- `log_section()`, `log_subsection()` - Formatted section headers
-- `log_progress()` - Progress indicators with progress bars
-- `log_script_start()`, `log_script_end()` - Script lifecycle logging
-- `set_log_level()` - Configure logging verbosity (debug, info, warning, error, off)
+**Replacement:**
+For new scripts, use simple logging functions:
+```bash
+log_info() { echo "[INFO] $1" >&2; }
+log_success() { echo "[SUCCESS] $1" >&2; }
+log_error() { echo "[ERROR] $1" >&2; }
+```
 
 ## Usage
 
@@ -43,11 +41,12 @@ Standardized logging functions with color coding, icons, log levels, and formatt
 # Source utilities
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/config.sh"
-source "$SCRIPT_DIR/utils/logging.sh"
 source "$SCRIPT_DIR/utils/validation.sh"
 
-# Initialize logging
-log_script_start
+# Simple logging functions
+log_info() { echo "[INFO] $1" >&2; }
+log_success() { echo "[SUCCESS] $1" >&2; }
+log_warning() { echo "[WARNING] $1" >&2; }
 
 # Use validation functions
 validate_required_env_vars "NODE_ENV" "DATABASE_URL"
@@ -57,34 +56,21 @@ validate_url "$DATABASE_URL" "database URL"
 log_info "Starting application"
 log_success "Application started successfully"
 log_warning "Configuration file not found, using defaults"
-
-# End script
-log_script_end 0
 ```
 
 ### Configuration
 
 The utilities are designed to work with the centralized configuration in `config.sh`. Environment-specific settings are loaded automatically.
 
-#### Log Level Configuration
 
-Set log level using environment variable or function:
-```bash
-# Via environment variable
-export NEONPRO_LOG_LEVEL=debug
-
-# Via function
-set_log_level "debug"  # Options: debug, info, warning, error, off
-```
 
 ### Best Practices
 
 1. **Always source utilities** at the beginning of your script
-2. **Initialize logging** with `log_script_start` and end with `log_script_end`
-3. **Validate inputs** before using them
-4. **Use appropriate log levels** for different message types
-5. **Handle validation failures** gracefully with proper error messages
-6. **Maintain consistency** across all scripts using these utilities
+2. **Validate inputs** before using them
+3. **Use simple logging functions** for consistent output formatting
+4. **Handle validation failures** gracefully with proper error messages
+5. **Maintain consistency** across all scripts using these utilities
 
 ## Examples
 
@@ -103,8 +89,8 @@ validate_healthcare_retention "$DATA_AGE_DAYS" 365
 # Check for LGPD compliance
 validate_lgpd_compliance "$USER_DATA_CONTENT" "user data"
 
-# Use healthcare-specific logging
-log_healthcare "Patient data validation completed"
+# Use simple logging for healthcare-specific messages
+log_info "Patient data validation completed"
 ```
 
 ### Secure Operations
@@ -112,8 +98,8 @@ log_healthcare "Patient data validation completed"
 # Validate secrets
 validate_secret "$JWT_SECRET" 32 "JWT secret"
 
-# Security-specific logging
-log_security "Authentication check completed"
+# Simple logging for security messages
+log_info "Authentication check completed"
 
 # Validate file permissions
 validate_file_permissions "$CONFIG_FILE" "600" "configuration file"
@@ -130,9 +116,13 @@ validate_batch \
     "validate_url $DATABASE_URL" \
     "validate_port $DB_PORT"
 
-# Result-based logging
+# Simple result-based logging
 command_result=$(some_command)
-log_result $? "Command succeeded" "Command failed"
+if [ $command_result -eq 0 ]; then
+    log_success "Command succeeded"
+else
+    log_error "Command failed"
+fi
 ```
 
 ## Integration with Existing Scripts
@@ -140,7 +130,7 @@ log_result $? "Command succeeded" "Command failed"
 All existing scripts should be refactored to use these utilities:
 
 1. Replace inline validation with utility functions
-2. Use standardized logging instead of echo statements
+2. Use simple logging functions instead of echo statements
 3. Source the utilities at the beginning of each script
 4. Follow the established patterns for consistency
 
@@ -150,6 +140,7 @@ The utilities are designed to be testable and include comprehensive error handli
 
 ## Version History
 
+- **1.1** - Removed logging.sh utility to reduce token consumption and complexity
 - **1.0** - Initial release with validation and logging utilities
 - Added comprehensive validation functions for healthcare compliance
 - Implemented standardized logging with color coding and icons

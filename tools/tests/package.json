@@ -16,14 +16,14 @@
     "validate": "pnpm run format:check && pnpm run lint && pnpm run test:run"
   },
   "dependencies": {
-    "vitest": "^1.0.0",
-    "@vitest/coverage-v8": "^1.0.0"
+    "@vitest/coverage-v8": "^1.0.0",
+    "vitest": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
     "dprint": "^0.45.0",
-    "oxlint": "^0.2.0"
+    "oxlint": "^0.2.0",
+    "typescript": "^5.9.2"
   },
   "private": true
 }

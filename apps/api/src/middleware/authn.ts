@@ -1,7 +1,7 @@
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { jwtValidator } from '../security/jwt-validator'
 
 // Interface for validated user token data

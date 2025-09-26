@@ -1,11 +1,12 @@
 import { vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
-import '@testing-library/jest-dom'
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { setupDOMEnvironment } from './setup/environment'
 
 // Setup DOM environment for tests
 const { dom } = setupDOMEnvironment()
+
+import '@testing-library/jest-dom'
 
 // Mock console methods in test environment to reduce noise
 global.console = {

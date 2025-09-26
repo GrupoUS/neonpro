@@ -107,6 +107,8 @@ interface NotificationOptions {
 }
 
 import { logger } from '@/utils/logger'
+
+export class PWANativeDeviceService {
   private static instance: PWANativeDeviceService
   private capabilities: Map<string, DeviceCapability> = new Map()
   private isInitialized = false
@@ -294,12 +296,12 @@ import { logger } from '@/utils/logger'
     }
   }
 
-  private handleOnline(): void {
+  private async handleOnline(): Promise<void> {
     await logger.info('Device online - syncing pending operations')
     this.syncPendingOperations()
   }
 
-  private handleOffline(): void {
+  private async handleOffline(): Promise<void> {
     await logger.info('Device offline - enabling offline mode')
   }
 
@@ -311,12 +313,12 @@ import { logger } from '@/utils/logger'
     }
   }
 
-  private handleAppInstalled(): void {
+  private async handleAppInstalled(): Promise<void> {
     await logger.info('NeonPro PWA installed successfully')
     this.updateCapabilityUsage('notifications')
   }
 
-  private handleBeforeInstall(event: BeforeInstallEvent): void {
+  private async handleBeforeInstall(event: BeforeInstallEvent): Promise<void> {
     await logger.info('PWA install prompt available')
     event.preventDefault()
   }

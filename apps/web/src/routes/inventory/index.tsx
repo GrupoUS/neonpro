@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Truck,
 } from 'lucide-react'
-import * as React from 'react'
 import { useState } from 'react'
 import { logger } from '@/utils/logger'
 

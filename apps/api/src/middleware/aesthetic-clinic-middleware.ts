@@ -13,7 +13,7 @@
 
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { AestheticClinicSecurityService } from '../security/aesthetic-clinic-security-service'
 import { AestheticMFAService } from '../security/aesthetic-mfa-service'
 import { MedicalImageProtectionService } from '../security/medical-image-protection-service'

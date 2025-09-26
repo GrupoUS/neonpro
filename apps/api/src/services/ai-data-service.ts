@@ -1,7 +1,7 @@
 import { Database } from '@neonpro/database'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
 import { getOttomatorBridge, OttomatorQuery, OttomatorResponse } from './ottomator-agent-bridge'
-import { logger } from '../lib/logger'
+import { logger } from "@/utils/healthcare-errors"
 import { aiValidationService } from './ai-validation-service'
 import { aiConnectionManager } from './ai-connection-manager'
 

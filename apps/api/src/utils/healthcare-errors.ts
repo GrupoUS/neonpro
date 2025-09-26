@@ -647,4 +647,4 @@ export class HealthcareTRPCError extends HealthcareError {
 }
 
 // Export all error types and utilities
-export { type HealthcareErrorDetails, HealthcareLogger }
+export { type HealthcareErrorDetails }

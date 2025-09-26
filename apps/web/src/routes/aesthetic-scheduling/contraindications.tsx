@@ -1,5 +1,4 @@
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import * as React from 'react'
 // import { useQuery } from "@tanstack/react-query";
 // import { api } from "@/lib/api";
 import { ContraindicationAnalysis } from '@/components/ai-clinical-support/ContraindicationAnalysis'
