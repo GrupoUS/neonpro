@@ -40,6 +40,42 @@ export { sanitizeForAI } from './sanitize';
 export { redact } from './sanitize';
 export { SecretManager } from './secret-manager';
 
+// Backup and disaster recovery
+export { 
+  BackupManager, 
+  createBackupManager,
+  type BackupConfig,
+  type BackupJob,
+  type RecoveryPlan,
+  type RecoveryStep
+} from './backup-manager';
+
+// Configuration management
+export { 
+  ConfigManager, 
+  createConfigManager,
+  HealthcareConfigSchemas,
+  type ConfigSchema,
+  type ConfigChangeEvent,
+  type ConfigManagerOptions
+} from './config-manager';
+
+// Observability and monitoring
+export { 
+  ObservabilityManager, 
+  createObservabilityManager,
+  withTrace,
+  timeOperation,
+  type MetricDefinition,
+  type MetricValue,
+  type HealthCheck,
+  type HealthStatus,
+  type AlertRule,
+  type Alert,
+  type PerformanceTrace,
+  type ObservabilityManagerOptions
+} from './observability-manager';
+
 // Appointment management
 export { hasConflict } from './appointments';
 
@@ -69,4 +105,10 @@ export const ApiUtils = {
   sanitizer: { sanitizeForAI, redact },
   optimizer: QueryOptimizer,
   appointments: { hasConflict },
+};
+
+export const InfrastructureUtils = {
+  backup: { BackupManager, createBackupManager },
+  config: { ConfigManager, createConfigManager, HealthcareConfigSchemas },
+  observability: { ObservabilityManager, createObservabilityManager, withTrace, timeOperation },
 };

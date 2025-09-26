@@ -44,7 +44,7 @@ export default defineConfig({
     testTimeout: 30000,
     hookTimeout: 30000,
     globalSetup: ['./setup/integration.global-setup.ts'],
-    globalTeardown: ['./setup/integration.global-teardown.ts'],
+    teardown: ['./setup/ai.global-teardown.ts'],
   },
   resolve: {
     alias: {
