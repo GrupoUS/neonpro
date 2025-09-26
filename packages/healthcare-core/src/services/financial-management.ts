@@ -4,12 +4,12 @@
  */
 
 export class FinancialManagementService {
-  private supabaseUrl: string
-  private supabaseKey: string
+  // private supabaseUrl: string
+  // private supabaseKey: string
 
   constructor(config: { supabaseUrl: string; supabaseKey: string }) {
-    this.supabaseUrl = config.supabaseUrl
-    this.supabaseKey = config.supabaseKey
+    // this.supabaseUrl = config.supabaseUrl
+    // this.supabaseKey = config.supabaseKey
     console.log('FinancialManagementService initialized with:', config.supabaseUrl)
   }
 
@@ -22,7 +22,7 @@ export class FinancialManagementService {
     }
   }
 
-  async getRevenueByClinic(clinicId: string, startDate: string, endDate: string) {
+  async getRevenueByClinic(clinicId: string, /*startDate: string, endDate: string*/) {
     return [
       {
         id: 'revenue_1',
@@ -58,7 +58,7 @@ export class FinancialManagementService {
     }
   }
 
-  async getExpensesByClinic(clinicId: string, startDate: string, endDate: string) {
+  async getExpensesByClinic(clinicId: string, /*startDate: string, endDate: string*/) {
     return [
       {
         id: 'expense_1',
@@ -103,10 +103,10 @@ export class FinancialManagementService {
   }
 
   // Financial Reports
-  async getProfitLossStatement(clinicId: string, startDate: string, endDate: string) {
+  async getProfitLossStatement(clinicId: string, /*startDate: string, endDate: string*/) {
     return {
       clinicId,
-      period: { startDate, endDate },
+      period: { startDate: '', endDate: '' },
       totalRevenue: 45000,
       totalExpenses: 28000,
       grossProfit: 17000,

@@ -123,11 +123,11 @@ export interface ProtocolExecution {
 }
 
 export class MultiProfessionalCoordinationService {
-  private database: any
+  // private database: any
   private auditService: any
 
   constructor({ database, auditService }: { database?: any; auditService?: any } = {}) {
-    this.database = database
+    // this.database = database
     this.auditService = auditService
     console.log('MultiProfessionalCoordinationService initialized with database:', !!database)
   }
@@ -149,7 +149,7 @@ export class MultiProfessionalCoordinationService {
     return team
   }
 
-  async getProfessionalTeams(clinicId: string): Promise<ProfessionalTeam[]> {
+  async getProfessionalTeams(/*clinicId: string*/): Promise<ProfessionalTeam[]> {
     // Mock implementation
     return []
   }
@@ -194,7 +194,7 @@ export class MultiProfessionalCoordinationService {
     return referral
   }
 
-  async getReferrals(professionalId: string, type?: string): Promise<ProfessionalReferral[]> {
+  async getReferrals(/*professionalId: string, type?: string*/): Promise<ProfessionalReferral[]> {
     // Mock implementation
     return []
   }
@@ -227,7 +227,7 @@ export class MultiProfessionalCoordinationService {
     return session
   }
 
-  async getCollaborativeSessions(filters: any): Promise<CollaborativeSession[]> {
+  async getCollaborativeSessions(/*filters: any*/): Promise<CollaborativeSession[]> {
     // Mock implementation
     return []
   }
@@ -262,7 +262,7 @@ export class MultiProfessionalCoordinationService {
     return thread
   }
 
-  async getCoordinationThreads(filters: any): Promise<CoordinationThread[]> {
+  async getCoordinationThreads(/*filters: any*/): Promise<CoordinationThread[]> {
     // Mock implementation
     return []
   }
@@ -299,7 +299,7 @@ export class MultiProfessionalCoordinationService {
     return supervision
   }
 
-  async getSupervisionRelationships(filters: any): Promise<ProfessionalSupervision[]> {
+  async getSupervisionRelationships(/*filters: any*/): Promise<ProfessionalSupervision[]> {
     // Mock implementation
     return []
   }
@@ -341,7 +341,7 @@ export class MultiProfessionalCoordinationService {
     return protocol
   }
 
-  async getCoordinationProtocols(clinicId: string): Promise<CoordinationProtocol[]> {
+  async getCoordinationProtocols(/*clinicId: string*/): Promise<CoordinationProtocol[]> {
     // Mock implementation
     return []
   }
@@ -371,7 +371,7 @@ export class MultiProfessionalCoordinationService {
     return await this.createCollaborativeSession(input)
   }
 
-  async getCoordinationAnalytics(clinicId: string): Promise<any> {
+  async getCoordinationAnalytics(/*clinicId: string*/): Promise<any> {
     // Mock implementation
     return {
       totalTeams: 0,
@@ -381,7 +381,7 @@ export class MultiProfessionalCoordinationService {
     }
   }
 
-  async getProfessionalCollaborationMetrics(professionalId: string): Promise<any> {
+  async getProfessionalCollaborationMetrics(/*professionalId: string*/): Promise<any> {
     // Mock implementation
     return {
       referralsSent: 0,

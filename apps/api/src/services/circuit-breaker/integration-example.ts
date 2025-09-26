@@ -620,11 +620,4 @@ function sendHealthAlert(event: any) {
   // - Monitoring dashboards
 }
 
-// Export examples and utilities
-export {
-  AguiServiceWithCircuitBreaker,
-  AIAgentServiceWithCircuitBreaker,
-  GoogleCalendarServiceWithCircuitBreaker,
-  setupHealthMonitoring,
-  withCircuitBreakerProtection,
-}
+// Classes are already exported individually above

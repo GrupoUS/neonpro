@@ -5,7 +5,7 @@
  */
 
 import { createAdminClient } from '../clients/supabase'
-import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-compliance'
+import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-middleware'
 
 // ============================================================================
 // Enhanced Consent Types & Schemas

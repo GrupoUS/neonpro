@@ -9,7 +9,7 @@ describe("Security Analysis", () => {
   describe("Input Validation", () => {
     it("should detect missing input sanitization", () => {
       const userInput = "'; DROP TABLE users;--"
-      const vulnerableCode = "const query = 'SELECT * FROM users WHERE name = ' + userInput"
+      const vulnerableCode = "const query = 'SELECT * FROM users WHERE name = ' + userInput + ''"
       expect(vulnerableCode).toMatch(/\+.*\+/)
 
       const safeCode = "const query = 'SELECT * FROM users WHERE name = ?'"

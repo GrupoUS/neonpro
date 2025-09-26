@@ -298,8 +298,8 @@ build_application() {
             turbo run build --filter=@neonpro/web
             
             # Validate build output
-            if [ ! -d "apps/web/.next" ]; then
-                log_error "Build failed - .next directory missing"
+            if [ ! -d "apps/web/dist" ]; then
+                log_error "Build failed - dist directory missing"
                 exit 1
             fi
             ;;
@@ -316,8 +316,8 @@ build_application() {
             npm run build
             
             # Validate build output
-            if [ ! -d "apps/web/.next" ]; then
-                log_error "Build failed - .next directory missing"
+            if [ ! -d "apps/web/dist" ]; then
+                log_error "Build failed - dist directory missing"
                 exit 1
             fi
             ;;
@@ -345,7 +345,7 @@ deploy_application() {
             
             # Run staging deployment
             log_step "Executing Staging Deployment"
-            npx vercel deploy --project "$PROJECT_NAME" --yes
+            npx vercel deploy --yes
             
             DEPLOY_URL=$(npx vercel ls | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
             log_success "Staging deployment completed: $DEPLOY_URL"
@@ -365,7 +365,7 @@ deploy_application() {
             
             # Execute production deployment
             log_step "Executing Production Deployment"
-            npx vercel deploy --prod --project "$PROJECT_NAME" --yes
+            npx vercel deploy --prod --yes
             
             DEPLOY_URL=$(npx vercel ls | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
             log_success "Production deployment completed: $DEPLOY_URL"

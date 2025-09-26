@@ -6,7 +6,7 @@ import {
   AnalyticsConfiguration, 
   CreateAnalyticsConfigurationInputType,
   UpdateAnalyticsConfigurationInputType,
-  DeleteAnalyticsConfigurationInputType
+  // DeleteAnalyticsConfigurationInputType
 } from '../schemas/analytics'
 
 export interface AnalyticsServiceConfig {

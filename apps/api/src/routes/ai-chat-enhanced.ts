@@ -1,7 +1,8 @@
 // Enhanced AI Chat Route with Semantic Caching for NeonPro Aesthetic Clinic
 // Integrates semantic caching with existing AI chat infrastructure for optimized performance
 import { zValidator } from '@hono/zod-validator'
-import { type AIMessage, AIProviderFactory } from '@neonpro/integrations'
+import { AIProviderFactory } from '@neonpro/ai-services'
+import { type AIMessage } from '@neonpro/healthcare-core'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { z } from 'zod'

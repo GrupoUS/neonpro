@@ -2,12 +2,25 @@
 
 Testes simples e funcionais que os agentes @.claude/agents/code-review/ podem utilizar.
 
+> Nota de Consolidação (2025-09-26)
+>
+> - As pastas antigas `tools/tests-consolidated` e `tools/shared` foram removidas.
+> - Todo o conteúdo útil foi consolidado aqui em `tools/tests` seguindo KISS/YAGNI.
+> - Utilidades compartilhadas agora vivem em `agent-utils.ts`.
+> - Testes RED-phase (arquivos `*.red-phase.test.ts`) permanecem no diretório `scripts/` e são EXCLUÍDOS por padrão pela configuração do Vitest.
+> - Atualize quaisquer referências antigas para apontar para `tools/tests`.
+
 ## 🚀 Como Usar
 
 ### 1. Importar as utilidades
 
 ```typescript
-import { validateCodeQuality, validateFile, validateSecurity } from "./agent-utils"
+import {
+  validateCodeQuality,
+  validateFile,
+  validatePerformance,
+  validateSecurity,
+} from "./agent-utils"
 ```
 
 ### 2. Validar um arquivo de código
@@ -79,11 +92,18 @@ const hasPerformanceIssues = validatePerformance.hasMemoryLeaks(code)
 ## 🔧 Executar Testes
 
 ```bash
-# Todos os testes
+# Todos os testes (exclui arquivos *.red-phase.* automaticamente)
 pnpm run test:run
 
-# Testes unitários apenas
-pnpm vitest run --config vitest.config.ts
+# Cobertura
+pnpm run test:coverage
+
+# Lint e validação completa
+pnpm run lint
+pnpm run validate   # format:check + lint + test:run
+
+# Rodar arquivo específico
+pnpm vitest run basic-functionality.test.ts
 ```
 
 ## 📊 Exemplo de Saída

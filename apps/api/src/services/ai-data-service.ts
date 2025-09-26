@@ -1,9 +1,54 @@
 import { Database } from '@neonpro/database'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
-import { getOttomatorBridge, OttomatorQuery, OttomatorResponse } from './ottomator-agent-bridge'
 import { logger } from "@/utils/healthcare-errors"
 import { aiValidationService } from './ai-validation-service'
 import { aiConnectionManager } from './ai-connection-manager'
+
+// Browser-compatible mock implementations for Ottomator agent
+export interface OttomatorQuery {
+  query: string
+  sessionId: string
+  _userId: string
+  _context?: {
+    patientId?: string
+    clinicId?: string
+    previousQueries?: string[]
+  }
+}
+
+export interface OttomatorResponse {
+  response: string
+  confidence: number
+  sources?: Array<{
+    type: string
+    content: string
+    confidence: number
+  }>
+  metadata?: Record<string, any>
+}
+
+class MockOttomatorBridge {
+  isAgentHealthy(): boolean {
+    return false // Always return false for browser build
+  }
+
+  async query(query: OttomatorQuery): Promise<OttomatorResponse> {
+    return {
+      response: 'Ottomator agent not available in browser environment',
+      confidence: 0,
+      sources: [],
+      metadata: {
+        error: 'BROWSER_ENVIRONMENT',
+        timestamp: new Date().toISOString()
+      }
+    }
+  }
+}
+
+const ottomatorBridge = new MockOttomatorBridge()
+export function getOttomatorBridge() {
+  return ottomatorBridge
+}
 
 /**
  * AI Data Service - Base class for AI agent database operations

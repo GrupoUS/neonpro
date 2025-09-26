@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { healthcareLogger as logger } from '@neonpro/shared';
+import { logger } from '@neonpro/utils';
+import { type AIMessage } from '@neonpro/healthcare-core';
 import { 
   IUnifiedAIProvider, 
   ProviderConfig, 
@@ -553,5 +554,48 @@ export class AIProviderFactory {
     this.configs.clear();
     this.healthStatus.clear();
     AIProviderFactory.instance = null as any;
+  }
+
+  /**
+   * Static method for generating responses with failover
+   * Compatible with existing AI chat interface
+   */
+  static async generateWithFailover(
+    messages: AIMessage[],
+    _temperature: number = 0.7
+  ): Promise<{ content: string; provider: string }> {
+    const factory = AIProviderFactory.getInstance();
+    
+    try {
+      const provider = await factory.getBestProvider({
+        healthcareCompliance: true
+      });
+      
+      // Convert AIMessage array to prompt string
+      const prompt = messages
+        .map(msg => `${msg.role}: ${msg.content}`)
+        .join('\n');
+      
+      const result = await provider.generateAnswer({ prompt });
+      
+      return {
+        content: result.content,
+        provider: provider.name
+      };
+    } catch (error) {
+      logger.error('AI generation failed', { error });
+      return {
+        content: 'Desculpe, estou enfrentando dificuldades técnicas. Por favor, tente novamente mais tarde.',
+        provider: 'mock'
+      };
+    }
+  }
+
+  /**
+   * Get available providers (static method for compatibility)
+   */
+  static getAvailableProviders(): string[] {
+    const factory = AIProviderFactory.getInstance();
+    return factory.getRegistry().map(registry => registry.name);
   }
 }

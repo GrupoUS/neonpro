@@ -14,7 +14,50 @@
  * - PII protection and data sanitization
  */
 
-import { HealthcareAIOptimizationUtils, HealthcareAIUseCase } from '@neonpro/shared'
+// Local implementations for healthcare AI types and utilities
+
+export enum HealthcareAIUseCase {
+  PATIENT_COMMUNICATION = 'patient_communication',
+  DOCUMENTATION = 'documentation',
+  SYMPTOMS_ANALYSIS = 'symptoms_analysis',
+  TREATMENT_PLANNING = 'treatment_planning',
+  MEDICAL_TRANSCRIPTION = 'medical_transcription',
+  PATIENT_EDUCATION = 'patient_education',
+  COMPLIANCE_CHECK = 'compliance_check',
+  APPOINTMENT_SCHEDULING = 'appointment_scheduling',
+}
+
+export class HealthcareAIOptimizationUtils {
+  static estimateRequestCost(
+    use_case: HealthcareAIUseCase,
+    provider: string,
+    complexity: number = 1
+  ): number {
+    const baseCosts: Record<HealthcareAIUseCase, number> = {
+      [HealthcareAIUseCase.PATIENT_COMMUNICATION]: 0.002,
+      [HealthcareAIUseCase.DOCUMENTATION]: 0.003,
+      [HealthcareAIUseCase.SYMPTOMS_ANALYSIS]: 0.005,
+      [HealthcareAIUseCase.TREATMENT_PLANNING]: 0.004,
+      [HealthcareAIUseCase.MEDICAL_TRANSCRIPTION]: 0.005,
+      [HealthcareAIUseCase.PATIENT_EDUCATION]: 0.003,
+      [HealthcareAIUseCase.COMPLIANCE_CHECK]: 0.005,
+      [HealthcareAIUseCase.APPOINTMENT_SCHEDULING]: 0.002,
+    }
+
+    const providerMultipliers: Record<string, number> = {
+      'openai': 1.0,
+      'anthropic': 1.2,
+      'google': 0.8,
+      'azure': 1.1,
+      'aws': 0.9,
+    }
+
+    const baseCost = baseCosts[use_case] || 0.003
+    const providerMultiplier = providerMultipliers[provider] || 1.0
+
+    return baseCost * providerMultiplier * complexity
+  }
+}
 import { AuditTrailService } from './audit-trail'
 import { SemanticCacheService } from './semantic-cache'
 

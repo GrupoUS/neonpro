@@ -3,7 +3,23 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIModelCategory, AIProviderOpt } from '@neonpro/shared'
+// Local AI provider types and enums
+export enum AIProviderOpt {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  AZURE = 'azure',
+  AWS_BEDROCK = 'aws_bedrock',
+}
+
+export enum AIModelCategory {
+  CHAT = 'chat',
+  COMPLETION = 'completion',
+  EMBEDDING = 'embedding',
+  MODERATION = 'moderation',
+  TRANSCRIPTION = 'transcription',
+}
+
 import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types'
 
 /**

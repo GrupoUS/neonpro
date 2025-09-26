@@ -17,7 +17,7 @@ export interface PatientAssessment {
   }
 }
 
-export interface TreatmentRecommendation {
+export interface AITreatmentRecommendation {
   id: string
   assessmentId: string
   treatmentType: string
@@ -29,7 +29,7 @@ export interface TreatmentRecommendation {
   createdAt: Date
 }
 
-export interface TreatmentPlan {
+export interface AITreatmentPlan {
   id: string
   patientId: string
   assessmentId: string
@@ -82,11 +82,11 @@ export interface TreatmentProgress {
 
 export class AIClinicalDecisionSupport {
   private static instance: AIClinicalDecisionSupport
-  private database: any
+  // private database: any
   private auditService: any
 
-  private constructor({ database, auditService }: { database?: any; auditService?: any } = {}) {
-    this.database = database
+  private constructor({ auditService }: { database?: any; auditService?: any } = {}) {
+    // this.database = database
     this.auditService = auditService
   }
 
@@ -97,8 +97,8 @@ export class AIClinicalDecisionSupport {
     return AIClinicalDecisionSupport.instance
   }
 
-  async generateTreatmentRecommendations(input: any): Promise<TreatmentRecommendation[]> {
-    const recommendations: TreatmentRecommendation[] = [
+  async generateTreatmentRecommendations(input: any): Promise<AITreatmentRecommendation[]> {
+    const recommendations: AITreatmentRecommendation[] = [
       {
         id: crypto.randomUUID(),
         assessmentId: input.id,
@@ -125,8 +125,8 @@ export class AIClinicalDecisionSupport {
     return recommendations
   }
 
-  async createTreatmentPlan(input: any): Promise<TreatmentPlan> {
-    const plan: TreatmentPlan = {
+  async createTreatmentPlan(input: any): Promise<AITreatmentPlan> {
+    const plan: AITreatmentPlan = {
       id: crypto.randomUUID(),
       patientId: input.patientId,
       assessmentId: input.assessmentId,

@@ -71,9 +71,7 @@ export default async function globalSetup(context: GlobalSetupContext) {
       inputValidation: true,
       outputFiltering: true,
     },
-  }
-
-  // Store global AI test state with full context
+  } // Store global AI test state with full context
   ;(global as any).aiTestState = {
     services: aiServices,
     utilities: agentUtilities,
@@ -85,5 +83,9 @@ export default async function globalSetup(context: GlobalSetupContext) {
   }
 
   console.log("✅ AI testing global setup completed")
-  console.log(`🔧 Enabled services: ${Object.entries(aiServices).filter(([_, s]) => s.enabled).map(([k]) => k).join(', ') || 'none'}`)
+  console.log(
+    `🔧 Enabled services: ${
+      Object.entries(aiServices).filter(([_, s]) => s.enabled).map(([k]) => k).join(", ") || "none"
+    }`,
+  )
 }

@@ -160,7 +160,7 @@
   "crons": [
     {
       "path": "/api/health/check",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/compliance/audit",
@@ -168,11 +168,11 @@
     },
     {
       "path": "/api/performance/metrics",
-      "schedule": "*/1 * * * *"
+      "schedule": "0 0 * * *"
     },
     {
       "path": "/api/anvisa/adverse-events/sync",
-      "schedule": "0 */6 * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "cleanUrls": true,

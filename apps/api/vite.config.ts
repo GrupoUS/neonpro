@@ -13,7 +13,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       lib: {
-        entry: 'src/index.ts',
+        entry: 'src/browser.ts',
         name: 'NeonProAPI',
         fileName: format => `index.${format}${isEdge ? '.edge' : ''}`,
         formats: ['es'],
@@ -50,7 +50,6 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       include: [
         'hono',
-        '@hono/node-server',
         '@hono/trpc-server',
         '@trpc/server',
         'zod',
@@ -58,7 +57,7 @@ export default defineConfig(({ mode }) => {
         'date-fns',
         'nanoid',
       ],
-      exclude: ['@prisma/client'],
+      exclude: ['@prisma/client', '@hono/node-server'],
     },
     esbuild: {
       target: isEdge ? 'es2022' : 'node18',

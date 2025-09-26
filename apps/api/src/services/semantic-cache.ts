@@ -1,13 +1,110 @@
-import {
-  AIProvider,
-  CacheConfig,
-  CacheStats,
-  ComplianceLevel,
-  HealthcareAIContext,
-  SemanticCacheEntry,
-  SemanticCacheEntrySchema,
-  VectorEmbeddingConfig,
-} from '@neonpro/shared'
+// Local implementations for AI cache types and interfaces
+
+export enum AIProvider {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  AZURE = 'azure',
+  AWS = 'aws',
+}
+
+export enum ComplianceLevel {
+  LGPD_COMPLIANT = 'lgpd_compliant',
+  HIPAA_COMPLIANT = 'hipaa_compliant',
+  ANVISA_COMPLIANT = 'anvisa_compliant',
+  CFM_COMPLIANT = 'cfm_compliant',
+  GDPR_COMPLIANT = 'gdpr_compliant',
+}
+
+export interface CacheConfig {
+  maxEntries?: number
+  ttlMs?: number
+  cleanupIntervalMs?: number
+  strategy?: 'semantic' | 'exact' | 'lru'
+  enabled?: boolean
+}
+
+export interface VectorEmbeddingConfig {
+  dimensions: number
+  model: string
+  provider: AIProvider
+  batchSize: number
+  cacheKeyPrefix: string
+  similarityMetric: string
+}
+
+export interface CacheStats {
+  totalRequests: number
+  cacheHits: number
+  cacheMisses: number
+  totalSavedCost: number
+  averageResponseTimeMs: number
+  cacheSize: number
+  hitRate: number
+  costEfficiency: number
+  lastCleanup: Date
+}
+
+export interface HealthcareAIContext {
+  patientId: string
+  userId?: string
+  sessionId?: string
+  isEmergency?: boolean
+  containsUrgentSymptoms?: boolean
+  isSensitiveData?: boolean
+  requiresPrivacy?: boolean
+  category?: string
+  requiredCompliance?: ComplianceLevel[]
+}
+
+export interface SemanticCacheEntry {
+  id: string
+  prompt: string
+  response: string
+  embedding: number[]
+  metadata: {
+    patientId: string
+    userId?: string
+    cost: number
+    compliance: ComplianceLevel[]
+    isEmergency?: boolean
+    containsUrgentSymptoms?: boolean
+    ttlMs?: number
+    sanitized?: boolean
+    integrityHash?: string
+  }
+  createdAt: Date
+  accessedAt: Date
+  accessCount: number
+  ttl?: Date
+  hash: string
+}
+
+import { z } from 'zod'
+
+// Zod schema for cache entry validation
+export const SemanticCacheEntrySchema = z.object({
+  id: z.string(),
+  prompt: z.string(),
+  response: z.string(),
+  embedding: z.array(z.number()),
+  metadata: z.object({
+    patientId: z.string(),
+    userId: z.string().optional(),
+    cost: z.number(),
+    compliance: z.array(z.nativeEnum(ComplianceLevel)),
+    isEmergency: z.boolean().optional(),
+    containsUrgentSymptoms: z.boolean().optional(),
+    ttlMs: z.number().optional(),
+    sanitized: z.boolean().optional(),
+    integrityHash: z.string().optional(),
+  }),
+  createdAt: z.date(),
+  accessedAt: z.date(),
+  accessCount: z.number(),
+  ttl: z.date().optional(),
+  hash: z.string(),
+})
 
 /**
  * Serviço de Cache Semântico com Vetores Embeddings para Otimização de IA

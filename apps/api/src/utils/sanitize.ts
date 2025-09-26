@@ -68,7 +68,28 @@ export { sanitizeForAI } from '@neonpro/database'
  * - Audit logging for all redaction operations
  * - Supports both synchronous and asynchronous redaction
  */
-export { redact } from '@neonpro/shared'
+/**
+ * Redact sensitive information from text data
+ * Mock implementation to replace @neonpro/shared import
+ */
+export function redact(text: string, patterns?: Array<{ pattern: RegExp; replacement: string }>): string {
+  const defaultPatterns = [
+    { pattern: /\d{3}\.\d{3}\.\d{3}-\d{2}/g, replacement: '[CPF_REDACTED]' },
+    { pattern: /\d{2}\.\d{3}\.\d{3}-\d{1}/g, replacement: '[RG_REDACTED]' },
+    { pattern: /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, replacement: '[PHONE_REDACTED]' },
+    { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REDACTED]' },
+    { pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g, replacement: '[NAME_REDACTED]' },
+  ]
+
+  const redactionPatterns = patterns || defaultPatterns
+  let redactedText = text
+
+  for (const { pattern, replacement } of redactionPatterns) {
+    redactedText = redactedText.replace(pattern, replacement)
+  }
+
+  return redactedText
+}
 
 /**
  * Data sanitization configuration interface

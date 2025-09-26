@@ -25,7 +25,6 @@ describe("Enhanced SecureLogger", () => {
 
     // Create logger with test configuration
     logger = createLogger({
-
       level: "debug",
       maskSensitiveData: true,
       lgpdCompliant: true,

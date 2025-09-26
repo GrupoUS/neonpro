@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { ProgressUpdate } from '@/types/ai-clinical-support'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'

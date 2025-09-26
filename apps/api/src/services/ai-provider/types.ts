@@ -3,14 +3,75 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import {
-  AIModelCategory,
-  AIModelConfigOpt,
-  AIProviderOpt,
-  HealthcareAIUseCase,
-  HealthcareDataClassification,
-  LGPDDataCategory,
-} from '@neonpro/shared'
+// Local healthcare AI types and enums
+export enum AIProviderOpt {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  AZURE = 'azure',
+  AWS_BEDROCK = 'aws_bedrock',
+}
+
+export enum AIModelCategory {
+  CHAT = 'chat',
+  COMPLETION = 'completion',
+  EMBEDDING = 'embedding',
+  MODERATION = 'moderation',
+  TRANSCRIPTION = 'transcription',
+}
+
+export enum HealthcareAIUseCase {
+  PATIENT_COMMUNICATION = 'patient_communication',
+  DOCUMENTATION = 'documentation',
+  SYMPTOMS_ANALYSIS = 'symptoms_analysis',
+  TREATMENT_PLANNING = 'treatment_planning',
+  MEDICAL_TRANSCRIPTION = 'medical_transcription',
+  PATIENT_EDUCATION = 'patient_education',
+  COMPLIANCE_CHECK = 'compliance_check',
+  APPOINTMENT_SCHEDULING = 'appointment_scheduling',
+}
+
+export enum HealthcareDataClassification {
+  PUBLIC = 'public',
+  INTERNAL = 'internal',
+  CONFIDENTIAL = 'confidential',
+  RESTRICTED = 'restricted',
+  SENSITIVE = 'sensitive',
+}
+
+export enum LGPDDataCategory {
+  PERSONAL_IDENTIFICATION = 'personal_identification',
+  HEALTH_DATA = 'health_data',
+  GENETIC_DATA = 'genetic_data',
+  BIOMETRIC_DATA = 'biometric_data',
+  PAYMENT_DATA = 'payment_data',
+}
+
+export interface AIModelConfigOpt {
+  provider: AIProviderOpt
+  model_name: string
+  category: AIModelCategory
+  cost_config: {
+    input_cost_per_1k_tokens: number
+    output_cost_per_1k_tokens: number
+    max_tokens: number
+    max_monthly_budget: number
+  }
+  performance_config: {
+    max_latency_ms: number
+    timeout_ms: number
+    retry_attempts: number
+    rate_limit_rpm: number
+  }
+  healthcare_config: {
+    pii_redaction_enabled: boolean
+    lgpd_compliant: boolean
+    anvisa_approved: boolean
+    cfm_professional_use: boolean
+    patient_data_processing: boolean
+    audit_logging_required: boolean
+  }
+}
 
 export enum RoutingStrategy {
   COST_OPTIMIZED = 'cost_optimized',

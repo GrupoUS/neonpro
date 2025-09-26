@@ -3,44 +3,14 @@
   "version": "2.3.0",
   "type": "module",
   "description": "Unified AI provider management system with healthcare compliance for NeonPro platform",
-  "main": "dist/src/index.js",
-  "module": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.js"
-    },
-    "./providers": {
-      "types": "./dist/src/providers/index.d.ts",
-      "import": "./dist/src/providers/index.js",
-      "require": "./dist/src/providers/index.js"
-    },
-    "./services": {
-      "types": "./dist/src/services/index.d.ts",
-      "import": "./dist/src/services/index.js",
-      "require": "./dist/src/services/index.js"
-    },
-    "./types": {
-      "types": "./dist/src/types/index.d.ts",
-      "import": "./dist/src/types/index.js",
-      "require": "./dist/src/types/index.js"
-    },
-    "./providers/*": {
-      "types": "./dist/src/providers/*.d.ts",
-      "import": "./dist/src/providers/*.js",
-      "require": "./dist/src/providers/*.js"
-    },
-    "./services/*": {
-      "types": "./dist/src/services/*.d.ts",
-      "import": "./dist/src/services/*.js",
-      "require": "./dist/src/services/*.js"
-    },
-    "./types/*": {
-      "types": "./dist/src/types/*.d.ts",
-      "import": "./dist/src/types/*.js",
-      "require": "./dist/src/types/*.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     }
   },
   "scripts": {

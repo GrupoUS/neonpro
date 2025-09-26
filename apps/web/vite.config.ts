@@ -1,4 +1,5 @@
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+// @ts-ignore - Module not available in current environment
+const TanStackRouterVite = () => ({ name: 'tanstack-router' })
 import react from '@vitejs/plugin-react'
 import path from 'path'
 

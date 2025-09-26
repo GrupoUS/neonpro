@@ -592,6 +592,9 @@ export class HealthcareErrorHandler {
 // Export singleton instance
 export const healthcareErrorHandler = new HealthcareErrorHandler()
 
+// Export logger instance for middleware usage
+export const logger = new HealthcareLogger()
+
 /**
  * tRPC-specific healthcare error class
  * Extends HealthcareError with tRPC-compatible properties

@@ -3,14 +3,125 @@
  * Comprehensive appointment management with conflict detection and AI predictions
  */
 
-import {
-  AppointmentResponseSchema,
-  AppointmentsListResponseSchema,
-  CreateAppointmentRequestSchema,
-  HealthcareTRPCError,
-  PaginationSchema,
-  UpdateAppointmentRequestSchema,
-} from '@neonpro/types'
+import { z } from 'zod'
+import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+
+// Local appointment schema definitions
+
+export const CreateAppointmentRequestSchema = z.object({
+  patientId: z.string(),
+  professionalId: z.string(),
+  clinicId: z.string(),
+  scheduledDate: z.string(), // ISO string
+  duration: z.number().min(15).max(240), // minutes
+  type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
+  priority: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
+  notes: z.string().optional(),
+  reason: z.string().optional(),
+  roomId: z.string().optional(),
+  requiresPreparation: z.boolean().default(false),
+  isTelemedicine: z.boolean().default(false),
+  telemedicineLink: z.string().url().optional(),
+})
+
+export const UpdateAppointmentRequestSchema = z.object({
+  id: z.string(),
+  patientId: z.string().optional(),
+  professionalId: z.string().optional(),
+  scheduledDate: z.string().optional(),
+  duration: z.number().min(15).max(240).optional(),
+  type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']).optional(),
+  priority: z.enum(['low', 'medium', 'high', 'emergency']).optional(),
+  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']).optional(),
+  notes: z.string().optional(),
+  roomId: z.string().optional(),
+  cancellationReason: z.string().optional(),
+  isTelemedicine: z.boolean().optional(),
+  telemedicineLink: z.string().url().optional(),
+})
+
+export const PaginationSchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(20),
+  sortBy: z.enum(['scheduledDate', 'createdAt', 'priority', 'status']).default('scheduledDate'),
+  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  search: z.string().optional(),
+  filters: z.object({
+    status: z.array(z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])).optional(),
+    type: z.array(z.enum(['consultation', 'procedure', 'follow_up', 'emergency'])).optional(),
+    priority: z.array(z.enum(['low', 'medium', 'high', 'emergency'])).optional(),
+    patientId: z.string().optional(),
+    professionalId: z.string().optional(),
+    clinicId: z.string().optional(),
+    dateFrom: z.string().optional(),
+    dateTo: z.string().optional(),
+  }).optional(),
+})
+
+export const AppointmentResponseSchema = z.object({
+  id: z.string(),
+  patientId: z.string(),
+  professionalId: z.string(),
+  clinicId: z.string(),
+  startTime: z.string(),
+  endTime: z.string(),
+  duration: z.number(),
+  type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
+  priority: z.enum(['low', 'medium', 'high', 'emergency']),
+  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
+  notes: z.string().nullable(),
+  roomId: z.string().nullable(),
+  cancellationReason: z.string().nullable(),
+  isTelemedicine: z.boolean(),
+  telemedicineLink: z.string().nullable(),
+  requiresPreparation: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  patient: z.object({
+    id: z.string(),
+    name: z.string(),
+    email: z.string().email().nullable(),
+    phone: z.string().nullable(),
+  }).optional(),
+  professional: z.object({
+    id: z.string(),
+    name: z.string(),
+    specialty: z.string(),
+    email: z.string().email().nullable(),
+  }).optional(),
+  room: z.object({
+    id: z.string(),
+    name: z.string(),
+    type: z.string(),
+  }).optional(),
+  aiPredictions: z.object({
+    noShowProbability: z.number().min(0).max(1),
+    cancellationProbability: z.number().min(0).max(1),
+    lateArrivalProbability: z.number().min(0).max(1),
+    factors: z.array(z.string()),
+  }).optional(),
+})
+
+export const AppointmentsListResponseSchema = z.object({
+  appointments: z.array(AppointmentResponseSchema),
+  pagination: z.object({
+    page: z.number(),
+    limit: z.number(),
+    total: z.number(),
+    pages: z.number(),
+    hasNext: z.boolean(),
+    hasPrev: z.boolean(),
+  }),
+  summary: z.object({
+    total: z.number(),
+    scheduled: z.number(),
+    confirmed: z.number(),
+    inProgress: z.number(),
+    completed: z.number(),
+    cancelled: z.number(),
+    noShow: z.number(),
+  }),
+})
 import { protectedProcedure, router } from '../trpc'
 
 export const appointmentRouter = router({

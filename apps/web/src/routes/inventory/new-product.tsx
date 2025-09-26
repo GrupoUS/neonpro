@@ -1,4 +1,4 @@
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Plus, Save, Trash2, X } from 'lucide-react'
 import { useState } from 'react'

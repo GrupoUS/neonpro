@@ -3,7 +3,25 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIProviderOpt, HealthcareAIUseCase } from '@neonpro/shared'
+// Local healthcare AI types
+export enum AIProviderOpt {
+  OPENAI = 'openai',
+  ANTHROPIC = 'anthropic',
+  GOOGLE = 'google',
+  AZURE = 'azure',
+  AWS_BEDROCK = 'aws_bedrock',
+}
+
+export enum HealthcareAIUseCase {
+  PATIENT_COMMUNICATION = 'patient_communication',
+  DOCUMENTATION = 'documentation',
+  SYMPTOMS_ANALYSIS = 'symptoms_analysis',
+  TREATMENT_PLANNING = 'treatment_planning',
+  MEDICAL_TRANSCRIPTION = 'medical_transcription',
+  PATIENT_EDUCATION = 'patient_education',
+  COMPLIANCE_CHECK = 'compliance_check',
+  APPOINTMENT_SCHEDULING = 'appointment_scheduling',
+}
 import { AuditEventType, AuditTrailService } from '../audit-trail'
 import { RoutingRequest } from './types'
 

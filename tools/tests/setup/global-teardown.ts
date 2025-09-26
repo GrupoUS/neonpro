@@ -8,10 +8,10 @@ async function globalTeardown(config: FullConfig) {
 
   const testConfig = (global as any).testConfig || {}
   const isCI = testConfig.isCI || process.env.CI
-  const projectName = testConfig.projectName || 'default'
+  const projectName = testConfig.projectName || "default"
 
   console.log(`🔧 Tearing down ${projectName} tests`)
-  console.log(`📍 Environment: ${isCI ? 'CI' : 'local'}`)
+  console.log(`📍 Environment: ${isCI ? "CI" : "local"}`)
 
   // Clean up browser instance with context
   const browser = (global as any).browser
@@ -30,9 +30,9 @@ async function globalTeardown(config: FullConfig) {
   // Cleanup test artifacts with configuration
   console.log("🗑️  Cleaning up test artifacts")
   const artifacts = {
-    screenshots: './test-results/screenshots/',
-    videos: './test-results/videos/',
-    traces: './test-results/traces/',
+    screenshots: "./test-results/screenshots/",
+    videos: "./test-results/videos/",
+    traces: "./test-results/traces/",
   }
 
   for (const [artifactType, path] of Object.entries(artifacts)) {
@@ -51,7 +51,7 @@ async function globalTeardown(config: FullConfig) {
   const complianceReport = {
     testRun: {
       project: projectName,
-      environment: isCI ? 'CI' : 'local',
+      environment: isCI ? "CI" : "local",
       timestamp: new Date().toISOString(),
       duration: Date.now() - (testConfig.startTime || Date.now()),
     },
@@ -69,7 +69,7 @@ async function globalTeardown(config: FullConfig) {
 
   // Save compliance report
   try {
-    const reportDir = './test-results/reports/'
+    const reportDir = "./test-results/reports/"
     if (!fs.existsSync(reportDir)) {
       fs.mkdirSync(reportDir, { recursive: true })
     }
@@ -86,12 +86,18 @@ async function globalTeardown(config: FullConfig) {
   delete (global as any).testConfig
 
   console.log("✅ Global teardown completed")
-  console.log(`📊 Test run summary: ${JSON.stringify({
-    project: projectName,
-    environment: isCI ? 'CI' : 'local',
-    browserClosed: !!browser,
-    reportGenerated: true,
-  }, null, 2)}`)
+  console.log(`📊 Test run summary: ${
+    JSON.stringify(
+      {
+        project: projectName,
+        environment: isCI ? "CI" : "local",
+        browserClosed: !!browser,
+        reportGenerated: true,
+      },
+      null,
+      2,
+    )
+  }`)
 }
 
 export default globalTeardown

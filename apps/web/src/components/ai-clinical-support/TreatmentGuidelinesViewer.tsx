@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api'
 import { GuidelineSection, TreatmentGuideline } from '@/types/ai-clinical-support'
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
