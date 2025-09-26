@@ -22,7 +22,7 @@ export {
 export { CryptographicAuditLogger as CryptoAudit, cryptographicAuditLogger } from './crypto-audit';
 export { PrivacyAlgorithms } from './privacy-algorithms';
 export { SecureLogger } from './secure-logger';
-export { HealthcareLogger as HealthcareErrorLogger } from './healthcare-errors';
+export { HealthcareLogger as HealthcareErrorLogger } from '../logging/healthcare-logger';
 
 // Error handling and responses
 export { badRequest, unauthorized, forbidden, notFound, serverError, success, ok, created } from './responses';

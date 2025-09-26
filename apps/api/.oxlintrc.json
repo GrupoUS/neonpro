@@ -1,0 +1,135 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "extends": ["../../.oxlintrc.json"],
+  "plugins": [
+    "typescript",
+    "node",
+    "promise",
+    "import",
+    "jsdoc",
+    "oxc"
+  ],
+  "rules": {
+    // Node.js específico
+    "node/prefer-global/buffer": "error",
+    "node/prefer-global/process": "error",
+    "node/no-deprecated-api": "error",
+    "node/no-missing-import": "off",
+    "node/no-unsupported-features/es-syntax": "off",
+
+    // tRPC & API específico
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/prefer-optional-chain": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+
+    // Promise/Async patterns
+    "promise/prefer-await-to-then": "error",
+    "promise/no-return-wrap": "error",
+    "promise/param-names": "error",
+    "promise/catch-or-return": "error",
+    "promise/no-nesting": "warn",
+
+    // Import organization para backend
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          ["internal", "parent", "sibling", "index"]
+        ],
+        "newlines-between": "always",
+        "pathGroups": [
+          {
+            "pattern": "@neonpro/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "~/trpc/**",
+            "group": "internal",
+            "position": "before"
+          },
+          {
+            "pattern": "~/services/**",
+            "group": "internal",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"]
+      }
+    ],
+
+    // Performance para APIs
+    "no-await-in-loop": "warn",
+    "prefer-const": "error",
+    "no-var": "error",
+
+    // Security para backend
+    "no-eval": "error",
+    "no-implied-eval": "error",
+    "no-new-func": "error",
+
+    // Documentation obrigatória
+    "jsdoc/require-jsdoc": [
+      "error",
+      {
+        "contexts": [
+          "FunctionExpression",
+          "FunctionDeclaration",
+          "ClassDeclaration",
+          "MethodDefinition"
+        ],
+        "require": {
+          "FunctionExpression": true,
+          "FunctionDeclaration": true,
+          "ClassDeclaration": true,
+          "MethodDefinition": true
+        }
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["src/trpc/**/*.ts"],
+      "rules": {
+        "typescript/no-explicit-any": "error",
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "jsdoc/require-jsdoc": "error"
+      }
+    },
+    {
+      "files": ["src/services/**/*.ts"],
+      "rules": {
+        "typescript/no-explicit-any": "error",
+        "promise/prefer-await-to-then": "error",
+        "jsdoc/require-jsdoc": "error"
+      }
+    },
+    {
+      "files": ["src/middleware/**/*.ts"],
+      "rules": {
+        "typescript/no-explicit-any": "error",
+        "no-console": "error",
+        "jsdoc/require-jsdoc": "error"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "*.min.js",
+    ".turbo/**",
+    "dev-tools/**",
+    "examples/**"
+  ]
+}

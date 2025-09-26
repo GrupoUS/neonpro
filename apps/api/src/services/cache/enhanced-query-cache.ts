@@ -11,15 +11,15 @@
 import { createHash } from 'crypto'
 import { AguiQueryMessage, AguiResponseMessage } from '../agui-protocol/types'
 
-import { CacheManagementService } from '../../../shared/src/services/cache-management'
+import { CacheManagementService } from '@neonpro/shared/services/cache-management'
 import {
   CacheConfig,
   CacheDataSensitivity,
   CacheOperationResult,
   CacheTier,
   HealthcareCacheContext,
-} from '../../../shared/src/services/cache-management'
-import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend'
+} from '@neonpro/shared/services/cache-management'
+import { RedisCacheBackend } from '@neonpro/shared/services/redis-cache-backend'
 
 // const QueryCacheKeySchema = z.string().min(1).max(1000);
 const UserIdSchema = z.string().min(1).max(255)
@@ -574,7 +574,7 @@ export class EnhancedQueryCacheService {
     if (this.config.enableMemoryCache) {
       const {
         InMemoryCacheBackend,
-      } = require('../../../shared/src/services/cache-management')
+      } = require('@neonpro/shared/services/cache-management')
       this.cacheService.registerBackend(
         CacheTier.MEMORY,
         new InMemoryCacheBackend(cacheConfig),

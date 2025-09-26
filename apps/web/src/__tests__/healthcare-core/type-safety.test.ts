@@ -2,22 +2,15 @@ import { describe, it, expect } from 'vitest'
 
 describe('Healthcare Core Type Safety', () => {
   describe('Export Conflicts', () => {
-    it('should not have duplicate TreatmentPlan exports', () => {
-      // This test will fail initially due to export conflicts
-      expect(() => {
-        // This import should fail due to duplicate exports
-        const healthcare = await import('@neonpro/healthcare-core')
-        // Check if TreatmentPlan is properly exported without conflicts
-        expect(healthcare.TreatmentPlan).toBeDefined()
-      }).toThrow('Module has already exported a member named TreatmentPlan')
+    it('should not have duplicate TreatmentPlan exports', async () => {
+      const healthcare = await import('@neonpro/healthcare-core')
+      // Check if TreatmentPlan is properly exported without conflicts
+      expect(healthcare).toHaveProperty('TreatmentPlan')
     })
 
-    it('should not have duplicate TreatmentRecommendation exports', () => {
-      // This test will fail initially due to export conflicts
-      expect(() => {
-        const healthcare = await import('@neonpro/healthcare-core')
-        expect(healthcare.TreatmentRecommendation).toBeDefined()
-      }).toThrow('Module has already exported a member named TreatmentRecommendation')
+    it('should not have duplicate TreatmentRecommendation exports', async () => {
+      const healthcare = await import('@neonpro/healthcare-core')
+      expect(healthcare).toHaveProperty('TreatmentRecommendation')
     })
   })
 
@@ -30,7 +23,7 @@ describe('Healthcare Core Type Safety', () => {
           metric: z.string(),
           value: z.number()
         })
-        
+
         // This should fail because Zod expects 2-3 arguments but gets 1
         const invalidSchema = z.string()
         invalidSchema.parse('test')
@@ -56,7 +49,7 @@ describe('Healthcare Core Type Safety', () => {
           name: 'Test Procedure',
           procedureType: 'facial'
         }
-        
+
         const result = validateProcedure(procedure) // This should fail due to missing properties
         expect(result).toBeDefined()
       }).toThrow('Property \'specialRequirements\' does not exist')

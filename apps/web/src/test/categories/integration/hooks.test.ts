@@ -40,18 +40,18 @@ describe('Healthcare Hooks Integration Tests', () => {
   beforeEach(() => {
     queryClient = new QueryClient({
       defaultOptions: {
-        queries: { 
+        queries: {
           retry: false,
           cacheTime: 0,
         },
-        mutations: { 
+        mutations: {
           retry: false,
         },
       },
     })
   })
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => 
+  const wrapper = ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children)
 
   describe('Modern Hook Patterns with Healthcare Compliance', () => {
@@ -61,7 +61,7 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       // Verify modern React Query patterns are working
       expect(result.current.isSubmitting).toBe(false)
       expect(typeof result.current.scheduleMutation.isPending).toBe('boolean')
@@ -74,7 +74,7 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       // Verify TypeScript inference is working
       expect(typeof result.current.handleSubmit).toBe('function')
       expect(typeof result.current.handleSubmitWrapper).toBe('function')
@@ -88,12 +88,12 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
       }
-      
+
       // Mock successful mutation
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
@@ -102,12 +102,12 @@ describe('Healthcare Hooks Integration Tests', () => {
           }
         }
       )
-      
+
       // Test async/await patterns
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
-      
+
       expect(result.current.scheduleMutation.mutate).toHaveBeenCalledWith(
         expect.objectContaining(mockData),
         expect.any(Object)
@@ -122,27 +122,27 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
         lgpdConsent: true, // Required for healthcare compliance
         dataProcessingConsent: true, // LGPD requirement
       }
-      
+
       // Mock successful LGPD-compliant submission
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
           // Verify LGPD compliance data is present
           expect(data).toHaveProperty('lgpdConsent', true)
           expect(data).toHaveProperty('dataProcessingConsent', true)
-          
+
           if (options?.onSuccess) {
             options.onSuccess({ success: true, data: mockData })
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
@@ -154,27 +154,27 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
         encryptedMedicalData: 'encrypted-payload', // Should be encrypted
         encryptionKey: 'key-123',
       }
-      
+
       // Mock encryption validation
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
           // Verify encryption is present
           expect(data).toHaveProperty('encryptedMedicalData')
           expect(data).toHaveProperty('encryptionKey')
-          
+
           if (options?.onSuccess) {
             options.onSuccess({ success: true, data: mockData })
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
@@ -186,7 +186,7 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
@@ -196,7 +196,7 @@ describe('Healthcare Hooks Integration Tests', () => {
           userId: 'user-123',
         },
       }
-      
+
       // Mock audit trail creation
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
@@ -204,13 +204,13 @@ describe('Healthcare Hooks Integration Tests', () => {
           expect(data).toHaveProperty('auditTrail')
           expect(data.auditTrail).toHaveProperty('action')
           expect(data.auditTrail).toHaveProperty('timestamp')
-          
+
           if (options?.onSuccess) {
             options.onSuccess({ success: true, data: mockData })
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
@@ -224,12 +224,12 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
       }
-      
+
       // Mock debounced submission
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         vi.fn().mockImplementation((data, options) => {
@@ -241,7 +241,7 @@ describe('Healthcare Hooks Integration Tests', () => {
           }, 100)
         })
       )
-      
+
       await act(async () => {
         const promise = result.current.handleSubmit(mockData)
         expect(result.current.scheduleMutation.isPending).toBe(true)
@@ -255,24 +255,24 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
       }
-      
+
       // Mock cached data access
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
           // Verify cache key usage
           expect(data.patientId).toBe('patient-123')
-          
+
           if (options?.onSuccess) {
             options.onSuccess({ success: true, data: mockData, cached: true })
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
@@ -284,7 +284,7 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const largeDataset = {
         patientId: 'patient-123',
         procedures: Array.from({ length: 100 }, (_, i) => ({
@@ -293,30 +293,30 @@ describe('Healthcare Hooks Integration Tests', () => {
           type: 'medical-procedure',
         })),
       }
-      
+
       // Mock efficient large dataset handling
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
           const startTime = performance.now()
-          
+
           // Simulate efficient processing
           setTimeout(() => {
             const endTime = performance.now()
             const processingTime = endTime - startTime
-            
+
             expect(processingTime).toBeLessThan(100) // Should process in under 100ms
-            
+
             if (options?.onSuccess) {
-              options.onSuccess({ 
-                success: true, 
+              options.onSuccess({
+                success: true,
                 data: largeDataset,
-                processingTime 
+                processingTime
               })
             }
           }, 50) // Simulate fast processing
         })
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(largeDataset)
       })
@@ -330,12 +330,12 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: 'invalid-date' }],
       }
-      
+
       // Mock validation error
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
@@ -344,11 +344,11 @@ describe('Healthcare Hooks Integration Tests', () => {
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
-      
+
       expect(result.current.scheduleMutation.error).toBeDefined()
     })
 
@@ -358,12 +358,12 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
       }
-      
+
       // Mock network error
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
@@ -372,11 +372,11 @@ describe('Healthcare Hooks Integration Tests', () => {
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })
-      
+
       expect(result.current.scheduleMutation.error).toBeDefined()
     })
 
@@ -386,7 +386,7 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const invalidData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
@@ -395,7 +395,7 @@ describe('Healthcare Hooks Integration Tests', () => {
           treatment: 'INVALID_TREATMENT_CODE', // Invalid code
         },
       }
-      
+
       // Mock healthcare validation error
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
@@ -404,11 +404,11 @@ describe('Healthcare Hooks Integration Tests', () => {
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(invalidData)
       })
-      
+
       expect(result.current.scheduleMutation.error).toBeDefined()
     })
   })
@@ -420,36 +420,36 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
         healthcareSystem: 'appointment-scheduling',
       }
-      
+
       // Mock successful integration
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
           expect(data).toHaveProperty('healthcareSystem', 'appointment-scheduling')
-          
+
           if (options?.onSuccess) {
-            options.onSuccess({ 
-              success: true, 
+            options.onSuccess({
+              success: true,
               data: mockData,
               integration: 'appointment-scheduling-system'
             })
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
-        
+
         // Should invalidate appointments query
         expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
           queryKey: ['appointments'],
         })
-        
+
         // Should invalidate patient-specific queries
         expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
           queryKey: ['patients', 'patient-123'],
@@ -463,30 +463,30 @@ describe('Healthcare Hooks Integration Tests', () => {
         () => useSchedulingSubmission('patient-123'),
         { wrapper }
       )
-      
+
       const mockData = {
         patientId: 'patient-123',
         procedures: [{ id: 'proc-1', date: '2024-01-01' }],
         externalProviderId: 'provider-123',
         coordinationRequired: true,
       }
-      
+
       // Mock external healthcare provider sync
       vi.mocked(result.current.scheduleMutation.mutate).mockImplementation(
         (data, options) => {
           expect(data).toHaveProperty('externalProviderId', 'provider-123')
           expect(data).toHaveProperty('coordinationRequired', true)
-          
+
           if (options?.onSuccess) {
-            options.onSuccess({ 
-              success: true, 
+            options.onSuccess({
+              success: true,
               data: mockData,
               externalSync: 'completed'
             })
           }
         }
       )
-      
+
       await act(async () => {
         await result.current.handleSubmit(mockData)
       })

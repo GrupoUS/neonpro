@@ -1,0 +1,160 @@
+{
+  "analysis_date": "2025-09-26",
+  "comprehensive_analysis": "Complete import dependency mapping",
+  "monorepo_path": "/home/vibecode/neonpro",
+  "dependency_map": {
+    "apps_to_packages_connections": {
+      "@neonpro/api": {
+        "current_connections": [
+          {
+            "package": "@neonpro/database", 
+            "version": "workspace:*",
+            "status": "HEALTHY",
+            "usage": "Data persistence and Prisma integration"
+          },
+          {
+            "package": "@neonpro/healthcare-core",
+            "version": "workspace:*", 
+            "status": "HEALTHY",
+            "usage": "Business logic and healthcare compliance"
+          },
+          {
+            "package": "@neonpro/security",
+            "version": "workspace:*",
+            "status": "HEALTHY", 
+            "usage": "LGPD, authentication, and security utilities"
+          },
+          {
+            "package": "@neonpro/utils",
+            "version": "workspace:*",
+            "status": "HEALTHY",
+            "usage": "Shared utility functions"
+          }
+        ],
+        "expected_connections": [
+          "@neonpro/database ✅",
+          "@neonpro/healthcare-core ✅", 
+          "@neonpro/security ✅",
+          "@neonpro/utils ✅"
+        ],
+        "connection_health": "100%",
+        "missing_connections": [],
+        "unexpected_connections": []
+      },
+      "@neonpro/web": {
+        "current_connections": [],
+        "expected_connections": [
+          "@neonpro/shared ❌ PACKAGE_NOT_EXISTS",
+          "@neonpro/utils ❌ NOT_IMPORTED",
+          "@neonpro/types ❌ PACKAGE_NOT_EXISTS"
+        ],
+        "connection_health": "0%",
+        "missing_connections": [
+          {
+            "package": "@neonpro/shared",
+            "reason": "Package does not exist",
+            "impact": "HIGH - UI components not shared",
+            "priority": "CRITICAL"
+          },
+          {
+            "package": "@neonpro/utils", 
+            "reason": "Not imported despite package existing",
+            "impact": "MEDIUM - utility logic duplication",
+            "priority": "HIGH"
+          },
+          {
+            "package": "@neonpro/types",
+            "reason": "Package does not exist", 
+            "impact": "HIGH - type safety gaps",
+            "priority": "CRITICAL"
+          }
+        ]
+      }
+    },
+    "packages_usage_analysis": {
+      "actively_used": [
+        {
+          "package": "@neonpro/database",
+          "consumers": ["@neonpro/api"],
+          "usage_frequency": "HIGH"
+        },
+        {
+          "package": "@neonpro/healthcare-core", 
+          "consumers": ["@neonpro/api"],
+          "usage_frequency": "HIGH"
+        },
+        {
+          "package": "@neonpro/security",
+          "consumers": ["@neonpro/api"],
+          "usage_frequency": "HIGH"
+        },
+        {
+          "package": "@neonpro/utils",
+          "consumers": ["@neonpro/api"],
+          "usage_frequency": "MEDIUM"
+        }
+      ],
+      "underutilized": [
+        {
+          "package": "@neonpro/ai-services",
+          "consumers": [],
+          "status": "UNUSED",
+          "recommendation": "Evaluate if needed or remove"
+        },
+        {
+          "package": "@neonpro/ui", 
+          "consumers": [],
+          "status": "UNUSED",
+          "recommendation": "Integrate with web app or consolidate with @neonpro/shared"
+        }
+      ],
+      "missing": [
+        {
+          "package": "@neonpro/shared",
+          "expected_consumers": ["@neonpro/web"],
+          "status": "NEEDS_CREATION",
+          "priority": "CRITICAL"
+        },
+        {
+          "package": "@neonpro/types",
+          "expected_consumers": ["@neonpro/web", "@neonpro/api"],
+          "status": "NEEDS_CREATION", 
+          "priority": "CRITICAL"
+        }
+      ]
+    }
+  },
+  "visual_dependency_graph": {
+    "current_state": {
+      "apps": {
+        "api": ["database", "healthcare-core", "security", "utils"],
+        "web": []
+      },
+      "orphaned_packages": ["ai-services", "ui"]
+    },
+    "expected_state": {
+      "apps": {
+        "api": ["database", "healthcare-core", "security", "utils"],
+        "web": ["shared", "utils", "types"]
+      },
+      "cross_package_dependencies": {
+        "shared": ["utils", "types"],
+        "healthcare-core": ["database", "security"]
+      }
+    }
+  },
+  "integration_health_summary": {
+    "overall_score": "50%",
+    "api_integration": "100% - excellent",
+    "web_integration": "0% - critical issues",
+    "package_utilization": "67% - some unused packages",
+    "workspace_protocol_compliance": "83% - mostly good"
+  },
+  "critical_actions_required": [
+    "Create @neonpro/shared package for UI components",
+    "Create @neonpro/types package for TypeScript definitions",
+    "Integrate web app with workspace packages",
+    "Evaluate unused packages (ai-services, ui)",
+    "Implement missing imports in TypeScript files"
+  ]
+}

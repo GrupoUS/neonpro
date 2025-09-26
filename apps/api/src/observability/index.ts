@@ -1,5 +1,5 @@
 // Minimal observability utilities (structured logs & metrics)
-import { endTimerMs, logMetric, startTimer } from '../services/metrics'
+import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
 
 export type ObsTimer = ReturnType<typeof startTimer>
 

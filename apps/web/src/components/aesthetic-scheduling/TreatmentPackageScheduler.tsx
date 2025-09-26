@@ -161,7 +161,7 @@ export function TreatmentPackageScheduler(
                       <div className='flex justify-between items-center mb-1'>
                         <span className='text-sm text-gray-600'>Valor Total:</span>
                         <span className='text-lg font-bold text-gray-900'>
-                          R$ {pkg.totalPrice.toLocaleString('pt-BR')}
+                          R$ {pkg.totalPrice.toLocaleString("pt-BR")}
                         </span>
                       </div>
                       <div className='flex justify-between items-center mb-1'>
@@ -174,7 +174,7 @@ export function TreatmentPackageScheduler(
                         <span className='text-sm text-gray-600'>Valor Final:</span>
                         <span className='text-lg font-bold text-green-600'>
                           R$ {(pkg.totalPrice * (1 - pkg.packageDiscount / 100)).toLocaleString(
-                            'pt-BR',
+                            "pt-BR",
                           )}
                         </span>
                       </div>
@@ -182,8 +182,9 @@ export function TreatmentPackageScheduler(
                     <div className='flex items-center gap-2 text-sm text-gray-600'>
                       <Clock className='h-4 w-4' />
                       <span>
-                        Economia: R${' '}
-                        {(pkg.totalPrice * pkg.packageDiscount / 100).toLocaleString('pt-BR')}
+                        Economia: R$ {(pkg.totalPrice * pkg.packageDiscount / 100).toLocaleString(
+                          "pt-BR",
+                        )}
                       </span>
                     </div>
                   </CardContent>
@@ -307,14 +308,14 @@ export function TreatmentPackageScheduler(
                                   <div>
                                     <span className='text-gray-600'>Valor:</span>
                                     <div className='font-medium'>
-                                      R$ {procedure.price.toLocaleString('pt-BR')}
+                                      R$ {procedure.price.toLocaleString("pt-BR")}
                                     </div>
                                   </div>
                                   <div>
                                     <span className='text-gray-600'>Total:</span>
                                     <div className='font-medium'>
                                       R$ {(procedure.price * procedure.sessions).toLocaleString(
-                                        'pt-BR',
+                                        "pt-BR",
                                       )}
                                     </div>
                                   </div>
@@ -356,7 +357,7 @@ export function TreatmentPackageScheduler(
                       Nenhum Pacote Selecionado
                     </h3>
                     <p className='text-gray-600'>
-                      Volte para a aba "Pacotes Disponíveis" para selecionar um pacote de
+                      Volte para a aba &quot;Pacotes Disponíveis&quot; para selecionar um pacote de
                       tratamento.
                     </p>
                   </CardContent>
@@ -515,16 +516,15 @@ export function TreatmentPackageScheduler(
                                 <span className='font-medium text-green-600'>
                                   R$ {(selectedPackage.totalPrice *
                                     (1 - selectedPackage.packageDiscount / 100)).toLocaleString(
-                                      'pt-BR',
+                                      "pt-BR",
                                     )}
                                 </span>
                               </p>
                               <p className='text-sm text-gray-600'>
                                 Economia:{' '}
                                 <span className='font-medium text-green-600'>
-                                  R$ {(selectedPackage.totalPrice *
-                                    selectedPackage.packageDiscount /
-                                    100).toLocaleString('pt-BR')}
+                                  R$ {(selectedPackage.totalPrice * selectedPackage.packageDiscount /
+                                    100).toLocaleString("pt-BR")}
                                 </span>
                               </p>
                             </div>
@@ -543,7 +543,7 @@ export function TreatmentPackageScheduler(
                       Pacote Não Selecionado
                     </h3>
                     <p className='text-gray-600'>
-                      Selecione um pacote na aba "Pacotes Disponíveis" para prosseguir com o
+                      Selecione um pacote na aba &quot;Pacotes Disponíveis&quot; para prosseguir com o
                       agendamento.
                     </p>
                   </CardContent>

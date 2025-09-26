@@ -2,10 +2,24 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "installCommand": "bun install",
+  "buildCommand": "cd apps/web && bun run build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
+  "outputDirectory": "dist",
   "devCommand": "turbo run dev",
   "regions": ["gru1"],
+  "framework": null,
+  "functions": {
+    "apps/api/src/index.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
 
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
@@ -88,32 +102,6 @@
       ]
     }
   ],
-
-  "env": {
-    "VITE_APP_ENV": "production",
-    "VITE_DEPLOYMENT_ENV": "vercel",
-    "VITE_APP_VERSION": "1.0.0",
-    "AI_AGENT_ENABLED": "true",
-    "AI_LGPD_COMPLIANCE": "true",
-    "AI_ANALYTICS_ENABLED": "true",
-    "AUDIT_LOGGING_ENABLED": "true",
-    "LOG_LEVEL": "info",
-    "LGPD_COMPLIANCE": "true",
-    "DATA_RESIDENCY": "brazil",
-    "BRAZIL_DATA_RESIDENCY": "true",
-    "CLIENT_DATA_PROTECTION": "true",
-    "CLIENT_DATA_ANONYMIZATION": "true",
-    "DATA_RETENTION_DAYS": "365",
-    "TURBO_REMOTE_CACHE_ENABLED": "true",
-    "VERCEL_ANALYTICS_ENABLED": "true"
-  },
-
-  "build": {
-    "env": {
-      "BUILD_TIME": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
-      "TURBO_REMOTE_CACHE_SIGNATURE": "true"
-    }
-  },
 
   "git": {
     "deploymentEnabled": true

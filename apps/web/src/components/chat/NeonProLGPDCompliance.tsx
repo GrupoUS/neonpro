@@ -11,8 +11,8 @@
  */
 
 import React, { useCallback, useState } from 'react'
-import { Alert, AlertDescription } from '../../ui/alert'
-import { Textarea } from '../../ui/textarea'
+import { Alert, AlertDescription } from '@neonpro/ui/alert'
+import { Textarea } from '@neonpro/ui/textarea'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'

@@ -15,14 +15,14 @@
  */
 
 import { PrismaClient } from '@prisma/client'
-// import type { Database } from '../../../packages/database/src/types/supabase';
+import type { Database } from '@neonpro/database'
 import { healthcareRLS } from './supabase.js'
 
 // Healthcare context interface for RLS
 interface HealthcareContext {
-  _userId?: string
+  userId?: string
   clinicId?: string
-  _role?: 'admin' | 'professional' | 'assistant' | 'patient'
+  role?: 'admin' | 'professional' | 'assistant' | 'patient'
   permissions?: string[]
   cfmValidated?: boolean
 }
@@ -173,33 +173,33 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
   // Healthcare context management
   healthcarePrisma.withContext = function(
-    _context: HealthcareContext,
+    context: HealthcareContext,
   ): HealthcarePrismaClient {
     const newInstance = Object.create(this)
-    newInstance.currentContext = _context
+    newInstance.currentContext = context
     return newInstance
   }
 
   healthcarePrisma.validateContext = async function(): Promise<boolean> {
-    if (!this.currentContext?._userId || !this.currentContext?.clinicId) {
+    if (!this.currentContext?.userId || !this.currentContext?.clinicId) {
       return false
     }
 
     try {
       // Validate user access to clinic using existing Supabase RLS
       const hasAccess = await healthcareRLS.canAccessClinic(
-        this.currentContext._userId,
+        this.currentContext.userId,
         this.currentContext.clinicId,
       )
 
       // Additional CFM validation for healthcare professionals
       if (
-        this.currentContext._role === 'professional' &&
+        this.currentContext.role === 'professional' &&
         !this.currentContext.cfmValidated
       ) {
         const professional = await this.professional.findFirst({
           where: {
-            userId: this.currentContext._userId,
+            userId: this.currentContext.userId,
             clinicId: this.currentContext.clinicId,
             isActive: true,
           },
@@ -423,7 +423,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           where: { id: patientId },
         })
       })
-    } catch {
+    } catch (error) {
       console.error('Patient data deletion failed:', error)
       throw error
     }
@@ -481,7 +481,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       })
 
       return patients
-    } catch {
+    } catch (error) {
       console.error('Find patients in clinic failed:', error)
       throw error
     }
@@ -546,7 +546,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       })
 
       return appointments
-    } catch {
+    } catch (error) {
       console.error('Find appointments for professional failed:', error)
       throw error
     }
@@ -560,7 +560,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   ): Promise<void> {
     try {
       const auditData = {
-        _userId: this.currentContext?.userId || 'system',
+        userId: this.currentContext?.userId || 'system',
         clinicId: this.currentContext?.clinicId,
         action: action as any,
         resource: `${resourceType}:${resourceId}`,
@@ -572,7 +572,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         status: 'SUCCESS' as any,
         riskLevel: details.riskLevel || ('LOW' as any),
         additionalInfo: JSON.stringify({
-          _context: this.currentContext,
+          context: this.currentContext,
           details,
           timestamp: new Date().toISOString(),
         }),
@@ -581,7 +581,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       await this.auditTrail.create({
         data: auditData,
       })
-    } catch {
+    } catch (error) {
       console.error('Audit log creation failed:', error)
       // Don't throw here to avoid breaking the main operation
     }
@@ -715,7 +715,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         action: params.action,
         model: params.model,
         error: error.message,
-        _context: healthcarePrisma.currentContext,
+        context: healthcarePrisma.currentContext,
       })
 
       throw error
@@ -752,7 +752,7 @@ export function getHealthcarePrismaClient(): HealthcarePrismaClient {
  * Create a new Prisma client instance with healthcare context
  */
 export function createPrismaWithContext(
-  _context: HealthcareContext,
+  context: HealthcareContext,
 ): HealthcarePrismaClient {
   const client = createHealthcarePrismaClient()
   return client.withContext(context)
@@ -762,9 +762,9 @@ export function createPrismaWithContext(
  * Helper function to validate and create healthcare context from request
  */
 export function createHealthcareContextFromRequest(
-  _userId: string,
+  userId: string,
   clinicId: string,
-  _role: HealthcareContext['role'],
+  role: HealthcareContext['role'],
   additionalData: Partial<HealthcareContext> = {},
 ): HealthcareContext {
   return {

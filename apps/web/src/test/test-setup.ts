@@ -422,4 +422,3 @@ export const createMockHealthcareData = () => ({
   },
 })
 
-export {}

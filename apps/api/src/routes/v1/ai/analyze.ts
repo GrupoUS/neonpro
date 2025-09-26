@@ -6,10 +6,10 @@
 
 import { zValidator } from '@hono/zod-validator'
 import { Context, Hono, Next } from 'hono'
-import { AIChatService } from '../../../services/ai-chat-service.js'
-import { ComprehensiveAuditService } from '../../../services/audit-service.js'
-import { LGPDService } from '../../../services/lgpd-service.js'
-import { PatientService } from '../../../services/patient-service.js'
+import { AIChatService } from '@/services/ai-chat-service'
+import { ComprehensiveAuditService } from '@/services/audit-service'
+import { LGPDService } from '@/services/lgpd-service'
+import { PatientService } from '@/services/patient-service'
 
 // Type definitions
 interface ServiceInterface {

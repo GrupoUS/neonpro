@@ -753,4 +753,3 @@ export type {
   HashResult,
   DigitalSignature
 }
-export { CryptographyManager }

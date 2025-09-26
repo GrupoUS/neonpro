@@ -6,16 +6,16 @@ import { type AIMessage } from '@neonpro/healthcare-core'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { z } from 'zod'
-import { endTimerMs, logMetric, startTimer } from '../services/metrics'
+import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
 
 // Import semantic caching components
 import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction'
-import AIProviderRouterService, { ProviderConfig, ProviderHealthCheck, RoutingRequest, RoutingResponse } from '../services/ai-provider-router'
-import { AuditTrailService } from '../services/audit-trail'
-import { CacheKeyGenerator, SemanticCacheService } from '../services/semantic-cache'
+import AIProviderRouterService, { ProviderConfig, ProviderHealthCheck, RoutingRequest, RoutingResponse } from '@/services/ai-provider-router'
+import { AuditTrailService } from '@/services/audit-trail'
+import { CacheKeyGenerator, SemanticCacheService } from '@/services/semantic-cache'
 
 // Import healthcare compliance utilities
-import { LGPDComplianceValidator } from '../utils/lgpd-compliance-validator'
+import { LGPDComplianceValidator } from '@/utils/lgpd-compliance-validator'
 
 // Define HealthcareComplianceContext interface
 interface HealthcareComplianceContext {

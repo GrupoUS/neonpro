@@ -178,7 +178,7 @@ export const DEFAULT_HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
     validate: (value: any, _context: ValidationContext) => {
       // Only validate if personal data is present
       const hasPersonalData =
-        context.request.headers["content-type"]?.includes("personal") || false;
+        _context._request.headers["content-type"]?.includes("personal") || false;
       if (!hasPersonalData) return true;
 
       return Array.isArray(value) && value.length > 0;
@@ -265,7 +265,7 @@ export function createDefaultAPIContract(): APIContract {
 export function validateAPIContract(
   data: any,
   contract: APIContract,
-  _context: ValidationContext,
+  context: ValidationContext,
 ): APIContractValidationResult {
   const startTime = Date.now();
   const errors: HealthcareValidationError[] = [];
@@ -464,7 +464,7 @@ export function validateAPIContract(
 
       rule.fields.forEach((field) => {
         const value = data[field];
-        const result = rule.validate(value, _context);
+        const result = rule.validate(value, context);
 
         if (result !== true) {
           if (typeof result === "object") {
@@ -501,6 +501,6 @@ export function validateAPIContract(
       rulesPassed,
       rulesFailed,
     },
-    context,
+    _context: context,
   };
 }

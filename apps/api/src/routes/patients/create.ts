@@ -142,9 +142,6 @@ app.openapi(
   async c => {
     try {
       const userId = c.get('userId')
-      // TODO: Implement patient creation logic
-      // const body = await c.req.json();
-
       // Get validated data from OpenAPI request
       const patientData = c.req.valid('json')
 

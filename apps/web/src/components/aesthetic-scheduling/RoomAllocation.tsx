@@ -36,11 +36,10 @@ import {
   // Heart,
   // Thermometer,
   Lightbulb,
-  // AlertTriangle,
-  // CheckCircle,
+  CheckCircle,
   Settings,
   Users,
-  // TrendingUp,
+  TrendingUp,
   // RefreshCw,
   // Plus,
   // Edit,
@@ -303,8 +302,8 @@ export function RoomAllocation({
           <AlertTitle>Sugestões de Otimização</AlertTitle>
           <AlertDescription>
             <ul className='list-disc list-inside'>
-              {optimization.suggestions.slice(0, 3).map((suggestion, index) => (
-                <li key={index}>{suggestion}</li>
+              {optimization.suggestions.slice(0, 3).map(suggestion => (
+                <li key={suggestion}>{suggestion}</li>
               ))}
             </ul>
           </AlertDescription>
@@ -497,6 +496,14 @@ export function RoomAllocation({
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                       onClick={() => setSelectedRoom(room.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setSelectedRoom(room.id);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
                     >
                       <div className='flex items-center justify-between mb-2'>
                         <h4 className='font-medium'>{room.name}</h4>
@@ -520,9 +527,9 @@ export function RoomAllocation({
                         <div className='mt-3'>
                           <span className='text-sm text-gray-500'>Equipamentos:</span>
                           <div className='flex flex-wrap gap-1 mt-1'>
-                            {room.equipment.slice(0, 3).map((equipment, index) => (
+                            {room.equipment.slice(0, 3).map((equipment) => (
                               <span
-                                key={index}
+                                key={equipment}
                                 className='text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded'
                               >
                                 {equipment}
@@ -567,6 +574,14 @@ export function RoomAllocation({
                                 : 'border-gray-200 bg-gray-50 cursor-not-allowed'
                             }`}
                             onClick={() => isAvailable && setSelectedTimeSlot(timeSlot.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                if (isAvailable) setSelectedTimeSlot(timeSlot.id);
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
                           >
                             <div className='flex items-center justify-between'>
                               <span className='font-medium'>{timeSlot.id}</span>

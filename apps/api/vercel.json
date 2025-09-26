@@ -1,23 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "name": "neonpro-aesthetic-api",
-  "alias": ["api.neonpro.com.br"],
-  "regions": ["gru1"],
   "buildCommand": "cd ../.. && bun install --frozen-lockfile && cd apps/api && bun run build",
   "installCommand": "cd ../.. && bun install --frozen-lockfile",
-  "framework": null,
-  "build": {
-    "env": {
-      "TURBO_REMOTE_CACHE_SIGNATURE": "true",
-      "VERCEL_ANALYTICS_ID": "${VERCEL_ANALYTICS_ID}",
-      "NODE_OPTIONS": "--max-old-space-size=2048"
-    }
-  },
   "functions": {
     "vercel/**/*.ts": {
       "runtime": "nodejs20.x",
-      "regions": ["gru1"],
       "memory": 1024,
       "maxDuration": 60
     }

@@ -7,7 +7,7 @@
 
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
-import { Database } from '../../../../packages/types/src/database'
+import { Database } from '@neonpro/types'
 
 // Browser-compatible crypto API
 const getCrypto = () => {

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="bun test" tests="106" assertions="309" failures="0" skipped="0" time="0.14085259">
+  <testsuite name="src/__tests__/encryption.test.ts" file="src/__tests__/encryption.test.ts" tests="42" assertions="82" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+    <testsuite name="Encryption Services - TDD RED PHASE" file="src/__tests__/encryption.test.ts" line="12" tests="40" assertions="77" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+      <testsuite name="Key Generation Tests" file="src/__tests__/encryption.test.ts" line="21" tests="4" assertions="9" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should generate valid encryption key" classname="Key Generation Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000176" file="src/__tests__/encryption.test.ts" line="22" assertions="3" />
+        <testcase name="should generate unique keys each time" classname="Key Generation Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000033" file="src/__tests__/encryption.test.ts" line="30" assertions="1" />
+        <testcase name="should validate correct key format" classname="Key Generation Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000014" file="src/__tests__/encryption.test.ts" line="37" assertions="1" />
+        <testcase name="should reject invalid key format" classname="Key Generation Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000051" file="src/__tests__/encryption.test.ts" line="43" assertions="4" />
+      </testsuite>
+      <testsuite name="Data Encryption Tests" file="src/__tests__/encryption.test.ts" line="57" tests="5" assertions="13" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should encrypt string data successfully" classname="Data Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000184" file="src/__tests__/encryption.test.ts" line="58" assertions="4" />
+        <testcase name="should encrypt empty string" classname="Data Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.00005" file="src/__tests__/encryption.test.ts" line="70" assertions="2" />
+        <testcase name="should encrypt long strings" classname="Data Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000129" file="src/__tests__/encryption.test.ts" line="80" assertions="3" />
+        <testcase name="should encrypt special characters and Unicode" classname="Data Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000043" file="src/__tests__/encryption.test.ts" line="91" assertions="3" />
+        <testcase name="should throw error for invalid key" classname="Data Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000042" file="src/__tests__/encryption.test.ts" line="102" assertions="1" />
+      </testsuite>
+      <testsuite name="Data Decryption Tests" file="src/__tests__/encryption.test.ts" line="112" tests="6" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should decrypt data correctly" classname="Data Decryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000186" file="src/__tests__/encryption.test.ts" line="113" assertions="1" />
+        <testcase name="should decrypt Unicode characters correctly" classname="Data Decryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000045" file="src/__tests__/encryption.test.ts" line="123" assertions="1" />
+        <testcase name="should decrypt empty string" classname="Data Decryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000039" file="src/__tests__/encryption.test.ts" line="133" assertions="1" />
+        <testcase name="should decrypt long strings correctly" classname="Data Decryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000151" file="src/__tests__/encryption.test.ts" line="143" assertions="1" />
+        <testcase name="should throw error for invalid key during decryption" classname="Data Decryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000072" file="src/__tests__/encryption.test.ts" line="153" assertions="1" />
+        <testcase name="should throw error for corrupted encrypted data" classname="Data Decryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000056" file="src/__tests__/encryption.test.ts" line="163" assertions="1" />
+      </testsuite>
+      <testsuite name="Object Encryption Tests" file="src/__tests__/encryption.test.ts" line="173" tests="4" assertions="8" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should encrypt sensitive fields in object" classname="Object Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000069" file="src/__tests__/encryption.test.ts" line="174" assertions="5" />
+        <testcase name="should decrypt sensitive fields in object" classname="Object Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000084" file="src/__tests__/encryption.test.ts" line="194" assertions="1" />
+        <testcase name="should handle missing fields gracefully" classname="Object Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000038" file="src/__tests__/encryption.test.ts" line="211" assertions="1" />
+        <testcase name="should handle non-string fields gracefully" classname="Object Encryption Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000035" file="src/__tests__/encryption.test.ts" line="226" assertions="1" />
+      </testsuite>
+      <testsuite name="Key Management Tests" file="src/__tests__/encryption.test.ts" line="243" tests="5" assertions="15" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should create and manage encryption keys" classname="Key Management Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000143" file="src/__tests__/encryption.test.ts" line="244" assertions="3" />
+        <testcase name="should retrieve stored encryption key" classname="Key Management Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000062" file="src/__tests__/encryption.test.ts" line="252" assertions="3" />
+        <testcase name="should delete encryption keys" classname="Key Management Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000074" file="src/__tests__/encryption.test.ts" line="261" assertions="2" />
+        <testcase name="should rotate encryption keys" classname="Key Management Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000044" file="src/__tests__/encryption.test.ts" line="271" assertions="4" />
+        <testcase name="should throw error for non-existent key operations" classname="Key Management Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000035" file="src/__tests__/encryption.test.ts" line="283" assertions="3" />
+      </testsuite>
+      <testsuite name="Data Hashing Tests" file="src/__tests__/encryption.test.ts" line="300" tests="3" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should hash sensitive data for comparison" classname="Data Hashing Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000073" file="src/__tests__/encryption.test.ts" line="301" assertions="3" />
+        <testcase name="should produce different hashes for different inputs" classname="Data Hashing Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000017" file="src/__tests__/encryption.test.ts" line="311" assertions="1" />
+        <testcase name="should be one-way function (cannot reverse)" classname="Data Hashing Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000011" file="src/__tests__/encryption.test.ts" line="321" assertions="2" />
+      </testsuite>
+      <testsuite name="Healthcare Compliance Tests" file="src/__tests__/encryption.test.ts" line="330" tests="3" assertions="7" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should encrypt healthcare data with LGPD compliance" classname="Healthcare Compliance Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000079" file="src/__tests__/encryption.test.ts" line="331" assertions="4" />
+        <testcase name="should maintain data integrity during encryption/decryption" classname="Healthcare Compliance Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000089" file="src/__tests__/encryption.test.ts" line="352" assertions="1" />
+        <testcase name="should handle healthcare data with special characters" classname="Healthcare Compliance Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000194" file="src/__tests__/encryption.test.ts" line="371" assertions="2" />
+      </testsuite>
+      <testsuite name="Performance Tests" file="src/__tests__/encryption.test.ts" line="389" tests="3" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should encrypt data efficiently" classname="Performance Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000128" file="src/__tests__/encryption.test.ts" line="390" assertions="2" />
+        <testcase name="should decrypt data efficiently" classname="Performance Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000067" file="src/__tests__/encryption.test.ts" line="402" assertions="2" />
+        <testcase name="should handle batch encryption operations" classname="Performance Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000918" file="src/__tests__/encryption.test.ts" line="415" assertions="2" />
+      </testsuite>
+      <testsuite name="Security Tests" file="src/__tests__/encryption.test.ts" line="434" tests="4" assertions="4" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should use different IVs for each encryption" classname="Security Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000048" file="src/__tests__/encryption.test.ts" line="435" assertions="1" />
+        <testcase name="should not encrypt with invalid key" classname="Security Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000083" file="src/__tests__/encryption.test.ts" line="446" assertions="1" />
+        <testcase name="should not decrypt with wrong key" classname="Security Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.00012" file="src/__tests__/encryption.test.ts" line="455" assertions="1" />
+        <testcase name="should detect tampered encrypted data" classname="Security Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000106" file="src/__tests__/encryption.test.ts" line="467" assertions="1" />
+      </testsuite>
+      <testsuite name="Error Handling Tests" file="src/__tests__/encryption.test.ts" line="482" tests="3" assertions="3" failures="0" skipped="0" time="0.004" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should handle empty encryption gracefully" classname="Error Handling Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000089" file="src/__tests__/encryption.test.ts" line="483" assertions="1" />
+        <testcase name="should handle null/undefined inputs" classname="Error Handling Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.000045" file="src/__tests__/encryption.test.ts" line="491" assertions="1" />
+        <testcase name="should handle very large data" classname="Error Handling Tests &amp;gt; Encryption Services - TDD RED PHASE" time="0.00453" file="src/__tests__/encryption.test.ts" line="499" assertions="1" />
+      </testsuite>
+    </testsuite>
+    <testsuite name="Test Coverage Verification" file="src/__tests__/encryption.test.ts" line="510" tests="2" assertions="5" failures="0" skipped="0" time="0.001" hostname="DESKTOP-BBM8EI4">
+      <testcase name="should cover all encryption functions" classname="Test Coverage Verification" time="0.000058" file="src/__tests__/encryption.test.ts" line="511" assertions="4" />
+      <testcase name="should maintain ≥9.5/10 quality standard" classname="Test Coverage Verification" time="0.001924" file="src/__tests__/encryption.test.ts" line="532" assertions="1" />
+    </testsuite>
+  </testsuite>
+  <testsuite name="src/__tests__/anonymization.test.ts" file="src/__tests__/anonymization.test.ts" tests="33" assertions="93" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+    <testsuite name="Data Anonymization - TDD RED PHASE" file="src/__tests__/anonymization.test.ts" line="25" tests="31" assertions="88" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+      <testsuite name="CPF Masking Tests" file="src/__tests__/anonymization.test.ts" line="26" tests="3" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should mask CPF with standard format" classname="CPF Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000267" file="src/__tests__/anonymization.test.ts" line="27" assertions="3" />
+        <testcase name="should mask CPF without formatting" classname="CPF Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.00005" file="src/__tests__/anonymization.test.ts" line="36" assertions="2" />
+        <testcase name="should handle invalid CPF gracefully" classname="CPF Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000021" file="src/__tests__/anonymization.test.ts" line="44" assertions="1" />
+      </testsuite>
+      <testsuite name="Email Masking Tests" file="src/__tests__/anonymization.test.ts" line="52" tests="3" assertions="5" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should mask email preserving domain" classname="Email Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000114" file="src/__tests__/anonymization.test.ts" line="53" assertions="3" />
+        <testcase name="should mask short email correctly" classname="Email Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.00002" file="src/__tests__/anonymization.test.ts" line="62" assertions="1" />
+        <testcase name="should handle invalid email format" classname="Email Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000016" file="src/__tests__/anonymization.test.ts" line="69" assertions="1" />
+      </testsuite>
+      <testsuite name="Phone Masking Tests" file="src/__tests__/anonymization.test.ts" line="77" tests="3" assertions="4" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should mask phone with Brazilian format" classname="Phone Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000077" file="src/__tests__/anonymization.test.ts" line="78" assertions="2" />
+        <testcase name="should mask phone without formatting" classname="Phone Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000024" file="src/__tests__/anonymization.test.ts" line="86" assertions="1" />
+        <testcase name="should handle different area codes" classname="Phone Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000034" file="src/__tests__/anonymization.test.ts" line="93" assertions="1" />
+      </testsuite>
+      <testsuite name="Name Masking Tests" file="src/__tests__/anonymization.test.ts" line="101" tests="3" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should mask full name completely" classname="Name Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000064" file="src/__tests__/anonymization.test.ts" line="102" assertions="4" />
+        <testcase name="should mask single name" classname="Name Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000016" file="src/__tests__/anonymization.test.ts" line="112" assertions="1" />
+        <testcase name="should handle empty name" classname="Name Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000019" file="src/__tests__/anonymization.test.ts" line="119" assertions="1" />
+      </testsuite>
+      <testsuite name="Patient Data Anonymization Tests" file="src/__tests__/anonymization.test.ts" line="127" tests="3" assertions="17" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should anonymize patient data with basic compliance" classname="Patient Data Anonymization Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000288" file="src/__tests__/anonymization.test.ts" line="142" assertions="13" />
+        <testcase name="should anonymize patient data with enhanced compliance" classname="Patient Data Anonymization Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000087" file="src/__tests__/anonymization.test.ts" line="161" assertions="2" />
+        <testcase name="should anonymize patient data with strict compliance" classname="Patient Data Anonymization Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000033" file="src/__tests__/anonymization.test.ts" line="168" assertions="2" />
+      </testsuite>
+      <testsuite name="CNPJ Masking Tests" file="src/__tests__/anonymization.test.ts" line="176" tests="2" assertions="3" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should mask CNPJ with standard format" classname="CNPJ Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000124" file="src/__tests__/anonymization.test.ts" line="177" assertions="2" />
+        <testcase name="should mask CNPJ without formatting" classname="CNPJ Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000027" file="src/__tests__/anonymization.test.ts" line="185" assertions="1" />
+      </testsuite>
+      <testsuite name="Address Masking Tests" file="src/__tests__/anonymization.test.ts" line="193" tests="1" assertions="3" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should mask complete address" classname="Address Masking Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000071" file="src/__tests__/anonymization.test.ts" line="194" assertions="3" />
+      </testsuite>
+      <testsuite name="Personal Data Anonymization Tests" file="src/__tests__/anonymization.test.ts" line="204" tests="1" assertions="4" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should anonymize personal data object" classname="Personal Data Anonymization Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000107" file="src/__tests__/anonymization.test.ts" line="205" assertions="4" />
+      </testsuite>
+      <testsuite name="Data Anonymization Validation Tests" file="src/__tests__/anonymization.test.ts" line="222" tests="2" assertions="2" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should detect if data is properly anonymized" classname="Data Anonymization Validation Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.00017" file="src/__tests__/anonymization.test.ts" line="223" assertions="1" />
+        <testcase name="should detect if data contains sensitive information" classname="Data Anonymization Validation Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000027" file="src/__tests__/anonymization.test.ts" line="233" assertions="1" />
+      </testsuite>
+      <testsuite name="Privacy Report Generation Tests" file="src/__tests__/anonymization.test.ts" line="244" tests="1" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should generate comprehensive privacy report" classname="Privacy Report Generation Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000298" file="src/__tests__/anonymization.test.ts" line="245" assertions="6" />
+      </testsuite>
+      <testsuite name="LGPD Compliance Tests" file="src/__tests__/anonymization.test.ts" line="271" tests="3" assertions="8" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should ensure basic LGPD compliance" classname="LGPD Compliance Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000122" file="src/__tests__/anonymization.test.ts" line="272" assertions="4" />
+        <testcase name="should ensure enhanced LGPD compliance" classname="LGPD Compliance Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000082" file="src/__tests__/anonymization.test.ts" line="298" assertions="2" />
+        <testcase name="should ensure strict LGPD compliance" classname="LGPD Compliance Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000036" file="src/__tests__/anonymization.test.ts" line="320" assertions="2" />
+      </testsuite>
+      <testsuite name="Performance and Quality Tests" file="src/__tests__/anonymization.test.ts" line="343" tests="3" assertions="13" failures="0" skipped="0" time="0.005" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should handle large datasets efficiently" classname="Performance and Quality Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.005341" file="src/__tests__/anonymization.test.ts" line="344" assertions="2" />
+        <testcase name="should maintain data structure integrity" classname="Performance and Quality Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000099" file="src/__tests__/anonymization.test.ts" line="369" assertions="10" />
+        <testcase name="should handle edge cases gracefully" classname="Performance and Quality Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.00005" file="src/__tests__/anonymization.test.ts" line="399" assertions="1" />
+      </testsuite>
+      <testsuite name="Security Tests" file="src/__tests__/anonymization.test.ts" line="421" tests="3" assertions="11" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should prevent data reconstruction" classname="Security Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.00004" file="src/__tests__/anonymization.test.ts" line="422" assertions="6" />
+        <testcase name="should maintain consistent masking patterns" classname="Security Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000107" file="src/__tests__/anonymization.test.ts" line="440" assertions="2" />
+        <testcase name="should handle special characters and Unicode" classname="Security Tests &amp;gt; Data Anonymization - TDD RED PHASE" time="0.000029" file="src/__tests__/anonymization.test.ts" line="452" assertions="3" />
+      </testsuite>
+    </testsuite>
+    <testsuite name="Test Coverage Verification" file="src/__tests__/anonymization.test.ts" line="463" tests="2" assertions="5" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+      <testcase name="should cover all anonymization functions" classname="Test Coverage Verification" time="0.00002" file="src/__tests__/anonymization.test.ts" line="464" assertions="4" />
+      <testcase name="should maintain ≥9.5/10 quality standard" classname="Test Coverage Verification" time="0.000045" file="src/__tests__/anonymization.test.ts" line="484" assertions="1" />
+    </testsuite>
+  </testsuite>
+  <testsuite name="src/audit/__tests__/audit-logger-security.test.ts" file="src/audit/__tests__/audit-logger-security.test.ts" tests="31" assertions="134" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+    <testsuite name="Audit Logger Security - TDD RED PHASE" file="src/audit/__tests__/audit-logger-security.test.ts" line="12" tests="29" assertions="128" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+      <testsuite name="Basic Audit Logging Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="38" tests="5" assertions="23" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should log basic audit entry" classname="Basic Audit Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000236" file="src/audit/__tests__/audit-logger-security.test.ts" line="39" assertions="4" />
+        <testcase name="should log successful operations" classname="Basic Audit Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.00017" file="src/audit/__tests__/audit-logger-security.test.ts" line="56" assertions="5" />
+        <testcase name="should log failed operations" classname="Basic Audit Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000115" file="src/audit/__tests__/audit-logger-security.test.ts" line="67" assertions="6" />
+        <testcase name="should generate unique IDs for audit entries" classname="Basic Audit Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000141" file="src/audit/__tests__/audit-logger-security.test.ts" line="79" assertions="4" />
+        <testcase name="should include timestamps in audit entries" classname="Basic Audit Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000134" file="src/audit/__tests__/audit-logger-security.test.ts" line="99" assertions="4" />
+      </testsuite>
+      <testsuite name="Healthcare Data Access Logging Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="115" tests="4" assertions="22" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should log healthcare data access with LGPD consent" classname="Healthcare Data Access Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000149" file="src/audit/__tests__/audit-logger-security.test.ts" line="116" assertions="7" />
+        <testcase name="should log healthcare data access without LGPD consent" classname="Healthcare Data Access Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000121" file="src/audit/__tests__/audit-logger-security.test.ts" line="136" assertions="3" />
+        <testcase name="should include healthcare metadata in audit logs" classname="Healthcare Data Access Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000117" file="src/audit/__tests__/audit-logger-security.test.ts" line="152" assertions="9" />
+        <testcase name="should classify healthcare data as sensitive" classname="Healthcare Data Access Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000052" file="src/audit/__tests__/audit-logger-security.test.ts" line="182" assertions="3" />
+      </testsuite>
+      <testsuite name="LGPD Compliance Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="198" tests="3" assertions="10" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should track LGPD compliance in audit entries" classname="LGPD Compliance Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000042" file="src/audit/__tests__/audit-logger-security.test.ts" line="199" assertions="3" />
+        <testcase name="should log LGPD violations" classname="LGPD Compliance Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000037" file="src/audit/__tests__/audit-logger-security.test.ts" line="216" assertions="4" />
+        <testcase name="should include data classification for LGPD compliance" classname="LGPD Compliance Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000034" file="src/audit/__tests__/audit-logger-security.test.ts" line="235" assertions="3" />
+      </testsuite>
+      <testsuite name="Security Event Logging Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="254" tests="3" assertions="16" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should log security events with high sensitivity" classname="Security Event Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000037" file="src/audit/__tests__/audit-logger-security.test.ts" line="255" assertions="5" />
+        <testcase name="should log authentication attempts" classname="Security Event Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.00007" file="src/audit/__tests__/audit-logger-security.test.ts" line="276" assertions="4" />
+        <testcase name="should log authorization failures" classname="Security Event Logging Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000096" file="src/audit/__tests__/audit-logger-security.test.ts" line="290" assertions="7" />
+      </testsuite>
+      <testsuite name="Data Integrity Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="308" tests="3" assertions="14" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should preserve all metadata in audit entries" classname="Data Integrity Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000127" file="src/audit/__tests__/audit-logger-security.test.ts" line="309" assertions="8" />
+        <testcase name="should handle special characters in audit data" classname="Data Integrity Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000101" file="src/audit/__tests__/audit-logger-security.test.ts" line="332" assertions="3" />
+        <testcase name="should sanitize sensitive data in audit logs" classname="Data Integrity Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000099" file="src/audit/__tests__/audit-logger-security.test.ts" line="347" assertions="3" />
+      </testsuite>
+      <testsuite name="Performance Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="366" tests="2" assertions="4" failures="0" skipped="0" time="0.001" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should handle high volume of audit logs" classname="Performance Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.001747" file="src/audit/__tests__/audit-logger-security.test.ts" line="367" assertions="2" />
+        <testcase name="should generate audit logs efficiently" classname="Performance Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000134" file="src/audit/__tests__/audit-logger-security.test.ts" line="385" assertions="2" />
+      </testsuite>
+      <testsuite name="Error Handling Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="395" tests="3" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should handle invalid audit entries gracefully" classname="Error Handling Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000267" file="src/audit/__tests__/audit-logger-security.test.ts" line="396" assertions="4" />
+        <testcase name="should handle metadata errors gracefully" classname="Error Handling Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000172" file="src/audit/__tests__/audit-logger-security.test.ts" line="411" assertions="1" />
+        <testcase name="should continue logging even if some operations fail" classname="Error Handling Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000191" file="src/audit/__tests__/audit-logger-security.test.ts" line="420" assertions="1" />
+      </testsuite>
+      <testsuite name="Compliance Integration Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="437" tests="2" assertions="13" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should integrate with healthcare security logger" classname="Compliance Integration Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000191" file="src/audit/__tests__/audit-logger-security.test.ts" line="438" assertions="7" />
+        <testcase name="should support multiple compliance frameworks" classname="Compliance Integration Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000166" file="src/audit/__tests__/audit-logger-security.test.ts" line="466" assertions="6" />
+      </testsuite>
+      <testsuite name="Audit Trail Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="492" tests="2" assertions="10" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should maintain complete audit trail for data access" classname="Audit Trail Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000205" file="src/audit/__tests__/audit-logger-security.test.ts" line="493" assertions="9" />
+        <testcase name="should track data modification attempts" classname="Audit Trail Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000155" file="src/audit/__tests__/audit-logger-security.test.ts" line="515" assertions="1" />
+      </testsuite>
+      <testsuite name="Security Enhancement Tests" file="src/audit/__tests__/audit-logger-security.test.ts" line="533" tests="2" assertions="10" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+        <testcase name="should prevent log tampering" classname="Security Enhancement Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000139" file="src/audit/__tests__/audit-logger-security.test.ts" line="534" assertions="4" />
+        <testcase name="should include security context in logs" classname="Security Enhancement Tests &amp;gt; Audit Logger Security - TDD RED PHASE" time="0.000119" file="src/audit/__tests__/audit-logger-security.test.ts" line="553" assertions="6" />
+      </testsuite>
+    </testsuite>
+    <testsuite name="Test Coverage Verification" file="src/audit/__tests__/audit-logger-security.test.ts" line="576" tests="2" assertions="6" failures="0" skipped="0" time="0" hostname="DESKTOP-BBM8EI4">
+      <testcase name="should cover all audit logger functions" classname="Test Coverage Verification" time="0.000044" file="src/audit/__tests__/audit-logger-security.test.ts" line="577" assertions="5" />
+      <testcase name="should maintain ≥9.5/10 quality standard" classname="Test Coverage Verification" time="0.00006" file="src/audit/__tests__/audit-logger-security.test.ts" line="596" assertions="1" />
+    </testsuite>
+  </testsuite>
+</testsuites>

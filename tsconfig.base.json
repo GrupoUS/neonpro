@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -34,14 +34,12 @@
     "allowUnreachableCode": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "removeComments": false,
     "incremental": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
-
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -58,7 +56,6 @@
       "@neonpro/ui/*": ["./packages/ui/src/*"],
       "@neonpro/utils": ["./packages/utils/src"],
       "@neonpro/utils/*": ["./packages/utils/src/*"],
-
       // Legacy package paths (for backward compatibility)
       "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"]
@@ -79,7 +76,6 @@
     { "path": "./packages/security" },
     { "path": "./packages/ui" },
     { "path": "./packages/utils" },
-
     // Applications
     { "path": "./apps/api" },
     { "path": "./apps/web" }

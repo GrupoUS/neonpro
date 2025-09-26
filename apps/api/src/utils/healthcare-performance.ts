@@ -11,7 +11,7 @@
  */
 
 import { type HealthcarePrismaClient } from '../clients/prisma'
-import { HealthcareLogger } from './healthcare-errors.js'
+import { HealthcareLogger } from '../logging/healthcare-logger.js'
 
 // Performance metrics interface
 interface PerformanceMetrics {

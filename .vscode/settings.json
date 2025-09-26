@@ -1,18 +1,106 @@
 {
-  "typescript.preferences.includePackageJsonAutoImports": "off",
+  // Configurações gerais do editor
+  "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
   },
-  "eslint.workingDirectories": ["apps/web", "apps/api", "packages/shared"],
-  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  // Configurações de arquivos
   "files.associations": {
-    "*.css": "tailwindcss"
+    "*.json": "jsonc",
+    "*.md": "markdown"
   },
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  // Configurações TypeScript
+  "typescript.validate.enable": true,
+  "typescript.suggestionActions.enabled": true,
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  // Desabilitar ESLint (usando Oxlint)
+  "eslint.enable": false,
+  // Configurações Oxlint
+  "oxlint.enable": true,
+  "oxlint.run": "onType",
+  "oxlint.autoFixOnSave": true,
+  "oxlint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "oxlint.options": {
+    "configFile": ".oxlintrc.json"
+  },
+  // Configurações por linguagem - TypeScript
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.biome": "explicit",
+      "quickfix.oxlint": "explicit"
+    }
+  },
+  // Configurações por linguagem - TypeScript React
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.biome": "explicit",
+      "quickfix.oxlint": "explicit"
+    }
+  },
+  // Configurações por linguagem - JavaScript
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "quickfix.oxlint": "explicit"
+    }
+  },
+  // Configurações por linguagem - JavaScript React
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "quickfix.oxlint": "explicit"
+    }
+  },
+  // Configurações por linguagem - JSON
+  "[json]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  // Configurações por linguagem - JSONC
+  "[jsonc]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  // Configurações por linguagem - Markdown
+  "[markdown]": {
+    "editor.defaultFormatter": "dprint.dprint",
+    "editor.wordWrap": "on"
+  },
+  // Configurações de workspace
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.turbo": true,
+    "**/coverage": true
+  },
+  // Configurações de performance
+  "typescript.preferences.includePackageJsonAutoImports": "off",
+  "typescript.suggest.autoImports": true,
+  // Configurações de extensões recomendadas
+  "extensions.ignoreRecommendations": false,
+  // Emmet para JSX/TSX
   "emmet.includeLanguages": {
-    "postcss": "css"
+    "javascript": "javascriptreact",
+    "typescript": "typescriptreact"
   },
-  "healthcare.lgpdCompliance": true,
-  "healthcare.anvisaCompliance": true,
-  "healthcare.cfmCompliance": true,
-  "accessibility.alwaysCheck": true
+  // Configurações de Git
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  // Configurações de terminal
+  "terminal.integrated.defaultProfile.linux": "bash",
+  "terminal.integrated.cwd": "${workspaceFolder}"
 }

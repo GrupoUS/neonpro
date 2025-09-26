@@ -847,6 +847,357 @@ export class SecurityValidationService {
   }
 
   /**
+   * Detect SQL injection attempts
+   */
+  static detectSQLInjection(input: string): { isDetected: boolean; severity: 'high' | 'none'; pattern?: string } {
+    const sqlPatterns = [
+      /(union\s+select\s+.*\s+from\s+)/i,
+      /(select\s+.*\s+from\s+)/i,
+      /(insert\s+into\s+)/i,
+      /(update\s+.*\s+set\s+)/i,
+      /(delete\s+from\s+)/i,
+      /(drop\s+(table|database))/i,
+      /(create\s+(table|database))/i,
+      /(alter\s+table\s+)/i,
+      /('\s*or\s*'\d+'\s*=\s*'\d+')/i,
+      /('\s*and\s*'\d+'\s*=\s*'\d+')/i,
+      /(\bor\s+\d+\s*=\s*\d+\b)/i,
+      /(band\s+\d+\s*=\s*\d+\b)/i,
+      /(;\s*(drop|delete|update|insert))/i,
+      /(\/\*.*\*\/)/i,
+      /(--.*$)/m,
+      /(\|\|)/i,
+      /(')/i
+    ]
+
+    for (const pattern of sqlPatterns) {
+      if (pattern.test(input)) {
+        return {
+          isDetected: true,
+          severity: 'high',
+          pattern: pattern.toString()
+        }
+      }
+    }
+
+    return { isDetected: false, severity: 'none' }
+  }
+
+  /**
+   * Detect XSS attempts
+   */
+  static detectXSS(input: string): { isDetected: boolean; severity: 'high' | 'none'; pattern?: string } {
+    const xssPatterns = [
+      /<script[^>]*>.*?<\/script>/i,
+      /<script[^>]*>/i,
+      /<\/script>/i,
+      /javascript:/i,
+      /vbscript:/i,
+      /onload\s*=/i,
+      /onerror\s*=/i,
+      /onclick\s*=/i,
+      /onmouseover\s*=/i,
+      /onfocus\s*=/i,
+      /onblur\s*=/i,
+      /<iframe[^>]*>/i,
+      /<object[^>]*>/i,
+      /<embed[^>]*>/i,
+      /<applet[^>]*>/i,
+      /<meta[^>]*>/i,
+      /<link[^>]*>/i,
+      /expression\s*\(/i,
+      /url\s*\(/i,
+      /import\s*\(/i,
+      /<[^>]*["'].*(?:javascript|vbscript):/i,
+      /<[^>]*["'].*\s*on\w+\s*=/i,
+      /<[^>]*["'].*\s*data:\s*text\/html/i,
+      /document\.(?:location|cookie|write)/i,
+      /eval\s*\(/i,
+      /setTimeout\s*\(/i,
+      /setInterval\s*\(/i,
+      /Function\s*\(/i
+    ]
+
+    for (const pattern of xssPatterns) {
+      if (pattern.test(input)) {
+        return {
+          isDetected: true,
+          severity: 'high',
+          pattern: pattern.toString()
+        }
+      }
+    }
+
+    return { isDetected: false, severity: 'none' }
+  }
+
+  /**
+   * Validate healthcare data access
+   */
+  static validateHealthcareDataAccess(access: any): { isValid: boolean; complianceScore: number; threats?: string[] } {
+    const threats: string[] = []
+    let complianceScore = 100
+
+    // Check for required permissions
+    if (!access.userId || !access.patientId) {
+      threats.push('Missing required identifiers')
+      complianceScore -= 30
+    }
+
+    // Check for consent
+    if (!access.consentId && !access.explicitConsent) {
+      threats.push('Missing patient consent')
+      complianceScore -= 25
+    }
+
+    // Check for purpose of access
+    if (!access.purpose || !['treatment', 'diagnosis', 'billing', 'research'].includes(access.purpose)) {
+      threats.push('Invalid or missing purpose of access')
+      complianceScore -= 20
+    }
+
+    // Check for healthcare professional validation
+    if (!access.healthcareProfessionalId && !access.crmNumber) {
+      threats.push('Missing healthcare professional validation')
+      complianceScore -= 15
+    }
+
+    // Check for time restrictions
+    if (access.requestTime && new Date(access.requestTime) > new Date()) {
+      threats.push('Invalid request timestamp')
+      complianceScore -= 10
+    }
+
+    return {
+      isValid: threats.length === 0,
+      complianceScore: Math.max(0, complianceScore),
+      threats: threats.length > 0 ? threats : undefined
+    }
+  }
+
+  
+
+  /**
+   * Analyze access patterns for suspicious behavior
+   */
+  static analyzeAccessPattern(sessionId: string, patterns: any[]): { isSuspicious: boolean; threats: string[]; riskScore: number } {
+    const threats: string[] = []
+    let riskScore = 0
+
+    // Check for rapid successive requests
+    if (patterns.length > 50) {
+      threats.push('High frequency access pattern detected')
+      riskScore += 30
+    }
+
+    // Check for unusual time patterns
+    const hourDistribution = new Array(24).fill(0)
+    patterns.forEach(p => {
+      const hour = new Date(p.timestamp).getHours()
+      hourDistribution[hour]++
+    })
+
+    const nightAccess = hourDistribution.slice(22, 24).concat(hourDistribution.slice(0, 6))
+    const nightAccessPercentage = nightAccess.reduce((a, b) => a + b, 0) / patterns.length
+
+    if (nightAccessPercentage > 0.4) {
+      threats.push('Unusual nighttime access pattern')
+      riskScore += 20
+    }
+
+    // Check for data access diversity
+    const uniquePatients = new Set(patterns.map(p => p.patientId)).size
+    if (uniquePatients > 100) {
+      threats.push('Excessive patient data access')
+      riskScore += 25
+    }
+
+    // Check for geographic anomalies
+    const locations = new Set(patterns.map(p => p.location)).size
+    if (locations > 5) {
+      threats.push('Suspicious geographic access pattern')
+      riskScore += 15
+    }
+
+    return {
+      isSuspicious: riskScore > 50,
+      threats,
+      riskScore: Math.min(100, riskScore)
+    }
+  }
+
+  /**
+   * Detect brute force attempts
+   */
+  static detectBruteForce(sessionId: string, attempts: any[]): { isDetected: boolean; threatType: string; severity: string } {
+    const recentAttempts = attempts.filter(attempt =>
+      Date.now() - new Date(attempt.timestamp).getTime() < 15 * 60 * 1000 // 15 minutes
+    )
+
+    if (recentAttempts.length >= 10) {
+      return {
+        isDetected: true,
+        threatType: 'brute_force',
+        severity: 'high'
+      }
+    }
+
+    const failedAttempts = recentAttempts.filter(attempt => !attempt.success)
+    if (failedAttempts.length >= 5) {
+      return {
+        isDetected: true,
+        threatType: 'credential_stuffing',
+        severity: 'medium'
+      }
+    }
+
+    return {
+      isDetected: false,
+      threatType: 'none',
+      severity: 'low'
+    }
+  }
+
+  /**
+   * Detect data exfiltration patterns
+   */
+  static detectDataExfiltration(sessionId: string, access: any): { isDetected: boolean; threatType: string; riskScore: number } {
+    let riskScore = 0
+    let threatType = 'none'
+
+    // Check for large data downloads
+    if (access.dataSize && access.dataSize > 100 * 1024 * 1024) { // 100MB
+      riskScore += 40
+      threatType = 'large_data_transfer'
+    }
+
+    // Check for unusual data access patterns
+    if (access.recordCount && access.recordCount > 1000) {
+      riskScore += 30
+      threatType = 'bulk_data_access'
+    }
+
+    // Check for sensitive data fields
+    const sensitiveFields = ['ssn', 'cpf', 'medical_record', 'diagnosis', 'treatment']
+    const accessedFields = access.fields || []
+    const sensitiveFieldCount = accessedFields.filter(field =>
+      sensitiveFields.some(sensitive => field.toLowerCase().includes(sensitive))
+    ).length
+
+    if (sensitiveFieldCount > 3) {
+      riskScore += 35
+      threatType = 'sensitive_data_access'
+    }
+
+    // Check for unusual timing
+    if (access.duration && access.duration > 300) { // 5 minutes
+      riskScore += 15
+    }
+
+    return {
+      isDetected: riskScore >= 50,
+      threatType,
+      riskScore: Math.min(100, riskScore)
+    }
+  }
+
+  /**
+   * Check rate limits
+   */
+  static checkRateLimit(sessionId: string): { isAllowed: boolean; resetTime?: number; remaining?: number } {
+    const now = Date.now()
+    const windowMs = 60 * 1000 // 1 minute
+    const maxRequests = 100
+
+    const rateLimitData = this.rateLimitStore.get(sessionId)
+
+    if (!rateLimitData || rateLimitData.resetTime < now) {
+      this.rateLimitStore.set(sessionId, {
+        count: 1,
+        resetTime: now + windowMs
+      })
+      return {
+        isAllowed: true,
+        resetTime: now + windowMs,
+        remaining: maxRequests - 1
+      }
+    }
+
+    if (rateLimitData.count >= maxRequests) {
+      return {
+        isAllowed: false,
+        resetTime: rateLimitData.resetTime
+      }
+    }
+
+    rateLimitData.count++
+    return {
+      isAllowed: true,
+      resetTime: rateLimitData.resetTime,
+      remaining: maxRequests - rateLimitData.count
+    }
+  }
+
+  /**
+   * Calculate comprehensive security score
+   */
+  static calculateSecurityScore(validationResults: any[]): number {
+    if (validationResults.length === 0) return 100
+
+    let totalScore = 100
+    const weights = {
+      authentication: 25,
+      authorization: 20,
+      inputValidation: 20,
+      dataProtection: 20,
+      threatDetection: 15
+    }
+
+    validationResults.forEach(result => {
+      if (!result.isValid) {
+        const weight = weights[result.category] || 10
+        totalScore -= weight
+      }
+    })
+
+    return Math.max(0, totalScore)
+  }
+
+  /**
+   * Get security recommendations
+   */
+  static getSecurityRecommendations(issues: SecurityIssue[]): string[] {
+    const recommendations = new Set<string>()
+
+    issues.forEach(issue => {
+      recommendations.add(issue.recommendation)
+
+      // Add specific recommendations based on issue type
+      switch (issue.type) {
+        case 'SQL_INJECTION':
+          recommendations.add('Use parameterized queries and prepared statements')
+          recommendations.add('Implement input validation and sanitization')
+          break
+        case 'XSS_VULNERABILITY':
+          recommendations.add('Implement output encoding')
+          recommendations.add('Use Content Security Policy (CSP)')
+          recommendations.add('Sanitize user input')
+          break
+        case 'MISSING_AUTHENTICATION':
+          recommendations.add('Implement multi-factor authentication')
+          recommendations.add('Use strong password policies')
+          break
+        case 'SENSITIVE_DATA_EXPOSURE':
+          recommendations.add('Implement data encryption at rest and in transit')
+          recommendations.add('Use data masking and tokenization')
+          break
+      }
+    })
+
+    return Array.from(recommendations)
+  }
+
+  /**
    * Initialize cleanup
    */
   static initializeCleanup(): void {

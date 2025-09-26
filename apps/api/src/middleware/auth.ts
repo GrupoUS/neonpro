@@ -22,6 +22,8 @@ interface User {
 /**
  * Extract token from authorization header
  */
+import { JWTSecurityService } from '../services/jwt-security-service'
+
 function extractToken(authHeader: string | undefined): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return null
@@ -32,23 +34,53 @@ function extractToken(authHeader: string | undefined): string | null {
 /**
  * Mock token validation - replace with actual implementation
  */
+/**
+ * JWT token validation using JWTSecurityService
+ * Validates JWT tokens with comprehensive security checks
+ */
 async function validateToken(token: string): Promise<User | null> {
-  // TODO: Replace with actual token validation
-  // This could be JWT verification, database lookup, etc.
-
-  // For development/testing
-  if (token === 'test-token') {
-    return {
-      id: 'test-user-id',
-      email: 'test@example.com',
-      _role: 'admin',
-      clinicId: 'test-clinic-id',
-      name: 'Test User',
-      permissions: ['read', 'write', 'admin'],
+  try {
+    // Use the comprehensive JWT validation service
+    const validationResult = await JWTSecurityService.validateToken(token)
+    
+    if (!validationResult.isValid || !validationResult.payload) {
+      logger.warn('JWT validation failed', {
+        error: validationResult.error,
+        errorCode: validationResult.errorCode
+      })
+      return null
     }
-  }
 
-  return null
+    const payload = validationResult.payload
+
+    // Map JWT payload to User interface
+    const user: User = {
+      id: payload.sub || payload.userId || '',
+      email: payload.email || `${payload.sub || 'user'}@neonpro.health`,
+      _role: payload.role || payload.userRole || 'user',
+      clinicId: payload.clinicId || payload.healthcareProvider || 'default-clinic',
+      name: payload.name || `${payload.sub || 'User'} Name`,
+      permissions: payload.permissions || []
+    }
+
+    // Log successful authentication with security context
+    logger.info('User authenticated successfully', {
+      userId: user.id,
+      userRole: user._role,
+      clinicId: user.clinicId,
+      permissions: user.permissions,
+      tokenType: payload.type || 'access',
+      warnings: validationResult.warnings
+    })
+
+    return user
+  } catch (error) {
+    logger.error('Token validation error', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined
+    })
+    return null
+  }
 }
 
 /**
@@ -93,19 +125,19 @@ export function auth() {
 
       logger.debug('User authenticated', {
         _userId: user.id,
-        _role: user.role,
+        _role: user._role,
         path: c.req.path,
         method: c.req.method,
       })
 
       await next()
-    } catch {
-      if (error instanceof HTTPException) {
-        throw error
+    } catch (err) {
+      if (err instanceof HTTPException) {
+        throw err
       }
 
       logger.error('Authentication error', {
-        error: error instanceof Error ? error.message : String(error),
+        error: err instanceof Error ? err.message : String(err),
         path: c.req.path,
         method: c.req.method,
       })
@@ -136,10 +168,10 @@ export function optionalAuth() {
       }
 
       await next()
-    } catch {
+    } catch (err) {
       // Silent fail for optional auth
       logger.debug('Optional auth failed', {
-        error: error instanceof Error ? error.message : String(error),
+        error: err instanceof Error ? err.message : String(err),
       })
 
       await next()
@@ -165,7 +197,7 @@ export function requireRole(allowedRoles: string | string[]) {
     if (!roles.includes(user._role)) {
       logger.warn('Access denied - insufficient role', {
         _userId: user.id,
-        userRole: user.role,
+        userRole: user._role,
         requiredRoles: roles,
         path: c.req.path,
         method: c.req.method,

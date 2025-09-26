@@ -1,16 +1,16 @@
 /**
  * Mock Services for Authentication Testing
- * 
+ *
  * Provides mock implementations of services needed for authentication testing
  */
 
 // Mock Session Management Service
 export class MockHealthcareSessionManagementService {
-  static async validateSession(sessionId: string) {
+  static async validateSession(_sessionId: string) {
     return {
-      isValid: sessionId === 'valid-session-id',
-      session: sessionId === 'valid-session-id' ? {
-        id: sessionId,
+      isValid: _sessionId === 'valid-session-id',
+      session: _sessionId === 'valid-session-id' ? {
+        id: _sessionId,
         userId: 'user-123',
         userRole: 'healthcare_professional',
         isActive: true,
@@ -30,7 +30,7 @@ export class MockHealthcareSessionManagementService {
 
 // Mock Security Validation Service
 export class MockSecurityValidationService {
-  static async validateRequest(request: any) {
+  static async validateRequest(_request: any) {
     return {
       isValid: true,
       threats: [],
@@ -38,14 +38,14 @@ export class MockSecurityValidationService {
     }
   }
 
-  static async validateSecurityContext(context: any) {
+  static async validateSecurityContext(_context: any) {
     return {
       isValid: true,
       issues: []
     }
   }
 
-  static async validateRequestSecurity(request: any) {
+  static async validateRequestSecurity(_request: any) {
     return {
       isValid: true,
       securityScore: 95,
@@ -56,12 +56,12 @@ export class MockSecurityValidationService {
 
 // Mock Audit Trail Service
 export class MockAuditTrailService {
-  static async logEvent(event: any) {
+  static async logEvent(_event: any) {
     // Mock implementation
     return Promise.resolve()
   }
 
-  static async logSecurityEvent(event: any) {
+  static async logSecurityEvent(_event: any) {
     // Mock implementation for test compatibility
     return Promise.resolve()
   }
@@ -69,11 +69,11 @@ export class MockAuditTrailService {
 
 // Mock Enhanced Session Manager
 export class MockEnhancedSessionManager {
-  static async validateSession(sessionId: string) {
+  static async validateSession(_sessionId: string) {
     return {
-      isValid: sessionId === 'valid-session-id',
-      session: sessionId === 'valid-session-id' ? {
-        id: sessionId,
+      isValid: _sessionId === 'valid-session-id',
+      session: _sessionId === 'valid-session-id' ? {
+        id: _sessionId,
         userId: 'user-123',
         userRole: 'healthcare_professional',
         isActive: true,
@@ -90,10 +90,10 @@ export class MockEnhancedSessionManager {
     }
   }
 
-  getSession(sessionId: string) {
-    if (sessionId === 'valid-session-id') {
+  getSession(_sessionId: string) {
+    if (_sessionId === 'valid-session-id') {
       return {
-        id: sessionId,
+        id: _sessionId,
         userId: 'user-123',
         role: 'healthcare_professional',
         permissions: ['read_patient_data'],
@@ -107,7 +107,7 @@ export class MockEnhancedSessionManager {
     return null
   }
 
-  destroySession(sessionId: string) {
+  destroySession(_sessionId: string) {
     // Mock implementation
     return true
   }

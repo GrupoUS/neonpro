@@ -149,15 +149,14 @@ validate_environment() {
     else
         log_info "Using configured Vercel organization: $VERCEL_ORG_ID"
         export VERCEL_ORG_ID
-        npx vercel link --yes
+        npx vercel link --cwd apps/web --yes
     fi
     log_success "Linked to Vercel project: $PROJECT_NAME"
     
-    # Pull production environment variables
-    log_step "Pulling production environment variables from Vercel"
-    [ -f .env.local ] && rm .env.local
-    npx vercel env pull .env.local --environment=production --yes
-    source .env.local
+    # Pull production environment variables from Vercel
+    [ -f apps/web/.env.local ] && rm apps/web/.env.local
+    npx vercel env pull .env.local --environment=production --yes --cwd apps/web
+    source apps/web/.env.local
     log_success "Environment variables loaded"
     
     # Validate required environment variables
@@ -337,9 +336,32 @@ deploy_application() {
             
             # Run staging deployment
             log_step "Executing Staging Deployment"
-            npx vercel deploy --yes
+            # Try to build locally to enable --prebuilt (non-fatal if not supported)
+            if ! npx vercel build --cwd apps/web --yes >/dev/null 2>&1; then
+                log_warning "vercel build not available or failed; proceeding with remote build"
+            fi
             
-            DEPLOY_URL=$(npx vercel ls | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
+            # Primary: deploy prebuilt and capture URL via JSON
+            DEPLOY_JSON=$(npx vercel deploy --cwd apps/web --prebuilt --yes --json || true)
+            DEPLOY_URL=$(echo "$DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            
+            # Fallback: remote build deploy if URL not captured
+            if [ -z "$DEPLOY_URL" ]; then
+                DEPLOY_JSON=$(npx vercel deploy --cwd apps/web --yes --json || true)
+                DEPLOY_URL=$(echo "$DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            fi
+            
+            # Final fallback: list recent deployments
+            if [ -z "$DEPLOY_URL" ]; then
+                log_warning "Could not parse DEPLOY_URL from JSON; attempting fallback via vercel ls"
+                DEPLOY_URL=$(npx vercel ls --cwd apps/web | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
+            fi
+            
+            if [ -z "$DEPLOY_URL" ]; then
+                log_error "Failed to determine deployment URL"
+                exit 1
+            fi
+            
             log_success "Staging deployment completed: $DEPLOY_URL"
             ;;
         "production")
@@ -357,12 +379,32 @@ deploy_application() {
             
             # Execute production deployment
             log_step "Executing Production Deployment"
-            npx vercel deploy --prod --yes
+            # Try to build locally for prebuilt deployment
+            if ! npx vercel build --cwd apps/web --yes >/dev/null 2>&1; then
+                log_warning "vercel build not available or failed; proceeding with remote build"
+            fi
             
-            DEPLOY_URL=$(npx vercel ls | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
+            DEPLOY_JSON=$(npx vercel deploy --cwd apps/web --prebuilt --prod --yes --json || true)
+            DEPLOY_URL=$(echo "$DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            
+            if [ -z "$DEPLOY_URL" ]; then
+                DEPLOY_JSON=$(npx vercel deploy --cwd apps/web --prod --yes --json || true)
+                DEPLOY_URL=$(echo "$DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            fi
+            
+            if [ -z "$DEPLOY_URL" ]; then
+                log_warning "Could not parse DEPLOY_URL from JSON; attempting fallback via vercel ls"
+                DEPLOY_URL=$(npx vercel ls --cwd apps/web | grep -m1 "$PROJECT_NAME" | awk '{print $2}')
+            fi
+            
+            if [ -z "$DEPLOY_URL" ]; then
+                log_error "Failed to determine deployment URL"
+                exit 1
+            fi
+            
             log_success "Production deployment completed: $DEPLOY_URL"
             ;;
-        *)
+        * )
             log_error "Invalid deployment target: $deployment_target"
             log_info "Valid targets: staging, production"
             exit 1
@@ -452,6 +494,11 @@ post_deployment_checks() {
             target_url="$PRODUCTION_URL"
             ;;
     esac
+    
+    # Prefer the actual DEPLOY_URL captured during deployment
+    if [ -n "$DEPLOY_URL" ]; then
+        target_url="$DEPLOY_URL"
+    fi
     
     log_info "Validating deployment at: $target_url"
     

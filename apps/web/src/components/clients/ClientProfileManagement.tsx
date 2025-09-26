@@ -50,6 +50,7 @@ import {
   Save,
   Scale,
   Shield,
+  Target,
   Upload,
   User,
   X,
@@ -745,16 +746,16 @@ export const ClientProfileManagement: React.FC = () => {
                 <div>
                   <Label className='text-sm text-gray-600'>Preocupações com a Pele</Label>
                   <div className='flex flex-wrap gap-2 mt-1'>
-                    {client.aestheticHistory.skinConcerns.map((concern, index) => (
-                      <Badge key={index} variant='outline'>{concern}</Badge>
+                    {client.aestheticHistory.skinConcerns.map((concern) => (
+                      <Badge key={concern} variant='outline'>{concern}</Badge>
                     ))}
                   </div>
                 </div>
                 <div>
                   <Label className='text-sm text-gray-600'>Metas</Label>
                   <div className='flex flex-wrap gap-2 mt-1'>
-                    {client.aestheticHistory.treatmentGoals.map((goal, index) => (
-                      <Badge key={index} variant='secondary'>{goal}</Badge>
+                    {client.aestheticHistory.treatmentGoals.map((goal) => (
+                      <Badge key={goal} variant='secondary'>{goal}</Badge>
                     ))}
                   </div>
                 </div>
@@ -1041,8 +1042,8 @@ export const ClientProfileManagement: React.FC = () => {
                   <div className='flex flex-wrap gap-2 mt-1'>
                     {client.medicalHistory.allergies.length > 0
                       ? (
-                        client.medicalHistory.allergies.map((allergy, index) => (
-                          <Badge key={index} variant='destructive'>{allergy}</Badge>
+                        client.medicalHistory.allergies.map((allergy) => (
+                          <Badge key={allergy} variant='destructive'>{allergy}</Badge>
                         ))
                       )
                       : <p className='text-gray-500'>Nenhuma alergia registrada</p>}
@@ -1053,8 +1054,8 @@ export const ClientProfileManagement: React.FC = () => {
                   <div className='flex flex-wrap gap-2 mt-1'>
                     {client.medicalHistory.medications.length > 0
                       ? (
-                        client.medicalHistory.medications.map((medication, index) => (
-                          <Badge key={index} variant='outline'>{medication}</Badge>
+                        client.medicalHistory.medications.map((medication) => (
+                          <Badge key={medication} variant='outline'>{medication}</Badge>
                         ))
                       )
                       : <p className='text-gray-500'>Nenhum medicamento registrado</p>}
@@ -1068,8 +1069,8 @@ export const ClientProfileManagement: React.FC = () => {
                   <div className='flex flex-wrap gap-2 mt-1'>
                     {client.medicalHistory.chronicConditions.length > 0
                       ? (
-                        client.medicalHistory.chronicConditions.map((condition, index) => (
-                          <Badge key={index} variant='secondary'>{condition}</Badge>
+                        client.medicalHistory.chronicConditions.map((condition) => (
+                          <Badge key={condition} variant='secondary'>{condition}</Badge>
                         ))
                       )
                       : <p className='text-gray-500'>Nenhuma condição crônica registrada</p>}
@@ -1080,8 +1081,8 @@ export const ClientProfileManagement: React.FC = () => {
                   <div className='flex flex-wrap gap-2 mt-1'>
                     {client.medicalHistory.previousSurgeries.length > 0
                       ? (
-                        client.medicalHistory.previousSurgeries.map((surgery, index) => (
-                          <Badge key={index} variant='outline'>{surgery}</Badge>
+                        client.medicalHistory.previousSurgeries.map((surgery) => (
+                          <Badge key={surgery} variant='outline'>{surgery}</Badge>
                         ))
                       )
                       : <p className='text-gray-500'>Nenhuma cirurgia anterior registrada</p>}
@@ -1207,9 +1208,13 @@ export const ClientProfileManagement: React.FC = () => {
               <div>
                 <Label className='text-sm text-gray-600'>Métodos de Pagamento</Label>
                 <div className='flex flex-wrap gap-2 mt-1'>
-                  {client.financial.paymentMethods.map((method, index) => (
-                    <Badge key={index} variant='outline'>{method}</Badge>
-                  ))}
+                  {client.financial.paymentMethods.length > 0
+                    ? (
+                      client.financial.paymentMethods.map((method) => (
+                        <Badge key={method} variant='outline'>{method}</Badge>
+                      ))
+                    )
+                    : <p className='text-gray-500'>Nenhum método de pagamento cadastrado</p>}
                 </div>
               </div>
 

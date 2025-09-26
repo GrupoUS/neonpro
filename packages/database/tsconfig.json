@@ -31,7 +31,7 @@
       "@neonpro/healthcare-core/*": ["../healthcare-core/src/*"]
     }
   },
-  "include": ["src/index.ts", "src/client.ts", "src/client-full.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"],
   "references": []
 }
