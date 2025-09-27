@@ -1,117 +1,79 @@
-/**
- * Hook for managing medical history in MultiSessionScheduler
- */
-import { type PregnancyStatus } from '@/types/aesthetic-scheduling'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
+import { api } from '@/lib/api.js'
+import type { MedicalHistory } from '@/types/aesthetic-scheduling.js'
 
-interface MedicalHistoryState {
-  pregnancyStatus: PregnancyStatus
-  contraindications: string[]
-  medications: string[]
-  allergies: string[]
-}
+export function useMedicalHistory(patientId: string) {
+  const [medicalHistory, setMedicalHistory] = useState<MedicalHistory[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-interface UseMedicalHistoryReturn {
-  medicalHistory: MedicalHistoryState
-  newContraindication: string
-  newMedication: string
-  newAllergy: string
-  setNewContraindication: (value: string) => void
-  setNewMedication: (value: string) => void
-  setNewAllergy: (value: string) => void
-  updatePregnancyStatus: (status: PregnancyStatus) => void
-  handleAddContraindication: () => void
-  handleRemoveContraindication: (contraindication: string) => void
-  handleAddMedication: () => void
-  handleRemoveMedication: (medication: string) => void
-  handleAddAllergy: () => void
-  handleRemoveAllergy: (allergy: string) => void
-}
-
-export function useMedicalHistory(): UseMedicalHistoryReturn {
-  const [medicalHistory, setMedicalHistory] = useState<MedicalHistoryState>({
-    pregnancyStatus: 'none' as const,
-    contraindications: [] as string[],
-    medications: [] as string[],
-    allergies: [] as string[],
-  })
-
-  const [newContraindication, setNewContraindication] = useState('')
-  const [newMedication, setNewMedication] = useState('')
-  const [newAllergy, setNewAllergy] = useState('')
-
-  const updatePregnancyStatus = (status: PregnancyStatus) => {
-    setMedicalHistory({ ...medicalHistory, pregnancyStatus: status })
-  }
-
-  const handleAddContraindication = () => {
-    if (
-      newContraindication.trim() &&
-      !medicalHistory.contraindications.includes(newContraindication.trim())
-    ) {
-      setMedicalHistory({
-        ...medicalHistory,
-        contraindications: [...medicalHistory.contraindications, newContraindication.trim()],
-      })
-      setNewContraindication('')
+  const fetchMedicalHistory = useCallback(async () => {
+    if (!patientId) return
+    
+    setLoading(true)
+    setError(null)
+    
+    try {
+      const response = await api.patient.getMedicalHistory.query({ patientId })
+      setMedicalHistory(response)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to fetch medical history')
+    } finally {
+      setLoading(false)
     }
-  }
+  }, [patientId])
 
-  const handleRemoveContraindication = (contraindication: string) => {
-    setMedicalHistory({
-      ...medicalHistory,
-      contraindications: medicalHistory.contraindications.filter(cont => cont !== contraindication),
-    })
-  }
-
-  const handleAddMedication = () => {
-    if (newMedication.trim() && !medicalHistory.medications.includes(newMedication.trim())) {
-      setMedicalHistory({
-        ...medicalHistory,
-        medications: [...medicalHistory.medications, newMedication.trim()],
+  const addMedicalRecord = useCallback(async (record: Omit<MedicalHistory, 'id'>) => {
+    try {
+      const response = await api.patient.addMedicalRecord.mutate({
+        patientId,
+        record
       })
-      setNewMedication('')
+      setMedicalHistory(prev => [...prev, response])
+      return response
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to add medical record')
+      throw err
     }
-  }
+  }, [patientId])
 
-  const handleRemoveMedication = (medication: string) => {
-    setMedicalHistory({
-      ...medicalHistory,
-      medications: medicalHistory.medications.filter(med => med !== medication),
-    })
-  }
-
-  const handleAddAllergy = () => {
-    if (newAllergy.trim() && !medicalHistory.allergies.includes(newAllergy.trim())) {
-      setMedicalHistory({
-        ...medicalHistory,
-        allergies: [...medicalHistory.allergies, newAllergy.trim()],
+  const updateMedicalRecord = useCallback(async (recordId: string, updates: Partial<MedicalHistory>) => {
+    try {
+      const response = await api.patient.updateMedicalRecord.mutate({
+        patientId,
+        recordId,
+        updates
       })
-      setNewAllergy('')
+      setMedicalHistory(prev => 
+        prev.map(record => record.id === recordId ? response : record)
+      )
+      return response
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update medical record')
+      throw err
     }
-  }
+  }, [patientId])
 
-  const handleRemoveAllergy = (allergy: string) => {
-    setMedicalHistory({
-      ...medicalHistory,
-      allergies: medicalHistory.allergies.filter(all => all !== allergy),
-    })
-  }
+  const deleteMedicalRecord = useCallback(async (recordId: string) => {
+    try {
+      await api.patient.deleteMedicalRecord.mutate({
+        patientId,
+        recordId
+      })
+      setMedicalHistory(prev => prev.filter(record => record.id !== recordId))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete medical record')
+      throw err
+    }
+  }, [patientId])
 
   return {
     medicalHistory,
-    newContraindication,
-    newMedication,
-    newAllergy,
-    setNewContraindication,
-    setNewMedication,
-    setNewAllergy,
-    updatePregnancyStatus,
-    handleAddContraindication,
-    handleRemoveContraindication,
-    handleAddMedication,
-    handleRemoveMedication,
-    handleAddAllergy,
-    handleRemoveAllergy,
+    loading,
+    error,
+    fetchMedicalHistory,
+    addMedicalRecord,
+    updateMedicalRecord,
+    deleteMedicalRecord
   }
 }

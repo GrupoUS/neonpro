@@ -8,8 +8,8 @@
  * @author NeonPro Platform Team
  */
 
-import { createSupabaseClient } from '@/lib/supabase/client'
-import { getNextRedirectFromCallback } from '@/lib/site-url'
+import { createSupabaseClient } from '@/lib/supabase/client.js'
+import { getNextRedirectFromCallback } from '@/lib/site-url.js'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useEffect } from 'react'
 

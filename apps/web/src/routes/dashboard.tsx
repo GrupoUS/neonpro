@@ -1,5 +1,5 @@
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
-import { useAuth } from '@/contexts/AuthContext'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute.js'
+import { useAuth } from '@/contexts/AuthContext.js'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard')({

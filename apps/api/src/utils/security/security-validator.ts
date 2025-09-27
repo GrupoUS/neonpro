@@ -808,5 +808,4 @@ export const defaultSecurityConfig: SecurityConfig = {
 }
 
 // Export types and enums
-export type { SecurityConfig, SecurityContext, SecurityMetrics, ValidationResult }
-export { SecurityThreat }
+// SecurityThreat enum is already exported above at line 118

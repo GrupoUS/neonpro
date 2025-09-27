@@ -4,7 +4,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react'
-import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission'
+import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission.js'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 // Mock the trpcClient following healthcare compliance patterns

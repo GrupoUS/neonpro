@@ -1089,6 +1089,4 @@ export const defaultAuditConfig: AuditConfig = {
   notificationChannels: {},
 }
 
-// Export types and class
-export type { AuditConfig, AuditFinding, SecurityAudit, SecurityIncident, SecurityPosture }
-export { SecurityAuditor }
+// The SecurityAuditor class is already exported above at line 158

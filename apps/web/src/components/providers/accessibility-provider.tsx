@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { TranslationProvider } from '@/lib/i18n/use-translation'
-import { ScreenReaderAnnouncerProvider } from '@/components/ui/screen-reader-announcer'
-import { SkipLinks } from '@/components/ui/screen-reader-announcer'
+import { TranslationProvider } from '@/lib/i18n/use-translation.js'
+import { ScreenReaderAnnouncerProvider } from '@/components/ui/screen-reader-announcer.js'
+import { SkipLinks } from '@/components/ui/screen-reader-announcer.js'
 
 interface AccessibilityProviderProps {
   children: React.ReactNode

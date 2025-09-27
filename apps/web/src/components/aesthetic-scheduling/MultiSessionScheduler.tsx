@@ -3,37 +3,37 @@
  * Brazilian healthcare compliant aesthetic procedure scheduling with multi-session support
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Input } from '@/components/ui/input.js'
+import { Label } from '@/components/ui/label.js'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+} from '@/components/ui/select.js'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import {
   type AestheticProcedure,
   type AestheticSchedulingResponse,
   type PregnancyStatus,
-} from '@/types/aesthetic-scheduling'
+} from '@/types/aesthetic-scheduling.js'
 import { AlertTriangle, Calendar, Loader2, User, XCircle } from 'lucide-react'
 import React, { useState } from 'react'
 
 // Custom hooks
-import { useDateManagement } from '@/hooks/useDateManagement'
-import { useMedicalHistory } from '@/hooks/useMedicalHistory'
-import { useProcedureSelection } from '@/hooks/useProcedureSelection'
-import { useProfessionalSelection } from '@/hooks/useProfessionalSelection'
-import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission'
-import { useSpecialRequirements } from '@/hooks/useSpecialRequirements'
-import { useSchedulingData } from '@/hooks/useSchedulingData'
-import { useSchedulingForm } from '@/hooks/useSchedulingForm'
+import { useDateManagement } from '@/hooks/useDateManagement.js'
+import { useMedicalHistory } from '@/hooks/useMedicalHistory.js'
+import { useProcedureSelection } from '@/hooks/useProcedureSelection.js'
+import { useProfessionalSelection } from '@/hooks/useProfessionalSelection.js'
+import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission.js'
+import { useSpecialRequirements } from '@/hooks/useSpecialRequirements.js'
+import { useSchedulingData } from '@/hooks/useSchedulingData.js'
+import { useSchedulingForm } from '@/hooks/useSchedulingForm.js'
 
 interface MultiSessionSchedulerProps {
   patientId: string

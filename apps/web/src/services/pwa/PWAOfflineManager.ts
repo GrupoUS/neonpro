@@ -55,7 +55,7 @@ interface ServerData {
   data: Record<string, unknown>
 }
 
-import { logger } from '@/utils/logger'
+import { logger } from '@/utils/logger.js'
 
 export class PWAOfflineManager {
   private queues: Map<string, OfflineQueue> = new Map()

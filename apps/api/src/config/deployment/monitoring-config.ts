@@ -44,28 +44,15 @@ export const monitoringConfig = {
       },
     },
 
-    // Custom integrations
+    // Custom integrations - Note: New Sentry API no longer uses Integrations namespace
+    // These integrations are now automatically enabled by default
     integrations: [
-      new Sentry.Integrations.Breadcrumbs({
-        console: false,
-        dom: true,
-        fetch: true,
-        history: true,
-        sentry: true,
-        xhr: true,
-      }),
-      new Sentry.Integrations.GlobalHandlers({
-        onunhandledrejection: true,
-        onerror: true,
-      }),
-      new Sentry.Integrations.HttpContext(),
-      new Sentry.Integrations.LinkedErrors(),
-      new Sentry.Integrations.RequestData(),
-      new Sentry.Integrations.TryCatch(),
+      // Note: Breadcrumbs, GlobalHandlers, HttpContext, LinkedErrors, RequestData, TryCatch
+      // are now built-in and automatically enabled
     ],
 
     // Before send callback for sensitive data filtering
-    beforeSend: event => {
+    beforeSend: (event: any) => {
       if (event.request && event.request.headers) {
         // Filter sensitive headers
         const sensitiveHeaders = [
@@ -76,7 +63,7 @@ export const monitoringConfig = {
         ]
         event.request.headers = Object.keys(event.request.headers)
           .filter(key => !sensitiveHeaders.includes(key.toLowerCase()))
-          .reduce((obj, key) => {
+          .reduce((obj: any, key: string) => {
             obj[key] = event.request.headers[key]
             return obj
           }, {})

@@ -301,7 +301,7 @@ app.get('/health', (c: HonoContext) => {
   })
 })
 
-app.get('/v1/health', (c: TRPCContext) => {
+app.get('/v1/health', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log('Detailed health check requested', { requestId })
@@ -335,7 +335,7 @@ app.get('/v1/health', (c: TRPCContext) => {
   return c.json(healthData)
 })
 
-app.get('/v1/info', (c: TRPCContext) => {
+app.get('/v1/info', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log('System info requested', { requestId })
@@ -372,7 +372,7 @@ app.get('/v1/info', (c: TRPCContext) => {
 })
 
 // HTTPS monitoring endpoint (T066)
-app.get('/v1/monitoring/https', (c: TRPCContext) => {
+app.get('/v1/monitoring/https', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log(
@@ -416,7 +416,7 @@ app.get('/v1/monitoring/https', (c: TRPCContext) => {
 // Security endpoints (protected)
 app.get(
   '/v1/security/status',
-  /* ...getProtectedRoutesMiddleware(['admin']), */ (c: TRPCContext) => {
+  /* ...getProtectedRoutesMiddleware(['admin']), */ (c: HonoContext) => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -468,7 +468,7 @@ app.get(
 // LGPD compliance endpoint
 app.get(
   '/v1/compliance/lgpd',
-  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ (c: TRPCContext) => {
+  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ (c: HonoContext) => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -522,7 +522,7 @@ app.get(
 
 // Error tracking test endpoint (for development)
 if (process.env.NODE_ENV !== 'production') {
-  app.get('/v1/test/error', (c: TRPCContext) => {
+  app.get('/v1/test/error', (c: HonoContext) => {
     const requestId = c.get('requestId')
 
     console.warn('Error test endpoint called', { requestId })
@@ -544,7 +544,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.post('/api/security/csp-violations', cspViolationHandler())
 
 // 404 handler with logging
-app.notFound((c: TRPCContext) => {
+app.notFound((c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.warn('Route not found', {

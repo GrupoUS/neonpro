@@ -8,12 +8,12 @@ import { KeyboardNavigationProvider, useKeyboardNavigation } from '@/components/
 import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer'
 import { HealthcareFormLoading } from '@/components/ui/healthcare-loading'
 import { HealthcareFieldError } from '@/components/ui/healthcare-error-boundary'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Progress } from '@/components/ui/progress'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { cn } from '@/lib/utils'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
+import { CardTitle } from '@/components/ui/card.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Progress } from '@/components/ui/progress.js'
+import { Alert, AlertDescription } from '@/components/ui/alert.js'
+import { cn } from '@/lib/utils.js'
 
 // Import new types and validation
 import { 

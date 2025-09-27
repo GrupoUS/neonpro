@@ -10,7 +10,7 @@
 
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/AuthContext.js'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,

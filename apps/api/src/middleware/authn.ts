@@ -1,7 +1,7 @@
 import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { createAdminClient } from '../services/jwt-security-service.js'
+import { createClient } from '@neonpro/database'
 import { jwtValidator } from '../services/jwt-security-service.js'
 
 // Interface for validated user token data
@@ -93,7 +93,7 @@ export function authenticationMiddleware() {
       })
 
       await next()
-    } catch {
+    } catch (error) {
       if (error instanceof HTTPException) {
         throw error
       }
@@ -209,11 +209,11 @@ async function validateUserFromToken(
     }
 
     // In production, validate user against database
-    const supabase = createAdminClient()
+    const supabase = createClient()
     const { data: user, error } = await supabase
       .from('users')
       .select('id, email, role, clinic_id, name')
-      .eq('id', _userId)
+      .eq('id', userId)
       .eq('email', email)
       .single()
 
@@ -229,7 +229,7 @@ async function validateUserFromToken(
       clinicId: user.clinic_id,
       name: user.name,
     }
-  } catch {
+  } catch (error) {
     logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
     })
@@ -292,7 +292,7 @@ export function optionalAuth() {
           })
         }
       }
-    } catch {
+    } catch (error) {
       // Silently fail for optional auth
       logger.debug('Optional authentication failed', {
         error: error instanceof Error ? error.message : String(error),

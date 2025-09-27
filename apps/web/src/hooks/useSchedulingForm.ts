@@ -1,82 +1,90 @@
-/**
- * Hook for managing form coordination in MultiSessionScheduler
- * Extracts form submission and data assembly logic
- */
-import { type MultiSessionSchedulingRequest, type AestheticSchedulingResponse } from '@/types/aesthetic-scheduling'
+import { useState, useCallback } from 'react'
+import { useSchedulingData } from './useSchedulingData'
 
-interface UseSchedulingFormReturn {
-  handleSubmitForm: (e: React.FormEvent, formData: {
-    patientId: string
-    selectedProcedures: string[]
-    preferredDates: Date[]
-    preferredProfessionals: string[]
-    urgencyLevel: 'routine' | 'priority' | 'urgent'
-    specialRequirements: string[]
-    medicalHistory: {
-      pregnancyStatus: string
-      contraindications: string[]
-      medications: string[]
-      allergies: string[]
-    }
-  }) => Promise<void>
+export interface FormField {
+  name: string
+  value: any
+  error?: string
+  touched: boolean
 }
 
-export function useSchedulingForm(
-  onSuccess?: (response: AestheticSchedulingResponse) => void,
-  onError?: (error: Error) => void,
-): UseSchedulingFormReturn {
-  const handleSubmitForm = async (
-    e: React.FormEvent,
-    formData: {
-      patientId: string
-      selectedProcedures: string[]
-      preferredDates: Date[]
-      preferredProfessionals: string[]
-      urgencyLevel: 'routine' | 'priority' | 'urgent'
-      specialRequirements: string[]
-      medicalHistory: {
-        pregnancyStatus: string
-        contraindications: string[]
-        medications: string[]
-        allergies: string[]
-      }
-    }
-  ) => {
-    e.preventDefault()
+export interface UseSchedulingFormReturn {
+  fields: Record<string, FormField>
+  updateField: (name: string, value: any) => void
+  touchField: (name: string) => void
+  setFieldError: (name: string, error: string) => void
+  resetForm: () => void
+  isFormValid: boolean
+  submitForm: () => void
+}
 
-    try {
-      // Validate form data
-      const requestData: MultiSessionSchedulingRequest = {
-        patientId: formData.patientId,
-        procedures: formData.selectedProcedures,
-        preferredDates: formData.preferredDates,
-        preferredProfessionals: formData.preferredProfessionals.length > 0
-          ? formData.preferredProfessionals
-          : undefined,
-        urgencyLevel: formData.urgencyLevel,
-        specialRequirements: formData.specialRequirements.length > 0 ? formData.specialRequirements : undefined,
-        medicalHistory: {
-          pregnancyStatus: formData.medicalHistory.pregnancyStatus,
-          contraindications: formData.medicalHistory.contraindications.length > 0
-            ? formData.medicalHistory.contraindications
-            : undefined,
-          medications: formData.medicalHistory.medications.length > 0
-            ? formData.medicalHistory.medications
-            : undefined,
-          allergies: formData.medicalHistory.allergies.length > 0 ? formData.medicalHistory.allergies : undefined,
-        },
-      }
+export function useSchedulingForm(): UseSchedulingFormReturn {
+  const { updateSchedulingData, resetSchedulingData } = useSchedulingData()
+  const [fields, setFields] = useState<Record<string, FormField>>({})
 
-      // Note: The actual submission will be handled by the useSchedulingSubmission hook
-      // This hook just handles data assembly and validation
-      return requestData
-    } catch (error) {
-      onError?.(error as Error)
-      throw error
-    }
-  }
+  const updateField = useCallback((name: string, value: any) => {
+    setFields(prev => ({
+      ...prev,
+      [name]: {
+        ...prev[name],
+        value,
+        error: undefined
+      }
+    }))
+    
+    // Update scheduling data
+    updateSchedulingData({ [name]: value })
+  }, [updateSchedulingData])
+
+  const touchField = useCallback((name: string) => {
+    setFields(prev => ({
+      ...prev,
+      [name]: {
+        ...prev[name],
+        touched: true
+      }
+    }))
+  }, [])
+
+  const setFieldError = useCallback((name: string, error: string) => {
+    setFields(prev => ({
+      ...prev,
+      [name]: {
+        ...prev[name],
+        error
+      }
+    }))
+  }, [])
+
+  const resetForm = useCallback(() => {
+    setFields({})
+    resetSchedulingData()
+  }, [resetSchedulingData])
+
+  const isFormValid = Object.values(fields).every(field => 
+    !field.error && (!field.touched || field.value !== undefined)
+  )
+
+  const submitForm = useCallback(() => {
+    // Mark all fields as touched
+    setFields(prev => 
+      Object.keys(prev).reduce((acc, key) => ({
+        ...acc,
+        [key]: {
+          ...prev[key],
+          touched: true
+        }
+      }), {})
+    )
+  }, [])
 
   return {
-    handleSubmitForm,
+    fields,
+    updateField,
+    touchField,
+    setFieldError,
+    resetForm,
+    isFormValid,
+    submitForm
   }
 }

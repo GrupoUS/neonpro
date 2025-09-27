@@ -1,15 +1,15 @@
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { apiClient as api } from '@/lib/api'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+import { apiClient as api } from '@/lib/api.js'
 import {
   ContraindicationAnalysis,
   ContraindicationRisk,
-} from '@/types/ai-clinical-support'
+} from '@/types/ai-clinical-support.js'
 import { useQuery } from '@tanstack/react-query'
 import {
   Activity,

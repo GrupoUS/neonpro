@@ -545,3 +545,6 @@ export class JWTSecurityService {
 
 // Initialize denylist cleanup when module loads
 JWTSecurityService.initializeDenylistCleanup()
+
+// Export the token validation method for middleware usage
+export const jwtValidator = JWTSecurityService.validateToken.bind(JWTSecurityService)

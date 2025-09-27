@@ -3,18 +3,18 @@
  * Brazilian healthcare compliant CFM certification validation for aesthetic procedures
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { trpc } from '@/lib/trpc'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Input } from '@/components/ui/input.js'
+import { Label } from '@/components/ui/label.js'
+import { Progress } from '@/components/ui/progress.js'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+import { trpc } from '@/lib/trpc.js'
 import {
   type CertificationValidation,
-} from '@/types/aesthetic-scheduling'
+} from '@/types/aesthetic-scheduling.js'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AlertTriangle,
