@@ -401,7 +401,7 @@ function extractCohort(metadata?: Record<string, unknown>): string | undefined {
   // Extract generalized demographic information
   const demographics = metadata.demographics as Record<string, unknown> | undefined
   if (demographics && typeof demographics.ageRange === 'string') {
-    return `age_${demographics.ageRange}`
+    return `age_${demographics.ageRange}` as string
   }
 
   return undefined
@@ -540,20 +540,21 @@ export function aggregateMetrics(
       return Math.max(...values)
 
     case 'median':
-      const sorted = values.sort((a, _b) => a - _b)
+      const sorted = values.filter(v => v !== undefined).sort((a, b) => (a || 0) - (b || 0))
       const mid = Math.floor(sorted.length / 2)
-      return sorted.length % 2 === 0
-        ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid]
+      const midValue = sorted.length % 2 === 0
+        ? ((sorted[mid - 1] || 0) + (sorted[mid] || 0)) / 2
+        : (sorted[mid] || 0)
+      return midValue
 
     case 'percentile':
       // Default to 95th percentile
-      const sortedValues = values.sort((a, _b) => a - _b)
+      const sortedValues = values.filter(v => v !== undefined).sort((a, b) => (a || 0) - (b || 0))
       const index = Math.ceil(0.95 * sortedValues.length) - 1
-      return sortedValues[index]
+      return sortedValues[index] || 0
 
     case 'last_value':
-      return values[values.length - 1]
+      return values[values.length - 1] || 0
 
     default:
       return values.reduce((sum, _val) => sum + _val, 0) / values.length

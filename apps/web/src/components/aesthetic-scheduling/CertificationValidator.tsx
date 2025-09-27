@@ -472,11 +472,8 @@ export function CertificationValidator(
                                 Certificações Faltantes
                               </h4>
                               <div className='space-y-2'>
-                                {validationResults.missingCertifications.map((
-                                  certification,
-                                  index,
-                                ) => (
-                                  <div key={index} className='flex items-center gap-2'>
+                                {validationResults.missingCertifications.map((certification) => (
+                                  <div key={certification} className='flex items-center gap-2'>
                                     <XCircle className='h-4 w-4 text-red-600' />
                                     <span className='text-sm text-red-800'>{certification}</span>
                                   </div>
@@ -490,8 +487,8 @@ export function CertificationValidator(
                           <div className='bg-yellow-50 rounded-lg p-4'>
                             <h4 className='font-medium text-yellow-900 mb-3'>Avisos</h4>
                             <div className='space-y-2'>
-                              {validationResults.warnings.map((warning, index) => (
-                                <div key={index} className='flex items-center gap-2'>
+                              {validationResults.warnings.map((warning) => (
+                                <div key={warning} className='flex items-center gap-2'>
                                   <AlertTriangle className='h-4 w-4 text-yellow-600' />
                                   <span className='text-sm text-yellow-800'>{warning}</span>
                                 </div>
@@ -507,8 +504,8 @@ export function CertificationValidator(
                             <div className='bg-blue-50 rounded-lg p-4'>
                               <h4 className='font-medium text-blue-900 mb-3'>Recomendações</h4>
                               <div className='space-y-2'>
-                                {validationResults.recommendations.map((recommendation, index) => (
-                                  <div key={index} className='flex items-center gap-2'>
+                                {validationResults.recommendations.map((recommendation) => (
+                                  <div key={recommendation} className='flex items-center gap-2'>
                                     <Info className='h-4 w-4 text-blue-600' />
                                     <span className='text-sm text-blue-800'>{recommendation}</span>
                                   </div>
@@ -527,7 +524,7 @@ export function CertificationValidator(
                               <Label className='text-sm font-medium text-gray-700'>Nome</Label>
                               <p className='text-sm text-gray-900'>
                                 {validationResults.professional && typeof validationResults.professional === 'object' && 'name' in validationResults.professional
-                                  ? (validationResults.professional as ProfessionalDetails).name 
+                                  ? (validationResults.professional as ProfessionalDetails).name
                                   : validationResults.professional || 'N/A'}
                               </p>
                             </div>
@@ -537,7 +534,7 @@ export function CertificationValidator(
                               </Label>
                               <p className='text-sm text-gray-900'>
                                 {validationResults.professional && typeof validationResults.professional === 'object' && 'specialty' in validationResults.professional
-                                  ? (validationResults.professional as ProfessionalDetails).specialty 
+                                  ? (validationResults.professional as ProfessionalDetails).specialty
                                   : 'N/A'}
                               </p>
                             </div>
@@ -545,7 +542,7 @@ export function CertificationValidator(
                               <Label className='text-sm font-medium text-gray-700'>CRM</Label>
                               <p className='text-sm text-gray-900'>
                                 {validationResults.professional && typeof validationResults.professional === 'object' && 'councilNumber' in validationResults.professional
-                                  ? (validationResults.professional as ProfessionalDetails).councilNumber 
+                                  ? (validationResults.professional as ProfessionalDetails).councilNumber
                                   : 'N/A'}
                               </p>
                             </div>

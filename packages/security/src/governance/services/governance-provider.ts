@@ -32,6 +32,10 @@ export function getGovernanceService(): GovernanceService {
     )
   }
 
+  if (!governanceServiceInstance) {
+    throw new Error('Failed to initialize governance service')
+  }
+
   return governanceServiceInstance
 }
 
