@@ -215,8 +215,19 @@ export interface CertificationValidation {
   recommendations: string[]
   experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'expert'
   missingCertifications?: string[]
-  professional?: string
+  professional?: string | ProfessionalDetails
   complianceStatus?: 'compliant' | 'warning' | 'non_compliant' | 'under_review'
+}
+
+export interface ProfessionalDetails {
+  name: string
+  specialty: string
+  councilNumber: string
+  id?: string
+  fullName?: string
+  licenseNumber?: string
+  specializations?: string[]
+  certifications?: any[]
 }
 
 // Recovery Planning Types
@@ -254,6 +265,10 @@ export interface RecoveryPlan {
   followUpAppointments?: FollowUpSchedule[] // Added alternative to followUpSchedule
   emergencyContacts: EmergencyContact[]
   customization?: RecoveryCustomization
+  customNotes?: string
+  careLevel?: string
+  risks?: string[]
+  warningSigns?: WarningSign[]
 }
 
 export interface FollowUpSchedule {
@@ -278,6 +293,12 @@ export interface RecoveryCustomization {
   lifestyle: string[]
 }
 
+export interface WarningSign {
+  sign: string
+  description: string
+  severity: string
+}
+
 // Treatment Package Types
 export interface TreatmentPackage {
   id: string
@@ -291,6 +312,9 @@ export interface TreatmentPackage {
   duration: number
   category: string
   requirements: string[]
+  packageDiscount: number
+  validityPeriod: number
+  isActive: boolean
 }
 
 export interface TreatmentProcedure {
@@ -299,7 +323,13 @@ export interface TreatmentProcedure {
   description: string
   duration: number
   price: number
-  session: number
+  sessions: number
+  procedure: {
+    name: string
+    description: string
+    category: string
+    baseDuration: number
+  }
   requirements?: string[]
 }
 
@@ -319,6 +349,37 @@ export interface ScheduledSession {
 }
 
 // Room Allocation Types
+export interface Room {
+  id: string
+  name: string
+  type: string
+  capacity: number
+  floor: number
+  description: string
+  status: 'available' | 'occupied' | 'maintenance' | 'cleaning' | 'reserved'
+  equipment: string[]
+}
+
+export interface RoomSchedule {
+  id: string
+  roomId: string
+  date: Date
+  appointments: RoomAppointment[]
+}
+
+export interface RoomAppointment {
+  id: string
+  patientName: string
+  procedureName: string
+  startTime: string
+  endTime: string
+}
+
+export interface OptimizationResult {
+  efficiencyScore: number
+  suggestions: string[]
+}
+
 export interface RoomAllocation {
   id: string
   roomId: string
@@ -326,4 +387,16 @@ export interface RoomAllocation {
   startTime: Date
   endTime: Date
   status: 'reserved' | 'occupied' | 'cleaning' | 'maintenance'
+}
+
+export interface TimeSlot {
+  start: Date
+  end: Date
+  id: string
+}
+
+export interface TimeSlotString {
+  start: string
+  end: string
+  id: string
 }

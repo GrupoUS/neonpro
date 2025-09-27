@@ -5,9 +5,7 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [
-    // @ts-expect-error - Ignore TanStackRouterVite type mismatch due to monorepo version differences
     TanStackRouterVite(),
-    // @ts-expect-error - Ignore react plugin type mismatch due to monorepo version differences
     react(),
   ],
 

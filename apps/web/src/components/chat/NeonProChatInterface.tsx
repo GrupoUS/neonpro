@@ -25,10 +25,11 @@ import {
   Trash2,
   Users,
 } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Alert, AlertDescription } from '../ui/alert.js'
 import { Badge } from '../ui/badge.js'
 import { Button } from '../ui/button.js'
+import { AccessibilityButton } from '../ui/accessibility-button.js'
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.js'
 import {
   AccessibilitySettingsPanel,
@@ -62,41 +63,110 @@ const ChatInput: React.FC<ChatInputProps> = ({
   placeholder = 'Digite sua mensagem...',
 }) => {
   const [message, setMessage] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+  const submitButtonRef = useRef<HTMLButtonElement>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Generate unique IDs for accessibility
+  const inputId = React.useId()
+  const helpId = `${inputId}-help`
+
+  // Enhanced submit handler with screen reader announcements
+  const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault()
     if (message.trim() && !disabled) {
+      // Announce message sending
+      const announcement = document.createElement('div')
+      announcement.setAttribute('role', 'status')
+      announcement.setAttribute('aria-live', 'polite')
+      announcement.className = 'sr-only'
+      announcement.textContent = 'Enviando mensagem...'
+      document.body.appendChild(announcement)
+
       onSendMessage(message.trim())
       setMessage('')
+
+      // Focus back to input after sending
+      setTimeout(() => {
+        inputRef.current?.focus()
+        document.body.removeChild(announcement)
+      }, 100)
     }
-  }
+  }, [message, disabled, onSendMessage])
+
+  // Enhanced keyboard navigation
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e as unknown as React.FormEvent)
+    }
+
+    // Alt+1 for quick navigation
+    if (e.altKey && e.key === '1') {
+      e.preventDefault()
+      inputRef.current?.focus()
+    }
+
+    // Escape to clear input
+    if (e.key === 'Escape' && message.trim()) {
+      e.preventDefault()
+      setMessage('')
+      inputRef.current?.focus()
+
+      // Announce clear action
+      const announcement = document.createElement('div')
+      announcement.setAttribute('role', 'status')
+      announcement.setAttribute('aria-live', 'polite')
+      announcement.className = 'sr-only'
+      announcement.textContent = 'Mensagem limpa'
+      document.body.appendChild(announcement)
+
+      setTimeout(() => {
+        document.body.removeChild(announcement)
+      }, 1000)
+    }
+  }, [message, handleSubmit])
 
   return (
-    <form onSubmit={handleSubmit} className='flex gap-2 p-4 border-t bg-gray-50' role='form'>
+    <form
+      onSubmit={handleSubmit}
+      className='flex gap-2 p-4 border-t bg-gray-50'
+      role='form'
+      aria-label='Enviar mensagem de chat'
+      onKeyDown={handleKeyDown}
+    >
       <input
+        ref={inputRef}
+        id={inputId}
         type='text'
         value={message}
         onChange={e => setMessage(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
         className='flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 touch-target'
-        aria-label='Mensagem de chat'
-        aria-describedby='chat-help-text'
+        aria-label='Digite sua mensagem'
+        aria-describedby={helpId}
         autoComplete='off'
         enterKeyHint='send'
+        aria-disabled={disabled}
+        maxLength={2000}
       />
-      <Button
+      <AccessibilityButton
+        ref={submitButtonRef}
         type='submit'
         disabled={disabled || !message.trim()}
-        className='px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 touch-target'
-        aria-label='Enviar mensagem'
-        aria-disabled={disabled || !message.trim()}
+        healthcareContext='administrative'
+        size='mobile-lg'
+        className='px-4 py-3'
+        ariaLabel='Enviar mensagem'
+        ariaDescribedBy={helpId}
+        shortcutKey='Enter'
+        announcement='Enviando mensagem'
       >
         <Send className='h-4 w-4' />
         <span className='sr-only'>Enviar</span>
-      </Button>
-      <div id='chat-help-text' className='sr-only'>
-        Pressione Enter para enviar a mensagem ou use Alt+1 para navegação por atalhos
+      </AccessibilityButton>
+      <div id={helpId} className='sr-only'>
+        Pressione Enter para enviar, Escape para limpar, Alt+1 para focar no campo. Máximo 2000 caracteres.
       </div>
     </form>
   )
@@ -175,45 +245,86 @@ const AgentSidebar: React.FC = () => {
     }
   }
 
+  const getAgentStatusText = (status: string) => {
+    switch (status) {
+      case 'thinking':
+        return 'Pensando'
+      case 'responding':
+        return 'Respondendo'
+      case 'error':
+        return 'Erro'
+      default:
+        return 'Disponível'
+    }
+  }
+
+  // Enhanced agent selection with screen reader announcements
+  const handleAgentSelect = useCallback((agentType: string, agentName: string) => {
+    setActiveAgent(agentType)
+
+    // Announce agent selection to screen readers
+    const announcement = document.createElement('div')
+    announcement.setAttribute('role', 'status')
+    announcement.setAttribute('aria-live', 'polite')
+    announcement.className = 'sr-only'
+    announcement.textContent = `Assistente ${agentName} selecionado`
+    document.body.appendChild(announcement)
+
+    setTimeout(() => {
+      document.body.removeChild(announcement)
+    }, 2000)
+  }, [setActiveAgent])
+
   return (
-    <Card className='h-fit'>
+    <Card className='h-fit' role='region' aria-label='Seleção de assistentes'>
       <CardHeader>
-        <CardTitle className='flex items-center gap-2'>
-          <MessageSquare className='h-5 w-5' />
+        <CardTitle className='flex items-center gap-2' id='assistants-title'>
+          <MessageSquare className='h-5 w-5' aria-hidden='true' />
           Assistentes AI
         </CardTitle>
       </CardHeader>
-      <CardContent className='space-y-3'>
-        {agents.map(agent => (
-          <button
-            key={agent.id}
-            onClick={() => setActiveAgent(agent.type)}
-            className={`w-full flex items-center gap-3 p-3 rounded-lg border transition-colors ${
-              activeAgent?.id === agent.id
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-            }`}
-            aria-label={`Selecionar assistente ${agent.name}`}
-            aria-pressed={activeAgent?.id === agent.id}
-          >
-            <div className='flex-shrink-0'>
-              {getAgentIcon(agent.type)}
-            </div>
-            <div className='flex-1 text-left'>
-              <div className='flex items-center gap-2'>
-                <span className='font-medium text-sm'>{agent.name}</span>
-                <div
-                  className={`w-2 h-2 rounded-full ${getAgentColor(agent.status)}`}
-                  aria-hidden='true'
-                />
+      <CardContent
+        className='space-y-3'
+        role='list'
+        aria-labelledby='assistants-title'
+      >
+        {agents.map((agent, index) => {
+          const isActive = activeAgent?.id === agent.id
+          const statusText = getAgentStatusText(agent.status)
+          const agentLabel = getAgentLabel(agent.type)
+
+          return (
+            <AccessibilityButton
+              key={agent.id}
+              variant={isActive ? 'default' : 'outline'}
+              onClick={() => handleAgentSelect(agent.type, agent.name)}
+              healthcareContext='administrative'
+              className={`w-full flex items-center gap-3 p-3 text-left ${isActive ? 'bg-blue-50 border-blue-500' : 'hover:bg-gray-50'}`}
+              ariaLabel={`Selecionar assistente ${agent.name} - ${agentLabel} - Status: ${statusText}`}
+              ariaPressed={isActive}
+              role='listitem'
+              announcement={`Assistente ${agent.name} selecionado`}
+            >
+              <div className='flex-shrink-0' aria-hidden='true'>
+                {getAgentIcon(agent.type)}
               </div>
-              <span className='text-xs text-gray-500'>{getAgentLabel(agent.type)}</span>
-            </div>
-            <Badge variant='secondary' className='text-xs'>
-              {agent.messages.length}
-            </Badge>
-          </button>
-        ))}
+              <div className='flex-1 text-left'>
+                <div className='flex items-center gap-2'>
+                  <span className='font-medium text-sm'>{agent.name}</span>
+                  <div
+                    className={`w-2 h-2 rounded-full ${getAgentColor(agent.status)}`}
+                    aria-hidden='true'
+                  />
+                  <span className='sr-only'>Status: {statusText}</span>
+                </div>
+                <span className='text-xs text-gray-500'>{agentLabel}</span>
+              </div>
+              <Badge variant='secondary' className='text-xs' aria-label={`${agent.messages.length} mensagens`}>
+                {agent.messages.length}
+              </Badge>
+            </AccessibilityButton>
+          )
+        })}
       </CardContent>
     </Card>
   )
@@ -225,12 +336,19 @@ const ComplianceBanner: React.FC = () => {
   if (!config?.compliance.lgpdEnabled) return null
 
   return (
-    <Alert className='mb-4'>
-      <Shield className='h-4 w-4' />
+    <Alert
+      className='mb-4 healthcare-context-administrative'
+      role='alert'
+      aria-live='polite'
+    >
+      <Shield className='h-4 w-4' aria-hidden='true' />
       <AlertDescription className='text-sm'>
-        <strong>LGPD Compliance:</strong>{' '}
+        <strong>Conformidade LGPD:</strong>{' '}
         Todas as conversas são criptografadas e registradas para auditoria. Os dados dos pacientes
-        são tratados conforme a Lei Geral de Proteção de Dados.
+        são tratados conforme a Lei Geral de Proteção de Dados.{' '}
+        <span className='block mt-1 text-xs text-purple-600'>
+          Dados sensíveis: Informações criptografadas em repouso e em trânsito
+        </span>
       </AlertDescription>
     </Alert>
   )
@@ -243,21 +361,70 @@ export const NeonProChatInterface: React.FC = () => {
     { message: string; priority: 'polite' | 'assertive' }[]
   >([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const chatContainerRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [activeAgent?.messages])
 
-  const handleSendMessage = (content: string) => {
-    if (activeAgent) {
-      sendMessage(content, activeAgent.type)
-    }
-  }
+  // Enhanced keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Alt+E for export
+      if (e.altKey && e.key === 'e') {
+        e.preventDefault()
+        setShowExport(!showExport)
+      }
 
-  const handleExport = async () => {
+      // Alt+C for clear chat
+      if (e.altKey && e.key === 'c' && activeAgent) {
+        e.preventDefault()
+        clearChat(activeAgent.type)
+      }
+
+      // Alt+1-3 for quick agent selection
+      if (e.altKey && /^[1-3]$/.test(e.key)) {
+        e.preventDefault()
+        const agentIndex = parseInt(e.key) - 1
+        // Agent selection logic would go here
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [showExport, activeAgent, clearChat])
+
+  // Enhanced send message with accessibility
+  const handleSendMessage = useCallback((content: string) => {
+    if (activeAgent) {
+      // Announce message sending
+      const announcement = document.createElement('div')
+      announcement.setAttribute('role', 'status')
+      announcement.setAttribute('aria-live', 'polite')
+      announcement.className = 'sr-only'
+      announcement.textContent = `Enviando mensagem para ${activeAgent.name}`
+      document.body.appendChild(announcement)
+
+      sendMessage(content, activeAgent.type)
+
+      setTimeout(() => {
+        document.body.removeChild(announcement)
+      }, 1000)
+    }
+  }, [activeAgent, sendMessage])
+
+  const handleExport = useCallback(async () => {
     if (activeAgent) {
       try {
+        // Announce export start
+        const startAnnouncement = document.createElement('div')
+        startAnnouncement.setAttribute('role', 'status')
+        startAnnouncement.setAttribute('aria-live', 'polite')
+        startAnnouncement.className = 'sr-only'
+        startAnnouncement.textContent = 'Iniciando exportação do chat...'
+        document.body.appendChild(startAnnouncement)
+
         const exportData = await exportChat(activeAgent.type)
         const blob = new Blob([exportData], { type: 'application/json' })
         const url = URL.createObjectURL(blob)
@@ -269,11 +436,36 @@ export const NeonProChatInterface: React.FC = () => {
         document.body.removeChild(a)
         URL.revokeObjectURL(url)
         setShowExport(false)
+
+        // Announce export completion
+        document.body.removeChild(startAnnouncement)
+        const completionAnnouncement = document.createElement('div')
+        completionAnnouncement.setAttribute('role', 'status')
+        completionAnnouncement.setAttribute('aria-live', 'polite')
+        completionAnnouncement.className = 'sr-only'
+        completionAnnouncement.textContent = 'Chat exportado com sucesso'
+        document.body.appendChild(completionAnnouncement)
+
+        setTimeout(() => {
+          document.body.removeChild(completionAnnouncement)
+        }, 3000)
       } catch (error) {
         console.error('Error exporting chat:', error)
+
+        // Announce export error
+        const errorAnnouncement = document.createElement('div')
+        errorAnnouncement.setAttribute('role', 'alert')
+        errorAnnouncement.setAttribute('aria-live', 'assertive')
+        errorAnnouncement.className = 'sr-only'
+        errorAnnouncement.textContent = 'Erro ao exportar chat. Tente novamente.'
+        document.body.appendChild(errorAnnouncement)
+
+        setTimeout(() => {
+          document.body.removeChild(errorAnnouncement)
+        }, 5000)
       }
     }
-  }
+  }, [activeAgent, exportChat])
 
   const getAgentInstructions = (agentType: string) => {
     const instructions = {
@@ -344,25 +536,49 @@ export const NeonProChatInterface: React.FC = () => {
           <AgentSidebar />
 
           {/* Accessibility & Compliance Info */}
-          <Card className='mt-4'>
+          <Card className='mt-4' role='region' aria-label='Informações de acessibilidade'>
             <CardHeader>
-              <CardTitle className='text-sm'>Acessibilidade & Compliance</CardTitle>
+              <CardTitle className='text-sm' id='accessibility-title'>
+                Acessibilidade & Compliance
+              </CardTitle>
             </CardHeader>
-            <CardContent className='space-y-2'>
-              <div className='flex items-center gap-2 text-sm'>
-                <Accessibility className='h-4 w-4 text-green-600' />
+            <CardContent
+              className='space-y-2'
+              role='list'
+              aria-labelledby='accessibility-title'
+            >
+              <div className='flex items-center gap-2 text-sm' role='listitem'>
+                <Accessibility className='h-4 w-4 text-green-600' aria-hidden='true' />
                 <span>WCAG 2.1 AA+ Compatível</span>
+                <Badge variant='outline' className='text-xs ml-auto'>Ativo</Badge>
               </div>
-              <div className='flex items-center gap-2 text-sm'>
-                <Smartphone className='h-4 w-4 text-blue-600' />
+              <div className='flex items-center gap-2 text-sm' role='listitem'>
+                <Smartphone className='h-4 w-4 text-blue-600' aria-hidden='true' />
                 <span>Design Responsivo</span>
+                <Badge variant='outline' className='text-xs ml-auto'>Ativo</Badge>
               </div>
-              <div className='flex items-center gap-2 text-sm'>
-                <Shield className='h-4 w-4 text-purple-600' />
+              <div className='flex items-center gap-2 text-sm' role='listitem'>
+                <Shield className='h-4 w-4 text-purple-600' aria-hidden='true' />
                 <span>LGPD Compliant</span>
+                <Badge variant='outline' className='text-xs ml-auto'>Ativo</Badge>
               </div>
             </CardContent>
           </Card>
+
+          {/* Keyboard shortcuts help */}
+          <div className='mt-4 p-3 bg-gray-100 rounded-lg'>
+            <h3 className='text-sm font-semibold mb-2' id='shortcuts-help'>
+              Atalhos de Teclado:
+            </h3>
+            <ul className='text-xs text-gray-600 space-y-1' aria-labelledby='shortcuts-help'>
+              <li>• Enter: Enviar mensagem</li>
+              <li>• Escape: Limpar campo</li>
+              <li>• Alt+1: Focar no campo de mensagem</li>
+              <li>• Alt+E: Exportar conversa</li>
+              <li>• Alt+C: Limpar conversa</li>
+              <li>• Tab: Navegar entre elementos</li>
+            </ul>
+          </div>
         </div>
 
         {/* Main Chat Area */}
@@ -382,40 +598,58 @@ export const NeonProChatInterface: React.FC = () => {
             </div>
 
             <div className='flex items-center gap-2'>
-              <Button
+              <AccessibilityButton
                 variant='outline'
                 size='sm'
                 onClick={() => setShowExport(!showExport)}
-                aria-label='Exportar conversa'
+                ariaLabel='Exportar conversa'
+                healthcareContext='administrative'
+                shortcutKey='e'
+                announcement={showExport ? 'Ocultar opções de exportação' : 'Mostrar opções de exportação'}
               >
                 <Download className='h-4 w-4' />
-              </Button>
-              <Button
+              </AccessibilityButton>
+              <AccessibilityButton
                 variant='outline'
                 size='sm'
                 onClick={() => activeAgent && clearChat(activeAgent.type)}
-                aria-label='Limpar conversa'
+                ariaLabel='Limpar conversa'
+                healthcareContext='administrative'
+                shortcutKey='c'
+                announcement='Conversa limpa'
+                disabled={!activeAgent}
               >
                 <Trash2 className='h-4 w-4' />
-              </Button>
+              </AccessibilityButton>
             </div>
           </div>
 
           {/* Export Controls */}
           {showExport && (
-            <div className='p-4 bg-gray-50 border-b'>
+            <div
+              className='p-4 bg-gray-50 border-b'
+              role='region'
+              aria-label='Opções de exportação'
+            >
               <div className='flex items-center gap-2'>
                 <span className='text-sm font-medium'>Exportar conversa:</span>
-                <Button size='sm' onClick={handleExport}>
+                <AccessibilityButton
+                  size='sm'
+                  onClick={handleExport}
+                  healthcareContext='administrative'
+                  ariaLabel='Exportar conversa como JSON'
+                >
                   Download JSON
-                </Button>
-                <Button
+                </AccessibilityButton>
+                <AccessibilityButton
                   variant='outline'
                   size='sm'
                   onClick={() => setShowExport(false)}
+                  healthcareContext='administrative'
+                  ariaLabel='Cancelar exportação'
                 >
                   Cancelar
-                </Button>
+                </AccessibilityButton>
               </div>
             </div>
           )}
@@ -424,29 +658,37 @@ export const NeonProChatInterface: React.FC = () => {
           <ComplianceBanner />
 
           {/* Messages Area */}
-          <div className='flex-1 overflow-y-auto p-4 space-y-4'>
-            {activeAgent?.messages.length === 0
-              ? (
-                <div className='flex items-center justify-center h-full text-gray-500'>
-                  <div className='text-center'>
-                    <MessageSquare className='h-12 w-12 mx-auto mb-4 opacity-50' />
-                    <p className='text-lg font-medium'>Comece uma conversa</p>
-                    <p className='text-sm'>Envie uma mensagem para {activeAgent?.name}</p>
-                  </div>
+          <div
+            className='flex-1 overflow-y-auto p-4 space-y-4'
+            role='log'
+            aria-label='Mensagens do chat'
+            aria-live='polite'
+            aria-atomic='false'
+          >
+            {activeAgent?.messages.length === 0 ? (
+              <div
+                className='flex items-center justify-center h-full text-gray-500'
+                role='status'
+                aria-live='polite'
+              >
+                <div className='text-center'>
+                  <MessageSquare className='h-12 w-12 mx-auto mb-4 opacity-50' aria-hidden='true' />
+                  <p className='text-lg font-medium'>Comece uma conversa</p>
+                  <p className='text-sm'>Envie uma mensagem para {activeAgent?.name || 'o assistente'}</p>
                 </div>
-              )
-              : (
-                <>
-                  {activeAgent.messages.map(message => (
-                    <MessageBubble
-                      key={message.id}
-                      message={message}
-                      isUser={message.role === 'user'}
-                    />
-                  ))}
-                  <div ref={messagesEndRef} />
-                </>
-              )}
+              </div>
+            ) : (
+              <>
+                {activeAgent.messages.map((message, index) => (
+                  <MessageBubble
+                    key={message.id}
+                    message={message}
+                    isUser={message.role === 'user'}
+                  />
+                ))}
+                <div ref={messagesEndRef} aria-hidden='true' />
+              </>
+            )}
           </div>
 
           {/* Input Area */}

@@ -1,12 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useLogin } from '@/hooks/useAuth.js'
 import type { AuthError } from '@neonpro/types'
+import { AccessibilityButton } from '@/components/ui/accessibility-button.js'
+import { AccessibilityInput } from '@/components/ui/accessibility-input.js'
+import { Alert, AlertDescription } from '@/components/ui/alert.js'
+import { cn } from '@/lib/utils.js'
 
 interface LoginFormProps {
   onSuccess?: () => void
   onForgotPassword?: () => void
   onSignUp?: () => void
   className?: string
+  'aria-label'?: string
+  'aria-describedby'?: string
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({
@@ -14,6 +20,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   onForgotPassword,
   onSignUp,
   className = '',
+  'aria-label': ariaLabel,
+  'aria-describedby': ariaDescribedBy,
 }) => {
   const { login, isLoading } = useLogin()
   const [formData, setFormData] = useState({
@@ -22,24 +30,114 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   })
   const [error, setError] = useState<AuthError | null>(null)
   const [rememberMe, setRememberMe] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  // Refs for focus management
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
+  const submitButtonRef = useRef<HTMLButtonElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
+
+  // Generate unique IDs for accessibility
+  const formId = React.useId()
+  const errorId = error ? `${formId}-error` : undefined
+  const emailId = `${formId}-email`
+  const passwordId = `${formId}-password`
+  const rememberId = `${formId}-remember`
+
+  // Set focus on first field when component mounts
+  useEffect(() => {
+    emailRef.current?.focus()
+  }, [])
+
+  // Announce errors to screen readers
+  useEffect(() => {
+    if (error) {
+      // Create live region for error announcement
+      const announcement = document.createElement('div')
+      announcement.setAttribute('role', 'alert')
+      announcement.setAttribute('aria-live', 'assertive')
+      announcement.className = 'sr-only'
+      announcement.textContent = `Erro de login: ${error.message}`
+      document.body.appendChild(announcement)
+
+      // Focus on first errored field
+      if (!formData.email) {
+        emailRef.current?.focus()
+      } else if (!formData.password) {
+        passwordRef.current?.focus()
+      }
+
+      // Remove announcement after delay
+      setTimeout(() => {
+        document.body.removeChild(announcement)
+      }, 5000)
+    }
+  }, [error, formData.email, formData.password])
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault()
+      handleSubmit(e as unknown as React.FormEvent)
+    }
+
+    // Enhanced navigation with Tab + Shift
+    if (e.key === 'Tab' && e.shiftKey) {
+      // Allow normal tab navigation but with enhanced focus management
+      setTimeout(() => {
+        const activeElement = document.activeElement
+        if (activeElement === formRef.current) {
+          submitButtonRef.current?.focus()
+        }
+      }, 0)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 
-    if (!formData.email || !formData.password) {
+    // Enhanced validation with accessibility feedback
+    const validationErrors: string[] = []
+
+    if (!formData.email?.trim()) {
+      validationErrors.push('Email é obrigatório')
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      validationErrors.push('Email inválido')
+    }
+
+    if (!formData.password?.trim()) {
+      validationErrors.push('Senha é obrigatória')
+    } else if (formData.password.length < 6) {
+      validationErrors.push('Senha deve ter pelo menos 6 caracteres')
+    }
+
+    if (validationErrors.length > 0) {
       setError({
         code: 'VALIDATION_ERROR',
-        message: 'Por favor, preencha todos os campos',
+        message: validationErrors.join('. ')
       })
       return
     }
 
     const result = await login(formData.email, formData.password)
-    
+
     if (result.error) {
       setError(result.error)
     } else {
+      // Announce success to screen readers
+      const successAnnouncement = document.createElement('div')
+      successAnnouncement.setAttribute('role', 'status')
+      successAnnouncement.setAttribute('aria-live', 'polite')
+      successAnnouncement.className = 'sr-only'
+      successAnnouncement.textContent = 'Login realizado com sucesso'
+      document.body.appendChild(successAnnouncement)
+
+      setTimeout(() => {
+        document.body.removeChild(successAnnouncement)
+      }, 3000)
+
       onSuccess?.()
     }
   }
@@ -47,108 +145,186 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
-    // Limpar erro quando usuário começar a digitar
-    if (error) setError(null)
+
+    // Clear error when user starts typing
+    if (error) {
+      setError(null)
+
+      // Announce field clearing to screen readers
+      const clearAnnouncement = document.createElement('div')
+      clearAnnouncement.setAttribute('role', 'status')
+      clearAnnouncement.setAttribute('aria-live', 'polite')
+      clearAnnouncement.className = 'sr-only'
+      clearAnnouncement.textContent = `Campo ${name} limpo`
+      document.body.appendChild(clearAnnouncement)
+
+      setTimeout(() => {
+        document.body.removeChild(clearAnnouncement)
+      }, 1000)
+    }
+  }
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRememberMe(e.target.checked)
+
+    // Announce checkbox state change
+    const announcement = document.createElement('div')
+    announcement.setAttribute('role', 'status')
+    announcement.setAttribute('aria-live', 'polite')
+    announcement.className = 'sr-only'
+    announcement.textContent = e.target.checked
+      ? 'Lembrar de mim ativado'
+      : 'Lembrar de mim desativado'
+    document.body.appendChild(announcement)
+
+    setTimeout(() => {
+      document.body.removeChild(announcement)
+    }, 1000)
   }
 
   return (
-    <div className={`w-full max-w-md mx-auto ${className}`}>
+    <div
+      className={`w-full max-w-md mx-auto ${className}`}
+      role="region"
+      aria-label={ariaLabel || 'Formulário de login'}
+      aria-describedby={ariaDescribedBy}
+    >
       <div className="bg-white shadow-lg rounded-lg p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-900 mb-6">
+        <h2 className="text-2xl font-bold text-center text-gray-900 mb-6" id={`${formId}-title`}>
           Entrar na NeonPro
         </h2>
 
+        {/* Error Announcement with proper ARIA */}
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-            <p className="text-sm text-red-600">{error.message}</p>
-          </div>
+          <Alert className="mb-4 healthcare-context-emergency" role="alert" aria-live="assertive">
+            <AlertDescription>{error.message}</AlertDescription>
+          </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="space-y-4"
+          noValidate
+          aria-labelledby={`${formId}-title`}
+          aria-describedby={errorId}
+          onKeyDown={handleKeyDown}
+        >
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              id="email"
+            <AccessibilityInput
+              ref={emailRef}
+              id={emailId}
               name="email"
               type="email"
-              autoComplete="email"
+              label="Email"
               required
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="seu@email.com"
               disabled={isLoading}
+              autoComplete="email"
+              healthcareContext="personal"
+              lgpdSensitive={true}
+              dataPurpose="Autenticação do usuário"
+              screenReaderInstructions="Digite seu endereço de email para login"
+              ariaLabel="Email para login"
+              helperText="Digite seu email cadastrado"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Senha
-            </label>
-            <input
-              id="password"
+            <AccessibilityInput
+              ref={passwordRef}
+              id={passwordId}
               name="password"
-              type="password"
-              autoComplete="current-password"
+              type={showPassword ? 'text' : 'password'}
+              label="Senha"
               required
               value={formData.password}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
               disabled={isLoading}
+              autoComplete="current-password"
+              healthcareContext="personal"
+              lgpdSensitive={true}
+              dataPurpose="Autenticação do usuário"
+              screenReaderInstructions="Digite sua senha para acessar o sistema"
+              ariaLabel="Senha para login"
+              helperText="Mínimo 6 caracteres"
             />
           </div>
 
           <div className="flex items-center justify-between">
-            <label className="flex items-center">
+            <label className="flex items-center cursor-pointer">
               <input
+                id={rememberId}
                 type="checkbox"
                 checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                onChange={handleCheckboxChange}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded focus:ring-2"
                 disabled={isLoading}
+                aria-describedby={`${rememberId}-help`}
               />
               <span className="ml-2 text-sm text-gray-600">Lembrar de mim</span>
+              <span
+                id={`${rememberId}-help`}
+                className="sr-only"
+              >
+                Mantenha sessão ativa neste dispositivo
+              </span>
             </label>
 
-            <button
+            <AccessibilityButton
               type="button"
+              variant="link"
               onClick={onForgotPassword}
-              className="text-sm text-blue-600 hover:text-blue-500 focus:outline-none focus:underline"
               disabled={isLoading}
+              ariaLabel="Recuperar senha esquecida"
+              healthcareContext="administrative"
+              className="text-sm p-0 h-auto"
             >
               Esqueci a senha
-            </button>
+            </AccessibilityButton>
           </div>
 
-          <button
+          <AccessibilityButton
+            ref={submitButtonRef}
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            loading={isLoading}
+            loadingText="Entrando..."
+            size="mobile-lg"
+            className="w-full min-h-[48px]"
+            ariaLabel="Fazer login no sistema"
+            healthcareContext="administrative"
+            shortcutKey="Enter"
+            announcement="Processando login"
           >
-            {isLoading ? (
-              <div className="flex items-center">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Entrando...
-              </div>
-            ) : (
-              'Entrar'
-            )}
-          </button>
+            Entrar
+          </AccessibilityButton>
         </form>
 
-        <div className="mt-6 text-center">
+        <div className="mt-6 text-center" role="navigation" aria-label="Opções de conta">
           <p className="text-sm text-gray-600">
             Não tem uma conta?{' '}
-            <button
+            <AccessibilityButton
+              type="button"
+              variant="link"
               onClick={onSignUp}
-              className="text-blue-600 hover:text-blue-500 focus:outline-none focus:underline font-medium"
               disabled={isLoading}
+              ariaLabel="Criar nova conta"
+              healthcareContext="administrative"
+              className="text-sm p-0 h-auto font-medium"
             >
               Cadastre-se
-            </button>
+            </AccessibilityButton>
+          </p>
+        </div>
+
+        {/* Keyboard shortcuts help */}
+        <div className="mt-4 text-xs text-gray-500 text-center">
+          <p>
+            Atalhos: Ctrl+Enter para enviar • Tab para navegar
           </p>
         </div>
       </div>

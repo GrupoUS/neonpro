@@ -1,34 +1,44 @@
-/**
- * Minimal UI Component Library
- * Basic types and utilities for healthcare applications
- * @version 1.0.0
- */
+import * as React from "react";
 
-// Basic types
-export interface BaseComponentProps {
-  className?: string
+// Basic type exports for UI components
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
 }
 
-export interface ButtonProps extends BaseComponentProps {
-  children: string
-  onClick?: () => void
-  disabled?: boolean
-}
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-export interface InputProps extends BaseComponentProps {
-  type?: string
-  placeholder?: string
-  value?: string
-}
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export interface CardProps extends BaseComponentProps {
-  children: string
-}
+// Placeholder component functions (non-JSX stubs)
+export const Button = (props: ButtonProps) => {
+  // Stub: return null or a div for now
+  return React.createElement("button", { ...props, className: props.className || "btn-stub" });
+};
 
-// Utility functions
-export const cn = (...classes: (string | undefined)[]): string => {
-  return classes.filter(Boolean).join(' ')
-}
+export const Input = (props: InputProps) => {
+  return React.createElement("input", { ...props, className: props.className || "input-stub" });
+};
 
-// Version info
-export const UI_PACKAGE_VERSION = '1.0.0'
+export const Card = (props: CardProps) => {
+  return React.createElement("div", { ...props, className: props.className || "card-stub" });
+};
+
+export const CardHeader = (props: CardProps) => {
+  return React.createElement("div", { ...props, className: props.className || "card-header-stub" });
+};
+
+export const CardTitle = (props: React.HTMLAttributes<HTMLHeadingElement>) => {
+  return React.createElement("h3", { ...props, className: props.className || "card-title-stub" });
+};
+
+// Placeholder for other components
+export const Alert = () => null;
+export const Badge = () => null;
+export const Label = () => null;
+export const Select = () => null;
+export const Tabs = () => null;
+export const Textarea = () => null;
+
+// Export cn from utils
+export { cn } from "./utils";

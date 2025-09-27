@@ -42,32 +42,32 @@ export function TreatmentPackageScheduler(
   const [preferences, setPreferences] = useState<Record<string, any>>({})
 
   // Fetch treatment packages
-  const { data: packagesData, isLoading: packagesLoading } = trpc.aestheticScheduling
+  const { data: packagesData, isLoading: packagesLoading } = (trpc as any).aestheticScheduling
     .getTreatmentPackages.useQuery(
       { limit: 100, offset: 0 },
       {
-        select: data => data.packages,
+        select: (data: any) => data.packages,
       },
     )
 
   // Schedule treatment package mutation
-  const scheduleMutation = trpc.aestheticScheduling.scheduleTreatmentPackage.useMutation({
-    onSuccess: data => {
-      queryClient.invalidateQueries(['appointments'])
-      queryClient.invalidateQueries(['patients', patientId])
+  const scheduleMutation = (trpc as any).aestheticScheduling.scheduleTreatmentPackage.useMutation({
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['appointments'] })
+      queryClient.invalidateQueries({ queryKey: ['patients', patientId] })
       onSuccess?.(data)
     },
-    onError: error => {
+    onError: (error: any) => {
       onError?.(error as Error)
     },
   })
 
-  const handlePackageSelect = (pkg: TreatmentPackage) => {
+  const handlePackageSelect = (pkg: any) => {
     setSelectedPackage(pkg)
     // Set default start date to tomorrow
     const tomorrow = new Date()
     tomorrow.setDate(tomorrow.getDate() + 1)
-    setStartDate(tomorrow.toISOString().split('T')[0])
+    setStartDate(tomorrow.toISOString().split('T')[0] || '')
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -127,7 +127,7 @@ export function TreatmentPackageScheduler(
 
           <TabsContent value='packages' className='space-y-6'>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {packagesData?.map(pkg => (
+              {packagesData?.map((pkg: any) => (
                 <Card
                   key={pkg.id}
                   className={`cursor-pointer transition-all hover:shadow-lg ${

@@ -1,11 +1,41 @@
-// Re-export all types from different modules
+export interface Patient {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  medicalHistory: string;
+  consentGiven: boolean;
+  createdAt: Date;
+}
 
-export * from './api.js'
-export * from './auth.js'
-export * from './common.js'
-export * from './database.js'
-export * from './healthcare.js'
+export interface Appointment {
+  id: string;
+  patientId: string;
+  professionalId: string;
+  date: Date;
+  type: 'consultation' | 'treatment' | 'follow-up';
+  status: 'scheduled' | 'completed' | 'cancelled';
+  notes: string;
+}
 
-// Package version and metadata
-export const TYPES_VERSION = '1.0.0'
-export const PACKAGE_NAME = '@neonpro/types'
+export interface Professional {
+  id: string;
+  name: string;
+  specialty: string;
+  licenseNumber: string;
+  availability: Date[];
+}
+
+export interface Treatment {
+  id: string;
+  name: string;
+  description: string;
+  duration: number; // in minutes
+  price: number;
+  category: 'aesthetic' | 'medical' | 'wellness';
+}
+
+export type HealthcareUser = Patient | Professional;
+
+export * from './guards.ts';
+export * from './validation.ts';

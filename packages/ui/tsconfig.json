@@ -1,35 +1,17 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src",
-    "baseUrl": ".",
-    "tsBuildInfoFile": "./.tsbuildinfo-ui",
-    "paths": {
-      "@/*": ["src/*"],
-      "@/components/*": ["src/components/*"],
-      "@/hooks/*": ["src/hooks/*"],
-      "@/utils/*": ["src/utils/*"],
-      "@/types/*": ["src/types/*"]
-    },
-    "composite": true,
-    "module": "Node16",
-    "noEmit": false,
-    "allowImportingTsExtensions": false,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "jsx": "react-jsx",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "jsx": "react-jsx",
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "ui/*": ["./src/*"]
+    }
   },
-  "include": ["src/index.ts"],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/*.test.tsx",
-    "**/*.spec.tsx"
-  ],
-  "references": [{ "path": "../healthcare-core" }]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

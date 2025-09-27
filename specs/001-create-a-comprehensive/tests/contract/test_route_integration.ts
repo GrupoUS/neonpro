@@ -1,6 +1,5 @@
 /**
  * Contract Test: Route Integration Validation
- * Agent: @test  
  * Task: T006 - Contract test for route integration validation
  * Phase: RED (These tests should FAIL initially)
  */
@@ -102,15 +101,15 @@ interface ComplianceImplementation {
 
 // Mock analyzer class (will be implemented in GREEN phase)
 class RouteIntegrationAnalyzer {
-  async analyzeApiRoutes(apiPath: string): Promise<ApiRouteIntegration[]> {
+  async analyzeApiRoutes(_apiPath: string): Promise<ApiRouteIntegration[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async analyzeFrontendRoutes(webPath: string): Promise<FrontendRouteIntegration[]> {
+  async analyzeFrontendRoutes(_webPath: string): Promise<FrontendRouteIntegration[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async validateServiceIntegrations(routes: ApiRouteIntegration[]): Promise<MissingIntegration[]> {
+  async validateServiceIntegrations(_routes: ApiRouteIntegration[]): Promise<MissingIntegration[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
@@ -138,10 +137,10 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate API routes use correct package services', async () => {
       // RED: This test should FAIL initially
       const apiRoutes = await analyzer.analyzeApiRoutes('apps/api');
-      
+
       expect(apiRoutes).toBeDefined();
       expect(Array.isArray(apiRoutes)).toBe(true);
-      
+
       // Expected: All API routes should use appropriate package services
       apiRoutes.forEach(route => {
         expect(route.package_services_used.length).toBeGreaterThan(0);
@@ -152,14 +151,14 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate /api/clients uses database, security, and core-services', async () => {
       // RED: This test should FAIL initially
       const apiRoutes = await analyzer.analyzeApiRoutes('apps/api');
-      
+
       const clientsRoute = apiRoutes.find(route => route.route_path.includes('/clients'));
       expect(clientsRoute).toBeDefined();
-      
+
       if (clientsRoute) {
         const expectedServices = ['@neonpro/database', '@neonpro/security', '@neonpro/core-services'];
         const usedPackages = clientsRoute.package_services_used.map(service => service.package_name);
-        
+
         expectedServices.forEach(expectedService => {
           expect(usedPackages).toContain(expectedService);
         });
@@ -169,7 +168,7 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate healthcare compliance in all API routes', async () => {
       // RED: This test should FAIL initially
       const apiRoutes = await analyzer.analyzeApiRoutes('apps/api');
-      
+
       // Expected: All routes should be healthcare compliant
       apiRoutes.forEach(route => {
         expect(route.healthcare_compliance.lgpd_compliant).toBe(true);
@@ -181,7 +180,7 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate error handling in all API routes', async () => {
       // RED: This test should FAIL initially
       const apiRoutes = await analyzer.analyzeApiRoutes('apps/api');
-      
+
       // Expected: All routes should have proper error handling
       apiRoutes.forEach(route => {
         expect(route.error_handling.try_catch_blocks).toBe(true);
@@ -195,10 +194,10 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate frontend routes use correct package components', async () => {
       // RED: This test should FAIL initially
       const frontendRoutes = await analyzer.analyzeFrontendRoutes('apps/web');
-      
+
       expect(frontendRoutes).toBeDefined();
       expect(Array.isArray(frontendRoutes)).toBe(true);
-      
+
       // Expected: All frontend routes should use appropriate packages
       frontendRoutes.forEach(route => {
         const totalPackageUsage = route.package_components_used.length + route.package_utilities_used.length;
@@ -209,17 +208,17 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate /dashboard uses shared and utils packages', async () => {
       // RED: This test should FAIL initially
       const frontendRoutes = await analyzer.analyzeFrontendRoutes('apps/web');
-      
+
       const dashboardRoute = frontendRoutes.find(route => route.route_path.includes('/dashboard'));
       expect(dashboardRoute).toBeDefined();
-      
+
       if (dashboardRoute) {
         const expectedPackages = ['@neonpro/shared', '@neonpro/utils'];
         const usedPackages = [
           ...dashboardRoute.package_components_used.map(comp => comp.package_name),
           ...dashboardRoute.package_utilities_used.map(util => util.source_package)
         ];
-        
+
         expectedPackages.forEach(expectedPackage => {
           expect(usedPackages).toContain(expectedPackage);
         });
@@ -229,7 +228,7 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate frontend routes have performance optimizations', async () => {
       // RED: This test should FAIL initially
       const frontendRoutes = await analyzer.analyzeFrontendRoutes('apps/web');
-      
+
       // Expected: All routes should have performance optimizations
       frontendRoutes.forEach(route => {
         expect(route.code_splitting).toBe(true);
@@ -241,15 +240,15 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should validate web app does not import backend-specific packages', async () => {
       // RED: This test should FAIL initially
       const frontendRoutes = await analyzer.analyzeFrontendRoutes('apps/web');
-      
+
       const forbiddenPackages = ['@neonpro/database'];
-      
+
       frontendRoutes.forEach(route => {
         const usedPackages = [
           ...route.package_components_used.map(comp => comp.package_name),
           ...route.package_utilities_used.map(util => util.source_package)
         ];
-        
+
         forbiddenPackages.forEach(forbidden => {
           expect(usedPackages).not.toContain(forbidden);
         });
@@ -262,10 +261,10 @@ describe('Route Integration Validation (Contract Tests)', () => {
       // RED: This test should FAIL initially
       const apiRoutes = await analyzer.analyzeApiRoutes('apps/api');
       const missingIntegrations = await analyzer.validateServiceIntegrations(apiRoutes);
-      
+
       expect(missingIntegrations).toBeDefined();
       expect(Array.isArray(missingIntegrations)).toBe(true);
-      
+
       // Expected: No high-impact missing integrations
       const highImpactMissing = missingIntegrations.filter(missing => missing.impact_level === 'high');
       expect(highImpactMissing).toHaveLength(0);
@@ -274,10 +273,10 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should detect broken integrations', async () => {
       // RED: This test should FAIL initially
       const brokenIntegrations = await analyzer.detectBrokenIntegrations();
-      
+
       expect(brokenIntegrations).toBeDefined();
       expect(Array.isArray(brokenIntegrations)).toBe(true);
-      
+
       // Expected: No critical broken integrations
       const criticalBroken = brokenIntegrations.filter(broken => broken.severity === 'critical');
       expect(criticalBroken).toHaveLength(0);
@@ -286,7 +285,7 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should calculate integration health score above 90%', async () => {
       // RED: This test should FAIL initially
       const healthScore = await analyzer.calculateIntegrationHealth();
-      
+
       expect(healthScore).toBeDefined();
       expect(typeof healthScore).toBe('number');
       expect(healthScore).toBeGreaterThanOrEqual(90);
@@ -296,7 +295,7 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should provide fix suggestions for broken integrations', async () => {
       // RED: This test should FAIL initially
       const brokenIntegrations = await analyzer.detectBrokenIntegrations();
-      
+
       // Expected: All broken integrations should have fix suggestions
       brokenIntegrations.forEach(broken => {
         expect(broken.fix_suggestion).toBeDefined();
@@ -309,7 +308,7 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should generate comprehensive route integration matrix', async () => {
       // RED: This test should FAIL initially
       const matrix = await analyzer.generateRouteIntegrationMatrix();
-      
+
       expect(matrix).toBeDefined();
       expect(matrix.api_routes.length).toBeGreaterThan(0);
       expect(matrix.frontend_routes.length).toBeGreaterThan(0);
@@ -320,19 +319,19 @@ describe('Route Integration Validation (Contract Tests)', () => {
     test('should identify all route integration patterns', async () => {
       // RED: This test should FAIL initially
       const matrix = await analyzer.generateRouteIntegrationMatrix();
-      
+
       // Expected patterns from NeonPro architecture
       const expectedApiRoutes = ['/clients', '/appointments', '/financial', '/auth'];
       const expectedFrontendRoutes = ['/dashboard', '/clients', '/appointments', '/settings'];
-      
+
       const actualApiPaths = matrix.api_routes.map(route => route.route_path);
       const actualFrontendPaths = matrix.frontend_routes.map(route => route.route_path);
-      
+
       expectedApiRoutes.forEach(expectedPath => {
         const hasMatchingRoute = actualApiPaths.some(path => path.includes(expectedPath));
         expect(hasMatchingRoute).toBe(true);
       });
-      
+
       expectedFrontendRoutes.forEach(expectedPath => {
         const hasMatchingRoute = actualFrontendPaths.some(path => path.includes(expectedPath));
         expect(hasMatchingRoute).toBe(true);

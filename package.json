@@ -28,7 +28,7 @@
   },
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --concurrency=10",
+    "dev": "turbo dev --concurrency=15",
     "dev:web": "turbo dev --filter=@neonpro/web",
     "dev:api": "turbo dev --filter=@neonpro/api",
     "test": "vitest",

@@ -2,8 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "rootDir": "./src",
     "baseUrl": ".",
     "lib": ["ES2022", "DOM"],
@@ -15,6 +15,8 @@
     "strict": false,
     "noResolve": false,
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
+    "esModuleInterop": true,
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./src/*"],

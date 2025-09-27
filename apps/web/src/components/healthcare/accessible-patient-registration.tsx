@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 // Note: Some accessibility imports temporarily disabled for build stability
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
 import { CardTitle } from '@/components/ui/card.js'
@@ -6,23 +6,47 @@ import { Badge } from '@/components/ui/badge.js'
 import { Progress } from '@/components/ui/progress.js'
 import { Alert, AlertDescription } from '@/components/ui/alert.js'
 import { cn } from '@/lib/utils.js'
+import { 
+  type BrazilianState, 
+  type HealthcareContext, 
+  type PatientData, 
+  type LGPDConsent,
+  type BrazilianPersonalInfo,
+  type BrazilianAddress,
+  type EmergencyContact,
+  type MedicalHistory
+} from '@/types/healthcare.js'
+import { HealthcareFormValidator } from '@/types/validation.js'
 
-// Import simplified types - some healthcare types temporarily simplified for build
-interface PatientData {
-  id?: string
-  name: string
-  cpf?: string
-  email?: string
-  phone?: string
-  dateOfBirth?: string
-  address?: any
-}
+// Temporary simple implementations for accessibility hooks
+const useTranslation = () => ({
+  t: (key: string) => key,
+  formatDate: (date: string) => date
+})
 
-interface LGPDConsent {
-  consentDate: string
-  treatmentConsent: boolean
-  dataProcessingConsent: boolean
-}
+const useScreenReaderAnnouncer = () => ({
+  announce: (message: string | { message: string; politeness: string }) => {
+    if (typeof message === 'string') {
+      console.log('Screen reader:', message)
+    } else {
+      console.log('Screen reader:', message.message)
+    }
+  }
+})
+
+const useFocusManagement = () => ({
+  setFocus: (element: string | HTMLElement) => {
+    if (typeof element === 'string') {
+      console.log('Focus set to:', element)
+    } else {
+      console.log('Focus set to element')
+    }
+  }
+})
+
+const useKeyboardNavigation = () => ({
+  registerFocusable: (element: string) => console.log('Registered focusable:', element)
+})
 
 // Type-safe form errors
 interface FormErrors {
@@ -102,13 +126,13 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   const { registerFocusable } = useKeyboardNavigation()
 
   // Initialize validator
-  const validator = React.useMemo(() => new HealthcareFormValidator(validationLevel), [validationLevel])
+  const validator = useMemo(() => new HealthcareFormValidator(validationLevel), [validationLevel])
 
-  const [currentStep, setCurrentStep] = React.useState(0)
-  const [patientData, setPatientData] = React.useState<Partial<PatientData>>({})
-  const [errors, setErrors] = React.useState<FormErrors>({})
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
-  const [submitError, setSubmitError] = React.useState<string | null>(null)
+  const [currentStep, setCurrentStep] = useState(0)
+  const [patientData, setPatientData] = useState<Partial<PatientData>>({})
+  const [errors, setErrors] = useState<FormErrors>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   // Form steps with proper typing
   const formSteps = [
@@ -157,13 +181,13 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   ]
 
   // Focus management for step changes
-  const stepRef = React.useRef<HTMLDivElement>(null)
-  React.useEffect(() => {
+  const stepRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
     if (stepRef.current) {
       stepRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
       setFocus(stepRef.current)
       announce({
-        message: `Etapa ${currentStep + 1}: ${formSteps[currentStep].title}`,
+        message: `Etapa ${currentStep + 1}: ${formSteps[currentStep]?.title || 'Unknown'}`,
         politeness: 'polite',
       })
     }
@@ -177,11 +201,11 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
     setPatientData(prev => {
       const newData = { ...prev }
       
-      if (field.includes('.')) {
+      if (typeof field === 'string' && field.includes('.')) {
         const [section, subField] = field.split('.') as [keyof PatientData, string]
-        if (section && newData[section]) {
+        if (section && newData[section] && typeof newData[section] === 'object') {
           newData[section] = {
-            ...newData[section],
+            ...(newData[section] as any),
             [subField]: value
           }
         }

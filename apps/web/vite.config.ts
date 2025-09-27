@@ -1,27 +1,19 @@
-// @ts-expect-error - Module not available in current environment
-let TanStackRouterVite: () => { name: string }
-try {
-  // @ts-expect-error
-  TanStackRouterVite = require('@tanstack/router-plugin/vite').TanStackRouterVite
-} catch {
-  TanStackRouterVite = () => ({ name: 'tanstack-router' })
-}
-// Fallback type declaration to suppress TS2307 for @tanstack/router-plugin/vite
-declare module '@tanstack/router-plugin' {
-  export function TanStackRouterVite(): { name: string }
-}
-
+import path from 'path'
 import react from '@vitejs/plugin-react'
-import path from 'node:path'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { defineConfig } from 'vite'
 
+let TanStackRouterVite: () => { name: string }
+try {
+  TanStackRouterVite = require('@tanstack/router-plugin/vite').TanStackRouterVite
+} catch {
+  TanStackRouterVite = () => ({ name: 'tanstack-router' })
+}
+
 export default defineConfig({
   plugins: [
-    // @ts-expect-error - Ignore TanStackRouterVite type mismatch due to monorepo version differences
     TanStackRouterVite(),
-    // @ts-expect-error - Ignore react plugin type mismatch due to monorepo version differences
     react(),
     tsconfigPaths(),
   ],

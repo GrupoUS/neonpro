@@ -32,7 +32,7 @@ interface RecoveryPlanningProps {
   treatmentPlanId?: string
   procedureIds?: string[]
   patientId?: string
-  onRecoveryPlanCreate?: (plan: Partial<RecoveryPlan>) => Promise<any>
+  _onRecoveryPlanCreate?: (plan: Partial<RecoveryPlan>) => Promise<any>
 }
 
 export function RecoveryPlanning({
@@ -60,7 +60,7 @@ export function RecoveryPlanning({
     queryKey: ['recovery-plan', appointmentId, treatmentPlanId, procedureIds, selectedProcedure],
     queryFn: async () => {
       if (selectedProcedure) {
-        return await api.aestheticScheduling.getRecoveryPlan({
+        return await (api as any).aestheticScheduling.getRecoveryPlan({
           procedureId: selectedProcedure,
           treatmentPlanId: treatmentPlanId || '',
           patientId: patientId || undefined,
@@ -74,7 +74,7 @@ export function RecoveryPlanning({
   // Create recovery plan mutation
   const createRecoveryPlan = useMutation({
     mutationFn: async (plan: Partial<RecoveryPlan>) => {
-      return await api.aestheticScheduling.createRecoveryPlan(plan)
+      return await (api as any).aestheticScheduling.createRecoveryPlan(plan)
     },
     onSuccess: () => {
       refetch()

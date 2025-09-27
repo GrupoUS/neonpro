@@ -6,11 +6,17 @@ import { Loader2 } from 'lucide-react'
  */
 interface LoadingSpinnerProps {
   /** Size variant of the spinner */
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'mobile'
   /** Optional text to display alongside the spinner */
   text?: string
   /** Additional CSS classes for styling */
   className?: string
+  /** Accessibility label for screen readers */
+  ariaLabel?: string
+  /** Healthcare context for proper styling */
+  healthcareContext?: 'medical' | 'administrative' | 'emergency'
+  /** Whether to reduce motion for accessibility */
+  reduceMotion?: boolean
 }
 
 /**
@@ -38,17 +44,48 @@ export function LoadingSpinner({
   size = 'md',
   text,
   className = '',
+  ariaLabel,
+  healthcareContext,
+  reduceMotion = false,
 }: LoadingSpinnerProps) {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12',
+    sm: 'h-4 w-4',           // 16px - minimum touch target
+    md: 'h-8 w-8',           // 32px - standard
+    lg: 'h-12 w-12',         // 48px - large
+    xl: 'h-16 w-16',         // 64px - extra large
+    mobile: 'h-14 w-14',      // 56px - mobile optimized (WCAG 2.1 AA+)
   }
 
+  // Healthcare context colors
+  const contextColors = {
+    medical: 'text-red-600',
+    administrative: 'text-blue-600',
+    emergency: 'text-orange-600 animate-pulse',
+  }
+
+  const colorClass = contextColors[healthcareContext] || 'text-blue-600'
+  const animationClass = reduceMotion ? '' : 'animate-spin'
+
   return (
-    <div className={`flex items-center justify-center ${className}`}>
-      <Loader2 className={`animate-spin ${sizeClasses[size]} text-blue-600`} />
-      {text && <span className='ml-2 text-gray-600'>{text}</span>}
+    <div
+      className={`flex items-center justify-center ${className}`}
+      role='status'
+      aria-live='polite'
+      aria-label={ariaLabel || text || 'Carregando'}
+    >
+      <Loader2
+        className={`${animationClass} ${sizeClasses[size]} ${colorClass}`}
+        aria-hidden='true'
+      />
+      {text && (
+        <span className='ml-2 text-gray-600' aria-hidden='true'>
+          {text}
+        </span>
+      )}
+      {/* Screen reader only text if different from visual text */}
+      {text && ariaLabel && text !== ariaLabel && (
+        <span className='sr-only'>{ariaLabel}</span>
+      )}
     </div>
   )
 }
@@ -82,9 +119,21 @@ interface LoadingPageProps {
  */
 export function LoadingPage({ text = 'Carregando...' }: LoadingPageProps) {
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-      <div className='text-center'>
-        <LoadingSpinner size='lg' text={text} />
+    <div
+      className='min-h-screen flex items-center justify-center bg-gray-50'
+      role='main'
+      aria-label='Página de carregamento'
+    >
+      <div className='text-center max-w-md mx-4'>
+        <LoadingSpinner
+          size='xl'
+          text={text}
+          ariaLabel='Sistema carregando'
+          className='mb-4'
+        />
+        <p className='text-sm text-gray-500 mt-2'>
+          Por favor, aguarde enquanto processamos sua solicitação
+        </p>
       </div>
     </div>
   )
@@ -128,8 +177,18 @@ export function LoadingCard({
   className = '',
 }: LoadingCardProps) {
   return (
-    <div className={`bg-white rounded-lg shadow p-6 ${className}`}>
-      <LoadingSpinner text={text} />
+    <div
+      className={`bg-white rounded-lg shadow p-6 ${className}`}
+      role='status'
+      aria-live='polite'
+      aria-label='Carregando conteúdo'
+    >
+      <LoadingSpinner
+        size='lg'
+        text={text}
+        ariaLabel='Carregando dados'
+        healthcareContext='administrative'
+      />
     </div>
   )
 }

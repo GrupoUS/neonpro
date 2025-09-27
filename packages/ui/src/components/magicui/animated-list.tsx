@@ -1,4 +1,5 @@
-import { AnimatePresence, motion } from 'framer-motion'
+// Note: framer-motion temporarily disabled for build stability
+// import { AnimatePresence, motion } from 'framer-motion'
 import * as React from 'react'
 import { cn } from '../../utils'
 
@@ -27,18 +28,13 @@ export interface SharedAnimatedListProps<T = SharedAnimatedListItem> {
    */
   size?: 'sm' | 'md' | 'lg'
   /**
-   * Animation config
+   * Animation config - temporarily disabled for build stability
    */
   motion?: {
-    initial?: import('framer-motion').Target | boolean
-    animate?:
-      | import('framer-motion').TargetAndTransition
-      | import('framer-motion').VariantLabels
-      | boolean
-    exit?:
-      | import('framer-motion').TargetAndTransition
-      | import('framer-motion').VariantLabels
-    transition?: import('framer-motion').Transition
+    initial?: any // import('framer-motion').Target | boolean
+    animate?: any // | import('framer-motion').TargetAndTransition | import('framer-motion').VariantLabels | boolean
+    exit?: any // | import('framer-motion').TargetAndTransition | import('framer-motion').VariantLabels
+    transition?: any // import('framer-motion').Transition
   }
   /**
    * Loading/empty/error states
@@ -165,64 +161,56 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
         </li>
       )}
 
-      <AnimatePresence initial={false}>
-        {(items ?? []).map((item, idx) => {
-          const key = (item as SharedAnimatedListItem)?.id ?? idx
-          return (
-            <motion.li
-              key={key}
-              initial={motionCfg.initial}
-              animate={motionCfg.animate}
-              exit={motionCfg.exit}
-              transition={motionCfg.transition as import('framer-motion').Transition}
-              role={role === 'listbox' ? 'option' : 'listitem'}
-              tabIndex={0}
-              className={cn(
-                'rounded-md border border-border/60 bg-card/50 text-card-foreground',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
-                paddingBySize,
-              )}
-            >
-              {renderItem
-                ? (
-                  renderItem(item)
-                )
-                : (
-                  <div className='flex items-start justify-between gap-2'>
-                    <div>
-                      {(item as SharedAnimatedListItem)?.title && (
-                        <div className='text-sm font-medium'>
-                          {(item as SharedAnimatedListItem).title}
-                        </div>
-                      )}
-                      {(item as SharedAnimatedListItem)?.message && (
-                        <div className='text-xs text-muted-foreground'>
-                          {(item as SharedAnimatedListItem).message}
-                        </div>
-                      )}
-                    </div>
-                    {(item as SharedAnimatedListItem)?.createdAt && (
-                      <time
-                        className='text-[11px] text-muted-foreground'
-                        dateTime={new Date((item as SharedAnimatedListItem).createdAt || '')
-                          .toISOString()}
-                      >
-                        {new Date((item as SharedAnimatedListItem).createdAt || '')
-                          .toLocaleTimeString(
-                            'pt-BR',
-                            {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            },
-                          )}
-                      </time>
+      {(items ?? []).map((item, idx) => {
+        const key = (item as SharedAnimatedListItem)?.id ?? idx
+        return (
+          <li
+            key={key}
+            role={role === 'listbox' ? 'option' : 'listitem'}
+            tabIndex={0}
+            className={cn(
+              'rounded-md border border-border/60 bg-card/50 text-card-foreground',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40',
+              paddingBySize,
+            )}
+          >
+            {renderItem
+              ? renderItem(item)
+              : (
+                <div className='flex items-start justify-between gap-2'>
+                  <div>
+                    {(item as SharedAnimatedListItem)?.title && (
+                      <div className='text-sm font-medium'>
+                        {(item as SharedAnimatedListItem).title}
+                      </div>
+                    )}
+                    {(item as SharedAnimatedListItem)?.message && (
+                      <div className='text-xs text-muted-foreground'>
+                        {(item as SharedAnimatedListItem).message}
+                      </div>
                     )}
                   </div>
-                )}
-            </motion.li>
-          )
-        })}
-      </AnimatePresence>
+                  {(item as SharedAnimatedListItem)?.createdAt && (
+                    <time
+                      className='text-[11px] text-muted-foreground'
+                      dateTime={new Date((item as SharedAnimatedListItem).createdAt || '')
+                        .toISOString()}
+                    >
+                      {new Date((item as SharedAnimatedListItem).createdAt || '')
+                        .toLocaleTimeString(
+                          'pt-BR',
+                          {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          },
+                        )}
+                    </time>
+                  )}
+                </div>
+              )}
+          </li>
+        )
+      })}
     </ul>
   )
 }
