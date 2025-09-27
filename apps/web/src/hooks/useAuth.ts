@@ -1,5 +1,5 @@
-import { useAuth } from '@/contexts/AuthContext'
-import type { AuthCredentials, SignUpData, ProfessionType } from '@neonpro/types'
+import { useAuth } from '@/contexts/AuthContext.js'
+import type { AuthCredentials, SignUpData } from '@neonpro/types'
 
 // Re-export do hook principal
 export { useAuth }
@@ -25,7 +25,7 @@ export const useSignUp = () => {
     password: string, 
     firstName: string, 
     lastName: string, 
-    profession: ProfessionType,
+    profession: string,
     license?: string
   ) => {
     const data: SignUpData = {
@@ -35,7 +35,6 @@ export const useSignUp = () => {
       lastName,
       profession,
       license,
-      lgpdConsent: true, // Obrigatório no formulário
     }
     return await signUp(data)
   }

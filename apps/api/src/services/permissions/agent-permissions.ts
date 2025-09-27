@@ -5,9 +5,9 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
+import { Database } from '@neonpro/types'
 import { createClient } from '@supabase/supabase-js'
 import { z } from 'zod'
-import { Database } from '@neonpro/types'
 
 // Browser-compatible crypto API
 const getCrypto = () => {
@@ -22,9 +22,9 @@ const getCrypto = () => {
     return {
       createHash: () => ({
         update: () => ({
-          digest: (encoding: string) => Math.random().toString(36).substring(7)
-        })
-      })
+          digest: (encoding: string) => Math.random().toString(36).substring(7),
+        }),
+      }),
     }
   }
 }
@@ -41,8 +41,8 @@ const createHash = cryptoModule.createHash || ((algorithm: string) => ({
         hash = hash & hash // Convert to 32-bit integer
       }
       return Math.abs(hash).toString(16)
-    }
-  })
+    },
+  }),
 }))
 // Input validation schemas
 const PermissionContextSchema = z.object({

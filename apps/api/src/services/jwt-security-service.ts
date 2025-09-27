@@ -9,9 +9,9 @@
  * @version 1.0.0
  */
 
-import jwt, { SignOptions, VerifyOptions, JwtPayload } from './jwt-fallback'
 import crypto from 'crypto'
-import { EnhancedSessionManager } from '../security/enhanced-session-manager'
+import { EnhancedSessionManager } from '../security/enhanced-session-manager.js'
+import jwt, { JwtPayload, SignOptions, VerifyOptions } from './jwt-fallback'
 
 /**
  * JWT token payload with healthcare-specific claims
@@ -54,7 +54,12 @@ export interface TokenValidationResult {
   isValid: boolean
   payload?: HealthcareJWTPayload
   error?: string
-  errorCode?: 'INVALID_TOKEN' | 'EXPIRED_TOKEN' | 'REVOKED_TOKEN' | 'INVALID_SIGNATURE' | 'MISSING_CLAIMS'
+  errorCode?:
+    | 'INVALID_TOKEN'
+    | 'EXPIRED_TOKEN'
+    | 'REVOKED_TOKEN'
+    | 'INVALID_SIGNATURE'
+    | 'MISSING_CLAIMS'
   warnings?: string[]
 }
 
@@ -77,15 +82,16 @@ export class JWTSecurityService {
    */
   static async generateAccessToken(options: TokenGenerationOptions): Promise<string> {
     const { userId, ...additionalClaims } = options
-    
+
     const payload: HealthcareJWTPayload = {
       sub: userId,
       iss: this.ISSUER,
       aud: this.AUDIENCE,
-      exp: Math.floor(Date.now() / 1000) + this.parseExpiry(options.expiresIn || this.ACCESS_TOKEN_EXPIRY),
+      exp: Math.floor(Date.now() / 1000) +
+        this.parseExpiry(options.expiresIn || this.ACCESS_TOKEN_EXPIRY),
       iat: Math.floor(Date.now() / 1000),
       jti: this.generateJWTId(),
-      ...additionalClaims
+      ...additionalClaims,
     }
 
     const signingOptions: SignOptions = {
@@ -94,14 +100,18 @@ export class JWTSecurityService {
       subject: userId,
       issuer: this.ISSUER,
       audience: this.AUDIENCE,
-      jwtid: payload.jti
+      jwtid: payload.jti,
     }
 
     try {
       const privateKey = await this.getPrivateKey()
       return jwt.sign(payload, privateKey, signingOptions)
     } catch (error) {
-      throw new Error(`Failed to generate access token: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to generate access token: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
     }
   }
 
@@ -116,7 +126,7 @@ export class JWTSecurityService {
       exp: Math.floor(Date.now() / 1000) + this.parseExpiry(this.REFRESH_TOKEN_EXPIRY),
       iat: Math.floor(Date.now() / 1000),
       jti: this.generateJWTId(),
-      type: 'refresh'
+      type: 'refresh',
     }
 
     const signingOptions: SignOptions = {
@@ -125,14 +135,18 @@ export class JWTSecurityService {
       subject: userId,
       issuer: this.ISSUER,
       audience: this.AUDIENCE,
-      jwtid: payload.jti
+      jwtid: payload.jti,
     }
 
     try {
       const privateKey = await this.getPrivateKey()
       return jwt.sign(payload, privateKey, signingOptions)
     } catch (error) {
-      throw new Error(`Failed to generate refresh token: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(
+        `Failed to generate refresh token: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
     }
   }
 
@@ -153,7 +167,7 @@ export class JWTSecurityService {
         return {
           isValid: false,
           error: 'Token has been revoked',
-          errorCode: 'REVOKED_TOKEN'
+          errorCode: 'REVOKED_TOKEN',
         }
       }
 
@@ -166,7 +180,7 @@ export class JWTSecurityService {
         issuer: this.ISSUER,
         audience: this.AUDIENCE,
         clockTolerance: 30, // 30 seconds clock skew tolerance
-        maxAge: this.ACCESS_TOKEN_EXPIRY
+        maxAge: this.ACCESS_TOKEN_EXPIRY,
       }
 
       // Verify token
@@ -175,7 +189,7 @@ export class JWTSecurityService {
       // Validate required healthcare claims
       const requiredClaims = ['sub', 'iss', 'aud', 'exp', 'iat', 'jti']
       const missingClaims = requiredClaims.filter(claim => !decoded[claim])
-      
+
       if (missingClaims.length > 0) {
         warnings.push(`Missing required claims: ${missingClaims.join(', ')}`)
       }
@@ -194,7 +208,7 @@ export class JWTSecurityService {
       return {
         isValid: true,
         payload: decoded,
-        warnings: warnings.length > 0 ? warnings : undefined
+        warnings: warnings.length > 0 ? warnings : undefined,
       }
     } catch (error) {
       return this.handleValidationError(error)
@@ -204,15 +218,17 @@ export class JWTSecurityService {
   /**
    * Refresh access token using refresh token
    */
-  static async refreshAccessToken(refreshToken: string): Promise<{ newAccessToken: string; newRefreshToken?: string }> {
+  static async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<{ newAccessToken: string; newRefreshToken?: string }> {
     const validationResult = await this.validateToken(refreshToken)
-    
+
     if (!validationResult.isValid || !validationResult.payload) {
       throw new Error('Invalid refresh token')
     }
 
     const payload = validationResult.payload
-    
+
     // Verify this is a refresh token
     if (payload.type !== 'refresh') {
       throw new Error('Invalid token type for refresh')
@@ -227,7 +243,7 @@ export class JWTSecurityService {
       patientId: payload.patientId,
       consentLevel: payload.consentLevel,
       sessionType: payload.sessionType,
-      mfaVerified: payload.mfaVerified
+      mfaVerified: payload.mfaVerified,
     })
 
     // Generate new refresh token (optional - can reuse existing one)
@@ -247,7 +263,7 @@ export class JWTSecurityService {
       const decoded = jwt.decode(token) as HealthcareJWTPayload
       if (decoded && decoded.jti) {
         this.tokenDenylist.add(decoded.jti)
-        
+
         // Schedule cleanup based on token expiration
         setTimeout(() => {
           this.tokenDenylist.delete(decoded.jti)
@@ -303,7 +319,8 @@ export class JWTSecurityService {
    * Get private key for signing (in production, use secure key management)
    */
   private static async getPrivateKey(): Promise<string> {
-    const privateKey = process.env.JWT_PRIVATE_KEY || process.env.JWT_SECRET || 'fallback-secret-key'
+    const privateKey = process.env.JWT_PRIVATE_KEY || process.env.JWT_SECRET ||
+      'fallback-secret-key'
     if (!privateKey) {
       throw new Error('JWT_PRIVATE_KEY or JWT_SECRET environment variable is required')
     }
@@ -335,7 +352,7 @@ export class JWTSecurityService {
     if (typeof expiresIn === 'number') {
       return expiresIn
     }
-    
+
     // Parse time strings like '15m', '1h', '7d'
     const match = expiresIn.match(/^(\d+)([smhd])$/)
     if (!match) {
@@ -346,11 +363,16 @@ export class JWTSecurityService {
     const unit = match[2]
 
     switch (unit) {
-      case 's': return value
-      case 'm': return value * 60
-      case 'h': return value * 60 * 60
-      case 'd': return value * 24 * 60 * 60
-      default: throw new Error(`Invalid expiry unit: ${unit}`)
+      case 's':
+        return value
+      case 'm':
+        return value * 60
+      case 'h':
+        return value * 60 * 60
+      case 'd':
+        return value * 24 * 60 * 60
+      default:
+        throw new Error(`Invalid expiry unit: ${unit}`)
     }
   }
 
@@ -362,30 +384,30 @@ export class JWTSecurityService {
       return {
         isValid: false,
         error: error.message,
-        errorCode: 'INVALID_TOKEN'
+        errorCode: 'INVALID_TOKEN',
       }
     }
-    
+
     if (error instanceof jwt.TokenExpiredError) {
       return {
         isValid: false,
         error: 'Token has expired',
-        errorCode: 'EXPIRED_TOKEN'
+        errorCode: 'EXPIRED_TOKEN',
       }
     }
-    
+
     if (error instanceof jwt.NotBeforeError) {
       return {
         isValid: false,
         error: 'Token is not yet valid',
-        errorCode: 'INVALID_TOKEN'
+        errorCode: 'INVALID_TOKEN',
       }
     }
 
     return {
       isValid: false,
       error: 'Token validation failed',
-      errorCode: 'INVALID_TOKEN'
+      errorCode: 'INVALID_TOKEN',
     }
   }
 
@@ -410,8 +432,8 @@ export class JWTSecurityService {
           userRole: 'healthcare_professional',
           healthcareProvider: 'test-hospital',
           sessionId: 'session-123',
-          permissions: ['read_patient_data']
-        }
+          permissions: ['read_patient_data'],
+        },
       }
     }
 
@@ -419,7 +441,7 @@ export class JWTSecurityService {
       return {
         isValid: false,
         error: 'Invalid token signature',
-        errorCode: 'INVALID_SIGNATURE'
+        errorCode: 'INVALID_SIGNATURE',
       }
     }
 
@@ -427,7 +449,7 @@ export class JWTSecurityService {
       return {
         isValid: false,
         error: 'Token expired',
-        errorCode: 'EXPIRED_TOKEN'
+        errorCode: 'EXPIRED_TOKEN',
       }
     }
 
@@ -449,8 +471,8 @@ export class JWTSecurityService {
           permissions: ['manage_users'],
           cfmLicense: 'CRM-12345-SP',
           anvisaCompliance: true,
-          lgpdConsentVersion: '1.0'
-        }
+          lgpdConsentVersion: '1.0',
+        },
       }
     }
 
@@ -458,14 +480,16 @@ export class JWTSecurityService {
     return {
       isValid: false,
       error: 'Unknown token',
-      errorCode: 'INVALID_TOKEN'
+      errorCode: 'INVALID_TOKEN',
     }
   }
 
   /**
    * Validate healthcare-specific claims
    */
-  static validateHealthcareClaims(payload: HealthcareJWTPayload): { isValid: boolean; errors: string[] } {
+  static validateHealthcareClaims(
+    payload: HealthcareJWTPayload,
+  ): { isValid: boolean; errors: string[] } {
     const errors: string[] = []
 
     // Validate patient data access
@@ -485,7 +509,7 @@ export class JWTSecurityService {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -499,11 +523,11 @@ export class JWTSecurityService {
   }> {
     const accessToken = await this.generateAccessToken(options)
     const refreshToken = await this.generateRefreshToken(options.userId)
-    
+
     return {
       accessToken,
       refreshToken,
-      expiresIn: this.parseExpiry(options.expiresIn || this.ACCESS_TOKEN_EXPIRY)
+      expiresIn: this.parseExpiry(options.expiresIn || this.ACCESS_TOKEN_EXPIRY),
     }
   }
 
@@ -521,3 +545,6 @@ export class JWTSecurityService {
 
 // Initialize denylist cleanup when module loads
 JWTSecurityService.initializeDenylistCleanup()
+
+// Export the token validation method for middleware usage
+export const jwtValidator = JWTSecurityService.validateToken.bind(JWTSecurityService)

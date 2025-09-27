@@ -9,6 +9,7 @@ import { agentRouter } from './routers/agent'
 import { aiRouter } from './routers/ai'
 import { aiClinicalSupportRouter } from './routers/ai-clinical-support'
 import { appointmentsRouter } from './routers/appointments'
+import { chatbotDataRouter } from './routers/chatbot-data'
 import { crudRouter } from './routers/crud'
 import { enhancedAestheticProfessionalsRouter } from './routers/enhanced-aesthetic-professionals'
 import { enhancedTelemedicineRouter } from './routers/enhanced-telemedicine'
@@ -89,6 +90,9 @@ export const appRouter = router({
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,
+
+  // Chatbot data access router for real-time AI agents
+  chatbotData: chatbotDataRouter,
 
   // Enhanced aesthetic scheduling router with Brazilian healthcare compliance
   aestheticScheduling: aestheticSchedulingRouter,

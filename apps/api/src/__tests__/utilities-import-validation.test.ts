@@ -1,63 +1,55 @@
 /**
  * Core Utilities Import Validation Tests
- * 
+ *
  * RED-002: Core Utilities Import Validation Test
  * Validates that all utility modules can be imported correctly from index.ts
  */
 
-import { describe, it, expect, beforeEach } from '@jest/globals'
+import { beforeEach, describe, expect, it } from '@jest/globals'
 
 // Test imports from the new utils index
 import {
-  // Healthcare validation and helpers
-  BrazilianHealthcareValidator,
-  HealthcareAppointmentHelper,
-  LGPDComplianceHelper,
-  PatientDataHelper,
-  
-  // Security and privacy utilities
-  CryptoAudit,
-  PrivacyAlgorithms,
-  SecureLogger,
-  
+  type ApiResponseFormat,
+  ApiUtils,
   // Error handling and responses
   badRequest,
-  unauthorized,
-  forbidden,
-  notFound,
-  serverError,
-  success,
-  ok,
-  created,
-  HealthcareError,
-  HealthcareAuthenticationError,
-  LGPDComplianceError,
-  
-  // Performance and optimization
-  QueryOptimizer,
+  // Healthcare validation and helpers
+  BrazilianHealthcareValidator,
   BundleOptimizer,
-  HealthcarePerformance,
-  
-  // Data handling and sanitization
-  sanitizeForAI,
-  redact,
-  
+  created,
+  // Security and privacy utilities
+  CryptoAudit,
+  forbidden,
   // Appointment management
   hasConflict,
-  
+  HealthcareAppointmentHelper,
+  HealthcareAuthenticationError,
+  HealthcareError,
+  type HealthcareError as HealthcareErrorType,
+  HealthcarePerformance,
   // Utility collections
   HealthcareUtils,
-  SecurityUtils,
-  ApiUtils,
-  
   // Type exports
   type HealthcareValidationResult,
-  type HealthcareError as HealthcareErrorType,
-  type ApiResponseFormat
+  LGPDComplianceError,
+  LGPDComplianceHelper,
+  notFound,
+  ok,
+  PatientDataHelper,
+  PrivacyAlgorithms,
+  // Performance and optimization
+  QueryOptimizer,
+  redact,
+  // Data handling and sanitization
+  sanitizeForAI,
+  SecureLogger,
+  SecurityUtils,
+  serverError,
+  success,
+  unauthorized,
 } from '../utils'
 
 describe('Core Utilities Import Validation', () => {
-  
   describe('Healthcare Utilities', () => {
     it('should import BrazilianHealthcareValidator', () => {
       expect(BrazilianHealthcareValidator).toBeDefined()
@@ -121,7 +113,7 @@ describe('Core Utilities Import Validation', () => {
       expect(success).toBeDefined()
       expect(ok).toBeDefined()
       expect(created).toBeDefined()
-      
+
       // Verify they are functions
       expect(typeof badRequest).toBe('function')
       expect(typeof unauthorized).toBe('function')
@@ -146,12 +138,12 @@ describe('Core Utilities Import Validation', () => {
       expect(HealthcareError).toBeDefined()
       expect(HealthcareAuthenticationError).toBeDefined()
       expect(LGPDComplianceError).toBeDefined()
-      
+
       // Verify they are constructor functions
       expect(typeof HealthcareError).toBe('function')
       expect(typeof HealthcareAuthenticationError).toBe('function')
       expect(typeof LGPDComplianceError).toBe('function')
-      
+
       // Verify inheritance
       const error = new HealthcareError('Test error')
       expect(error).toBeInstanceOf(Error)
@@ -173,7 +165,7 @@ describe('Core Utilities Import Validation', () => {
       expect(QueryOptimizer).toBeDefined()
       expect(BundleOptimizer).toBeDefined()
       expect(HealthcarePerformance).toBeDefined()
-      
+
       expect(typeof QueryOptimizer).toBe('function')
       expect(typeof BundleOptimizer).toBe('function')
       expect(typeof HealthcarePerformance).toBe('function')
@@ -195,7 +187,7 @@ describe('Core Utilities Import Validation', () => {
         type TestValidationResult = HealthcareValidationResult
         type TestHealthcareError = HealthcareErrorType
         type TestApiResponseFormat = ApiResponseFormat
-        
+
         // If we get here without errors, types are properly exported
         expect(true).toBe(true)
       }).not.toThrow()
@@ -219,9 +211,9 @@ describe('Core Utilities Import Validation', () => {
         sanitizeForAI,
         redact,
         QueryOptimizer,
-        hasConflict
+        hasConflict,
       ]
-      
+
       imports.forEach(imported => {
         expect(imported).toBeDefined()
         expect(typeof imported).toBe('function')
@@ -233,11 +225,11 @@ describe('Core Utilities Import Validation', () => {
       expect(HealthcareUtils).toHaveProperty('validation')
       expect(HealthcareUtils).toHaveProperty('helpers')
       expect(HealthcareUtils).toHaveProperty('compliance')
-      
+
       expect(SecurityUtils).toHaveProperty('audit')
       expect(SecurityUtils).toHaveProperty('privacy')
       expect(SecurityUtils).toHaveProperty('logger')
-      
+
       expect(ApiUtils).toHaveProperty('responses')
       expect(ApiUtils).toHaveProperty('sanitizer')
       expect(ApiUtils).toHaveProperty('optimizer')

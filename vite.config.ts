@@ -1,5 +1,5 @@
+import path from 'node:path'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -33,15 +33,15 @@ export default defineConfig({
       // App path aliases
       {
         find: /^@\//,
-        replacement: path.resolve(__dirname, './apps/web/src/') + '/',
+        replacement: `${path.resolve(__dirname, './apps/web/src/')}/`,
       },
       {
         find: /^@components\//,
-        replacement: path.resolve(__dirname, './apps/web/src/components') + '/',
+        replacement: `${path.resolve(__dirname, './apps/web/src/components')}/`,
       },
       {
         find: /^@hooks\//,
-        replacement: path.resolve(__dirname, './apps/web/src/hooks') + '/',
+        replacement: `${path.resolve(__dirname, './apps/web/src/hooks')}/`,
       },
       // Packages
       {

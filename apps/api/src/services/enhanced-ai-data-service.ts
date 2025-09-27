@@ -9,6 +9,7 @@
  * Compliance: LGPD, ANVISA, CFM
  */
 
+import { logger } from '@/utils/healthcare-errors.js'
 import {
   CacheConfig,
   CacheDataSensitivity,
@@ -21,9 +22,8 @@ import {
 } from '@neonpro/shared/src/services/redis-cache-backend'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
 import { createHash } from 'crypto'
-import { AIDataService } from './ai-data-service'
 import { aiCacheInvalidationManager } from './ai-cache-invalidation-service'
-import { logger } from "@/utils/healthcare-errors"
+import { AIDataService } from './ai-data-service'
 
 /**
  * Cache configuration for AI data queries
@@ -58,12 +58,12 @@ export class EnhancedAIDataService extends AIDataService {
 
     // Initialize Redis cache backend
     this.cache = createRedisCacheBackend(AIDATA_CACHE_CONFIG)
-    
+
     // Initialize cache invalidation service
     const invalidationService = aiCacheInvalidationManager.getService()
     if (invalidationService) {
       // Set up event listeners for cache invalidation
-      invalidationService.on('cache:invalidation', (event) => {
+      invalidationService.on('cache:invalidation', event => {
         this.handleCacheInvalidation(event)
       })
     }
@@ -250,12 +250,14 @@ export class EnhancedAIDataService extends AIDataService {
       type: event.type,
       entityType: event.entityType,
       domain: event.domain,
-      userId: event.userId
+      userId: event.userId,
     })
-    
+
     // Invalidate relevant cache entries
-    if (event.domain === this.permissionContext.domain || 
-        event.userId === this.permissionContext.userId) {
+    if (
+      event.domain === this.permissionContext.domain ||
+      event.userId === this.permissionContext.userId
+    ) {
       // Clear cache stats for affected user/domain
       this.cacheStats.hits = 0
       this.cacheStats.misses = 0
@@ -310,10 +312,10 @@ export class EnhancedAIDataService extends AIDataService {
         await invalidationService.invalidateByQueryContext(
           intent,
           this.permissionContext,
-          `Manual cache clear for ${intent}`
+          `Manual cache clear for ${intent}`,
         )
       }
-      
+
       // Fallback to direct cache clearing
       const keys = await this.cache.getKeys(`${intent}_*`)
       for (const key of keys) {

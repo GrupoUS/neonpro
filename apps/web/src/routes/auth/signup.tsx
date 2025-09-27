@@ -1,18 +1,18 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { SignUpForm } from '@/components/auth'
-import { useAuthStatus } from '@/hooks/useAuth'
+import { Navigate } from "@tanstack/react-router"
+import { SignUpForm } from '@/components/auth/index.js'
+import { useAuthStatus } from '@/hooks/useAuth.js'
 
 export const Route = createFileRoute('/auth/signup')({
   component: SignUpPage,
 })
 
 function SignUpPage() {
-  const { isLoggedIn } = useAuthStatus()
+  const { isAuthenticated } = useAuthStatus()
 
-  // Redirecionamento client-side se já estiver logado
-  if (isLoggedIn) {
-    window.location.href = '/dashboard'
-    return null
+  // Redirecionamento se já estiver logado
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />
   }
 
   const handleSignUpSuccess = () => {

@@ -3,8 +3,6 @@
 // Minimal test runner to bypass vitest CLI issues
 import { JSDOM } from 'jsdom'
 
-console.warn('🧪 Starting minimal test runner...')
-
 // Setup JSDOM environment
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
   url: 'http://localhost:8080',
@@ -51,21 +49,19 @@ Object.defineProperty(global, 'URL', {
   configurable: true,
 })
 
-console.warn('✅ DOM environment setup complete')
-
 // Mock React and testing library for basic component testing
 const React = {
   useState: initial => [initial, () => {}],
   useEffect: () => {},
   createElement: (type, props, ...children) => {
     const element = document.createElement(type === 'div' ? 'div' : 'span')
-    if (props && props['data-testid']) {
+    if (props?.['data-testid']) {
       element.setAttribute('data-testid', props['data-testid'])
     }
-    if (props && props.onClick) {
+    if (props?.onClick) {
       element.addEventListener('click', props.onClick)
     }
-    if (children && children.length) {
+    if (children?.length) {
       element.textContent = children.join(' ')
     }
     return element
@@ -138,16 +134,13 @@ const vi = {
   clearAllMocks: () => {},
   beforeEach: callback => callback(),
   afterEach: callback => callback(),
-  describe: (name, callback) => {
-    console.warn(`\n📋 ${name}`)
+  describe: (_name, callback) => {
     callback()
   },
-  it: (name, callback) => {
+  it: (_name, callback) => {
     try {
-      console.warn(`  ✅ ${name}`)
       callback()
     } catch (error) {
-      console.warn(`  ❌ ${name}: ${error.message}`)
       throw error
     }
   },
@@ -171,9 +164,6 @@ const vi = {
 }
 
 global.vi = vi
-
-// Import and run our test
-console.warn('🔄 Loading test file...')
 
 try {
   // Simple test to verify our setup works
@@ -212,9 +202,6 @@ try {
       vi.expect(document.querySelector('[data-testid="submit-button"]')).toBeInTheDocument()
     })
   })
-
-  console.warn('\n🎉 All tests passed! DOM setup is working correctly.')
-} catch (error) {
-  console.error('❌ Test failed:', error.message)
+} catch (_error) {
   process.exit(1)
 }

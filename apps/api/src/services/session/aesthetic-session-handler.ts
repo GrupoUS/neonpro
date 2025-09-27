@@ -5,13 +5,13 @@
  * treatment workflow management, and Brazilian healthcare compliance.
  */
 
-import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service'
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling'
+import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service.js'
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling.js'
 import {
   AestheticAguiService,
   AestheticClientProfile,
   AestheticTreatmentData,
-} from '../agui-protocol/aesthetic-service'
+} from '../agui-protocol/aesthetic-service.js'
 import { CopilotKitSessionIntegration } from './copilotkit-session-integration'
 import { EnhancedAgentSessionService } from './enhanced-agent-session-service'
 

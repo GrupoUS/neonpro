@@ -9,7 +9,7 @@
  * - Performance monitoring
  */
 
-import { logger } from '../utils/secure-logger'
+import { logger } from '../utils/secure-logger.js'
 
 interface SQLOperation {
   type: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE'

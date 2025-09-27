@@ -13,37 +13,37 @@ export {
   createPasswordMigrationService,
   passwordMigrationHealthCheck,
   PasswordMigrationService,
-} from '../lib/password-migration'
+} from '../lib/password-migration.js'
 export type {
   MigrationMetrics,
   PasswordAlgorithm,
   PasswordMigrationConfig,
   PasswordVerificationResult,
-} from '../lib/password-migration'
+} from '../lib/password-migration.js'
 export {
   DEFAULT_CONFIG,
   MigrationEventSchema,
   PasswordHashMetadataSchema,
   PasswordVerificationRequestSchema,
-} from '../lib/password-migration'
+} from '../lib/password-migration.js'
 
 // Session Management Service
 export {
   createSessionManager,
   sessionHealthCheck,
   SessionManager,
-} from '../../shared/src/services/session-management'
+} from '../../shared/src/services/session-management.js'
 export type {
   Session,
   SessionConfig,
   SessionMetrics,
   SessionStatus,
   SessionType,
-} from '../../shared/src/services/session-management'
+} from '../../shared/src/services/session-management.js'
 
 // Legacy exports (for backward compatibility)
 export {
   cleanupExpiredSessions,
   DEFAULT_SESSION_CONFIG,
   validateSessionCompliance,
-} from '../../shared/src/services/session-management'
+} from '../../shared/src/services/session-management.js'

@@ -37,8 +37,8 @@ const cryptoPolyfill = {
           hash = hash & hash // Convert to 32-bit integer
         }
         return Math.abs(hash).toString(16)
-      }
-    })
+      },
+    }),
   }),
   createHmac: (algorithm: string, key: string) => ({
     update: (data: string) => ({
@@ -51,8 +51,8 @@ const cryptoPolyfill = {
           hash = hash & hash
         }
         return Math.abs(hash).toString(16)
-      }
-    })
+      },
+    }),
   }),
   randomBytes: (size: number) => {
     const bytes = []
@@ -63,8 +63,8 @@ const cryptoPolyfill = {
   },
   createCipheriv: (algorithm: string, key: Uint8Array, iv: Uint8Array) => ({
     update: (data: string) => ({
-      final: () => data // Return encrypted data (simplified)
-    })
+      final: () => data, // Return encrypted data (simplified)
+    }),
   }),
   scryptSync: (password: string, salt: Buffer, keylen: number) => {
     // Simple scrypt simulation - in production, use proper crypto
@@ -73,7 +73,7 @@ const cryptoPolyfill = {
       derived[i] = password.charCodeAt(i % password.length) ^ salt[i % salt.length]
     }
     return derived
-  }
+  },
 }
 
 // Global crypto reference with polyfill fallback

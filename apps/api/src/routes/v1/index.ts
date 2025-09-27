@@ -4,7 +4,7 @@
  */
 
 import { Hono } from 'hono'
-import aiRoutes from './ai'
+import aiRoutes from './ai/index.js'
 
 const app = new Hono()
 

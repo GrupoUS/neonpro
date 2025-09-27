@@ -22,23 +22,23 @@ export function validateCPF(cpf: string): boolean {
   // Validate check digits
   let sum = 0
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF[i]!) * (10 - i)
+    sum += parseInt(cleanCPF[i]!, 10) * (10 - i)
   }
   let checkDigit1 = 11 - (sum % 11)
   if (checkDigit1 >= 10) checkDigit1 = 0
 
-  if (parseInt(cleanCPF[9]!) !== checkDigit1) {
+  if (parseInt(cleanCPF[9]!, 10) !== checkDigit1) {
     return false
   }
 
   sum = 0
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF[i]!) * (11 - i)
+    sum += parseInt(cleanCPF[i]!, 10) * (11 - i)
   }
   let checkDigit2 = 11 - (sum % 11)
   if (checkDigit2 >= 10) checkDigit2 = 0
 
-  return parseInt(cleanCPF[10]!) === checkDigit2
+  return parseInt(cleanCPF[10]!, 10) === checkDigit2
 }
 
 /**
@@ -167,7 +167,7 @@ export function capitalizeWords(text: string): string {
 
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text
-  return text.slice(0, maxLength) + '...'
+  return `${text.slice(0, maxLength)}...`
 }
 
 /**
@@ -201,7 +201,9 @@ export function throttle<T extends (...args: any[]) => any>(
     if (!inThrottle) {
       func(...args)
       inThrottle = true
-      setTimeout(() => (inThrottle = false), limit)
+      setTimeout(() => {
+        inThrottle = false
+      }, limit)
     }
   }
 }

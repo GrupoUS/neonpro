@@ -4,7 +4,11 @@
  */
 
 import { z } from 'zod'
-import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+import {
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+  HealthcareTRPCError,
+} from '../../utils/healthcare-errors'
 import { protectedProcedure, router } from '../trpc'
 
 // Patient schema definitions

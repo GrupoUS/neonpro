@@ -1,6 +1,6 @@
+import { logger } from '@/utils/secure-logger'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from "@/utils/secure-logger"
 
 /**
  * Global error handler middleware for the API

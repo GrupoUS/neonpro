@@ -5,9 +5,9 @@
  * in Supabase with LGPD compliance and healthcare data protection.
  */
 
+import { Database } from '@neonpro/types'
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
-import { Database } from '@neonpro/types'
 
 export interface ConversationMessage {
   id: string

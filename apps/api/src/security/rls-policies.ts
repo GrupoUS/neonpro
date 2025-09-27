@@ -4,7 +4,7 @@
  */
 
 import { createServerClient } from '../clients/supabase.js'
-import { healthcareLogger, SECURITY_EVENT_TYPES } from '../logging/healthcare-logger'
+import { healthcareLogger, SECURITY_EVENT_TYPES } from '../logging/healthcare-logger.js'
 
 export interface RLSContext {
   userId: string
@@ -221,7 +221,7 @@ export class AdvancedRLSPolicies {
         operation,
         userId: context.userId,
         clinicId: context.clinicId,
-        severity: 'high'
+        severity: 'high',
       })
       return {
         allowed: false,
@@ -340,7 +340,7 @@ export class AdvancedRLSPolicies {
         userId,
         recordId,
         tableName,
-        severity: 'medium'
+        severity: 'medium',
       })
       return false
     }
@@ -412,7 +412,7 @@ export class AdvancedRLSPolicies {
       healthcareLogger.error('Error evaluating dynamic conditions', error, {
         userId: context.userId,
         conditions,
-        severity: 'medium'
+        severity: 'medium',
       })
       return false
     }
@@ -508,7 +508,7 @@ USING (${sqlConditions});
       healthcareLogger.error('Error setting RLS context', error, {
         userId: context.userId,
         clinicId: context.clinicId,
-        severity: 'high'
+        severity: 'high',
       })
       throw new Error('Failed to set RLS context')
     }
@@ -565,7 +565,7 @@ USING (${sqlConditions});
     } catch (error) {
       healthcareLogger.warn('Failed to log RLS context set', error, {
         userId: context.userId,
-        severity: 'low'
+        severity: 'low',
       })
     }
   }

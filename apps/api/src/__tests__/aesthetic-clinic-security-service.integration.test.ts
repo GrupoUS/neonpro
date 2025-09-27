@@ -4,11 +4,11 @@
  * Security: Critical - Aesthetic clinic security service integration tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AestheticClinicSecurityService } from '../security/aesthetic-clinic-security-service'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
-import { SecurityValidationService } from '../services/security-validation-service'
 import { LGPDService } from '../services/lgpd-service'
+import { SecurityValidationService } from '../services/security-validation-service'
 
 // Mock external dependencies
 vi.mock('../services/healthcare-session-management-service', () => ({
@@ -42,7 +42,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks()
-    
+
     // Initialize services
     aestheticSecurityService = AestheticClinicSecurityService
     sessionService = HealthcareSessionManagementService
@@ -91,7 +91,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateProcedureAccess(
         accessRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(true)
@@ -122,7 +122,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateProcedureAccess(
         accessRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(false)
@@ -152,7 +152,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const complianceCheck = await aestheticSecurityService.validateANVISACompliance(
         procedureData,
-        'session-123'
+        'session-123',
       )
 
       expect(complianceCheck.compliant).toBe(true)
@@ -180,7 +180,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateRecordAccess(
         accessRequest,
-        'session-456'
+        'session-456',
       )
 
       expect(result.authorized).toBe(false)
@@ -216,7 +216,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateImageAccess(
         imageAccessRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(true)
@@ -235,7 +235,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const consentCheck = await aestheticSecurityService.validatePhotoUsageConsent(
         'patient-456',
-        'marketing_materials'
+        'marketing_materials',
       )
 
       expect(consentCheck.authorized).toBe(true)
@@ -264,7 +264,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validatePhotoDistribution(
         distributionRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(false)
@@ -280,7 +280,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const privacyProtection = await aestheticSecurityService.applyFacialPrivacyProtection(
-        facialData
+        facialData,
       )
 
       expect(privacyProtection.anonymized).toBe(true)
@@ -313,7 +313,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       const securityCheck = await aestheticSecurityService.validateTreatmentPlanAccess(
         treatmentPlan,
         'read',
-        'session-123'
+        'session-123',
       )
 
       expect(securityCheck.authorized).toBe(true)
@@ -343,7 +343,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateTreatmentPlanModification(
         planModification,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(true)
@@ -363,7 +363,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const costValidation = await aestheticSecurityService.validateCostTransparency(
-        treatmentCosts
+        treatmentCosts,
       )
 
       expect(costValidation.compliant).toBe(true)
@@ -393,7 +393,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateInventoryAccess(
         inventoryRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(true)
@@ -411,7 +411,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const batchValidation = await aestheticSecurityService.validateProductBatchSecurity(
-        productBatch
+        productBatch,
       )
 
       expect(batchValidation.valid).toBe(true)
@@ -440,7 +440,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateProductDisposal(
         disposalRequest,
-        'session-456'
+        'session-456',
       )
 
       expect(result.authorized).toBe(false)
@@ -459,7 +459,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const cfmCompliance = await aestheticSecurityService.validateCFMCompliance(
-        professionalData
+        professionalData,
       )
 
       expect(cfmCompliance.compliant).toBe(true)
@@ -478,7 +478,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const marketingCheck = await aestheticSecurityService.validateMarketingCompliance(
-        marketingContent
+        marketingContent,
       )
 
       expect(marketingCheck.compliant).toBe(false) // Pricing in ads is typically prohibited
@@ -495,7 +495,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const retentionValidation = await aestheticSecurityService.validateDataRetention(
-        dataRetentionRequest
+        dataRetentionRequest,
       )
 
       expect(retentionValidation.authorized).toBe(true)
@@ -525,7 +525,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const threatDetection = await aestheticSecurityService.analyzeProcedurePatterns(
-        procedurePattern
+        procedurePattern,
       )
 
       expect(threatDetection.suspicious).toBe(true)
@@ -543,7 +543,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const riskAssessment = await aestheticSecurityService.assessInventoryDiversionRisk(
-        inventoryData
+        inventoryData,
       )
 
       expect(riskAssessment.riskLevel).toBe('medium')
@@ -567,7 +567,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       const consentCheck = await aestheticSecurityService.validateMarketingConsent(
-        marketingUsage
+        marketingUsage,
       )
 
       expect(consentCheck.authorized).toBe(true)
@@ -623,15 +623,14 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
               patientId: `patient-${i}`,
               accessReason: 'treatment',
             },
-            'session-123'
-          )
+            'session-123',
+          ),
         )
       }
 
       const results = await Promise.allSettled(requests)
       const successfulResults = results.filter(
-        (result): result is PromiseFulfilledResult<any> =>
-          result.status === 'fulfilled'
+        (result): result is PromiseFulfilledResult<any> => result.status === 'fulfilled',
       )
 
       expect(successfulResults.length).toBe(concurrentRequests)
@@ -662,7 +661,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       const result = await aestheticSecurityService.validateProcedureAccess(
         accessRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(result.authorized).toBe(false)
@@ -702,7 +701,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
 
       // Mock security validation failure
       vi.spyOn(validationService, 'validateHealthcareDataAccess').mockRejectedValueOnce(
-        new Error('Security validation failed')
+        new Error('Security validation failed'),
       )
 
       const accessRequest = {
@@ -712,7 +711,7 @@ describe('Aesthetic Clinic Security Service Integration Tests', () => {
       }
 
       await expect(
-        aestheticSecurityService.validateImageAccess(accessRequest, 'session-123')
+        aestheticSecurityService.validateImageAccess(accessRequest, 'session-123'),
       ).rejects.toThrow('Security validation failed')
 
       // Verify error was logged appropriately

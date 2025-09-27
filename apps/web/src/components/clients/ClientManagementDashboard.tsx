@@ -5,12 +5,12 @@
  * retention analytics, and intelligent workflow automation.
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Alert, AlertDescription } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Progress } from '@/components/ui/progress.js'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { createClient } from '@/integrations/supabase/client'
 import { useCoAgent, useCopilotAction } from '@copilotkit/react-core'
 import {

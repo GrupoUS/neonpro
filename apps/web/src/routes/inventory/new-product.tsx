@@ -1,8 +1,9 @@
-import { apiClient as api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api.js'
+import React from "react"
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { Plus, Save, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
-import { logger } from '@/utils/logger'
+import { logger } from '@/utils/logger.js'
 
 
 export const Route = createFileRoute('/inventory/new-product')({

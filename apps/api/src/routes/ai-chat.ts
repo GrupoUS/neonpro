@@ -5,10 +5,10 @@ import { zValidator } from '@hono/zod-validator'
 import { type AIMessage, AIProviderFactory } from '@neonpro/integrations'
 import { ComplianceLevel, type HealthcareAIContext } from '@neonpro/shared'
 
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
 import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
 import { SemanticCacheService } from '@/services/semantic-cache'
+import { Hono } from 'hono'
+import { cors } from 'hono/cors'
 
 // Request validation schemas
 const ChatMessageSchema = z.object({

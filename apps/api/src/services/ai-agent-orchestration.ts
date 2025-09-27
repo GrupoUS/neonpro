@@ -4,7 +4,7 @@
  * Following KISS/YAGNI principles - leverages existing components
  */
 
-import { ServiceResponse } from '../types/shared'
+import { ServiceResponse } from '../types/shared.js'
 import { AIChatService } from './ai-chat-service'
 // Mock AgentConfig interface - would interface with Python agent in production
 export interface AgentConfig {
@@ -42,8 +42,8 @@ export class HealthcareLogger {
   }
 }
 
-import { AuditTrailService } from './audit-trail'
 import { ComprehensiveAuditService } from './audit-service'
+import { AuditTrailService } from './audit-trail'
 
 // Mock AgUiRagAgent class - would interface with Python agent in production
 export class AgUiRagAgent {
@@ -65,7 +65,7 @@ export class AgUiRagAgent {
     sessionId: string,
     userId: string,
     patientId?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<{
     response?: {
       content: string
@@ -87,13 +87,13 @@ export class AgUiRagAgent {
         provider: 'rag',
         usage: {
           total_tokens: 150,
-          total_cost: 0.002
-        }
+          total_cost: 0.002,
+        },
       },
       context_used: [
         { type: 'patient_records' },
-        { type: 'medical_knowledge' }
-      ]
+        { type: 'medical_knowledge' },
+      ],
     }
   }
 
@@ -116,22 +116,22 @@ export class AgUiRagAgent {
         initialized: this.initialized,
         version: this.config.version,
         environment: this.config.environment,
-        uptime: Date.now() - this.startTime
+        uptime: Date.now() - this.startTime,
       },
       components: {
         database: 'connected',
         vector_store: 'active',
-        embedding_manager: 'ready'
+        embedding_manager: 'ready',
       },
       connections: {
         active_sessions: 1,
-        websocket_connections: 0
+        websocket_connections: 0,
       },
       compliance: {
         lgpd_compliant: true,
         pii_detection_enabled: true,
-        audit_logging_enabled: true
-      }
+        audit_logging_enabled: true,
+      },
     }
   }
 
@@ -217,7 +217,7 @@ export class UnifiedAgentInterface {
 
   constructor(
     auditService?: AuditTrailService,
-    healthcareLogger?: HealthcareLogger
+    healthcareLogger?: HealthcareLogger,
   ) {
     this.auditService = auditService || new AuditTrailService()
     this.healthcareLogger = healthcareLogger || new HealthcareLogger()
@@ -246,14 +246,14 @@ export class UnifiedAgentInterface {
           model: 'gpt-4',
           max_tokens: 2000,
           temperature: 0.1,
-          api_key: process.env.OPENAI_API_KEY || ''
+          api_key: process.env.OPENAI_API_KEY || '',
         },
         compliance: {
           audit_logging: true,
           pii_detection: true,
           data_encryption: true,
-          enabled_standards: ['lgpd', 'anvisa', 'cfm']
-        }
+          enabled_standards: ['lgpd', 'anvisa', 'cfm'],
+        },
       }
 
       // Initialize RAG agent (Python agent)
@@ -265,7 +265,7 @@ export class UnifiedAgentInterface {
       await this.auditService.logEvent({
         action: 'unified_agent_init',
         details: { environment: ragConfig.environment, compliance: ragConfig.compliance },
-        result: 'success'
+        result: 'success',
       })
 
       return { success: true, data: undefined }
@@ -273,12 +273,12 @@ export class UnifiedAgentInterface {
       await this.auditService.logEvent({
         action: 'unified_agent_init',
         details: { error: error.message },
-        result: 'failure'
+        result: 'failure',
       })
-      
+
       return {
         success: false,
-        error: `Failed to initialize unified agent: ${error.message}`
+        error: `Failed to initialize unified agent: ${error.message}`,
       }
     }
   }
@@ -288,7 +288,7 @@ export class UnifiedAgentInterface {
    * Routes to appropriate service based on mode and context
    */
   async processRequest(
-    request: UnifiedAgentRequest
+    request: UnifiedAgentRequest,
   ): Promise<ServiceResponse<UnifiedAgentResponse>> {
     try {
       if (!this.initialized) {
@@ -296,7 +296,7 @@ export class UnifiedAgentInterface {
         if (!initResult.success) {
           return {
             success: false,
-            error: 'Failed to initialize agent interface'
+            error: 'Failed to initialize agent interface',
           }
         }
       }
@@ -309,9 +309,9 @@ export class UnifiedAgentInterface {
           userId: request.userId,
           patientId: request.patientId,
           mode: request.mode || 'chat',
-          provider: request.provider
+          provider: request.provider,
         },
-        result: 'success'
+        result: 'success',
       })
 
       // Route request based on mode and available context
@@ -328,14 +328,14 @@ export class UnifiedAgentInterface {
         details: {
           sessionId: request.sessionId,
           userId: request.userId,
-          error: error.message
+          error: error.message,
         },
-        result: 'failure'
+        result: 'failure',
       })
 
       return {
         success: false,
-        error: `Failed to process request: ${error.message}`
+        error: `Failed to process request: ${error.message}`,
       }
     }
   }
@@ -345,13 +345,13 @@ export class UnifiedAgentInterface {
    * Uses the Python AG-UI RAG agent for healthcare-specific queries
    */
   private async processRagRequest(
-    request: UnifiedAgentRequest
+    request: UnifiedAgentRequest,
   ): Promise<ServiceResponse<UnifiedAgentResponse>> {
     try {
       if (!this.ragAgent) {
         return {
           success: false,
-          error: 'RAG agent not available'
+          error: 'RAG agent not available',
         }
       }
 
@@ -363,7 +363,7 @@ export class UnifiedAgentInterface {
         request.sessionId,
         request.userId,
         request.patientId,
-        request.context
+        request.context,
       )
 
       const responseTime = Date.now() - startTime
@@ -371,7 +371,7 @@ export class UnifiedAgentInterface {
       if (ragResponse.error) {
         return {
           success: false,
-          error: ragResponse.error
+          error: ragResponse.error,
         }
       }
 
@@ -383,8 +383,8 @@ export class UnifiedAgentInterface {
           metadata: {
             confidence: ragResponse.response?.confidence,
             sources: ragResponse.context_used?.map((ctx: any) => ctx.type) || [],
-            compliance: ['lgpd', 'anvisa', 'cfm']
-          }
+            compliance: ['lgpd', 'anvisa', 'cfm'],
+          },
         },
         timestamp: new Date().toISOString(),
         provider: ragResponse.response?.provider || 'rag',
@@ -392,15 +392,15 @@ export class UnifiedAgentInterface {
         usage: {
           tokens: ragResponse.response?.usage?.total_tokens,
           responseTime,
-          cost: ragResponse.response?.usage?.total_cost || 0
-        }
+          cost: ragResponse.response?.usage?.total_cost || 0,
+        },
       }
 
       return { success: true, data: unifiedResponse }
     } catch (error: any) {
       return {
         success: false,
-        error: `RAG processing failed: ${error.message}`
+        error: `RAG processing failed: ${error.message}`,
       }
     }
   }
@@ -410,7 +410,7 @@ export class UnifiedAgentInterface {
    * Integrates with CopilotKit frontend components
    */
   private async processCopilotRequest(
-    request: UnifiedAgentRequest
+    request: UnifiedAgentRequest,
   ): Promise<ServiceResponse<UnifiedAgentResponse>> {
     try {
       // For now, route through chat service with Copilot-specific context
@@ -420,13 +420,13 @@ export class UnifiedAgentInterface {
         model: 'gpt-4',
         messages: [{ role: 'user', content: request.query }],
         patientId: request.patientId || request.userId,
-        context: request.context
+        context: request.context,
       })
 
       if (!chatResponse.success) {
         return {
           success: false,
-          error: chatResponse.error || 'Copilot request failed'
+          error: chatResponse.error || 'Copilot request failed',
         }
       }
 
@@ -437,8 +437,8 @@ export class UnifiedAgentInterface {
           type: 'action',
           metadata: {
             confidence: chatResponse.data?.confidence,
-            compliance: ['lgpd', 'anvisa', 'cfm']
-          }
+            compliance: ['lgpd', 'anvisa', 'cfm'],
+          },
         },
         timestamp: new Date().toISOString(),
         provider: request.provider || 'openai',
@@ -446,15 +446,15 @@ export class UnifiedAgentInterface {
         usage: {
           tokens: chatResponse.data?.tokensUsed,
           responseTime: chatResponse.data?.responseTime,
-          cost: chatResponse.data?.cost
-        }
+          cost: chatResponse.data?.cost,
+        },
       }
 
       return { success: true, data: unifiedResponse }
     } catch (error: any) {
       return {
         success: false,
-        error: `Copilot processing failed: ${error.message}`
+        error: `Copilot processing failed: ${error.message}`,
       }
     }
   }
@@ -464,19 +464,19 @@ export class UnifiedAgentInterface {
    * Uses the AI chat service for general queries
    */
   private async processChatRequest(
-    request: UnifiedAgentRequest
+    request: UnifiedAgentRequest,
   ): Promise<ServiceResponse<UnifiedAgentResponse>> {
     try {
       const chatResponse = await this.chatService.generateHealthcareResponse({
         _query: request.query,
         patientId: request.patientId || request.userId,
-        _context: request.mode || 'general'
+        _context: request.mode || 'general',
       })
 
       if (!chatResponse.success) {
         return {
           success: false,
-          error: chatResponse.error || 'Chat request failed'
+          error: chatResponse.error || 'Chat request failed',
         }
       }
 
@@ -487,22 +487,22 @@ export class UnifiedAgentInterface {
           type: 'text',
           metadata: {
             sources: chatResponse.data?.sources,
-            compliance: ['lgpd', 'anvisa', 'cfm']
-          }
+            compliance: ['lgpd', 'anvisa', 'cfm'],
+          },
         },
         timestamp: new Date().toISOString(),
         provider: request.provider || 'openai',
         mode: 'chat',
         usage: {
-          responseTime: 0 // Would be calculated in actual implementation
-        }
+          responseTime: 0, // Would be calculated in actual implementation
+        },
       }
 
       return { success: true, data: unifiedResponse }
     } catch (error: any) {
       return {
         success: false,
-        error: `Chat processing failed: ${error.message}`
+        error: `Chat processing failed: ${error.message}`,
       }
     }
   }
@@ -512,14 +512,14 @@ export class UnifiedAgentInterface {
    */
   async getHealthStatus(): Promise<ServiceResponse<AgentHealthStatus>> {
     try {
-      const ragAgentStatus = this.ragAgent 
+      const ragAgentStatus = this.ragAgent
         ? await this.ragAgent.get_agent_status()
         : {
-            agent: { initialized: false, version: 'N/A', environment: 'N/A' },
-            components: {},
-            connections: { active_sessions: 0, websocket_connections: 0 },
-            compliance: {}
-          }
+          agent: { initialized: false, version: 'N/A', environment: 'N/A' },
+          components: {},
+          connections: { active_sessions: 0, websocket_connections: 0 },
+          compliance: {},
+        }
 
       const chatServiceStatus = this.chatService.getHealthStatus()
 
@@ -531,27 +531,27 @@ export class UnifiedAgentInterface {
           components: {
             database: ragAgentStatus.components?.database || 'disconnected',
             vectorStore: ragAgentStatus.components?.vector_store || 'inactive',
-            embeddingManager: ragAgentStatus.components?.embedding_manager || 'initializing'
-          }
+            embeddingManager: ragAgentStatus.components?.embedding_manager || 'initializing',
+          },
         },
         chatService: {
           uptime: chatServiceStatus.uptime,
           conversations: this.chatService['conversations']?.size || 0,
-          providers: chatServiceStatus.providers
+          providers: chatServiceStatus.providers,
         },
         compliance: {
           auditLogging: true,
           piiDetection: true,
-          lgpdCompliant: true
+          lgpdCompliant: true,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }
 
       return { success: true, data: healthStatus }
     } catch (error: any) {
       return {
         success: false,
-        error: `Failed to get health status: ${error.message}`
+        error: `Failed to get health status: ${error.message}`,
       }
     }
   }
@@ -564,16 +564,16 @@ export class UnifiedAgentInterface {
     userId: string,
     patientId?: string,
     title?: string,
-    context?: Record<string, any>
+    context?: Record<string, any>,
   ): Promise<ServiceResponse<{ sessionId: string; created: boolean }>> {
     try {
       // Check if conversation already exists
       const existingConversation = await this.chatService.getConversationHistory(sessionId)
-      
+
       if (existingConversation.success) {
         return {
           success: true,
-          data: { sessionId, created: false }
+          data: { sessionId, created: false },
         }
       }
 
@@ -586,25 +586,25 @@ export class UnifiedAgentInterface {
           sessionId,
           userId,
           mode: context?.mode || 'chat',
-          compliance: ['lgpd', 'anvisa', 'cfm']
-        }
+          compliance: ['lgpd', 'anvisa', 'cfm'],
+        },
       })
 
       if (!conversation.success) {
         return {
           success: false,
-          error: conversation.error || 'Failed to create conversation'
+          error: conversation.error || 'Failed to create conversation',
         }
       }
 
       return {
         success: true,
-        data: { sessionId, created: true }
+        data: { sessionId, created: true },
       }
     } catch (error: any) {
       return {
         success: false,
-        error: `Failed to create conversation: ${error.message}`
+        error: `Failed to create conversation: ${error.message}`,
       }
     }
   }
@@ -623,7 +623,7 @@ export class UnifiedAgentInterface {
       await this.auditService.logEvent({
         action: 'unified_agent_shutdown',
         details: { uptime: Date.now() - this.startTime.getTime() },
-        result: 'success'
+        result: 'success',
       })
 
       return { success: true, data: undefined }
@@ -631,12 +631,12 @@ export class UnifiedAgentInterface {
       await this.auditService.logEvent({
         action: 'unified_agent_shutdown',
         details: { error: error.message },
-        result: 'failure'
+        result: 'failure',
       })
 
       return {
         success: false,
-        error: `Failed to shutdown gracefully: ${error.message}`
+        error: `Failed to shutdown gracefully: ${error.message}`,
       }
     }
   }

@@ -1,6 +1,6 @@
 /**
  * 🔒 Security Validation Utility
- * 
+ *
  * Comprehensive security validation and sanitization system for healthcare applications:
  * - Input validation and sanitization
  * - Security headers validation
@@ -9,7 +9,7 @@
  * - Security audit trail integration
  * - LGPD compliance validation
  * - Cryptographic operations validation
- * 
+ *
  * Features:
  * - OWASP Top 10 protection patterns
  * - Healthcare-specific security requirements
@@ -19,9 +19,9 @@
  * - Automated security incident response
  */
 
-import { SecureLogger } from '../secure-logger'
-import { LGPDComplianceValidator } from '../lgpd-compliance-validator'
-import { HealthcareError } from '../healthcare-errors'
+import { HealthcareError } from '../healthcare-errors.js'
+import { LGPDComplianceValidator } from '../lgpd-compliance-validator.js'
+import { SecureLogger } from '../secure-logger.js'
 
 export interface SecurityConfig {
   /**
@@ -63,7 +63,14 @@ export interface ValidationResult {
    */
   isValid: boolean
   severity: 'low' | 'medium' | 'high' | 'critical'
-  category: 'input_validation' | 'authentication' | 'authorization' | 'rate_limiting' | 'cors' | 'headers' | 'lgpd'
+  category:
+    | 'input_validation'
+    | 'authentication'
+    | 'authorization'
+    | 'rate_limiting'
+    | 'cors'
+    | 'headers'
+    | 'lgpd'
   message: string
   details?: any
   recommendations?: string[]
@@ -121,7 +128,7 @@ export enum SecurityThreat {
   DOS = 'dos',
   RATE_LIMITING = 'rate_limiting',
   INVALID_INPUT = 'invalid_input',
-  LGPD_VIOLATION = 'lgpd_violation'
+  LGPD_VIOLATION = 'lgpd_violation',
 }
 
 export class SecurityValidator {
@@ -140,7 +147,7 @@ export class SecurityValidator {
       lgpdCompliant: true,
       auditTrail: true,
       enableMetrics: true,
-      _service: 'SecurityValidator'
+      _service: 'SecurityValidator',
     })
 
     this.metrics = {
@@ -155,8 +162,8 @@ export class SecurityValidator {
         sql_injection: 0,
         csrf: 0,
         rate_limiting: 0,
-        invalid_input: 0
-      }
+        invalid_input: 0,
+      },
     }
 
     // Initialize blocked IPs
@@ -168,7 +175,7 @@ export class SecurityValidator {
    */
   async validateRequest(
     context: SecurityContext,
-    data: Record<string, any>
+    data: Record<string, any>,
   ): Promise<{
     isValid: boolean
     validations: ValidationResult[]
@@ -190,7 +197,7 @@ export class SecurityValidator {
           severity: 'high',
           category: 'rate_limiting',
           message: 'IP address is blocked due to suspicious activity',
-          timestamp: new Date()
+          timestamp: new Date(),
         }
         validations.push(result)
         blocked = true
@@ -242,7 +249,7 @@ export class SecurityValidator {
 
       // Calculate security score
       const securityScore = this.calculateSecurityScore(validations)
-      
+
       // Collect recommendations
       const recommendations = this.generateRecommendations(validations)
 
@@ -255,8 +262,9 @@ export class SecurityValidator {
         this.metrics.failedValidations++
       }
 
-      this.metrics.averageResponseTime = 
-        (this.metrics.averageResponseTime * (this.metrics.totalValidations - 1) + (Date.now() - startTime)) / 
+      this.metrics.averageResponseTime =
+        (this.metrics.averageResponseTime * (this.metrics.totalValidations - 1) +
+          (Date.now() - startTime)) /
         this.metrics.totalValidations
 
       return {
@@ -264,7 +272,7 @@ export class SecurityValidator {
         validations,
         securityScore,
         recommendations,
-        blocked
+        blocked,
       }
     } catch (error) {
       this.logger.error('Security validation failed', error as Error, { context, data })
@@ -273,7 +281,7 @@ export class SecurityValidator {
         'SECURITY',
         'HIGH',
         'Security validation process failed',
-        { context, error: error instanceof Error ? error.message : String(error) }
+        { context, error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -283,7 +291,7 @@ export class SecurityValidator {
    */
   validateInput(data: any, context: SecurityContext): ValidationResult {
     const threats: SecurityThreat[] = []
-    
+
     const sanitizedData = this.sanitizeInput(data, threats)
 
     if (threats.length > 0) {
@@ -297,9 +305,9 @@ export class SecurityValidator {
           'Implement proper input validation',
           'Use parameterized queries for database operations',
           'Sanitize user input before processing',
-          'Implement Content Security Policy headers'
+          'Implement Content Security Policy headers',
         ],
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
 
@@ -308,7 +316,7 @@ export class SecurityValidator {
       severity: 'low',
       category: 'input_validation',
       message: 'Input validation passed',
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   }
 
@@ -341,7 +349,7 @@ export class SecurityValidator {
       /on\w+\s*=/gi,
       /<\?php/gi,
       /<%=/gi,
-      /\$\{.*\}/g
+      /\$\{.*\}/g,
     ]
 
     for (const pattern of xssPatterns) {
@@ -357,7 +365,7 @@ export class SecurityValidator {
       /['"]\s*AND\s*['"]?\s*1\s*=\s*1/gi,
       /;\s*(DROP|DELETE|TRUNCATE)/gi,
       /\/\*.*\*\//g,
-      /--.*$/gm
+      /--.*$/gm,
     ]
 
     for (const pattern of sqlPatterns) {
@@ -385,7 +393,7 @@ export class SecurityValidator {
     const windowMs = 60 * 1000 // 1 minute window
 
     let record = this.requestCounts.get(key)
-    
+
     if (!record || now > record.resetTime) {
       record = { count: 0, resetTime: now + windowMs }
       this.requestCounts.set(key, record)
@@ -395,14 +403,14 @@ export class SecurityValidator {
 
     if (record.count > this.config.rateLimits.maxRequestsPerMinute) {
       this.metrics.suspiciousActivities++
-      
+
       // Block IP if exceeding limit significantly
       if (record.count > this.config.rateLimits.maxRequestsPerMinute * 2) {
         this.blockedIPs.add(context.ipAddress)
         this.logger.warn('IP blocked due to excessive requests', {
           ip: context.ipAddress,
           endpoint: context.endpoint,
-          requestCount: record.count
+          requestCount: record.count,
         })
       }
 
@@ -416,15 +424,15 @@ export class SecurityValidator {
           endpoint: context.endpoint,
           requestCount: record.count,
           limit: this.config.rateLimits.maxRequestsPerMinute,
-          window: '1 minute'
+          window: '1 minute',
         },
         recommendations: [
           'Implement client-side rate limiting',
           'Use CAPTCHA for high-frequency requests',
           'Consider increasing rate limits for legitimate users',
-          'Monitor for automated attack patterns'
+          'Monitor for automated attack patterns',
         ],
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
 
@@ -433,7 +441,7 @@ export class SecurityValidator {
       severity: 'low',
       category: 'rate_limiting',
       message: 'Rate limit validation passed',
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   }
 
@@ -449,7 +457,7 @@ export class SecurityValidator {
       'X-Content-Type-Options',
       'X-Frame-Options',
       'X-XSS-Protection',
-      'Strict-Transport-Security'
+      'Strict-Transport-Security',
     ]
 
     for (const header of requiredHeaders) {
@@ -467,7 +475,7 @@ export class SecurityValidator {
         message: `Missing security headers: ${missingHeaders.join(', ')}`,
         details: { missingHeaders },
         recommendations,
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
 
@@ -476,7 +484,7 @@ export class SecurityValidator {
       severity: 'low',
       category: 'headers',
       message: 'Security headers validation passed',
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   }
 
@@ -485,14 +493,14 @@ export class SecurityValidator {
    */
   private validateCORS(context: SecurityContext): ValidationResult {
     const origin = context.additionalData?.origin || context.additionalData?.Origin
-    
+
     if (!origin) {
       return {
         isValid: true,
         severity: 'low',
         category: 'cors',
         message: 'No origin specified, CORS validation skipped',
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
 
@@ -506,9 +514,9 @@ export class SecurityValidator {
         recommendations: [
           'Add origin to allowed origins list',
           'Implement proper CORS policies',
-          'Consider using wildcard origins for development only'
+          'Consider using wildcard origins for development only',
         ],
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
 
@@ -517,7 +525,7 @@ export class SecurityValidator {
       severity: 'low',
       category: 'cors',
       message: 'CORS validation passed',
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   }
 
@@ -531,16 +539,16 @@ export class SecurityValidator {
         severity: 'low',
         category: 'lgpd',
         message: 'No patient data involved, LGPD validation skipped',
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
 
     try {
       // This would integrate with the LGPDComplianceValidator
       // For now, implement basic validation
-      
+
       const violations: string[] = []
-      
+
       // Check if user has proper consent
       if (!context.userId) {
         violations.push('User authentication required for patient data access')
@@ -562,9 +570,9 @@ export class SecurityValidator {
             'Implement proper patient consent management',
             'Enable comprehensive audit logging',
             'Establish data retention policies',
-            'Implement patient data anonymization procedures'
+            'Implement patient data anonymization procedures',
           ],
-          timestamp: new Date()
+          timestamp: new Date(),
         }
       }
 
@@ -573,7 +581,7 @@ export class SecurityValidator {
         severity: 'low',
         category: 'lgpd',
         message: 'LGPD compliance validation passed',
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     } catch (error) {
       return {
@@ -585,9 +593,9 @@ export class SecurityValidator {
         recommendations: [
           'Check LGPD compliance validator configuration',
           'Ensure patient data access is properly authorized',
-          'Verify audit logging functionality'
+          'Verify audit logging functionality',
         ],
-        timestamp: new Date()
+        timestamp: new Date(),
       }
     }
   }
@@ -613,7 +621,7 @@ export class SecurityValidator {
       low: 1,
       medium: 5,
       high: 10,
-      critical: 20
+      critical: 20,
     }
 
     const totalWeight = validations.reduce((sum, v) => sum + severityWeights[v.severity], 0)
@@ -627,7 +635,7 @@ export class SecurityValidator {
    */
   private generateRecommendations(validations: ValidationResult[]): string[] {
     const recommendations = new Set<string>()
-    
+
     for (const validation of validations) {
       if (validation.recommendations) {
         validation.recommendations.forEach(rec => recommendations.add(rec))
@@ -652,9 +660,9 @@ export class SecurityValidator {
    * Log security validation event
    */
   private logSecurityValidation(
-    context: SecurityContext, 
-    validations: ValidationResult[], 
-    securityScore: number
+    context: SecurityContext,
+    validations: ValidationResult[],
+    securityScore: number,
   ): void {
     this.logger.logWithMetrics('info', 'Security validation completed', {
       ipAddress: context.ipAddress,
@@ -663,14 +671,18 @@ export class SecurityValidator {
       securityScore,
       validationCount: validations.length,
       failedValidations: validations.filter(v => !v.isValid).length,
-      threatsDetected: validations.filter(v => !v.isValid).map(v => v.category)
+      threatsDetected: validations.filter(v => !v.isValid).map(v => v.category),
     })
   }
 
   /**
    * Log security event
    */
-  private logSecurityEvent(eventType: string, context: SecurityContext, result: ValidationResult): void {
+  private logSecurityEvent(
+    eventType: string,
+    context: SecurityContext,
+    result: ValidationResult,
+  ): void {
     this.logger.warn('Security event detected', {
       eventType,
       ipAddress: context.ipAddress,
@@ -679,7 +691,7 @@ export class SecurityValidator {
       severity: result.severity,
       category: result.category,
       message: result.message,
-      timestamp: result.timestamp
+      timestamp: result.timestamp,
     })
   }
 
@@ -706,8 +718,8 @@ export class SecurityValidator {
         sql_injection: 0,
         csrf: 0,
         rate_limiting: 0,
-        invalid_input: 0
-      }
+        invalid_input: 0,
+      },
     }
   }
 
@@ -752,7 +764,7 @@ export class SecurityValidator {
       summary: this.metrics,
       blockedIPs: this.getBlockedIPs(),
       recentThreats: [], // Would be populated from recent security events
-      recommendations: this.generateRecommendations([])
+      recommendations: this.generateRecommendations([]),
     }
   }
 }
@@ -774,31 +786,26 @@ export const defaultSecurityConfig: SecurityConfig = {
     enableDataAccessLogging: true,
     enableConsentValidation: true,
     enableDataRetentionValidation: true,
-    enableAnonymization: true
+    enableAnonymization: true,
   },
   rateLimits: {
     maxRequestsPerMinute: 60,
     maxRequestsPerHour: 1000,
-    maxConcurrentSessions: 10
+    maxConcurrentSessions: 10,
   },
   allowedOrigins: ['http://localhost:3000', 'https://localhost:3000'],
   blockedIPs: [],
   securityHeaders: {
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
+    'Content-Security-Policy':
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'X-XSS-Protection': '1; mode=block',
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
-  }
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  },
 }
 
 // Export types and enums
-export type {
-  SecurityConfig,
-  ValidationResult,
-  SecurityContext,
-  SecurityMetrics
-}
-export { SecurityThreat }
+// SecurityThreat enum is already exported above at line 118

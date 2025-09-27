@@ -10,17 +10,21 @@
  */
 
 import { Context, Next } from 'hono'
-import { JWTSecurityService, HealthcareJWTPayload, TokenValidationResult } from '../services/jwt-security-service'
-import { SessionCookieUtils } from '../__tests__/mock-services'
+import { SessionCookieUtils } from '../security/session-cookie-utils.js'
+import {
+  HealthcareJWTPayload,
+  JWTSecurityService,
+  TokenValidationResult,
+} from '../services/jwt-security-service.js'
 // Simple session manager for testing
-import { MockEnhancedSessionManager as EnhancedSessionManager } from '../__tests__/mock-services'
+import { MockEnhancedSessionManager as EnhancedSessionManager } from '../__tests__/mock-services.js'
 
 /**
  * Authentication context attached to request
  */
 export interface AuthenticationContext {
   isAuthenticated: boolean
-  isAuthorized?: boolean  // Added for test compatibility
+  isAuthorized?: boolean // Added for test compatibility
   userId?: string
   userRole?: string
   permissions?: string[]
@@ -29,19 +33,19 @@ export interface AuthenticationContext {
   consentLevel?: 'none' | 'basic' | 'full'
   sessionType?: 'standard' | 'telemedicine' | 'emergency'
   mfaVerified?: boolean
-  cfmLicense?: string  // Added for test compatibility
-  anvisaCompliance?: boolean  // Added for test compatibility
-  lgpdConsentVersion?: string  // Added for test compatibility
+  cfmLicense?: string // Added for test compatibility
+  anvisaCompliance?: boolean // Added for test compatibility
+  lgpdConsentVersion?: string // Added for test compatibility
   tokenPayload?: HealthcareJWTPayload
   sessionId?: string
   clientIP?: string
   userAgent?: string
   authMethod: 'jwt' | 'session' | 'api-key' | 'none'
-  errorCode?: string  // Added for test compatibility
-  securityScore?: number  // Added for test compatibility
-  threats?: string[]  // Added for test compatibility
-  error?: string  // Added for test compatibility
-  
+  errorCode?: string // Added for test compatibility
+  securityScore?: number // Added for test compatibility
+  threats?: string[] // Added for test compatibility
+  error?: string // Added for test compatibility
+
   // Methods for test compatibility
   hasPermission?: (permission: string) => boolean
 }
@@ -62,7 +66,7 @@ export interface AuthenticationOptions {
   skipAuthForPaths?: string[]
   rateLimitEnabled?: boolean
   auditLogEnabled?: boolean
-  
+
   // Test compatibility options
   requireAuth?: boolean
   methods?: string[]
@@ -82,7 +86,7 @@ export class EnhancedAuthenticationMiddleware {
     allowAPIKeyAuth: false,
     sessionType: 'all',
     rateLimitEnabled: true,
-    auditLogEnabled: true
+    auditLogEnabled: true,
   }
 
   private static sessionManager = new EnhancedSessionManager()
@@ -92,7 +96,7 @@ export class EnhancedAuthenticationMiddleware {
    */
   static create(options: Partial<AuthenticationOptions> = {}) {
     const config = { ...this.DEFAULT_OPTIONS, ...options }
-    
+
     return async (c: Context, next: Next) => {
       // Skip authentication for specified paths
       if (config.skipAuthForPaths?.some(path => c.req.path.startsWith(path))) {
@@ -101,7 +105,7 @@ export class EnhancedAuthenticationMiddleware {
       }
 
       const authContext = await this.authenticateRequestInternal(c, config)
-      
+
       // Attach authentication context to request
       c.set('authContext', authContext)
 
@@ -130,7 +134,7 @@ export class EnhancedAuthenticationMiddleware {
    */
   private static async authenticateRequestInternal(
     c: Context,
-    options: AuthenticationOptions
+    options: AuthenticationOptions,
   ): Promise<AuthenticationContext> {
     const clientIP = this.getClientIP(c)
     const userAgent = c.req.header('user-agent')
@@ -139,7 +143,7 @@ export class EnhancedAuthenticationMiddleware {
       isAuthenticated: false,
       authMethod: 'none',
       clientIP,
-      userAgent
+      userAgent,
     }
 
     // Try JWT authentication
@@ -174,7 +178,7 @@ export class EnhancedAuthenticationMiddleware {
    */
   private static async authenticateWithJWT(
     c: Context,
-    baseContext: AuthenticationContext
+    baseContext: AuthenticationContext,
   ): Promise<AuthenticationContext> {
     const authHeader = c.req.header('authorization')
 
@@ -198,7 +202,7 @@ export class EnhancedAuthenticationMiddleware {
         return {
           ...baseContext,
           isAuthenticated: false,
-          error: validationResult.error || 'JWT validation failed'
+          error: validationResult.error || 'JWT validation failed',
         }
       }
 
@@ -222,13 +226,13 @@ export class EnhancedAuthenticationMiddleware {
         mfaVerified: authData.mfaVerified,
         sessionId: authData.sessionId,
         tokenPayload: authData,
-        
+
         // Extract healthcare compliance fields
         cfmLicense: authData.cfmLicense,
         anvisaCompliance: authData.anvisaCompliance,
-        lgpdConsentVersion: authData.lgpdConsentVersion
+        lgpdConsentVersion: authData.lgpdConsentVersion,
       }
-      
+
       console.log('🔐 JWT authentication successful:', result)
       return result
     } catch (error) {
@@ -236,7 +240,7 @@ export class EnhancedAuthenticationMiddleware {
       return {
         ...baseContext,
         isAuthenticated: false,
-        error: error instanceof Error ? error.message : 'JWT authentication error'
+        error: error instanceof Error ? error.message : 'JWT authentication error',
       }
     }
   }
@@ -245,8 +249,8 @@ export class EnhancedAuthenticationMiddleware {
    * Authenticate using session cookies
    */
   private static async authenticateWithSession(
-    c: Context, 
-    baseContext: AuthenticationContext
+    c: Context,
+    baseContext: AuthenticationContext,
   ): Promise<AuthenticationContext> {
     const cookieHeader = c.req.header('cookie')
     const secretKey = process.env.SESSION_SECRET || 'default-secret'
@@ -255,7 +259,7 @@ export class EnhancedAuthenticationMiddleware {
       const cookieValidation = SessionCookieUtils.validateSessionCookies(
         cookieHeader,
         secretKey,
-        this.sessionManager
+        this.sessionManager,
       )
 
       if (!cookieValidation.isValid || !cookieValidation.sessionId) {
@@ -284,11 +288,11 @@ export class EnhancedAuthenticationMiddleware {
         patientId: session.patientId,
         consentLevel: session.consentLevel,
         sessionId: cookieValidation.sessionId,
-        mfaVerified: session.mfaVerified
+        mfaVerified: session.mfaVerified,
       }
     } catch (error) {
       await this.logSecurityEvent(c, 'session_authentication_error', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       return baseContext
     }
@@ -298,11 +302,12 @@ export class EnhancedAuthenticationMiddleware {
    * Authenticate using API key
    */
   private static async authenticateWithAPIKey(
-    c: Context, 
-    baseContext: AuthenticationContext
+    c: Context,
+    baseContext: AuthenticationContext,
   ): Promise<AuthenticationContext> {
-    const apiKey = c.req.header('x-api-key') || c.req.header('authorization')?.replace('Bearer ', '')
-    
+    const apiKey = c.req.header('x-api-key') ||
+      c.req.header('authorization')?.replace('Bearer ', '')
+
     if (!apiKey) {
       return baseContext
     }
@@ -313,7 +318,7 @@ export class EnhancedAuthenticationMiddleware {
       if (!this.isValidAPIKeyFormat(apiKey)) {
         await this.logSecurityEvent(c, 'invalid_api_key_format', {
           apiKeyLength: apiKey.length,
-          apiKeyPrefix: apiKey.substring(0, 8)
+          apiKeyPrefix: apiKey.substring(0, 8),
         })
         return baseContext
       }
@@ -321,11 +326,11 @@ export class EnhancedAuthenticationMiddleware {
       // In production, validate against secure database or key management service
       // For now, implement basic validation to prevent obvious security issues
       const validationResult = await this.validateAPIKeyAgainstDatabase(apiKey)
-      
+
       if (!validationResult.isValid) {
         await this.logSecurityEvent(c, 'invalid_api_key', {
           reason: validationResult.reason,
-          keyHash: this.hashAPIKeyForLogging(apiKey)
+          keyHash: this.hashAPIKeyForLogging(apiKey),
         })
         return baseContext
       }
@@ -339,11 +344,11 @@ export class EnhancedAuthenticationMiddleware {
         permissions: validationResult.permissions,
         healthcareProvider: validationResult.healthcareProvider,
         apiKeyId: validationResult.apiKeyId,
-        apiKeyScopes: validationResult.scopes
+        apiKeyScopes: validationResult.scopes,
       }
     } catch (error) {
       await this.logSecurityEvent(c, 'api_key_authentication_error', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       })
       return baseContext
     }
@@ -354,7 +359,7 @@ export class EnhancedAuthenticationMiddleware {
    */
   private static validateSecurityRequirements(
     context: AuthenticationContext,
-    options: AuthenticationOptions
+    options: AuthenticationOptions,
   ): { isValid: boolean; error?: string } {
     // Check MFA requirement
     if (options.requireMFA && !context.mfaVerified) {
@@ -363,10 +368,10 @@ export class EnhancedAuthenticationMiddleware {
 
     // Check role requirements
     if (options.requiredRole) {
-      const requiredRoles = Array.isArray(options.requiredRole) 
-        ? options.requiredRole 
+      const requiredRoles = Array.isArray(options.requiredRole)
+        ? options.requiredRole
         : [options.requiredRole]
-      
+
       if (!context.userRole || !requiredRoles.includes(context.userRole)) {
         return { isValid: false, error: 'Insufficient privileges' }
       }
@@ -375,9 +380,9 @@ export class EnhancedAuthenticationMiddleware {
     // Check permission requirements
     if (options.requiredPermissions && context.permissions) {
       const missingPermissions = options.requiredPermissions.filter(
-        perm => !context.permissions!.includes(perm)
+        perm => !context.permissions!.includes(perm),
       )
-      
+
       if (missingPermissions.length > 0) {
         return { isValid: false, error: 'Missing required permissions' }
       }
@@ -392,10 +397,10 @@ export class EnhancedAuthenticationMiddleware {
     if (options.requirePatientConsent) {
       const consentLevels = ['none', 'basic', 'full']
       const requiredLevelIndex = consentLevels.indexOf(options.requirePatientConsent)
-      const currentLevelIndex = context.consentLevel 
-        ? consentLevels.indexOf(context.consentLevel) 
+      const currentLevelIndex = context.consentLevel
+        ? consentLevels.indexOf(context.consentLevel)
         : -1
-      
+
       if (currentLevelIndex < requiredLevelIndex) {
         return { isValid: false, error: 'Insufficient patient consent level' }
       }
@@ -420,8 +425,8 @@ export class EnhancedAuthenticationMiddleware {
       error: {
         code: 'AUTHENTICATION_REQUIRED',
         message: 'Authentication is required to access this resource',
-        authMethod: context.authMethod
-      }
+        authMethod: context.authMethod,
+      },
     }
 
     // Log failed authentication attempt
@@ -438,8 +443,8 @@ export class EnhancedAuthenticationMiddleware {
       success: false,
       error: {
         code: 'AUTHORIZATION_FAILED',
-        message: errorMessage
-      }
+        message: errorMessage,
+      },
     }
 
     // Log failed authorization attempt
@@ -457,7 +462,7 @@ export class EnhancedAuthenticationMiddleware {
       c.req.header('cf-connecting-ip'),
       c.req.header('x-forwarded-for')?.split(',')[0]?.trim(),
       c.req.header('x-real-ip'),
-      c.req.header('x-client-ip')
+      c.req.header('x-client-ip'),
     ]
 
     // Filter out any authorization headers that might be returned in test mocks
@@ -474,9 +479,9 @@ export class EnhancedAuthenticationMiddleware {
    * Log authentication event
    */
   private static async logAuthenticationEvent(
-    c: Context, 
-    context: AuthenticationContext, 
-    eventType: 'success' | 'failed' | 'authorization_failed'
+    c: Context,
+    context: AuthenticationContext,
+    eventType: 'success' | 'failed' | 'authorization_failed',
   ): Promise<void> {
     try {
       const logEntry = {
@@ -493,7 +498,7 @@ export class EnhancedAuthenticationMiddleware {
         patientId: context.patientId,
         sessionType: context.sessionType,
         mfaVerified: context.mfaVerified,
-        success: eventType === 'success'
+        success: eventType === 'success',
       }
 
       console.info('[AUTH_EVENT]', JSON.stringify(logEntry))
@@ -506,9 +511,9 @@ export class EnhancedAuthenticationMiddleware {
    * Log security event
    */
   private static async logSecurityEvent(
-    c: Context, 
-    eventType: string, 
-    details: Record<string, any>
+    c: Context,
+    eventType: string,
+    details: Record<string, any>,
   ): Promise<void> {
     try {
       const logEntry = {
@@ -518,7 +523,7 @@ export class EnhancedAuthenticationMiddleware {
         path: c.req.path,
         clientIP: this.getClientIP(c),
         userAgent: c.req.header('user-agent'),
-        details
+        details,
       }
 
       console.warn('[SECURITY_EVENT]', JSON.stringify(logEntry))
@@ -559,9 +564,9 @@ export class EnhancedAuthenticationMiddleware {
    * Helper middleware for telemedicine sessions
    */
   static requireTelemedicineSession() {
-    return this.create({ 
+    return this.create({
       sessionType: 'telemedicine',
-      requireMFA: true 
+      requireMFA: true,
     })
   }
 
@@ -569,9 +574,9 @@ export class EnhancedAuthenticationMiddleware {
    * Helper middleware for emergency access
    */
   static requireEmergencyAccess() {
-    return this.create({ 
+    return this.create({
       sessionType: 'emergency',
-      requiredRole: 'emergency-medical-staff'
+      requiredRole: 'emergency-medical-staff',
     })
   }
 
@@ -581,7 +586,7 @@ export class EnhancedAuthenticationMiddleware {
    */
   static async authenticateRequest(
     c: Context,
-    options: any
+    options: any,
   ): Promise<AuthenticationContext> {
     try {
       console.log('🔍 DEBUG: authenticateRequest called')
@@ -589,7 +594,8 @@ export class EnhancedAuthenticationMiddleware {
       console.log('🔍 DEBUG: options value:', options)
 
       // Check if authentication is required
-      const authRequired = options.requireAuth || options.requiredRoles || options.requiredPermissions
+      const authRequired = options.requireAuth || options.requiredRoles ||
+        options.requiredPermissions
       console.log('🔍 DEBUG: Authentication required?', authRequired)
 
       // If no authentication required, return basic context
@@ -600,7 +606,7 @@ export class EnhancedAuthenticationMiddleware {
           isAuthorized: true, // No auth required = authorized
           authMethod: 'none',
           clientIP: this.getClientIP(c),
-          userAgent: c.req.header('user-agent') || 'unknown'
+          userAgent: c.req.header('user-agent') || 'unknown',
         }
       }
 
@@ -613,7 +619,7 @@ export class EnhancedAuthenticationMiddleware {
           isAuthenticated: false,
           authMethod: 'none',
           clientIP: this.getClientIP(c),
-          userAgent: c.req.header('user-agent') || 'unknown'
+          userAgent: c.req.header('user-agent') || 'unknown',
         }, 'No authentication provided')
       }
 
@@ -634,7 +640,11 @@ export class EnhancedAuthenticationMiddleware {
             const token = authHeader.substring(7)
             const validationResult: any = await JWTSecurityService.validateToken(token)
             if (validationResult && validationResult.error) {
-              return this.createErrorResult(result, validationResult.error, validationResult.errorCode)
+              return this.createErrorResult(
+                result,
+                validationResult.error,
+                validationResult.errorCode,
+              )
             }
           }
         } catch (error) {
@@ -658,7 +668,7 @@ export class EnhancedAuthenticationMiddleware {
             isAuthorized: false,
             error: 'Security validation failed',
             securityScore: securityValidation.securityScore,
-            threats: securityValidation.threats
+            threats: securityValidation.threats,
           }
         }
 
@@ -699,7 +709,7 @@ export class EnhancedAuthenticationMiddleware {
         isAuthenticated: false,
         isAuthorized: false,
         authMethod: 'none',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       }
     }
   }
@@ -716,7 +726,7 @@ export class EnhancedAuthenticationMiddleware {
       requiredPermissions: testOptions.requiredPermissions,
       requireHealthcareProvider: testOptions.requireHealthcareProvider,
       rateLimitEnabled: true,
-      auditLogEnabled: true
+      auditLogEnabled: true,
     }
 
     // Handle LGPD consent requirement
@@ -730,13 +740,17 @@ export class EnhancedAuthenticationMiddleware {
   /**
    * Create authentication result with error
    */
-  private static createErrorResult(baseContext: AuthenticationContext, error: string, errorCode?: string): AuthenticationContext {
+  private static createErrorResult(
+    baseContext: AuthenticationContext,
+    error: string,
+    errorCode?: string,
+  ): AuthenticationContext {
     return {
       ...baseContext,
       isAuthenticated: false,
       isAuthorized: false,
       error,
-      errorCode
+      errorCode,
     }
   }
 
@@ -748,10 +762,10 @@ export class EnhancedAuthenticationMiddleware {
     const minLength = 32
     const maxLength = 512
     const validKeyPattern = /^[a-zA-Z0-9._\-+]+$/
-    
-    return apiKey.length >= minLength && 
-           apiKey.length <= maxLength && 
-           validKeyPattern.test(apiKey)
+
+    return apiKey.length >= minLength &&
+      apiKey.length <= maxLength &&
+      validKeyPattern.test(apiKey)
   }
 
   /**
@@ -783,7 +797,7 @@ export class EnhancedAuthenticationMiddleware {
   }> {
     // In production, this would query a secure database or key management service
     // For now, implement basic validation to prevent obvious security issues
-    
+
     // Check against common weak patterns
     const weakPatterns = [
       /^test.*key/i,
@@ -792,14 +806,14 @@ export class EnhancedAuthenticationMiddleware {
       /^secret.*key/i,
       /^[a-f0-9]{32}$/, // Simple hex keys are weak
       /^password/i,
-      /^12345/
+      /^12345/,
     ]
-    
+
     for (const pattern of weakPatterns) {
       if (pattern.test(apiKey)) {
         return {
           isValid: false,
-          reason: 'Weak API key pattern detected'
+          reason: 'Weak API key pattern detected',
         }
       }
     }
@@ -813,21 +827,24 @@ export class EnhancedAuthenticationMiddleware {
         role: 'service_account',
         permissions: ['read', 'write'],
         scopes: ['api.access'],
-        apiKeyId: 'test-key-id'
+        apiKeyId: 'test-key-id',
       }
     }
 
     // If no valid key found, return invalid
     return {
       isValid: false,
-      reason: 'Invalid API key'
+      reason: 'Invalid API key',
     }
   }
 
   /**
    * Perform security validation (for test compatibility)
    */
-  private static async performSecurityValidation(c: Context, context: AuthenticationContext): Promise<{
+  private static async performSecurityValidation(
+    c: Context,
+    context: AuthenticationContext,
+  ): Promise<{
     isValid: boolean
     securityScore: number
     threats: string[]
@@ -836,22 +853,32 @@ export class EnhancedAuthenticationMiddleware {
     return {
       isValid: true,
       securityScore: 95,
-      threats: []
+      threats: [],
     }
   }
-
 }
 
 /**
  * Convenience middleware functions
  */
 export const requireAuth = EnhancedAuthenticationMiddleware.create()
-export const requireAdminRole = EnhancedAuthenticationMiddleware.requireRole(['admin', 'super-admin'])
-export const requireDoctorRole = EnhancedAuthenticationMiddleware.requireRole(['doctor', 'specialist'])
-export const requireNurseRole = EnhancedAuthenticationMiddleware.requireRole(['nurse', 'medical-staff'])
+export const requireAdminRole = EnhancedAuthenticationMiddleware.requireRole([
+  'admin',
+  'super-admin',
+])
+export const requireDoctorRole = EnhancedAuthenticationMiddleware.requireRole([
+  'doctor',
+  'specialist',
+])
+export const requireNurseRole = EnhancedAuthenticationMiddleware.requireRole([
+  'nurse',
+  'medical-staff',
+])
 export const requireMFA = EnhancedAuthenticationMiddleware.requireMFA()
-export const requireHealthcareProvider = EnhancedAuthenticationMiddleware.requireHealthcareProvider()
-export const requirePatientConsent = (level: 'none' | 'basic' | 'full') => 
+export const requireHealthcareProvider = EnhancedAuthenticationMiddleware
+  .requireHealthcareProvider()
+export const requirePatientConsent = (level: 'none' | 'basic' | 'full') =>
   EnhancedAuthenticationMiddleware.requirePatientConsent(level)
-export const requireTelemedicineSession = EnhancedAuthenticationMiddleware.requireTelemedicineSession()
+export const requireTelemedicineSession = EnhancedAuthenticationMiddleware
+  .requireTelemedicineSession()
 export const requireEmergencyAccess = EnhancedAuthenticationMiddleware.requireEmergencyAccess()

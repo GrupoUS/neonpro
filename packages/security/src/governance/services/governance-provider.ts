@@ -13,6 +13,7 @@ let governanceServiceInstance: GovernanceService | null = null
 
 /**
  * Get or create the governance service instance
+ * @returns The singleton GovernanceService instance
  */
 export function getGovernanceService(): GovernanceService {
   if (!governanceServiceInstance) {
@@ -43,6 +44,7 @@ export function resetGovernanceService(): void {
 
 /**
  * Set custom governance service instance (useful for testing)
+ * @param _service - The custom GovernanceService instance to use
  */
 export function setGovernanceService(_service: GovernanceService): void {
   governanceServiceInstance = _service

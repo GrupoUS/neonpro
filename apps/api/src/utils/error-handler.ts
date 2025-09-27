@@ -1,6 +1,6 @@
 /**
  * 🛡️ Standardized Error Handler Utility
- * 
+ *
  * A comprehensive error handling system with:
  * - Centralized error classification and handling
  * - Consistent error response formatting
@@ -10,9 +10,13 @@
  * - Graceful degradation strategies
  */
 
-import { SecureLogger } from './secure-logger'
-import { HealthcareError, HealthcareErrorSeverity, HealthcareErrorCategory } from './healthcare-errors'
+import {
+  HealthcareError,
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+} from './healthcare-errors'
 import { ObservabilityManager } from './observability-manager'
+import { SecureLogger } from './secure-logger'
 
 export interface ErrorContext {
   /**
@@ -96,7 +100,7 @@ export class ErrorHandler {
 
   constructor(
     config: ErrorHandlerConfig = {},
-    observabilityManager?: ObservabilityManager
+    observabilityManager?: ObservabilityManager,
   ) {
     this.config = {
       enableErrorMonitoring: true,
@@ -110,9 +114,9 @@ export class ErrorHandler {
         low: 10,
         medium: 5,
         high: 3,
-        critical: 1
+        critical: 1,
       },
-      ...config
+      ...config,
     }
 
     this.logger = new SecureLogger({
@@ -120,7 +124,7 @@ export class ErrorHandler {
       maskSensitiveData: true,
       lgpdCompliant: true,
       auditTrail: true,
-      _service: 'ErrorHandler'
+      _service: 'ErrorHandler',
     })
 
     this.observabilityManager = observabilityManager
@@ -138,7 +142,7 @@ export class ErrorHandler {
       throwOnError?: boolean
       retry?: boolean
       fallback?: any
-    } = {}
+    } = {},
   ): Promise<ErrorResponse> {
     const normalizedError = this.normalizeError(error)
     const errorId = this.generateErrorId()
@@ -148,7 +152,7 @@ export class ErrorHandler {
     const enhancedContext: ErrorContext = {
       ...context,
       timestamp,
-      environment: context.environment || process.env.NODE_ENV || 'development'
+      environment: context.environment || process.env.NODE_ENV || 'development',
     }
 
     // Log the error
@@ -196,7 +200,7 @@ export class ErrorHandler {
       retries?: number
       timeout?: number
       fallback?: T
-    } = {}
+    } = {},
   ): Promise<{ success: boolean; result?: T; error?: ErrorResponse }> {
     const { retries = this.config.maxErrorRetries, timeout, fallback } = options
 
@@ -205,7 +209,7 @@ export class ErrorHandler {
     for (let attempt = 1; attempt <= (retries + 1); attempt++) {
       try {
         // Execute with timeout if specified
-        const result = timeout 
+        const result = timeout
           ? await this.executeWithTimeout(operation, timeout)
           : await operation()
 
@@ -218,7 +222,7 @@ export class ErrorHandler {
           attempt,
           maxAttempts: retries + 1,
           error: error instanceof Error ? error.message : String(error),
-          operation: context.operation
+          operation: context.operation,
         })
 
         // Check if we should retry
@@ -233,8 +237,8 @@ export class ErrorHandler {
           additionalData: {
             ...context.additionalData,
             attempt,
-            maxAttempts: retries + 1
-          }
+            maxAttempts: retries + 1,
+          },
         })
 
         return { success: false, error: errorResponse }
@@ -244,7 +248,7 @@ export class ErrorHandler {
     // This should never be reached, but just in case
     return {
       success: false,
-      error: await this.handleError(lastError!, context)
+      error: await this.handleError(lastError!, context),
     }
   }
 
@@ -253,13 +257,13 @@ export class ErrorHandler {
    */
   registerRecoveryStrategy(name: string, strategy: ErrorRecoveryStrategy): void {
     this.recoveryStrategies.set(name, strategy)
-    
+
     this.logger.debug('Error recovery strategy registered', {
       name,
       errorTypes: strategy.errorTypes,
       retryCondition: !!strategy.retryCondition,
       maxRetries: strategy.maxRetries,
-      backoffStrategy: strategy.backoffStrategy
+      backoffStrategy: strategy.backoffStrategy,
     })
   }
 
@@ -273,16 +277,16 @@ export class ErrorHandler {
       retries?: number
       timeout?: number
       fallback?: R
-    } = {}
+    } = {},
   ): (...args: T) => Promise<{ success: boolean; result?: R; error?: ErrorResponse }> {
     return async (...args: T) => {
       return this.executeWithErrorHandling(
         () => fn(...args),
         {
           ...context,
-          operation: fn.name || 'anonymous'
+          operation: fn.name || 'anonymous',
         },
-        options
+        options,
       )
     }
   }
@@ -310,7 +314,7 @@ export class ErrorHandler {
     for (const [strategyName, attempts] of this.recoveryAttempts) {
       recoveryRates[strategyName] = {
         attempted,
-        succeeded: Math.floor(attempts * 0.7) // Mock success rate
+        succeeded: Math.floor(attempts * 0.7), // Mock success rate
       }
     }
 
@@ -318,7 +322,7 @@ export class ErrorHandler {
       totalErrors: Array.from(this.errorCounts.values()).reduce((a, b) => a + b, 0),
       errorCounts,
       recoveryRates,
-      recentErrors: [] // Would track recent errors in real implementation
+      recentErrors: [], // Would track recent errors in real implementation
     }
   }
 
@@ -365,7 +369,7 @@ export class ErrorHandler {
     return {
       valid: issues.length === 0,
       issues,
-      recommendations
+      recommendations,
     }
   }
 
@@ -398,14 +402,14 @@ export class ErrorHandler {
         requestId: context.requestId,
         operation: context.operation,
         resource: context.resource,
-        environment: context.environment
+        environment: context.environment,
       },
-      additionalData: context.additionalData
+      additionalData: context.additionalData,
     }
 
     // Determine log level based on error severity
     const severity = this.getErrorSeverity(error)
-    
+
     switch (severity) {
       case HealthcareErrorSeverity.CRITICAL:
         this.logger.error('Critical error occurred', logData, severity)
@@ -429,7 +433,7 @@ export class ErrorHandler {
 
     // Determine severity based on error type or message
     const errorMessage = error.message.toLowerCase()
-    
+
     if (errorMessage.includes('timeout') || errorMessage.includes('connection')) {
       return HealthcareErrorSeverity.MEDIUM
     }
@@ -456,7 +460,7 @@ export class ErrorHandler {
       this.observabilityManager.incrementCounter('error_count', {
         type: errorType,
         severity: this.getErrorSeverity(error),
-        operation: context.operation || 'unknown'
+        operation: context.operation || 'unknown',
       })
     }
 
@@ -473,14 +477,14 @@ export class ErrorHandler {
     severity: 'low' | 'medium' | 'high' | 'critical',
     errorType: string,
     count: number,
-    context: ErrorContext
+    context: ErrorContext,
   ): Promise<void> {
     this.logger.warn('Error threshold exceeded, triggering alert', {
       severity,
       errorType,
       count,
       thresholds: this.config.alertThresholds,
-      context
+      context,
     })
 
     // In a real implementation, this would send notifications
@@ -489,7 +493,7 @@ export class ErrorHandler {
 
   private async attemptRecovery(
     error: Error,
-    context: ErrorContext
+    context: ErrorContext,
   ): Promise<{ success: boolean; response?: ErrorResponse }> {
     const errorType = error.constructor.name
 
@@ -514,7 +518,7 @@ export class ErrorHandler {
             strategy: strategyName,
             errorType,
             attempt: attemptCount + 1,
-            maxRetries
+            maxRetries,
           })
 
           const result = await strategy.recoveryAction(error, context)
@@ -522,7 +526,7 @@ export class ErrorHandler {
           this.logger.info('Error recovery successful', {
             strategy: strategyName,
             errorType,
-            attempt: attemptCount + 1
+            attempt: attemptCount + 1,
           })
 
           return {
@@ -534,18 +538,23 @@ export class ErrorHandler {
                 message: 'Operation completed after recovery',
                 category: 'RECOVERY',
                 severity: 'low',
-                userMessage: this.getUserMessage('RECOVERY_SUCCESS', 'Operation completed successfully after recovery'),
+                userMessage: this.getUserMessage(
+                  'RECOVERY_SUCCESS',
+                  'Operation completed successfully after recovery',
+                ),
                 timestamp: new Date().toISOString(),
-                retryable: false
-              }
-            }
+                retryable: false,
+              },
+            },
           }
         } catch (recoveryError) {
           this.logger.warn('Error recovery failed', {
             strategy: strategyName,
             errorType,
             attempt: attemptCount + 1,
-            recoveryError: recoveryError instanceof Error ? recoveryError.message : String(recoveryError)
+            recoveryError: recoveryError instanceof Error
+              ? recoveryError.message
+              : String(recoveryError),
           })
         }
       }
@@ -557,7 +566,7 @@ export class ErrorHandler {
   private createErrorResponse(
     error: Error,
     context: ErrorContext,
-    errorId: string
+    errorId: string,
   ): ErrorResponse {
     const errorCode = this.getErrorCode(error)
     const category = this.getErrorCategory(error)
@@ -575,15 +584,17 @@ export class ErrorHandler {
         timestamp: new Date().toISOString(),
         requestId: context.requestId,
         retryable: this.shouldRetry(error),
-        recovery: this.getRecoveryInstructions(error)
+        recovery: this.getRecoveryInstructions(error),
       },
       metadata: {
         traceId: context.requestId,
-        debug: process.env.NODE_ENV === 'development' ? {
-          stack: error.stack,
-          context: context.additionalData
-        } : undefined
-      }
+        debug: process.env.NODE_ENV === 'development'
+          ? {
+            stack: error.stack,
+            context: context.additionalData,
+          }
+          : undefined,
+      },
     }
   }
 
@@ -595,13 +606,13 @@ export class ErrorHandler {
     // Map common error types to codes
     const errorType = error.constructor.name
     const errorCodeMap: Record<string, string> = {
-      'ValidationError': 'VALIDATION_ERROR',
-      'AuthenticationError': 'AUTHENTICATION_ERROR',
-      'AuthorizationError': 'AUTHORIZATION_ERROR',
-      'NetworkError': 'NETWORK_ERROR',
-      'TimeoutError': 'TIMEOUT_ERROR',
-      'DatabaseError': 'DATABASE_ERROR',
-      'ExternalServiceError': 'EXTERNAL_SERVICE_ERROR'
+      ValidationError: 'VALIDATION_ERROR',
+      AuthenticationError: 'AUTHENTICATION_ERROR',
+      AuthorizationError: 'AUTHORIZATION_ERROR',
+      NetworkError: 'NETWORK_ERROR',
+      TimeoutError: 'TIMEOUT_ERROR',
+      DatabaseError: 'DATABASE_ERROR',
+      ExternalServiceError: 'EXTERNAL_SERVICE_ERROR',
     }
 
     return errorCodeMap[errorType] || 'UNKNOWN_ERROR'
@@ -613,7 +624,7 @@ export class ErrorHandler {
     }
 
     const errorMessage = error.message.toLowerCase()
-    
+
     if (errorMessage.includes('validation') || errorMessage.includes('invalid')) {
       return 'VALIDATION'
     }
@@ -638,15 +649,15 @@ export class ErrorHandler {
       'ValidationError',
       'AuthenticationError',
       'AuthorizationError',
-      'NotFoundError'
+      'NotFoundError',
     ]
 
     return !nonRetryableErrors.includes(error.constructor.name)
   }
 
   private getUserMessage(errorCode: string, defaultMessage: string): string {
-    return this.config.userMessageOverrides?.[errorCode] || 
-           'An error occurred while processing your request. Please try again.'
+    return this.config.userMessageOverrides?.[errorCode] ||
+      'An error occurred while processing your request. Please try again.'
   }
 
   private getRecoveryInstructions(error: Error): ErrorResponse['error']['recovery'] {
@@ -656,8 +667,8 @@ export class ErrorHandler {
         steps: [
           'Verify all required fields are provided',
           'Check data format and values',
-          'Contact support if the issue persists'
-        ]
+          'Contact support if the issue persists',
+        ],
       }
     }
 
@@ -666,9 +677,9 @@ export class ErrorHandler {
       steps: [
         'Wait a few seconds before trying again',
         'Check your internet connection',
-        'Contact support if the issue persists after multiple attempts'
+        'Contact support if the issue persists after multiple attempts',
       ],
-      estimatedTime: '30 seconds'
+      estimatedTime: '30 seconds',
     }
   }
 
@@ -686,21 +697,22 @@ export class ErrorHandler {
         timestamp: new Date().toISOString(),
         retryable: false,
         recovery: {
-          suggestedAction: 'Some features may be limited. Full functionality will be restored soon.'
-        }
-      }
+          suggestedAction:
+            'Some features may be limited. Full functionality will be restored soon.',
+        },
+      },
     } as ErrorResponse
   }
 
   private async executeWithTimeout<T>(
     operation: () => Promise<T>,
-    timeoutMs: number
+    timeoutMs: number,
   ): Promise<T> {
     return Promise.race([
       operation(),
       new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Operation timeout')), timeoutMs)
-      )
+      ),
     ])
   }
 
@@ -727,7 +739,7 @@ export class ErrorHandler {
         return { success: true }
       },
       maxRetries: 3,
-      backoffStrategy: 'exponential'
+      backoffStrategy: 'exponential',
     })
 
     // Database connection recovery strategy
@@ -739,7 +751,7 @@ export class ErrorHandler {
         return { success: true }
       },
       maxRetries: 2,
-      backoffStrategy: 'exponential'
+      backoffStrategy: 'exponential',
     })
   }
 }
@@ -747,7 +759,7 @@ export class ErrorHandler {
 // Factory function for easy instantiation
 export function createErrorHandler(
   config?: ErrorHandlerConfig,
-  observabilityManager?: ObservabilityManager
+  observabilityManager?: ObservabilityManager,
 ): ErrorHandler {
   return new ErrorHandler(config, observabilityManager)
 }
@@ -760,19 +772,19 @@ export function withErrorHandling<T extends any[], R>(
     retries?: number
     timeout?: number
     fallback?: R
-  } = {}
+  } = {},
 ) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
     const originalMethod = descriptor.value
 
-    descriptor.value = async function (...args: T) {
+    descriptor.value = async function(...args: T) {
       return handler.executeWithErrorHandling(
         () => originalMethod.apply(this, args),
         {
           ...context,
-          operation: `${target.constructor.name}.${propertyKey}`
+          operation: `${target.constructor.name}.${propertyKey}`,
         },
-        options
+        options,
       )
     }
 
@@ -787,9 +799,9 @@ export function HandleErrors(
     retries?: number
     timeout?: number
     fallback?: any
-  } = {}
+  } = {},
 ) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+  return function(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const handler = new ErrorHandler()
     return withErrorHandling(handler, context, options)(target, propertyKey, descriptor)
   }

@@ -5,7 +5,7 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { Database } from '@/types/database'
+import { Database } from '@/types/database.js'
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
 

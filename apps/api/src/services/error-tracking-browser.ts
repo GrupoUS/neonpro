@@ -7,13 +7,13 @@
 
 import {
   browserErrorTrackingConfig,
-  initializeSentryBrowser,
   captureBrowserError,
   captureBrowserMessage,
-  setBrowserUserContext,
   clearBrowserUserContext,
   getBrowserErrorTrackingHealth,
-} from '../config/error-tracking-browser'
+  initializeSentryBrowser,
+  setBrowserUserContext,
+} from '../config/error-tracking-browser.js'
 
 let isInitialized = false
 
@@ -70,7 +70,7 @@ export async function initializeBrowserErrorTracking(): Promise<void> {
  */
 function setupBrowserGlobalHandlers(): void {
   // Handle uncaught errors
-  window.addEventListener('error', (event) => {
+  window.addEventListener('error', event => {
     const error = event.error || event.message
     const context = {
       source: event.filename,
@@ -83,7 +83,7 @@ function setupBrowserGlobalHandlers(): void {
   })
 
   // Handle unhandled promise rejections
-  window.addEventListener('unhandledrejection', (event) => {
+  window.addEventListener('unhandledrejection', event => {
     const error = event.reason instanceof Error ? event.reason : new Error(String(event.reason))
     const context = {
       promiseRejection: true,
@@ -134,7 +134,7 @@ export async function shutdownBrowserErrorTracking(): Promise<void> {
 /**
  * Health check for browser error tracking systems
  */
-export function getBrowserErrorTrackingHealth() {
+export function getBrowserErrorTrackingSystemsHealth() {
   return {
     status: isInitialized ? 'healthy' : 'unhealthy',
     systems: {
@@ -206,7 +206,12 @@ export async function forceBrowserErrorTracking(
   if (browserErrorTrackingConfig.sentry.enabled) {
     try {
       const { Severity } = await import('@sentry/browser')
-      const normalizedSeverity = severity === 'critical' ? Severity.Fatal : Severity[severity.charAt(0).toUpperCase() + severity.slice(1).toLowerCase() as keyof typeof Severity]
+      const normalizedSeverity = severity === 'critical'
+        ? Severity.Fatal
+        : Severity[
+          severity.charAt(0).toUpperCase() +
+          severity.slice(1).toLowerCase() as keyof typeof Severity
+        ]
       captureBrowserError(testError)
       captureBrowserMessage(`Forced test: ${message}`, 'warn', {
         test: true,
@@ -224,9 +229,9 @@ export async function forceBrowserErrorTracking(
 }
 
 /**
- * Set browser user context (LGPD compliant)
+ * Set browser user context with sanitization (LGPD compliant)
  */
-export function setBrowserUserContext(user: {
+export function setSanitizedBrowserUserContext(user: {
   id: string
   email?: string
   role?: string

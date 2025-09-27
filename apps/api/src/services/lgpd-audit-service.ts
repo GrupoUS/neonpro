@@ -1,4 +1,4 @@
-import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma'
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma.js'
 import { type LGPDOperationResult } from '../types/lgpd.js'
 import { createHealthcareError } from './createHealthcareError.js'
 

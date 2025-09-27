@@ -4,8 +4,8 @@
  * Implements LGPD Articles 7º, 11º, 18º with Brazilian healthcare compliance
  */
 
-import { createAdminClient } from '../clients/supabase'
-import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-middleware'
+import { createAdminClient } from '../clients/supabase.js'
+import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-middleware.js'
 
 // ============================================================================
 // Enhanced Consent Types & Schemas

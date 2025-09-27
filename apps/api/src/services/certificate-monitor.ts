@@ -2,8 +2,8 @@ import { exec } from 'child_process'
 import fs from 'fs'
 // import path from 'path';
 import { promisify } from 'util'
-import { TLSConfigManager } from '../config/tls-config'
-import { HealthcareLogger } from '../logging/healthcare-logger'
+import { TLSConfigManager } from '../config/tls-config.js'
+import { HealthcareLogger } from '../logging/healthcare-logger.js'
 
 const execAsync = promisify(exec)
 
@@ -505,7 +505,7 @@ export class CertificateMonitor {
 
     // Restart monitoring with new config
     this.stop()
-    this.start().catch(async (error) => {
+    this.start().catch(async error => {
       await this.logger.logError('certificate_monitor_restart_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),

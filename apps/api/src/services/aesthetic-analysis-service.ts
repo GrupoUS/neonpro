@@ -16,9 +16,9 @@
  * @updated 2025-09-16 - Refactored for aesthetic procedures
  */
 
+import { logger } from '@/utils/healthcare-errors.js'
 import { SupabaseClient } from '@supabase/supabase-js'
 import crypto from 'crypto'
-import { logger } from "@/utils/healthcare-errors"
 import { AuditService } from './audit-service'
 
 // Aesthetic Analysis Types

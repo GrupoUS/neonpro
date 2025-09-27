@@ -30,8 +30,6 @@ globalThis.import = {
 
 // Test getSiteUrl function
 function testGetSiteUrl() {
-  console.log('🧪 Testing getSiteUrl...')
-
   function getSiteUrl() {
     if (typeof window === 'undefined') {
       if (process.env.VITE_PUBLIC_SITE_URL) {
@@ -43,12 +41,7 @@ function testGetSiteUrl() {
       return 'http://localhost:5173'
     }
 
-    if (
-      globalThis.import &&
-      globalThis.import.meta &&
-      globalThis.import.meta.env &&
-      globalThis.import.meta.env.VITE_PUBLIC_SITE_URL
-    ) {
+    if (globalThis.import?.meta?.env?.VITE_PUBLIC_SITE_URL) {
       return globalThis.import.meta.env.VITE_PUBLIC_SITE_URL
     }
 
@@ -56,14 +49,11 @@ function testGetSiteUrl() {
   }
 
   const siteUrl = getSiteUrl()
-  console.log(`✅ Site URL: ${siteUrl}`)
   return siteUrl === 'https://neonpro.vercel.app'
 }
 
 // Test buildOAuthRedirectUrl function
 function testBuildOAuthRedirectUrl() {
-  console.log('🧪 Testing buildOAuthRedirectUrl...')
-
   function buildOAuthRedirectUrl(finalRedirectTo) {
     const siteUrl = 'https://neonpro.vercel.app'
     const callbackUrl = `${siteUrl}/auth/callback`
@@ -73,35 +63,25 @@ function testBuildOAuthRedirectUrl() {
   }
 
   const redirectUrl = buildOAuthRedirectUrl('/dashboard')
-  console.log(`✅ OAuth Redirect URL: ${redirectUrl}`)
   return redirectUrl.includes('/auth/callback?next=%2Fdashboard')
 }
 
 // Test environment variables
 function testEnvironmentVariables() {
-  console.log('🧪 Testing environment variables...')
-
   const supabaseUrl = globalThis.import?.meta?.env?.VITE_SUPABASE_URL
   const supabaseKey = globalThis.import?.meta?.env?.VITE_SUPABASE_ANON_KEY
   const siteUrl = globalThis.import?.meta?.env?.VITE_PUBLIC_SITE_URL
-
-  console.log(`✅ Supabase URL: ${supabaseUrl ? '✓ Configured' : '✗ Missing'}`)
-  console.log(`✅ Supabase Key: ${supabaseKey ? '✓ Configured' : '✗ Missing'}`)
-  console.log(`✅ Site URL: ${siteUrl ? '✓ Configured' : '✗ Missing'}`)
 
   return !!(supabaseUrl && supabaseKey && siteUrl)
 }
 
 // Test configuration compatibility
 function testConfigurationCompatibility() {
-  console.log('🧪 Testing configuration compatibility...')
-
   const expectedProjectId = 'ownkoxryswokcdanrdgj'
   const supabaseUrl = globalThis.import?.meta?.env?.VITE_SUPABASE_URL
 
   if (supabaseUrl) {
     const urlMatch = supabaseUrl.includes(expectedProjectId)
-    console.log(`✅ Project ID Match: ${urlMatch ? '✓ Correct' : '✗ Mismatch'}`)
     return urlMatch
   }
 
@@ -110,8 +90,6 @@ function testConfigurationCompatibility() {
 
 // Test file structure (simplified for ES modules)
 function testFileStructure() {
-  console.log('🧪 Testing file structure...')
-
   // Since we can't use require() in ES modules context,
   // we'll simulate the file structure check
   const requiredFiles = [
@@ -128,18 +106,12 @@ function testFileStructure() {
   ]
 
   // For this test, we'll assume files exist since manual verification shows they do
-  requiredFiles.forEach(file => {
-    console.log(`✅ ${file}`)
-  })
-
-  console.log('✅ All authentication files are properly structured')
+  requiredFiles.forEach(_file => {})
   return true
 }
 
 // Run all tests
 function runAuthTests() {
-  console.log('🚀 Starting Authentication Implementation Tests...\n')
-
   const tests = [
     { name: 'Environment Variables', test: testEnvironmentVariables },
     { name: 'Site URL Resolution', test: testGetSiteUrl },
@@ -149,28 +121,20 @@ function runAuthTests() {
   ]
 
   let passed = 0
-  let total = tests.length
+  const total = tests.length
 
   tests.forEach(({ name, test }) => {
     try {
       const result = test()
       if (result) {
-        console.log(`✅ ${name}: PASSED\n`)
         passed++
       } else {
-        console.log(`❌ ${name}: FAILED\n`)
       }
-    } catch (error) {
-      console.log(`❌ ${name}: ERROR - ${error}\n`)
-    }
+    } catch (_error) {}
   })
 
-  console.log(`📊 Test Results: ${passed}/${total} tests passed`)
-
   if (passed === total) {
-    console.log('🎉 All tests passed! Authentication implementation is ready.')
   } else {
-    console.log('⚠️  Some tests failed. Check configuration.')
   }
 
   return passed === total

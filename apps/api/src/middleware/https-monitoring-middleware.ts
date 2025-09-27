@@ -5,8 +5,8 @@
  * Integrates with the HTTPSMonitoringService for real-time performance tracking.
  */
 
-import { logger } from "@/utils/healthcare-errors"
-import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service'
+import { logger } from '@/utils/healthcare-errors'
+import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service.js'
 
 export interface TLSHandshakeInfo {
   sessionId: string
@@ -32,67 +32,64 @@ export class HTTPSMonitoringMiddleware {
   private activeHandshakes = new Map<string, TLSHandshakeInfo>()
 
   /**
-   * Express middleware for monitoring HTTPS handshakes
+   * Hono middleware for monitoring HTTPS handshakes
    */
-  middleware = (req: any, res: any, next: any): void => {
+  middleware = async (c: any, next: any): Promise<void> => {
     const startTime = Date.now()
-    const requestId = req.get('requestId') || this.generateId()
+    const requestId = c.get('requestId') || this.generateId()
 
-    // Store request start time for handshake calculation
-    res.on('finish', () => {
-      try {
-        const endTime = Date.now()
-        const duration = endTime - startTime
+    try {
+      await next()
 
-        // Extract TLS information from request (if available)
-        const tlsInfo = this.extractTLSInfo(req, res)
+      const endTime = Date.now()
+      const duration = endTime - startTime
 
-        if (tlsInfo && this.shouldMonitor(req)) {
-          const metrics = {
-            handshakeTimeMs: duration,
-            tlsVersion: tlsInfo.tlsVersion,
-            cipherSuite: tlsInfo.cipherSuite,
-            serverName: tlsInfo.serverName,
-            clientHelloTime: tlsInfo.timing.clientHello,
-            serverHelloTime: tlsInfo.timing.serverHello,
-            certificateTime: tlsInfo.timing.certificate,
-            keyExchangeTime: tlsInfo.timing.keyExchange,
-            finishedTime: tlsInfo.timing.finished,
-            alpnProtocol: tlsInfo.alpnProtocol,
-            ocspStapling: tlsInfo.ocspStapling,
-            certificateTransparency: tlsInfo.certificateTransparency,
-            sessionId: tlsInfo.sessionId,
-          }
+      // Extract TLS information from request (if available)
+      const tlsInfo = this.extractTLSInfo(c.req, c.res)
 
-          // Record metrics asynchronously
-          httpsMonitoringService
-            .recordHandshakeMetrics(metrics)
-            .catch(async (error) => {
-              logger.error(
-                'https_monitoring_middleware',
-                'Failed to record handshake metrics',
-                {
-                  error: error.message,
-                  sessionId: tlsInfo.sessionId,
-                  requestId,
-                }
-              )
-            })
+      if (tlsInfo && this.shouldMonitor(c.req)) {
+        const metrics = {
+          handshakeTimeMs: duration,
+          tlsVersion: tlsInfo.tlsVersion,
+          cipherSuite: tlsInfo.cipherSuite,
+          serverName: tlsInfo.serverName,
+          clientHelloTime: tlsInfo.timing.clientHello,
+          serverHelloTime: tlsInfo.timing.serverHello,
+          certificateTime: tlsInfo.timing.certificate,
+          keyExchangeTime: tlsInfo.timing.keyExchange,
+          finishedTime: tlsInfo.timing.finished,
+          alpnProtocol: tlsInfo.alpnProtocol,
+          ocspStapling: tlsInfo.ocspStapling,
+          certificateTransparency: tlsInfo.certificateTransparency,
+          sessionId: tlsInfo.sessionId,
         }
-      } catch (error) {
-        void _error
-        logger.error(
-          'https_monitoring_middleware',
-          'Error in handshake monitoring',
-          {
-            error: (error as Error).message,
-            requestId,
-          }
-        )
-      }
-    })
 
-    next()
+        // Record metrics asynchronously
+        httpsMonitoringService
+          .recordHandshakeMetrics(metrics)
+          .catch(async error => {
+            logger.error(
+              'https_monitoring_middleware',
+              'Failed to record handshake metrics',
+              {
+                error: error.message,
+                sessionId: tlsInfo.sessionId,
+                requestId,
+              },
+            )
+          })
+      }
+    } catch (error) {
+      void error
+      logger.error(
+        'https_monitoring_middleware',
+        'Error in handshake monitoring',
+        {
+          error: (error as Error).message,
+          requestId,
+        },
+      )
+    }
   }
 
   /**
@@ -332,14 +329,14 @@ export class HTTPSMonitoringMiddleware {
 
         httpsMonitoringService
           .recordHandshakeMetrics(metrics)
-          .catch(async (error) => {
+          .catch(async error => {
             logger.error(
               'https_monitoring_middleware',
               'Failed to record handshake metrics',
               {
                 error: error.message,
                 sessionId,
-              }
+              },
             )
           })
 
@@ -354,7 +351,7 @@ export class HTTPSMonitoringMiddleware {
         {
           error: (error as Error).message,
           sessionId,
-        }
+        },
       )
     }
   }

@@ -6,8 +6,13 @@
  * Quality Standard: ≥9.5/10 NEONPRO
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { auditLogger, AUDIT_CATEGORIES, type AuditAction, type AuditCategory } from '@/utils/audit-logger'
+import {
+  AUDIT_CATEGORIES,
+  type AuditAction,
+  type AuditCategory,
+  auditLogger,
+} from '@/utils/audit-logger'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 describe('Healthcare Audit Logger - TDD RED PHASE', () => {
   let consoleSpy: any
@@ -73,11 +78,11 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
       expect(consoleSpy.info).toHaveBeenCalledTimes(2)
       const log1 = consoleSpy.info.mock.calls[0][1]
       const log2 = consoleSpy.info.mock.calls[1][1]
-      
+
       // Extract IDs from log output and ensure they're different
       const id1 = log1.match(/auditId":"([^"]+)"/)?.[1]
       const id2 = log2.match(/auditId":"([^"]+)"/)?.[1]
-      
+
       expect(id1).toBeDefined()
       expect(id2).toBeDefined()
       expect(id1).not.toBe(id2)
@@ -98,7 +103,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
       expect(consoleSpy.info).toHaveBeenCalled()
       const logOutput = consoleSpy.info.mock.calls[0][1]
       const timestamp = logOutput.match(/timestamp":"([^"]+)"/)?.[1]
-      
+
       expect(timestamp).toBeDefined()
       const timestampDate = new Date(timestamp)
       expect(timestampDate.getTime()).toBeGreaterThanOrEqual(beforeTest.getTime())
@@ -112,7 +117,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'CREATE',
         'patient456',
         'doctor123',
-        { patientName: 'João Silva', age: 45 }
+        { patientName: 'João Silva', age: 45 },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -130,7 +135,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'VIEW',
         'patient456',
         'nurse123',
-        { accessReason: 'routine_checkup', department: 'emergency' }
+        { accessReason: 'routine_checkup', department: 'emergency' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -149,7 +154,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'patient456',
         'admin123',
         { reason: 'data_retention_policy' },
-        'FAILURE'
+        'FAILURE',
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -169,7 +174,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'admin123',
         1500.00,
         'credit_card',
-        { procedure: 'consultation', insurance: 'unimed' }
+        { procedure: 'consultation', insurance: 'unimed' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -190,7 +195,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'admin123',
         15000.00, // High value transaction
         'bank_transfer',
-        { procedure: 'surgery', insurance: 'bradesco' }
+        { procedure: 'surgery', insurance: 'bradesco' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -207,7 +212,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'admin123',
         2500.00,
         'invoice',
-        { exportFormat: 'csv', destination: 'accounting_department' }
+        { exportFormat: 'csv', destination: 'accounting_department' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -226,7 +231,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'diagnosis',
         'VIEW',
         'SUCCESS',
-        { accessReason: 'treatment_planning', recordType: 'clinical_notes' }
+        { accessReason: 'treatment_planning', recordType: 'clinical_notes' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -248,7 +253,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'full_history',
         'EXPORT',
         'SUCCESS',
-        { exportReason: 'referral', format: 'pdf' }
+        { exportReason: 'referral', format: 'pdf' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -267,7 +272,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'sensitive_info',
         'VIEW',
         'FAILURE',
-        { failureReason: 'insufficient_permissions' }
+        { failureReason: 'insufficient_permissions' },
       )
 
       expect(consoleSpy.error).toHaveBeenCalled()
@@ -286,7 +291,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'coordination123',
         'doctor123',
         'patient456',
-        { coordinationType: 'multidisciplinary_team', participants: 5 }
+        { coordinationType: 'multidisciplinary_team', participants: 5 },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -306,11 +311,11 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'referral456',
         'doctor123',
         'patient456',
-        { 
+        {
           referralType: 'specialist_consultation',
           fromSpecialty: 'general_practice',
-          toSpecialty: 'cardiology'
-        }
+          toSpecialty: 'cardiology',
+        },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -331,7 +336,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         undefined,
         'doctor123',
         'SUCCESS',
-        { method: 'password', mfaEnabled: true }
+        { method: 'password', mfaEnabled: true },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -351,12 +356,12 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         undefined,
         undefined,
         'FAILURE',
-        { 
+        {
           username: 'doctor123',
           failureReason: 'invalid_credentials',
           ipAddress: '192.168.1.100',
-          attempts: 3
-        }
+          attempts: 3,
+        },
       )
 
       expect(consoleSpy.error).toHaveBeenCalled()
@@ -377,11 +382,11 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'patient456',
         'nurse123',
         'FAILURE',
-        { 
+        {
           resource: 'sensitive_diagnosis',
           requiredPermission: 'doctor_access',
-          userRole: 'nurse'
-        }
+          userRole: 'nurse',
+        },
       )
 
       expect(consoleSpy.error).toHaveBeenCalled()
@@ -401,12 +406,12 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'CREATE',
         'patient456',
         'doctor123',
-        { 
+        {
           patientName: 'Maria Santos',
           cpf: '123.456.789-00',
           consentProvided: true,
-          consentDate: '2024-01-15'
-        }
+          consentDate: '2024-01-15',
+        },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -422,11 +427,11 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'UPDATE',
         'patient456',
         'doctor123',
-        { 
+        {
           medicalDevice: 'pacemaker',
           deviceSerial: 'PM123456',
-          anvisaRegistration: '10212340001'
-        }
+          anvisaRegistration: '10212340001',
+        },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -442,12 +447,12 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'treatment789',
         'doctor123',
         'patient456',
-        { 
+        {
           crm: '123456',
           uf: 'SP',
           specialty: 'cardiology',
-          procedure: 'cardiac_catheterization'
-        }
+          procedure: 'cardiac_catheterization',
+        },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -463,7 +468,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'VIEW',
         'patient456',
         'doctor123',
-        { accessReason: 'routine_follow_up' }
+        { accessReason: 'routine_follow_up' },
       )
 
       expect(consoleSpy.info).toHaveBeenCalled()
@@ -479,7 +484,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         undefined,
         undefined,
         'FAILURE',
-        { failureReason: 'invalid_credentials' }
+        { failureReason: 'invalid_credentials' },
       )
 
       expect(consoleSpy.error).toHaveBeenCalled()
@@ -496,11 +501,11 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         undefined,
         undefined,
         'FAILURE',
-        { 
+        {
           failureReason: 'suspected_brute_force',
           ipAddress: ' malicious_ip',
-          attempts: 100
-        }
+          attempts: 100,
+        },
       )
 
       expect(consoleSpy.error).toHaveBeenCalled()
@@ -524,9 +529,10 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         maintainability: true,
         regulatoryCompliance: true,
       }
-      
-      const qualityScore = Object.values(qualityMetrics).filter(Boolean).length / Object.keys(qualityMetrics).length
-      
+
+      const qualityScore = Object.values(qualityMetrics).filter(Boolean).length /
+        Object.keys(qualityMetrics).length
+
       expect(qualityScore).toBeGreaterThanOrEqual(0.95) // ≥9.5/10
     })
 
@@ -545,7 +551,7 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
         'COMPLIANCE',
         'SYSTEM',
       ]
-      
+
       requiredCategories.forEach(category => {
         expect(categories).toContain(category)
       })
@@ -553,12 +559,27 @@ describe('Healthcare Audit Logger - TDD RED PHASE', () => {
 
     it('should support all required audit actions', () => {
       const requiredActions = [
-        'CREATE', 'UPDATE', 'DELETE', 'VIEW', 'AUTHORIZE', 'DENY',
-        'EXPORT', 'IMPORT', 'LOGIN', 'LOGOUT', 'REFUND', 'PAYMENT',
-        'CONSULTATION', 'TREATMENT', 'PRESCRIPTION', 'REFERRAL',
-        'COORDINATION', 'AUDIT', 'SECURITY_ALERT'
+        'CREATE',
+        'UPDATE',
+        'DELETE',
+        'VIEW',
+        'AUTHORIZE',
+        'DENY',
+        'EXPORT',
+        'IMPORT',
+        'LOGIN',
+        'LOGOUT',
+        'REFUND',
+        'PAYMENT',
+        'CONSULTATION',
+        'TREATMENT',
+        'PRESCRIPTION',
+        'REFERRAL',
+        'COORDINATION',
+        'AUDIT',
+        'SECURITY_ALERT',
       ]
-      
+
       // This test ensures we have comprehensive action coverage
       expect(requiredActions.length).toBeGreaterThan(0)
       expect(requiredActions).toContain('CREATE')

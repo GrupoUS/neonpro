@@ -10,7 +10,7 @@
  * - Brazilian healthcare compliance monitoring
  */
 
-import { HEALTHCARE_POOL_CONFIG } from '../utils/query-optimizer'
+import { HEALTHCARE_POOL_CONFIG } from '../utils/query-optimizer.js'
 
 // Connection pool metrics
 export interface PoolMetrics {

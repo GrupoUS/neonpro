@@ -10,7 +10,7 @@
  * - No-show prevention strategies
  */
 
-import { prisma } from '../lib/prisma'
+import { prisma } from '../lib/prisma.js'
 import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol'
 import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service'
 

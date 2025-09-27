@@ -1,4 +1,5 @@
-import { apiClient as api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api.js'
+import React from "react"
 import { createFileRoute, Link } from '@tanstack/react-router'
 import {
   AlertTriangle,
@@ -14,7 +15,7 @@ import {
   Truck,
 } from 'lucide-react'
 import { useState } from 'react'
-import { logger } from '@/utils/logger'
+import { logger } from '@/utils/logger.js'
 
 
 export const Route = createFileRoute('/inventory/')({

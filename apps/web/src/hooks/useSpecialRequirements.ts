@@ -1,36 +1,33 @@
-/**
- * Hook for managing special requirements in MultiSessionScheduler
- */
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
-interface UseSpecialRequirementsReturn {
+export interface SpecialRequirements {
   specialRequirements: string[]
   newRequirement: string
-  setNewRequirement: (value: string) => void
+  setNewRequirement: (requirement: string) => void
   handleAddRequirement: () => void
-  handleRemoveRequirement: (requirement: string) => void
+  handleRemoveRequirement: (index: number) => void
 }
 
-export function useSpecialRequirements(): UseSpecialRequirementsReturn {
+export function useSpecialRequirements(): SpecialRequirements {
   const [specialRequirements, setSpecialRequirements] = useState<string[]>([])
   const [newRequirement, setNewRequirement] = useState('')
 
-  const handleAddRequirement = () => {
-    if (newRequirement.trim() && !specialRequirements.includes(newRequirement.trim())) {
-      setSpecialRequirements([...specialRequirements, newRequirement.trim()])
+  const handleAddRequirement = useCallback(() => {
+    if (newRequirement.trim()) {
+      setSpecialRequirements(prev => [...prev, newRequirement.trim()])
       setNewRequirement('')
     }
-  }
+  }, [newRequirement])
 
-  const handleRemoveRequirement = (requirement: string) => {
-    setSpecialRequirements(specialRequirements.filter(req => req !== requirement))
-  }
+  const handleRemoveRequirement = useCallback((index: number) => {
+    setSpecialRequirements(prev => prev.filter((_, i) => i !== index))
+  }, [])
 
   return {
     specialRequirements,
     newRequirement,
     setNewRequirement,
     handleAddRequirement,
-    handleRemoveRequirement,
+    handleRemoveRequirement
   }
 }

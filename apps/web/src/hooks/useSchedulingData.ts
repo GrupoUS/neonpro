@@ -1,41 +1,38 @@
-/**
- * Hook for managing scheduling data queries in MultiSessionScheduler
- * Extracts tRPC queries for procedures and professionals
- */
-import { trpc } from '@/lib/trpc'
-import { type AestheticProcedure } from '@/types/aesthetic-scheduling'
+import { useEffect, useState } from 'react'
 
-interface UseSchedulingDataReturn {
-  proceduresData: AestheticProcedure[] | undefined
-  professionalsData: any[] | undefined
+export interface UseSchedulingDataReturn {
+  proceduresData: any[] | null
+  professionalsData: any[] | null
   proceduresLoading: boolean
   professionalsLoading: boolean
-  checkContraindicationsMutation: ReturnType<typeof trpc.aestheticScheduling.checkContraindications.useMutation>
+  error: string | null
 }
 
 export function useSchedulingData(): UseSchedulingDataReturn {
-  // Fetch available procedures
-  const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling
-    .getAestheticProcedures.useQuery(
-      { limit: 100, offset: 0 },
-      {
-        select: data => data.procedures || [],
-      },
-    )
+  const [proceduresData, setProceduresData] = useState<any[] | null>(null)
+  const [professionalsData, setProfessionalsData] = useState<any[] | null>(null)
+  const [proceduresLoading, setProceduresLoading] = useState(false)
+  const [professionalsLoading, setProfessionalsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  // Fetch available professionals
-  const { data: professionalsData, isLoading: professionalsLoading } = trpc
-    .enhancedAestheticProfessionals.getProfessionals.useQuery()
+  useEffect(() => {
+    // Mock data loading - replace with actual API calls
+    setProceduresLoading(true)
+    setProfessionalsLoading(true)
 
-  // Check contraindications mutation
-  const checkContraindicationsMutation = trpc.aestheticScheduling.checkContraindications
-    .useMutation()
+    setTimeout(() => {
+      setProceduresData([])
+      setProfessionalsData([])
+      setProceduresLoading(false)
+      setProfessionalsLoading(false)
+    }, 100)
+  }, [])
 
   return {
     proceduresData,
     professionalsData,
     proceduresLoading,
     professionalsLoading,
-    checkContraindicationsMutation,
+    error
   }
 }

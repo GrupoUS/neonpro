@@ -30,7 +30,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { apiClient as api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api.js'
 
 export const Route = createFileRoute('/analytics/')({
   component: AnalyticsDashboard,

@@ -3,8 +3,8 @@
  * Handles secure document downloads with authentication and audit
  */
 
-import { PatientDocumentService } from '@apps/api/src/services/patient-document-service'
 import { auth } from '@apps/api/src/middleware/auth'
+import { PatientDocumentService } from '@apps/api/src/services/patient-document-service'
 import { logger } from '@apps/api/src/utils/healthcare-errors'
 import type { Context } from 'hono'
 
@@ -32,32 +32,38 @@ export default async function handler(req: Request, ctx: Context) {
         method: req.method,
         userAgent: req.headers.get('user-agent'),
       })
-      
-      return new Response(JSON.stringify({ 
-        error: 'Authentication required',
-        code: 'AUTH_REQUIRED'
-      }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      })
+
+      return new Response(
+        JSON.stringify({
+          error: 'Authentication required',
+          code: 'AUTH_REQUIRED',
+        }),
+        {
+          status: 401,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
     }
 
     // Get authenticated user from context
     const userId = ctx.get('userId')
     const user = ctx.get('user')
-    
+
     if (!userId || !user) {
       logger.error('Authentication context missing after auth check', {
         path: req.url,
       })
-      
-      return new Response(JSON.stringify({ 
-        error: 'Authentication context missing',
-        code: 'AUTH_CONTEXT_ERROR'
-      }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      })
+
+      return new Response(
+        JSON.stringify({
+          error: 'Authentication context missing',
+          code: 'AUTH_CONTEXT_ERROR',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
     }
 
     const url = new URL(req.url)
@@ -93,14 +99,17 @@ export default async function handler(req: Request, ctx: Context) {
         userId,
         userRole: user._role,
       })
-      
-      return new Response(JSON.stringify({ 
-        error: 'Document not found',
-        code: 'DOCUMENT_NOT_FOUND'
-      }), {
-        status: 404,
-        headers: { 'Content-Type': 'application/json' },
-      })
+
+      return new Response(
+        JSON.stringify({
+          error: 'Document not found',
+          code: 'DOCUMENT_NOT_FOUND',
+        }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
     }
 
     // Get file content
@@ -171,8 +180,8 @@ export default async function handler(req: Request, ctx: Context) {
       JSON.stringify({
         error: 'Internal server error',
         code: 'DOWNLOAD_ERROR',
-        message: process.env.NODE_ENV === 'development' && error instanceof Error 
-          ? error.message 
+        message: process.env.NODE_ENV === 'development' && error instanceof Error
+          ? error.message
           : 'An error occurred while processing your request',
       }),
       {

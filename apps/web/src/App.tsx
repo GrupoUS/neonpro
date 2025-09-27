@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import * as React from 'react'
-import { AccessibilityProvider } from './components/stubs/AccessibilityProvider.js'
+import { AccessibilityProvider } from './components/providers/accessibility-provider.js'
 import { PWAInstallPrompt } from './components/stubs/PWAInstallPrompt.js'
 import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator.js'
 import { router } from './router.js'

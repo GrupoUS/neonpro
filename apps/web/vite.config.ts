@@ -12,19 +12,8 @@ declare module '@tanstack/router-plugin' {
 }
 
 import react from '@vitejs/plugin-react'
-
-// @ts-expect-error - Module not available in current environment
-let path: { resolve: (from: string, to: string) => string }
-try {
-  // @ts-expect-error
-  path = require('path')
-} catch {
-  path = { resolve: (from: string, to: string) => from + '/' + to }
-}
-// Fallback type declaration to suppress TS2307 for path
-declare module 'path' {
-  export function resolve(from: string, to: string): string
-}
+import path from 'node:path'
+import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { defineConfig } from 'vite'
 
@@ -34,6 +23,7 @@ export default defineConfig({
     TanStackRouterVite(),
     // @ts-expect-error - Ignore react plugin type mismatch due to monorepo version differences
     react(),
+    tsconfigPaths(),
   ],
   root: '.',
   publicDir: 'public',
@@ -45,6 +35,7 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
+    'process.env': 'import.meta.env',
   },
   server: {
     host: true,

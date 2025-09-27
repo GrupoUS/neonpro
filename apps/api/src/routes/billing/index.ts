@@ -8,7 +8,7 @@
 import { zValidator } from '@hono/zod-validator'
 import { Hono } from 'hono'
 import { auditLog } from '../../middleware/audit-log'
-import { requireAuth } from '../../middleware/authn'
+import { requireAuth } from '../../middleware/authn.js'
 import { dataProtection } from '../../middleware/lgpd-middleware'
 import { BillingService, PaymentMethod, PaymentStatus } from '../../services/billing-service'
 import { badRequest, created, forbidden, notFound, ok, serverError } from '../../utils/responses'

@@ -3,8 +3,8 @@
  * Integra com React Query para cache otimizado e estado global
  */
 
-import { apiClient as api } from '@/lib/api'
-import type { RecoveryPlan } from '@/types/aesthetic-scheduling'
+import { apiClient as api } from '@/lib/api.js'
+import type { RecoveryPlan } from '@/types/aesthetic-scheduling.js'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 interface UseRecoveryPlanOptions {

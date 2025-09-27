@@ -35,7 +35,7 @@ class SecretManager {
   private secrets: Map<string, string> = new Map()
   private metadata: Map<string, SecretMetadata> = new Map()
   private encryptionKey: Buffer
-  private cryptoManager: CryptographyManager;
+  private cryptoManager: CryptographyManager
 
   constructor(config: SecretConfig) {
     this.config = {
@@ -50,9 +50,9 @@ class SecretManager {
     }
 
     this.encryptionKey = Buffer.from(this.config.encryptionKey, 'hex')
-    this.cryptoManager = createCryptographyManager();
+    this.cryptoManager = createCryptographyManager()
     if (!this.cryptoManager) {
-      throw new Error('CryptographyManager initialization failed');
+      throw new Error('CryptographyManager initialization failed')
     }
     this.loadSecrets()
   }
@@ -161,7 +161,7 @@ class SecretManager {
       return undefined
     }
 
-    const [ivHex, authTagHex, encrypted] = parts;
+    const [ivHex, authTagHex, encrypted] = parts
     if (!ivHex || !authTagHex || !encrypted) {
       logger.warn('Invalid encrypted value parts')
       return undefined

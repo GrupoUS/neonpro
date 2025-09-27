@@ -1,31 +1,30 @@
-/**
- * Hook for managing date selection in MultiSessionScheduler
- */
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
-interface UseDateManagementReturn {
+export interface DateManagement {
   preferredDates: Date[]
-  handleAddDate: (dateString: string) => void
+  handleAddDate: (date: Date) => void
   handleRemoveDate: (date: Date) => void
 }
 
-export function useDateManagement(): UseDateManagementReturn {
+export function useDateManagement(): DateManagement {
   const [preferredDates, setPreferredDates] = useState<Date[]>([])
 
-  const handleAddDate = (dateString: string) => {
-    const date = new Date(dateString)
-    if (!preferredDates.some(d => d.toDateString() === date.toDateString())) {
-      setPreferredDates([...preferredDates, date])
-    }
-  }
+  const handleAddDate = useCallback((date: Date) => {
+    setPreferredDates(prev => {
+      if (!prev.some(d => d.getTime() === date.getTime())) {
+        return [...prev, date]
+      }
+      return prev
+    })
+  }, [])
 
-  const handleRemoveDate = (date: Date) => {
-    setPreferredDates(preferredDates.filter(d => d !== date))
-  }
+  const handleRemoveDate = useCallback((date: Date) => {
+    setPreferredDates(prev => prev.filter(d => d.getTime() !== date.getTime()))
+  }, [])
 
   return {
     preferredDates,
     handleAddDate,
-    handleRemoveDate,
+    handleRemoveDate
   }
 }

@@ -20,15 +20,15 @@ import ANVISAComplianceService, {
   ANVISA_DEVICE_CLASSES,
   ANVISA_SOFTWARE_CATEGORIES,
   type ANVISAComplianceReport,
-} from './anvisa-compliance'
+} from './anvisa-compliance.js'
 import CFMComplianceService, {
   CFM_COMPLIANCE_LEVELS,
   type CFMComplianceReport,
-} from './cfm-compliance'
+} from './cfm-compliance.js'
 import LGPDComplianceService, {
   LGPD_COMPLIANCE_LEVELS,
   type LGPDComplianceReport,
-} from './lgpd-compliance'
+} from './lgpd-compliance.js'
 
 // Brazilian Compliance Levels
 export const BRAZILIAN_COMPLIANCE_LEVELS = {

@@ -11,7 +11,7 @@ import {
   validateAIOutputSafety,
   logAIInteraction,
   aiSecurityService 
-} from '../../../apps/api/src/services/ai-security-service.js'
+} from '../../../apps/api/src/services/ai-security-service'
 
 interface AnthropicConfig {
   apiKey: string

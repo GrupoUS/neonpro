@@ -8,11 +8,12 @@
     "baseUrl": ".",
     "lib": ["ES2022", "DOM"],
     "tsBuildInfoFile": "./.tsbuildinfo",
-    "types": ["vite/client", "node"],
+    "types": ["node", "@types/node"],
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "jsx": "react-jsx",
     "strict": false,
+    "noResolve": false,
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],

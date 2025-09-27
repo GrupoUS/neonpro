@@ -1,19 +1,19 @@
 /**
  * TDD RED Phase - Trusty IP Check Issue Test
- * 
+ *
  * This test demonstrates the trusty IP check bug where userAgent comparison
  * throws TypeError when session.userAgent or attempt.userAgent is undefined.
- * 
+ *
  * Expected Behavior:
  * - EnhancedSessionManager should handle undefined userAgent values gracefully
  * - User agent comparison should work correctly with undefined values
  * - Session validation should not throw TypeError for undefined userAgent
- * 
+ *
  * Security: Critical - Session security validation for healthcare compliance
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock dependencies
 const mockConfig = {
@@ -54,7 +54,7 @@ class TestSessionManager {
       userAgent: options.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
       deviceFingerprint: options.deviceFingerprint || 'fingerprint-123',
     }
-    
+
     this.sessions.set(sessionId, session)
     return session
   }
@@ -89,9 +89,12 @@ class TestSessionManager {
     if (session.ipAddress !== attempt.ipAddress) {
       threats.push('ip_address_mismatch')
       confidence += 40
-      
+
       // Check if IP change is within mobile subnet tolerance
-      if (session.ipAddress && attempt.ipAddress && !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+      if (
+        session.ipAddress && attempt.ipAddress &&
+        !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)
+      ) {
         confidence += 30
       }
     }
@@ -142,16 +145,20 @@ class TestSessionManager {
     if (session.ipAddress !== attempt.ipAddress) {
       threats.push('ip_address_mismatch')
       confidence += 40
-      
+
       // Check if IP change is within mobile subnet tolerance
-      if (session.ipAddress && attempt.ipAddress && !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+      if (
+        session.ipAddress && attempt.ipAddress &&
+        !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)
+      ) {
         confidence += 30
       }
     }
 
     // CORRECT: User agent comparison with undefined checking
     // Only mismatch if both are defined and different
-    const userAgentMismatch = session.userAgent !== undefined && attempt.userAgent !== undefined && session.userAgent !== attempt.userAgent
+    const userAgentMismatch = session.userAgent !== undefined && attempt.userAgent !== undefined &&
+      session.userAgent !== attempt.userAgent
     if (userAgentMismatch) {
       threats.push('user_agent_mismatch')
       confidence += 30
@@ -187,7 +194,7 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
       // Arrange: Create a session with undefined userAgent
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { userAgent: undefined })
-      
+
       const attempt = sessionManager.createAttempt({ userAgent: 'different-browser' })
 
       // Act: Use buggy implementation
@@ -203,7 +210,7 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
       // Arrange: Create a session with undefined userAgent
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { userAgent: undefined })
-      
+
       const attempt = sessionManager.createAttempt({ userAgent: 'different-browser' })
 
       // Act: Use correct implementation
@@ -218,7 +225,7 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
       // Arrange: Create a session with undefined userAgent
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { userAgent: undefined })
-      
+
       const attempt = sessionManager.createAttempt({ userAgent: undefined })
 
       // Act: Use correct implementation
@@ -232,8 +239,10 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
     it('should not detect userAgent mismatch when session has userAgent but attempt does not', () => {
       // Arrange: Create a session with valid userAgent
       const sessionId = 'session-123'
-      sessionManager.createSession(sessionId, { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' })
-      
+      sessionManager.createSession(sessionId, {
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      })
+
       const attempt = sessionManager.createAttempt({ userAgent: undefined })
 
       // Act: Use correct implementation
@@ -249,7 +258,9 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { userAgent: undefined })
 
-      const attempt = sessionManager.createAttempt({ userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' })
+      const attempt = sessionManager.createAttempt({
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      })
 
       // Act: Use correct implementation
       const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt)
@@ -263,9 +274,13 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
     it('should maintain security functionality with proper userAgent validation', () => {
       // Arrange: Create a session with valid userAgent
       const sessionId = 'session-123'
-      sessionManager.createSession(sessionId, { userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' })
+      sessionManager.createSession(sessionId, {
+        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+      })
 
-      const attempt = sessionManager.createAttempt({ userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)' })
+      const attempt = sessionManager.createAttempt({
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+      })
 
       // Act: Use correct implementation
       const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt)
@@ -302,7 +317,7 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
           lgpdCompliant: true,
           anonymizationRequired: false,
           dataMinimizationApplied: true,
-        }
+        },
       })
 
       const attempt = sessionManager.createAttempt({ userAgent: 'browser-for-treatment' })
@@ -344,9 +359,9 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
             resourceType: 'patient',
             resourceId: 'patient-123',
             purpose: 'treatment',
-            legalBasis: 'consent'
-          }
-        ]
+            legalBasis: 'consent',
+          },
+        ],
       })
 
       const attempt = sessionManager.createAttempt({ userAgent: 'medical-browser' })
@@ -365,7 +380,10 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
     it('should maintain proper security scoring with undefined userAgent handling', () => {
       // Arrange: Create session without device fingerprint
       const sessionId = 'security-test-999'
-      sessionManager.createSession(sessionId, { userAgent: undefined, deviceFingerprint: undefined })
+      sessionManager.createSession(sessionId, {
+        userAgent: undefined,
+        deviceFingerprint: undefined,
+      })
 
       const attempt = sessionManager.createAttempt({ userAgent: undefined })
 
@@ -381,15 +399,15 @@ describe('TDD RED PHASE - Trusty IP Check Issue', () => {
     it('should handle multiple security scenarios simultaneously', () => {
       // Arrange: Create session with mixed scenarios
       const sessionId = 'multi-scenario-777'
-      sessionManager.createSession(sessionId, { 
+      sessionManager.createSession(sessionId, {
         userAgent: undefined,
         deviceFingerprint: undefined,
-        ipAddress: '192.168.1.1'
+        ipAddress: '192.168.1.1',
       })
 
-      const attempt = sessionManager.createAttempt({ 
+      const attempt = sessionManager.createAttempt({
         userAgent: 'different-browser',
-        ipAddress: '10.0.0.1'
+        ipAddress: '10.0.0.1',
       })
 
       // Mock mobile subnet change to return true

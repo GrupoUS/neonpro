@@ -41,7 +41,7 @@ export enum LegalBasis {
   LEGAL_OBLIGATION = 'legal_obligation',
   VITAL_INTEREST = 'vital_interest',
   PUBLIC_INTEREST = 'public_interest',
-  LEGITIMATE_INTEREST = 'legitimate_interest'
+  LEGITIMATE_INTEREST = 'legitimate_interest',
 }
 
 export enum RequestType {
@@ -49,14 +49,14 @@ export enum RequestType {
   PORTABILITY = 'portability',
   DELETION = 'deletion',
   RECTIFICATION = 'rectification',
-  OBJECTION = 'objection'
+  OBJECTION = 'objection',
 }
 
 export enum RequestStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
-  REJECTED = 'rejected'
+  REJECTED = 'rejected',
 }
 
 export const createLGPDConsent = (data: Partial<LGPDConsent>): LGPDConsent => ({
@@ -67,17 +67,19 @@ export const createLGPDConsent = (data: Partial<LGPDConsent>): LGPDConsent => ({
   status: data.status || ConsentStatus.PENDING,
   grantedAt: new Date(),
   revokedAt: data.revokedAt,
-  expirationDate: data.expirationDate
+  expirationDate: data.expirationDate,
 })
 
-export const createDataSubjectRequest = (data: Partial<DataSubjectRequest>): DataSubjectRequest => ({
+export const createDataSubjectRequest = (
+  data: Partial<DataSubjectRequest>,
+): DataSubjectRequest => ({
   id: Math.random().toString(36).substr(2, 9),
   userId: data.userId || '',
   type: data.type || RequestType.ACCESS,
   description: data.description || '',
   status: data.status || RequestStatus.PENDING,
   createdAt: new Date(),
-  resolvedAt: data.resolvedAt
+  resolvedAt: data.resolvedAt,
 })
 
 // Define missing enums locally

@@ -10,8 +10,8 @@ import {
   errorTrackingConfig,
   initializeOpenTelemetry,
   initializeSentry,
-} from '../config/error-tracking'
-import { setupGlobalErrorHandlers } from '../middleware/error-tracking'
+} from '../config/error-tracking.js'
+import { setupGlobalErrorHandlers } from '../middleware/error-tracking.js'
 
 let telemetrySDK: NodeSDK | null = null
 let isInitialized = false

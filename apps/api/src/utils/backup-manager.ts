@@ -1,6 +1,6 @@
 /**
  * 🔄 Backup and Disaster Recovery Utility
- * 
+ *
  * A modular backup management system with:
  * - Automated backup scheduling
  * - Multiple backup strategies (full, incremental, differential)
@@ -10,9 +10,13 @@
  * - Monitoring and alerting
  */
 
-import { SecureLogger } from './secure-logger'
+import {
+  HealthcareError,
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+} from './healthcare-errors'
 import { SecretManager } from './secret-manager'
-import { HealthcareError, HealthcareErrorSeverity, HealthcareErrorCategory } from './healthcare-errors'
+import { SecureLogger } from './secure-logger'
 
 export interface BackupConfig {
   // Backup scheduling
@@ -21,7 +25,7 @@ export interface BackupConfig {
     incrementalBackup: string // Cron expression for incremental backups
     retentionDays: number // Days to keep backups
   }
-  
+
   // Storage configuration
   storage: {
     primary: 'local' | 's3' | 'azure' | 'gcs'
@@ -34,7 +38,7 @@ export interface BackupConfig {
       secretKey?: string
     }
   }
-  
+
   // Data selection and filtering
   dataSelection: {
     includeTables: string[]
@@ -42,14 +46,14 @@ export interface BackupConfig {
     includeSensitiveData: boolean
     anonymizeSensitiveData: boolean
   }
-  
+
   // Encryption and security
   security: {
     encryptBackups: boolean
     compression: boolean
     checksumValidation: boolean
   }
-  
+
   // Performance and monitoring
   performance: {
     maxConcurrentBackups: number
@@ -116,7 +120,7 @@ export class BackupManager {
       maskSensitiveData: true,
       lgpdCompliant: true,
       auditTrail: true,
-      _service: 'BackupManager'
+      _service: 'BackupManager',
     })
     this.secretManager = new SecretManager()
   }
@@ -129,13 +133,13 @@ export class BackupManager {
       config: {
         schedule: this.config.schedule,
         storage: this.config.storage.primary,
-        retentionDays: this.config.schedule.retentionDays
-      }
+        retentionDays: this.config.schedule.retentionDays,
+      },
     })
 
     // Schedule full backups
     this.scheduleBackup('full', this.config.schedule.fullBackup)
-    
+
     // Schedule incremental backups
     this.scheduleBackup('incremental', this.config.schedule.incrementalBackup)
 
@@ -158,21 +162,21 @@ export class BackupManager {
         tables: this.config.dataSelection.includeTables,
         records: 0,
         compressed: this.config.security.compression,
-        encrypted: this.config.security.encryptBackups
-      }
+        encrypted: this.config.security.encryptBackups,
+      },
     }
 
     this.activeJobs.set(jobId, job)
-    
+
     try {
       this.logger.info('Starting backup', { jobId, type })
-      
+
       // Update status to running
       job.status = 'running'
-      
+
       // Execute backup
       const result = await this.executeBackup(job)
-      
+
       // Update job with results
       job.endTime = new Date()
       job.size = result.size
@@ -180,32 +184,32 @@ export class BackupManager {
       job.checksum = result.checksum
       job.metadata.records = result.records
       job.status = 'completed'
-      
+
       this.logger.info('Backup completed successfully', {
         jobId,
         duration: job.endTime.getTime() - job.startTime.getTime(),
         size: result.size,
-        location: result.location
+        location: result.location,
       })
-      
+
       return job
     } catch (error) {
       job.endTime = new Date()
       job.status = 'failed'
       job.error = error instanceof Error ? error.message : String(error)
-      
+
       this.logger.error('Backup failed', {
         jobId,
         error: job.error,
-        duration: job.endTime.getTime() - job.startTime.getTime()
+        duration: job.endTime.getTime() - job.startTime.getTime(),
       }, HealthcareErrorSeverity.HIGH)
-      
+
       throw new HealthcareError(
         'BACKUP_FAILED',
         HealthcareErrorCategory.SYSTEM,
         HealthcareErrorSeverity.HIGH,
         `Backup job ${jobId} failed: ${job.error}`,
-        { jobId, type, error: job.error }
+        { jobId, type, error: job.error },
       )
     }
   }
@@ -229,7 +233,7 @@ export class BackupManager {
       recoverySteps: this.generateDefaultRecoverySteps(options.backupId, options.targetEnvironment),
       estimatedDuration: this.calculateEstimatedDuration(options.targetEnvironment),
       rollbackPlan: this.generateRollbackPlan(options.backupId),
-      created: new Date()
+      created: new Date(),
     }
 
     // Add custom steps if provided
@@ -245,20 +249,20 @@ export class BackupManager {
           expectedDuration: step.expectedDuration || 5,
           dependencies: step.dependencies || [],
           rollbackCommand: step.rollbackCommand,
-          validationCriteria: step.validationCriteria
+          validationCriteria: step.validationCriteria,
         }
         plan.recoverySteps.push(fullStep)
       })
     }
 
     this.recoveryPlans.set(plan.id, plan)
-    
+
     this.logger.info('Recovery plan created', {
       planId: plan.id,
       name: plan.name,
       targetEnvironment: plan.targetEnvironment,
       stepsCount: plan.recoverySteps.length,
-      estimatedDuration: plan.estimatedDuration
+      estimatedDuration: plan.estimatedDuration,
     })
 
     return plan
@@ -274,18 +278,18 @@ export class BackupManager {
         'RECOVERY_PLAN_NOT_FOUND',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.HIGH,
-        `Recovery plan ${planId} not found`
+        `Recovery plan ${planId} not found`,
       )
     }
 
     this.logger.info('Executing recovery plan', {
       planId: plan.id,
       name: plan.name,
-      stepsCount: plan.recoverySteps.length
+      stepsCount: plan.recoverySteps.length,
     })
 
     const results: any[] = []
-    
+
     try {
       // Execute steps in order
       for (const step of plan.recoverySteps.sort((a, b) => a.order - b.order)) {
@@ -297,7 +301,7 @@ export class BackupManager {
               'DEPENDENCY_FAILED',
               HealthcareErrorCategory.SYSTEM,
               HealthcareErrorSeverity.HIGH,
-              `Dependency step ${depId} failed or not completed`
+              `Dependency step ${depId} failed or not completed`,
             )
           }
         }
@@ -306,7 +310,7 @@ export class BackupManager {
           planId,
           stepId: step.id,
           stepName: step.name,
-          order: step.order
+          order: step.order,
         })
 
         const result = await this.executeRecoveryStep(step)
@@ -317,7 +321,7 @@ export class BackupManager {
             'RECOVERY_STEP_FAILED',
             HealthcareErrorCategory.SYSTEM,
             HealthcareErrorSeverity.CRITICAL,
-            `Recovery step ${step.name} failed: ${result.error}`
+            `Recovery step ${step.name} failed: ${result.error}`,
           )
         }
       }
@@ -328,14 +332,14 @@ export class BackupManager {
       this.logger.info('Recovery plan executed successfully', {
         planId,
         duration: results.reduce((total, r) => total + r.duration, 0),
-        stepsExecuted: results.length
+        stepsExecuted: results.length,
       })
 
       return { success: true, results }
     } catch (error) {
       this.logger.error('Recovery plan execution failed', {
         planId,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       }, HealthcareErrorSeverity.CRITICAL)
 
       return { success: false, results }
@@ -360,7 +364,7 @@ export class BackupManager {
       activeJobs: Array.from(this.activeJobs.values()).filter(job => job.status === 'running'),
       recentJobs,
       storageUsage: this.calculateStorageUsage(),
-      nextScheduledBackup: this.getNextScheduledBackup()
+      nextScheduledBackup: this.getNextScheduledBackup(),
     }
   }
 
@@ -374,12 +378,12 @@ export class BackupManager {
         'BACKUP_NOT_FOUND',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.MEDIUM,
-        `Backup ${backupId} not found or not completed`
+        `Backup ${backupId} not found or not completed`,
       )
     }
 
     const issues: string[] = []
-    
+
     try {
       // Validate checksum
       if (job.checksum) {
@@ -402,18 +406,21 @@ export class BackupManager {
 
       return {
         valid: issues.length === 0,
-        issues
+        issues,
       }
     } catch (error) {
       return {
         valid: false,
-        issues: [`Validation error: ${error instanceof Error ? error.message : String(error)}`]
+        issues: [`Validation error: ${error instanceof Error ? error.message : String(error)}`],
       }
     }
   }
 
   // Private helper methods
-  private scheduleBackup(type: 'full' | 'incremental' | 'differential', cronExpression: string): void {
+  private scheduleBackup(
+    type: 'full' | 'incremental' | 'differential',
+    cronExpression: string,
+  ): void {
     // In a real implementation, this would use a cron library
     this.logger.info('Scheduled backup', { type, cronExpression })
   }
@@ -423,21 +430,23 @@ export class BackupManager {
     this.logger.info('Started backup cleanup process')
   }
 
-  private async executeBackup(job: BackupJob): Promise<{ size: number; location: string; checksum: string; records: number }> {
+  private async executeBackup(
+    job: BackupJob,
+  ): Promise<{ size: number; location: string; checksum: string; records: number }> {
     // Mock implementation - in real scenario, this would:
     // 1. Connect to database
     // 2. Export data based on type (full/incremental/differential)
     // 3. Apply compression and encryption
     // 4. Upload to storage
     // 5. Generate checksum
-    
+
     await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate backup time
-    
+
     return {
       size: Math.floor(Math.random() * 1000000) + 100000, // Random size between 100KB and 1MB
       location: `${this.config.storage.primary}://backups/${job.id}.backup`,
       checksum: this.generateChecksum(),
-      records: Math.floor(Math.random() * 10000) + 1000
+      records: Math.floor(Math.random() * 10000) + 1000,
     }
   }
 
@@ -452,7 +461,7 @@ export class BackupManager {
         command: 'system-check --pre-recovery',
         expectedDuration: 5,
         dependencies: [],
-        validationCriteria: ['System resources adequate', 'No conflicting processes']
+        validationCriteria: ['System resources adequate', 'No conflicting processes'],
       },
       {
         id: this.generateStepId(),
@@ -463,7 +472,7 @@ export class BackupManager {
         command: `restore-backup --backup-id ${backupId}`,
         expectedDuration: 30,
         dependencies: ['pre-recovery-validation'],
-        rollbackCommand: 'restore-previous-state'
+        rollbackCommand: 'restore-previous-state',
       },
       {
         id: this.generateStepId(),
@@ -473,7 +482,7 @@ export class BackupManager {
         type: 'config',
         command: 'restore-config --environment ' + environment,
         expectedDuration: 10,
-        dependencies: ['database-backup-restore']
+        dependencies: ['database-backup-restore'],
       },
       {
         id: this.generateStepId(),
@@ -484,8 +493,12 @@ export class BackupManager {
         command: 'system-check --post-recovery',
         expectedDuration: 15,
         dependencies: ['configuration-restoration'],
-        validationCriteria: ['All services running', 'Data integrity verified', 'Performance metrics acceptable']
-      }
+        validationCriteria: [
+          'All services running',
+          'Data integrity verified',
+          'Performance metrics acceptable',
+        ],
+      },
     ]
   }
 
@@ -495,28 +508,33 @@ export class BackupManager {
     const environmentMultiplier = {
       production: 2.0,
       staging: 1.5,
-      development: 1.0
+      development: 1.0,
     }
-    return Math.floor(baseDuration * environmentMultiplier[environment as keyof typeof environmentMultiplier] || 1.0)
+    return Math.floor(
+      baseDuration * environmentMultiplier[environment as keyof typeof environmentMultiplier] ||
+        1.0,
+    )
   }
 
   private generateRollbackPlan(backupId: string): string {
     return `Rollback plan for backup ${backupId}:\n1. Create current state backup\n2. Restore previous known good state\n3. Validate system functionality\n4. Document rollback actions`
   }
 
-  private async executeRecoveryStep(step: RecoveryStep): Promise<{ stepId: string; success: boolean; duration: number; error?: string }> {
+  private async executeRecoveryStep(
+    step: RecoveryStep,
+  ): Promise<{ stepId: string; success: boolean; duration: number; error?: string }> {
     const startTime = Date.now()
-    
+
     try {
       // Mock execution - in real scenario, execute the actual command
       await new Promise(resolve => setTimeout(resolve, step.expectedDuration * 100))
-      
+
       const duration = Date.now() - startTime
-      
+
       return {
         stepId: step.id,
         success: true,
-        duration
+        duration,
       }
     } catch (error) {
       const duration = Date.now() - startTime
@@ -524,7 +542,7 @@ export class BackupManager {
         stepId: step.id,
         success: false,
         duration,
-        error: error instanceof Error ? error.message : String(error)
+        error: error instanceof Error ? error.message : String(error),
       }
     }
   }
@@ -534,7 +552,7 @@ export class BackupManager {
     return {
       used: 2500000000, // 2.5GB
       total: 10000000000, // 10GB
-      available: 7500000000 // 7.5GB
+      available: 7500000000, // 7.5GB
     }
   }
 

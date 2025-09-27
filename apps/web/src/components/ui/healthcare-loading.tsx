@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useTranslation } from '@/lib/i18n/use-translation'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils.js'
 
 export interface HealthcareLoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'

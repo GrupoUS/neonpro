@@ -13,7 +13,7 @@
  * - Data access control
  */
 
-import { prisma } from '../lib/prisma'
+import { prisma } from '../lib/prisma.js'
 
 export interface LGPDConsentRecord {
   id: string

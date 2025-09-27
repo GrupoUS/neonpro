@@ -14,7 +14,8 @@
     "src/utils.ts",
     "src/console-manager.ts",
     "src/cryptography.ts",
-    "src/encryption.ts"
+    "src/encryption.ts",
+    "src/crypto-utils.ts"
   ],
   "exclude": [
     "node_modules",

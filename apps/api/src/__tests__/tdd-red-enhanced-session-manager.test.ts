@@ -1,20 +1,20 @@
 /**
  * TDD RED Phase - Enhanced Session Manager Issues Test
- * 
+ *
  * This test demonstrates the Enhanced Session Manager timeout and validation issues
  * that are causing test failures.
- * 
+ *
  * Expected Behavior:
  * - Enhanced Session Manager should handle session timeouts properly
  * - Should validate session security and compliance requirements
  * - Should provide observability metrics and monitoring
  * - Should integrate with healthcare compliance frameworks
- * 
+ *
  * Security: Critical - Enhanced session management with timeout handling
  * Compliance: LGPD, ANVISA, CFM, OWASP Session Management
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EnhancedSessionManager } from '../security/enhanced-session-manager'
 
 // Mock session data for testing
@@ -37,7 +37,7 @@ const mockSessionData = {
   location: {
     country: 'BR',
     region: 'SP',
-    city: 'São Paulo'
+    city: 'São Paulo',
   },
   dataAccessLog: [],
   complianceFlags: {
@@ -48,8 +48,8 @@ const mockSessionData = {
     encryptionApplied: true,
     accessControlApplied: true,
     auditTrailEnabled: true,
-    breachNotificationRequired: false
-  }
+    breachNotificationRequired: false,
+  },
 }
 
 describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
@@ -58,7 +58,7 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     sessionManager = EnhancedSessionManager
-    
+
     // Reset session manager state
     if (sessionManager['sessions']) {
       sessionManager['sessions'].clear()
@@ -77,13 +77,13 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
       // Arrange: Create a session that's about to timeout
       const nearTimeoutSession = {
         ...mockSessionData,
-        expiresAt: new Date(Date.now() + 1000) // 1 second from now
+        expiresAt: new Date(Date.now() + 1000), // 1 second from now
       }
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist or has timeout issues
       const result = await sessionManager.validateSessionWithTimeout(nearTimeoutSession.sessionId, {
         timeoutWarning: 30, // 30 seconds warning
-        autoExtend: false
+        autoExtend: false,
       })
 
       expect(result).toEqual({
@@ -91,11 +91,11 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         isNearTimeout: true,
         timeRemaining: expect.any(Number),
         session: expect.objectContaining({
-          sessionId: nearTimeoutSession.sessionId
+          sessionId: nearTimeoutSession.sessionId,
         }),
         warnings: expect.arrayContaining([
-          'Session approaching timeout'
-        ])
+          'Session approaching timeout',
+        ]),
       })
     })
 
@@ -103,7 +103,7 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
       // Arrange: Create an expired session
       const expiredSession = {
         ...mockSessionData,
-        expiresAt: new Date(Date.now() - 5000) // 5 seconds ago
+        expiresAt: new Date(Date.now() - 5000), // 5 seconds ago
       }
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist or has timeout issues
@@ -114,7 +114,7 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         isExpired: true,
         session: null,
         error: 'Session expired',
-        cleanupPerformed: true
+        cleanupPerformed: true,
       })
 
       // Verify session was cleaned up
@@ -130,8 +130,8 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         healthcareProvider: 'Hospital São Lucas',
         requestContext: {
           ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
       })
 
       const originalExpiry = session.expiresAt
@@ -139,16 +139,16 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
       const result = await sessionManager.extendSessionLifetime(session.sessionId, {
         extensionMinutes: 30,
-        requireReauthentication: false
+        requireReauthentication: false,
       })
 
       expect(result).toEqual({
         success: true,
         session: expect.objectContaining({
           sessionId: session.sessionId,
-          expiresAt: expect.any(Date)
+          expiresAt: expect.any(Date),
         }),
-        extensionApplied: true
+        extensionApplied: true,
       })
 
       // Verify expiry was extended
@@ -159,7 +159,7 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
       // Arrange: Create multiple sessions for the same user
       const userId = 'user-123'
       const sessionPromises = []
-      
+
       for (let i = 0; i < 5; i++) {
         sessionPromises.push(
           sessionManager.createEnhancedSession({
@@ -168,18 +168,18 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
             healthcareProvider: 'Hospital São Lucas',
             requestContext: {
               ipAddress: '192.168.1.100',
-              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
-          })
+              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            },
+          }),
         )
       }
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
       const sessions = await Promise.all(sessionPromises)
-      
+
       // Should have enforced concurrent session limit (typically 3)
       expect(sessions.length).toBeLessThanOrEqual(3)
-      
+
       const metrics = sessionManager.getSessionMetrics()
       expect(metrics.concurrentSessionLimitExceeded).toBeGreaterThan(0)
     })
@@ -194,27 +194,27 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         healthcareProvider: 'Hospital São Lucas',
         requestContext: {
           ipAddress: '203.0.113.1', // Suspicious IP
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
       })
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
       const securityValidation = await sessionManager.validateSessionSecurity(session.sessionId, {
         checkIPReputation: true,
         checkDeviceFingerprint: true,
-        checkGeoLocation: true
+        checkGeoLocation: true,
       })
 
       expect(securityValidation).toEqual({
         isValid: false,
         securityScore: expect.any(Number),
         threats: expect.arrayContaining([
-          'suspicious_ip_address'
+          'suspicious_ip_address',
         ]),
         recommendations: expect.arrayContaining([
           'Review IP address reputation',
-          'Enable additional authentication factors'
-        ])
+          'Enable additional authentication factors',
+        ]),
       })
     })
 
@@ -226,15 +226,15 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         healthcareProvider: 'Hospital São Lucas',
         requestContext: {
           ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
       })
 
       // Simulate session hijacking with different IP
       const hijackAttempt = {
         sessionId: session.sessionId,
         ipAddress: '203.0.113.1', // Different IP
-        userAgent: 'Mozilla/5.0 (compatible; MSIE 10.0)' // Different user agent
+        userAgent: 'Mozilla/5.0 (compatible; MSIE 10.0)', // Different user agent
       }
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
@@ -245,10 +245,10 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         confidence: expect.any(Number),
         evidence: expect.arrayContaining([
           'ip_address_mismatch',
-          'user_agent_mismatch'
+          'user_agent_mismatch',
         ]),
         action: 'terminate_session',
-        alertGenerated: true
+        alertGenerated: true,
       })
     })
 
@@ -260,15 +260,15 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         healthcareProvider: 'Hospital São Lucas',
         requestContext: {
           ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         },
-        sessionType: 'telemedicine'
+        sessionType: 'telemedicine',
       })
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
       const mfaValidation = await sessionManager.validateMFARequirements(session.sessionId, {
         operationType: 'patient_data_access',
-        sensitivityLevel: 'high'
+        sensitivityLevel: 'high',
       })
 
       expect(mfaValidation).toEqual({
@@ -277,8 +277,8 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         isValid: false,
         recommendations: [
           'MFA verification required for telemedicine sessions',
-          'Complete MFA challenge before accessing sensitive data'
-        ]
+          'Complete MFA challenge before accessing sensitive data',
+        ],
       })
     })
   })
@@ -293,16 +293,19 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         patientId: 'patient-456',
         requestContext: {
           ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
       })
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
-      const complianceValidation = await sessionManager.validateSessionCompliance(session.sessionId, {
-        frameworks: ['lgpd'],
-        consentLevel: 'full',
-        dataMinimization: true
-      })
+      const complianceValidation = await sessionManager.validateSessionCompliance(
+        session.sessionId,
+        {
+          frameworks: ['lgpd'],
+          consentLevel: 'full',
+          dataMinimization: true,
+        },
+      )
 
       expect(complianceValidation).toEqual({
         isCompliant: true,
@@ -313,8 +316,8 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
           'data_consent',
           'data_minimization',
           'retention_policy',
-          'encryption_standards'
-        ])
+          'encryption_standards',
+        ]),
       })
     })
 
@@ -326,8 +329,8 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         healthcareProvider: 'Hospital São Lucas',
         requestContext: {
           ipAddress: '192.168.1.100',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
       })
 
       // Act & Assert: This should fail because EnhancedSessionManager doesn't exist
@@ -336,7 +339,7 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         resourceType: 'patient',
         resourceId: 'patient-456',
         purpose: 'Clinical consultation',
-        legalBasis: 'consent'
+        legalBasis: 'consent',
       })
 
       expect(accessLog).toEqual({
@@ -345,8 +348,8 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         timestamp: expect.any(Date),
         complianceFlags: expect.objectContaining({
           lgpdCompliant: true,
-          auditTrailEnabled: true
-        })
+          auditTrailEnabled: true,
+        }),
       })
 
       // Verify access was logged
@@ -371,13 +374,13 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         performanceMetrics: {
           averageValidationTime: expect.any(Number),
           timeoutEvents: expect.any(Number),
-          extensionRequests: expect.any(Number)
+          extensionRequests: expect.any(Number),
         },
         healthcareMetrics: {
           telemedicineSessions: expect.any(Number),
           mfaVerifiedSessions: expect.any(Number),
-          consentLevelDistribution: expect.any(Object)
-        }
+          consentLevelDistribution: expect.any(Object),
+        },
       })
     })
 
@@ -392,8 +395,8 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
             healthcareProvider: 'Hospital São Lucas',
             requestContext: {
               ipAddress: '192.168.1.100',
-              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            }
+              userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+            },
           })
         } catch (error) {
           // Expected to fail
@@ -408,13 +411,13 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         anomalyScore: expect.any(Number),
         detectedPatterns: expect.arrayContaining([
           'high_session_creation_rate',
-          'potential_session_bombing'
+          'potential_session_bombing',
         ]),
         recommendations: [
           'Implement rate limiting for session creation',
           'Enable additional authentication challenges',
-          'Monitor for suspicious behavior patterns'
-        ]
+          'Monitor for suspicious behavior patterns',
+        ],
       })
     })
 
@@ -428,7 +431,7 @@ describe('TDD RED PHASE - Enhanced Session Manager Issues', () => {
         threatLevel: expect.any(String),
         systemHealth: expect.any(String),
         alerts: expect.arrayContaining([]),
-        lastUpdate: expect.any(Date)
+        lastUpdate: expect.any(Date),
       })
     })
   })

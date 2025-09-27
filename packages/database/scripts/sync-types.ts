@@ -31,7 +31,7 @@ function getHealthcareLogger(): HealthcareSecurityLogger {
 // ES module equivalents for __dirname
 const _filename = fileURLToPath(import.meta.url)
 void _filename
-const dirnamePath = dirname(__filename)
+const _dirnamePath = dirname(__filename)
 
 // Read Prisma schema and generate basic Supabase types
 const _prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma')

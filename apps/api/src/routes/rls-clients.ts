@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import type { Context } from 'hono'
-import type { RLSQueryBuilder } from '../lib/supabase-client'
+import type { RLSQueryBuilder } from '../lib/supabase-client.js'
 // import removed: dataProtection was unused
 
 import { patientAccessMiddleware, rlsHealthcareMiddleware } from '../middleware/rls-middleware'

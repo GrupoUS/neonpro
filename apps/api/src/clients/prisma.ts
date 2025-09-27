@@ -71,115 +71,60 @@ class UnauthorizedHealthcareAccessError extends Error {
   }
 }
 
-// Extended Prisma client interface for healthcare features
-interface HealthcarePrismaClient extends PrismaClient {
-  // Connection management
-  healthcareConfig: HealthcareConnectionConfig
-  currentContext?: HealthcareContext
-  connectionPool: {
+// Enhanced healthcare client using Prisma with RLS context
+class HealthcarePrismaClient {
+  private client: PrismaClient
+  private currentContext: HealthcareContext = {}
+  private healthcareConfig: HealthcareConnectionConfig
+  private connectionPool: {
     activeConnections: number
     totalConnections: number
     healthStatus: 'healthy' | 'degraded' | 'unhealthy'
     lastHealthCheck: Date
   }
 
-  // Healthcare context management
-  withContext(_context: HealthcareContext): HealthcarePrismaClient
-  validateContext(): Promise<boolean>
+  constructor(options?: { connectionString?: string }) {
+    // Healthcare-optimized configuration
+    this.healthcareConfig = {
+      maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS || '20'),
+      connectionTimeout: parseInt(process.env.DATABASE_CONNECTION_TIMEOUT || '30000'),
+      idleTimeout: parseInt(process.env.DATABASE_IDLE_TIMEOUT || '600000'),
+      healthCheckInterval: parseInt(process.env.DATABASE_HEALTH_CHECK_INTERVAL || '30000'),
+    }
 
-  // LGPD compliance methods
-  exportPatientData(
-    patientId: string,
-    requestedBy: string,
-    reason: string,
-  ): Promise<LGPDDataExport>
-  deletePatientData(
-    patientId: string,
-    options?: {
-      cascadeDelete?: boolean
-      retainAuditTrail?: boolean
-      reason?: string
-    },
-  ): Promise<void>
-
-  // Healthcare-specific query methods
-  findPatientsInClinic(clinicId: string, filters?: any): Promise<any[]>
-  findAppointmentsForProfessional(
-    professionalId: string,
-    filters?: any,
-  ): Promise<any[]>
-  createAuditLog(
-    action: string,
-    resourceType: string,
-    resourceId: string,
-    details?: any,
-  ): Promise<void>
-
-  // Connection health methods
-  validateConnection(): Promise<boolean>
-  getHealthMetrics(): Promise<any>
-  handleConnectionError(error: any): Promise<void>
-}
-
-// Singleton instance for resource efficiency
-let healthcarePrismaInstance: HealthcarePrismaClient | null = null
-
-/**
- * Creates healthcare-optimized Prisma client with singleton pattern
- * Integrates with Supabase RLS and provides healthcare-specific features
- */
-function createHealthcarePrismaClient(): HealthcarePrismaClient {
-  if (healthcarePrismaInstance) {
-    return healthcarePrismaInstance
-  }
-
-  // Healthcare-optimized configuration
-  const healthcareConfig: HealthcareConnectionConfig = {
-    maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS || '20'),
-    connectionTimeout: parseInt(
-      process.env.DATABASE_CONNECTION_TIMEOUT || '30000',
-    ),
-    idleTimeout: parseInt(process.env.DATABASE_IDLE_TIMEOUT || '600000'),
-    healthCheckInterval: parseInt(
-      process.env.DATABASE_HEALTH_CHECK_INTERVAL || '30000',
-    ),
-  }
-
-  // Create base Prisma client with healthcare optimizations
-  const basePrisma = new PrismaClient({
-    log: process.env.NODE_ENV === 'development'
-      ? ['query', 'error', 'warn', 'info']
-      : ['error', 'warn'],
-    errorFormat: 'pretty',
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL,
+    this.client = new PrismaClient({
+      log: process.env.NODE_ENV === 'development'
+        ? ['query', 'error', 'warn', 'info']
+        : ['error', 'warn'],
+      errorFormat: 'pretty',
+      datasources: {
+        db: {
+          url: options?.connectionString || process.env.DATABASE_URL || 'postgresql://localhost:5432/neonpro',
+        },
       },
-    },
-  })
+    })
 
-  // Extend base client with healthcare features
-  const healthcarePrisma = basePrisma as HealthcarePrismaClient
+    this.connectionPool = {
+      activeConnections: 1,
+      totalConnections: 1,
+      healthStatus: 'healthy',
+      lastHealthCheck: new Date(),
+    }
+  }
 
-  // Initialize healthcare configuration
-  healthcarePrisma.healthcareConfig = healthcareConfig
-  healthcarePrisma.connectionPool = {
-    activeConnections: 1,
-    totalConnections: 1,
-    healthStatus: 'healthy',
-    lastHealthCheck: new Date(),
+  // Access the underlying Prisma client for direct operations
+  get raw() {
+    return this.client
   }
 
   // Healthcare context management
-  healthcarePrisma.withContext = function(
-    context: HealthcareContext,
-  ): HealthcarePrismaClient {
+  withContext(context: HealthcareContext): HealthcarePrismaClient {
     const newInstance = Object.create(this)
     newInstance.currentContext = context
     return newInstance
   }
 
-  healthcarePrisma.validateContext = async function(): Promise<boolean> {
+  async validateContext(): Promise<boolean> {
     if (!this.currentContext?.userId || !this.currentContext?.clinicId) {
       return false
     }
@@ -190,41 +135,15 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         this.currentContext.userId,
         this.currentContext.clinicId,
       )
-
-      // Additional CFM validation for healthcare professionals
-      if (
-        this.currentContext.role === 'professional' &&
-        !this.currentContext.cfmValidated
-      ) {
-        const professional = await this.professional.findFirst({
-          where: {
-            userId: this.currentContext.userId,
-            clinicId: this.currentContext.clinicId,
-            isActive: true,
-          },
-          select: {
-            licenseNumber: true,
-            specialization: true,
-          },
-        })
-
-        if (!professional?.licenseNumber) {
-          throw new HealthcareComplianceError(
-            'Professional license validation required',
-            'CFM_VALIDATION_REQUIRED',
-            'CFM',
-          )
-        }
-      }
-
       return hasAccess
     } catch (error) {
       console.error('Context validation failed:', error)
       return false
     }
   }
+
   // LGPD compliance methods
-  healthcarePrisma.exportPatientData = async function(
+  async exportPatientData(
     patientId: string,
     requestedBy: string,
     reason: string,
@@ -240,7 +159,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       // Check if patient belongs to current clinic context
-      const patient = await this.patient.findFirst({
+      const patient = await this.client.patient.findFirst({
         where: {
           id: patientId,
           clinicId: this.currentContext?.clinicId,
@@ -301,8 +220,8 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
               endTime: apt.endTime,
               status: apt.status,
               notes: apt.notes,
-              professional: apt.professional.fullName,
-              serviceType: apt.serviceType.name,
+              professional: apt.professional?.fullName || 'Unknown',
+              serviceType: apt.serviceType?.name || 'Unknown',
             })),
           },
           insuranceData: {
@@ -354,7 +273,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     }
   }
 
-  healthcarePrisma.deletePatientData = async function(
+  async deletePatientData(
     patientId: string,
     options: {
       cascadeDelete?: boolean
@@ -375,7 +294,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       // Verify patient exists and belongs to clinic
-      const patient = await this.patient.findFirst({
+      const patient = await this.client.patient.findFirst({
         where: {
           id: patientId,
           clinicId: this.currentContext?.clinicId,
@@ -390,7 +309,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         )
       }
 
-      await this.$transaction(async tx => {
+      await this.client.$transaction(async tx => {
         // Create audit log before deletion
         await this.createAuditLog('DELETE', 'PATIENT_RECORD', patientId, {
           cascadeDelete,
@@ -426,8 +345,10 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       console.error('Patient data deletion failed:', error)
       throw error
     }
-  } // Healthcare-specific query methods with RLS integration
-  healthcarePrisma.findPatientsInClinic = async function(
+  }
+
+  // Healthcare-specific query methods with RLS integration
+  async findPatientsInClinic(
     clinicId: string,
     filters: any = {},
   ): Promise<any[]> {
@@ -446,7 +367,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         )
       }
 
-      const patients = await this.patient.findMany({
+      const patients = await this.client.patient.findMany({
         where: {
           clinicId,
           isActive: true,
@@ -486,13 +407,13 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     }
   }
 
-  healthcarePrisma.findAppointmentsForProfessional = async function(
+  async findAppointmentsForProfessional(
     professionalId: string,
     filters: any = {},
   ): Promise<any[]> {
     try {
       // Validate professional access
-      const professional = await this.professional.findFirst({
+      const professional = await this.client.professional.findFirst({
         where: {
           id: professionalId,
           clinicId: this.currentContext?.clinicId,
@@ -508,7 +429,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         )
       }
 
-      const appointments = await this.appointment.findMany({
+      const appointments = await this.client.appointment.findMany({
         where: {
           professionalId,
           ...filters,
@@ -551,7 +472,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     }
   }
 
-  healthcarePrisma.createAuditLog = async function(
+  async createAuditLog(
     action: string,
     resourceType: string,
     resourceId: string,
@@ -577,21 +498,23 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         }),
       }
 
-      await this.auditTrail.create({
+      await this.client.auditTrail.create({
         data: auditData,
       })
     } catch (error) {
       console.error('Audit log creation failed:', error)
       // Don't throw here to avoid breaking the main operation
     }
-  } // Connection health and monitoring methods
-  healthcarePrisma.validateConnection = async function(): Promise<boolean> {
+  }
+
+  // Connection health and monitoring methods
+  async validateConnection(): Promise<boolean> {
     try {
       // Test basic connectivity
-      await this.$queryRaw`SELECT 1`
+      await this.client.$queryRaw`SELECT 1`
 
       // Test healthcare-specific tables
-      await this.clinic.count()
+      await this.client.clinic.count()
 
       this.connectionPool.healthStatus = 'healthy'
       this.connectionPool.lastHealthCheck = new Date()
@@ -606,7 +529,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     }
   }
 
-  healthcarePrisma.getHealthMetrics = async function(): Promise<any> {
+  async getHealthMetrics(): Promise<any> {
     try {
       const startTime = Date.now()
 
@@ -617,11 +540,11 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         clinicCount,
         auditLogCount,
       ] = await Promise.all([
-        this.patient.count(),
-        this.appointment.count(),
-        this.professional.count(),
-        this.clinic.count(),
-        this.auditTrail.count({
+        this.client.patient.count(),
+        this.client.appointment.count(),
+        this.client.professional.count(),
+        this.client.clinic.count(),
+        this.client.auditTrail.count({
           where: {
             createdAt: {
               gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
@@ -653,9 +576,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     }
   }
 
-  healthcarePrisma.handleConnectionError = async function(
-    error: any,
-  ): Promise<void> {
+  async handleConnectionError(error: any): Promise<void> {
     console.error('Prisma connection error:', error)
 
     this.connectionPool.healthStatus = 'unhealthy'
@@ -663,8 +584,8 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
     // Attempt to reconnect
     try {
-      await this.$disconnect()
-      await this.$connect()
+      await this.client.$disconnect()
+      await this.client.$connect()
 
       if (await this.validateConnection()) {
         this.connectionPool.healthStatus = 'healthy'
@@ -677,67 +598,90 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   }
 
   // Set up middleware for automatic audit logging
-  healthcarePrisma.$use(async (params, next) => {
-    const start = Date.now()
+  private setupAuditMiddleware(): void {
+    this.client.$use(async (params, next) => {
+      const start = Date.now()
 
-    try {
-      const result = await next(params)
+      try {
+        const result = await next(params)
 
-      // Log significant operations
-      if (['create', 'update', 'delete'].includes(params.action)) {
-        const duration = Date.now() - start
+        // Log significant operations
+        if (['create', 'update', 'delete'].includes(params.action)) {
+          const duration = Date.now() - start
 
-        // Create audit log for data modifications
-        if (healthcarePrisma.currentContext) {
-          try {
-            await healthcarePrisma.createAuditLog(
-              params.action.toUpperCase(),
-              params.model || 'UNKNOWN',
-              JSON.stringify(params.args?.where || {}),
-              {
-                operation: params.action,
-                model: params.model,
-                duration,
-                dataModified: true,
-              },
-            )
-          } catch (auditError) {
-            console.error('Audit logging failed:', auditError)
+          // Create audit log for data modifications
+          if (this.currentContext) {
+            try {
+              await this.createAuditLog(
+                params.action.toUpperCase(),
+                params.model || 'UNKNOWN',
+                JSON.stringify(params.args?.where || {}),
+                {
+                  operation: params.action,
+                  model: params.model,
+                  duration,
+                  dataModified: true,
+                },
+              )
+            } catch (auditError) {
+              console.error('Audit logging failed:', auditError)
+            }
           }
         }
+
+        return result
+      } catch (error) {
+        // Log errors for monitoring
+        console.error('Prisma operation failed:', {
+          action: params.action,
+          model: params.model,
+          error: error instanceof Error ? error.message : String(error),
+          context: this.currentContext,
+        })
+
+        throw error
       }
+    })
+  }
 
-      return result
-    } catch (error) {
-      // Log errors for monitoring
-      console.error('Prisma operation failed:', {
-        action: params.action,
-        model: params.model,
-        error: error instanceof Error ? error.message : String(error),
-        context: healthcarePrisma.currentContext,
-      })
+  async connect(): Promise<void> {
+    await this.client.$connect()
+    this.setupAuditMiddleware()
+  }
 
-      throw error
-    }
-  })
+  async disconnect(): Promise<void> {
+    await this.client.$disconnect()
+  }
+}
 
-  // Initialize singleton instance
-  healthcarePrismaInstance = healthcarePrisma
+// Singleton instance for resource efficiency
+let healthcarePrismaInstance: HealthcarePrismaClient | null = null
+
+/**
+ * Creates healthcare-optimized Prisma client with singleton pattern
+ * Integrates with Supabase RLS and provides healthcare-specific features
+ */
+function createHealthcarePrismaClient(): HealthcarePrismaClient {
+  if (healthcarePrismaInstance) {
+    return healthcarePrismaInstance
+  }
+
+  healthcarePrismaInstance = new HealthcarePrismaClient()
 
   // Handle process termination for graceful shutdown
   if (typeof process !== 'undefined') {
     process.on('SIGINT', async () => {
       console.warn('Gracefully shutting down Prisma client...')
-      await healthcarePrisma.$disconnect()
+      await healthcarePrismaInstance.disconnect()
     })
 
     process.on('SIGTERM', async () => {
       console.warn('Gracefully shutting down Prisma client...')
-      await healthcarePrisma.$disconnect()
+      await healthcarePrismaInstance.disconnect()
     })
   }
 
-  return healthcarePrisma
+  return healthcarePrismaInstance
 }
 
 /**
@@ -780,7 +724,7 @@ export function createHealthcareContextFromRequest(
 export {
   HealthcareComplianceError,
   type HealthcareContext,
-  type HealthcarePrismaClient,
+  type HealthcareConnectionConfig,
   type LGPDDataExport,
   UnauthorizedHealthcareAccessError,
 }

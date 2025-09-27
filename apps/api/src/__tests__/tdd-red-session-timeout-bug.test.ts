@@ -1,19 +1,19 @@
 /**
  * TDD RED Phase - Session Timeout Logic Bug Test
- * 
+ *
  * This test demonstrates the session timeout logic bug where lastActivity
  * is set to a future timestamp instead of current time during auto-extend.
- * 
+ *
  * Expected Behavior:
  * - EnhancedSessionManager should use current time for lastActivity on auto-extend
  * - Session timeout calculation should work correctly after auto-extend
  * - Auto-extend should extend the session properly from current time
- * 
+ *
  * Security: Critical - Session timeout management for healthcare compliance
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock dependencies
 const mockConfig = {
@@ -34,7 +34,7 @@ class TestSessionManager {
       createdAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
       expiresAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now
     }
-    
+
     this.sessions.set(sessionId, session)
     return session
   }
@@ -217,7 +217,7 @@ describe('TDD RED PHASE - Session Timeout Logic Bug', () => {
         encryptionApplied: true,
         accessControlApplied: true,
         auditTrailEnabled: true,
-        breachNotificationRequired: false
+        breachNotificationRequired: false,
       }
 
       const originalLastActivity = session.lastActivity
@@ -228,7 +228,7 @@ describe('TDD RED PHASE - Session Timeout Logic Bug', () => {
       // Assert: Should maintain compliance data and properly extend session
       expect(result.isValid).toBe(true)
       expect(result.session?.complianceFlags.lgpdCompliant).toBe(true)
-      
+
       const newLastActivity = sessionManager['sessions'].get(sessionId).lastActivity
       expect(newLastActivity.getTime()).toBeGreaterThanOrEqual(originalLastActivity.getTime())
     })
@@ -247,7 +247,7 @@ describe('TDD RED PHASE - Session Timeout Logic Bug', () => {
 
       // Correct implementation should give reasonable timeout (around idleTimeout)
       expect(correctResult.timeRemaining).toBeGreaterThan(20 * 60 * 1000) // At least 20 minutes
-      
+
       // Buggy implementation might give different (possibly incorrect) timeout
       console.log('Buggy timeout:', buggyResult.timeRemaining, 'ms')
       console.log('Correct timeout:', correctResult.timeRemaining, 'ms')
@@ -266,7 +266,7 @@ describe('TDD RED PHASE - Session Timeout Logic Bug', () => {
       // Assert: Should maintain proper session state for audit trail
       expect(result.isValid).toBe(true)
       expect(result.session).toBeDefined()
-      
+
       const session = sessionManager['sessions'].get(sessionId)
       expect(session.lastActivity.getTime()).toBeGreaterThanOrEqual(Date.now() - 1000)
     })
@@ -284,8 +284,8 @@ describe('TDD RED PHASE - Session Timeout Logic Bug', () => {
           resourceType: 'patient',
           resourceId: 'patient-123',
           purpose: 'treatment',
-          legalBasis: 'consent'
-        }
+          legalBasis: 'consent',
+        },
       ]
 
       const originalLastActivity = session.lastActivity
@@ -298,7 +298,7 @@ describe('TDD RED PHASE - Session Timeout Logic Bug', () => {
       expect(result.session?.patientId).toBe('patient-123')
       expect(result.session?.consentLevel).toBe('full')
       expect(result.session?.dataAccessLog).toHaveLength(1)
-      
+
       const newLastActivity = sessionManager['sessions'].get(sessionId).lastActivity
       expect(newLastActivity.getTime()).toBeGreaterThanOrEqual(originalLastActivity.getTime())
     })

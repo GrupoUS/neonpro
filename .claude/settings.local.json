@@ -71,7 +71,15 @@
       "mcp__web-search-prime__webSearchPrime",
       "mcp__zai-mcp-server__analyze_image",
       "Read(//tmp/**)",
-      "mcp__serena__think_about_whether_you_are_done"
+      "mcp__serena__think_about_whether_you_are_done",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__fill",
+      "mcp__chrome-devtools__list_network_requests",
+      "mcp__chrome-devtools__close_page"
     ],
     "deny": [
       "Edit",

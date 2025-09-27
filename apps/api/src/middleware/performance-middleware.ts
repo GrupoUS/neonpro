@@ -4,7 +4,7 @@
  */
 
 import { Context, Next } from 'hono'
-import { AestheticClinicPerformanceOptimizer } from '../services/performance/aesthetic-clinic-performance-optimizer'
+import { AestheticClinicPerformanceOptimizer } from '../services/jwt-security-service.js'
 // import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface PerformanceMetrics {
@@ -194,7 +194,9 @@ export class PerformanceMonitor {
     const requests = new Map<string, { count: number; resetTime: number }>()
 
     return async (c: Context, next: Next) => {
-      const key = options.keyGenerator ? options.keyGenerator(c) : c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'
+      const key = options.keyGenerator
+        ? options.keyGenerator(c)
+        : c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'
       const now = Date.now()
 
       let record = requests.get(key)

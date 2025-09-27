@@ -4,7 +4,7 @@
  */
 
 import { createHash } from 'crypto'
-import { type HealthcarePrismaClient } from '../clients/prisma'
+import { type HealthcarePrismaClient } from '../clients/prisma.js'
 import {
   HealthcareQueryOptimizer,
   type PerformanceMetrics,
@@ -777,11 +777,11 @@ export class EnhancedPerformanceOptimizationService {
       }, timeoutMs)
 
       fn()
-        .then(async (result) => {
+        .then(async result => {
           clearTimeout(timer)
           resolve(result)
         })
-        .catch(async (error) => {
+        .catch(async error => {
           clearTimeout(timer)
           reject(error)
         })

@@ -4,7 +4,11 @@
  */
 
 import { z } from 'zod'
-import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+import {
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+  HealthcareTRPCError,
+} from '../../utils/healthcare-errors'
 import { protectedProcedure, router } from '../trpc'
 
 // Professional schema definitions
@@ -22,7 +26,9 @@ export const CreateProfessionalRequestSchema = z.object({
   clinicId: z.string(),
   services: z.array(z.string()).default([]),
   schedule: z.object({
-    workingDays: z.array(z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])),
+    workingDays: z.array(
+      z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
+    ),
     startTime: z.string(), // HH:mm
     endTime: z.string(), // HH:mm
     lunchBreak: z.object({
@@ -101,7 +107,9 @@ export const ProfessionalResponseSchema = z.object({
   cancelledAppointments: z.number().default(0),
   noShowRate: z.number().min(0).max(1).default(0),
   schedule: z.object({
-    workingDays: z.array(z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])),
+    workingDays: z.array(
+      z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
+    ),
     startTime: z.string(),
     endTime: z.string(),
     lunchBreak: z.object({

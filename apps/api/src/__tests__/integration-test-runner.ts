@@ -1,21 +1,21 @@
 /**
  * Security Integration Test Runner
- * 
+ *
  * Comprehensive test runner for all security components integration tests.
  * Provides detailed reporting and validation of security system integrity.
- * 
+ *
  * Security: Critical - Complete security system validation tests
  * Test Coverage: Complete Security System
  * Compliance: OWASP Top 10, LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { SecurityIntegrationService } from '../services/security-integration-service'
-import { JWTSecurityService } from '../services/jwt-security-service'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { AuditTrailService } from '../services/audit-trail-service'
 import { EnhancedAuthenticationMiddleware } from '../services/enhanced-authentication-middleware'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
+import { JWTSecurityService } from '../services/jwt-security-service'
+import { SecurityIntegrationService } from '../services/security-integration-service'
 import { SecurityValidationService } from '../services/security-validation-service'
-import { AuditTrailService } from '../services/audit-trail-service'
 
 describe('Security Integration Test Suite', () => {
   let testResults: {
@@ -90,10 +90,10 @@ describe('Security Integration Test Suite', () => {
 
     it('should validate service health status', async () => {
       const healthStatus = await SecurityIntegrationService.getHealthStatus()
-      
+
       expect(healthStatus.overallHealth).toBe('healthy')
       expect(healthStatus.services).toHaveLength(6)
-      
+
       for (const serviceHealth of healthStatus.services) {
         expect(serviceHealth.status).toBe('healthy')
         expect(serviceHealth.uptime).toBeGreaterThan(0)
@@ -107,7 +107,7 @@ describe('Security Integration Test Suite', () => {
   describe('Security Integration Tests', () => {
     it('should test complete security flow integration', async () => {
       const startTime = performance.now()
-      
+
       // Test complete security flow
       const integrationResult = await SecurityIntegrationService.testCompleteFlow({
         includeJWT: true,
@@ -130,11 +130,11 @@ describe('Security Integration Test Suite', () => {
       testResults.performanceMetrics.averageResponseTime += duration
       testResults.performanceMetrics.maxResponseTime = Math.max(
         testResults.performanceMetrics.maxResponseTime,
-        duration
+        duration,
       )
       testResults.performanceMetrics.minResponseTime = Math.min(
         testResults.performanceMetrics.minResponseTime,
-        duration
+        duration,
       )
 
       testResults.totalTests += 1
@@ -145,7 +145,7 @@ describe('Security Integration Test Suite', () => {
 
     it('should test healthcare compliance integration', async () => {
       const startTime = performance.now()
-      
+
       const complianceResult = await SecurityIntegrationService.testComplianceIntegration({
         frameworks: ['lgpd', 'anvisa', 'cfm'],
         testDataGeneration: true,
@@ -167,7 +167,7 @@ describe('Security Integration Test Suite', () => {
 
     it('should test threat detection integration', async () => {
       const startTime = performance.now()
-      
+
       const threatResult = await SecurityIntegrationService.testThreatDetection({
         testCases: ['sql_injection', 'xss', 'csrf', 'brute_force'],
         includeAdvancedPatterns: true,

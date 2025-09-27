@@ -1,42 +1,37 @@
 import { trpcServer } from '@hono/trpc-server'
-import { cors } from 'hono/cors'
-import { errorHandler } from './middleware/error-handler'
-import { errorSanitizationMiddleware } from './middleware/error-sanitization'
-import aiRouter from './routes/ai/index'
-import financialCopilotRouter from './routes/ai/financial-copilot'
-import copilotBridge from './routes/ai/copilot-bridge'
-import appointmentsRouter from './routes/appointments'
-import { billing } from './routes/billing'
-import chatRouter from './routes/chat'
-import { medicalRecords } from './routes/medical-records'
-import patientsRouter from './routes/patients'
-import v1Router from './routes/v1'
-import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
-import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
-import { Context } from './trpc/context'
-import { appRouter } from './trpc/router'
+import { Context as HonoContext } from 'hono'
+import { cors } from './middleware/cors.js'
+import { errorHandler } from './middleware/error-handler.js'
+import { errorSanitizationMiddleware } from './middleware/error-sanitization.js'
+import copilotBridge from './routes/ai/copilot-bridge.js'
+import financialCopilotRouter from './routes/ai/financial-copilot.js'
+import aiRouter from './routes/ai/index.js'
+import aiSessionsCleanup from './routes/api/cleanup/ai-sessions.js'
+import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions.js'
+import appointmentsRouter from './routes/appointments.js'
+import { billing } from './routes/billing.js'
+import chatRouter from './routes/chat.js'
+import { medicalRecords } from './routes/medical-records.js'
+import patientsRouter from './routes/patients.js'
+import v1Router from './routes/v1.js'
+import { Context as TRPCContext } from './trpc/context.js'
+import { appRouter } from './trpc/router.js'
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
-import { initializeSentry, sentryMiddleware } from './lib/sentry'
-import { errorTracker } from './services/error-tracking-bridge'
-import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init'
+import { initializeSentry, sentryMiddleware } from './lib/sentry.js'
+import { errorTracker } from './services/error-tracking-bridge.js'
+import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init.js'
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
-import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator'
-import { cspViolationHandler } from './lib/security/csp'
+import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator.js'
+import { cspViolationHandler } from './lib/security/csp.js'
 import {
   errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
   globalErrorHandler,
-} from './middleware/error-tracking'
-import { rateLimitMiddleware } from './middleware/rate-limiting'
-import {
-  healthcareSecurityHeadersMiddleware,
-  httpsRedirectMiddleware,
-} from './middleware/security-headers'
-import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer'
-
-// Extract middleware functions from security package
-// const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
+} from './middleware/error-tracking.js'
+import { rateLimitMiddleware } from './middleware/rate-limiting.js'
+import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer.js' // Extract middleware functions from security package
+ // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
 // Initialize monitoring and telemetry
 ;(async () => {
@@ -85,26 +80,26 @@ const app = createHealthcareOpenAPIApp()
 app.use(
   '*',
   cors({
-    origin: (origin) => {
+    origin: origin => {
       // Allow same-origin requests (no origin header)
-      if (!origin) return '*'
+      if (!origin) return true
 
       // Allowed origins based on environment
       const allowedOrigins = process.env.NODE_ENV === 'production'
         ? [
-            'https://neonpro.com.br',
-            'https://www.neonpro.com.br',
-            'https://neonpro.vercel.app',
-          ]
+          'https://neonpro.com.br',
+          'https://www.neonpro.com.br',
+          'https://neonpro.vercel.app',
+        ]
         : [
-            'http://localhost:3000',
-            'http://localhost:5173',
-            'http://127.0.0.1:5173',
-            'https://neonpro.vercel.app',
-          ]
+          'http://localhost:3000',
+          'http://localhost:5173',
+          'http://127.0.0.1:5173',
+          'https://neonpro.vercel.app',
+        ]
 
       // Check if origin is allowed
-      return allowedOrigins.includes(origin) ? origin : null
+      return allowedOrigins.includes(origin)
     },
     credentials: true,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -125,7 +120,7 @@ app.use('*', sentryMiddleware())
 app.use('*', errorSanitizationMiddleware())
 
 // HTTP error handling middleware with rate limiting and DDoS protection
-import { httpErrorHandlingMiddleware } from './middleware/http-error-handling'
+import { httpErrorHandlingMiddleware } from './middleware/http-error-handling.js'
 app.use('*', httpErrorHandlingMiddleware())
 
 // Global error handler with enhanced error tracking
@@ -148,25 +143,25 @@ app.use('*', rateLimitMiddleware())
 // app.use('*', healthcareCSPMiddleware())
 
 // Query timeout middleware for <2s healthcare compliance (T064)
-// import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware'
-// const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
-// app.use('*', queryTimeoutMiddleware.middleware)
+import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware.js'
+const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
+app.use('*', queryTimeoutMiddleware.middleware)
 
 // Compression and optimization middleware for HTTPS responses (T065)
-import { CompressionMiddleware } from './middleware/compression-middleware'
+import { CompressionMiddleware } from './middleware/compression-middleware.js'
 const compressionMiddleware = new CompressionMiddleware()
 app.use('*', compressionMiddleware.middleware)
 
 // HTTPS handshake performance monitoring middleware (T066)
-import { httpsMonitoringMiddleware } from './middleware/https-monitoring-middleware'
-import { httpsMonitoringService } from './services/monitoring/https-monitoring-service'
+import { httpsMonitoringMiddleware } from './middleware/https-monitoring-middleware.js'
+import { httpsMonitoringService } from './services/monitoring/https-monitoring-service.js'
 app.use('*', httpsMonitoringMiddleware.middleware)
 
 // Sensitive data exposure monitoring
 app.use('*', sensitiveDataExposureMiddleware())
 
 // Enhanced error handling middleware
-app.use('*', async (c, next) => {
+app.use('*', async (c: HonoContext, next: () => Promise<void>) => {
   const startTime = Date.now()
   const requestId = c.get('requestId')
 
@@ -270,7 +265,7 @@ app.route('/api/cleanup/expired-predictions', expiredPredictionsCleanup)
 // Mount tRPC router under /trpc for type-safe API access
 const tRPCHandle = trpcServer({
   router: appRouter,
-  createContext: async opts => {
+  createContext: async (opts: { req: { headers: Headers } }) => {
     // Create tRPC context from Hono request
     const headers = opts.req.headers
     const userId = headers.get('x-user-id') || headers.get('user-id')
@@ -286,7 +281,7 @@ const tRPCHandle = trpcServer({
         userAgent: headers.get('user-agent') || 'unknown',
         sessionId: headers.get('x-session-id') || headers.get('session-id') || 'unknown',
       },
-    } as Context
+    } as TRPCContext
   },
 })
 
@@ -294,7 +289,7 @@ const tRPCHandle = trpcServer({
 app.use('/trpc/*', tRPCHandle)
 
 // Basic health endpoints with enhanced monitoring
-app.get('/health', c => {
+app.get('/health', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log('Health check requested', { requestId })
@@ -306,7 +301,7 @@ app.get('/health', c => {
   })
 })
 
-app.get('/v1/health', c => {
+app.get('/v1/health', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log('Detailed health check requested', { requestId })
@@ -340,7 +335,7 @@ app.get('/v1/health', c => {
   return c.json(healthData)
 })
 
-app.get('/v1/info', c => {
+app.get('/v1/info', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log('System info requested', { requestId })
@@ -377,7 +372,7 @@ app.get('/v1/info', c => {
 })
 
 // HTTPS monitoring endpoint (T066)
-app.get('/v1/monitoring/https', c => {
+app.get('/v1/monitoring/https', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log(
@@ -421,7 +416,7 @@ app.get('/v1/monitoring/https', c => {
 // Security endpoints (protected)
 app.get(
   '/v1/security/status',
-  /* ...getProtectedRoutesMiddleware(['admin']), */ c => {
+  /* ...getProtectedRoutesMiddleware(['admin']), */ (c: HonoContext) => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -473,7 +468,7 @@ app.get(
 // LGPD compliance endpoint
 app.get(
   '/v1/compliance/lgpd',
-  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ c => {
+  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ (c: HonoContext) => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -527,7 +522,7 @@ app.get(
 
 // Error tracking test endpoint (for development)
 if (process.env.NODE_ENV !== 'production') {
-  app.get('/v1/test/error', c => {
+  app.get('/v1/test/error', (c: HonoContext) => {
     const requestId = c.get('requestId')
 
     console.warn('Error test endpoint called', { requestId })
@@ -549,7 +544,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.post('/api/security/csp-violations', cspViolationHandler())
 
 // 404 handler with logging
-app.notFound(c => {
+app.notFound((c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.warn('Route not found', {

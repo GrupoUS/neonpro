@@ -1,53 +1,45 @@
-/**
- * Hook for managing procedure selection in MultiSessionScheduler
- */
-import { type AestheticProcedure } from '@/types/aesthetic-scheduling'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
-interface UseProcedureSelectionReturn {
+export interface ProcedureSelection {
   selectedProcedures: string[]
-  handleProcedureSelect: (procedureId: string, checked: boolean) => void
-  getSelectedProceduresData: (procedures: AestheticProcedure[]) => AestheticProcedure[]
-  getTotalEstimatedDuration: (procedures: AestheticProcedure[]) => number
-  getTotalEstimatedCost: (procedures: AestheticProcedure[]) => number
+  handleProcedureSelect: (procedureId: string, selected: boolean) => void
+  getSelectedProceduresData: (procedures: any[]) => any[]
+  getTotalEstimatedDuration: (procedures: any[]) => number
+  getTotalEstimatedCost: (procedures: any[]) => number
 }
 
-export function useProcedureSelection(): UseProcedureSelectionReturn {
+export function useProcedureSelection(): ProcedureSelection {
   const [selectedProcedures, setSelectedProcedures] = useState<string[]>([])
 
-  const handleProcedureSelect = (procedureId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedProcedures([...selectedProcedures, procedureId])
-    } else {
-      setSelectedProcedures(selectedProcedures.filter(id => id !== procedureId))
-    }
-  }
+  const handleProcedureSelect = useCallback((procedureId: string, selected: boolean) => {
+    setSelectedProcedures(prev => {
+      if (selected) {
+        return [...prev, procedureId]
+      } else {
+        return prev.filter(id => id !== procedureId)
+      }
+    })
+  }, [])
 
-  const getSelectedProceduresData = (procedures: AestheticProcedure[]) => {
-    return procedures.filter((p: AestheticProcedure) => selectedProcedures.includes(p.id))
-  }
+  const getSelectedProceduresData = useCallback((procedures: any[]) => {
+    return procedures.filter(procedure => selectedProcedures.includes(procedure.id))
+  }, [selectedProcedures])
 
-  const getTotalEstimatedDuration = (procedures: AestheticProcedure[]) => {
-    const selectedProceduresData = getSelectedProceduresData(procedures)
-    return selectedProceduresData.reduce(
-      (total: number, proc: AestheticProcedure) => total + proc.baseDuration,
-      0,
-    )
-  }
+  const getTotalEstimatedDuration = useCallback((procedures: any[]) => {
+    const selected = getSelectedProceduresData(procedures)
+    return selected.reduce((total, procedure) => total + (procedure.baseDuration || 0), 0)
+  }, [getSelectedProceduresData])
 
-  const getTotalEstimatedCost = (procedures: AestheticProcedure[]) => {
-    const selectedProceduresData = getSelectedProceduresData(procedures)
-    return selectedProceduresData.reduce(
-      (total: number, proc: AestheticProcedure) => total + proc.basePrice,
-      0,
-    )
-  }
+  const getTotalEstimatedCost = useCallback((procedures: any[]) => {
+    const selected = getSelectedProceduresData(procedures)
+    return selected.reduce((total, procedure) => total + (procedure.basePrice || 0), 0)
+  }, [getSelectedProceduresData])
 
   return {
     selectedProcedures,
     handleProcedureSelect,
     getSelectedProceduresData,
     getTotalEstimatedDuration,
-    getTotalEstimatedCost,
+    getTotalEstimatedCost
   }
 }

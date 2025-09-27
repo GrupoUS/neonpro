@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { trpc } from '@/lib/trpc'
+import { trpc } from '@/lib/trpc.js'
 
 interface TRPCProviderProps {
   children: React.ReactNode

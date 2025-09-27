@@ -1,6 +1,6 @@
+import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Basic authentication middleware
@@ -22,7 +22,7 @@ interface User {
 /**
  * Extract token from authorization header
  */
-import { JWTSecurityService } from '../services/jwt-security-service'
+import { JWTSecurityService } from '../services/jwt-security-service.js'
 
 function extractToken(authHeader: string | undefined): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -42,11 +42,11 @@ async function validateToken(token: string): Promise<User | null> {
   try {
     // Use the comprehensive JWT validation service
     const validationResult = await JWTSecurityService.validateToken(token)
-    
+
     if (!validationResult.isValid || !validationResult.payload) {
       logger.warn('JWT validation failed', {
         error: validationResult.error,
-        errorCode: validationResult.errorCode
+        errorCode: validationResult.errorCode,
       })
       return null
     }
@@ -60,7 +60,7 @@ async function validateToken(token: string): Promise<User | null> {
       _role: payload.role || payload.userRole || 'user',
       clinicId: payload.clinicId || payload.healthcareProvider || 'default-clinic',
       name: payload.name || `${payload.sub || 'User'} Name`,
-      permissions: payload.permissions || []
+      permissions: payload.permissions || [],
     }
 
     // Log successful authentication with security context
@@ -70,14 +70,14 @@ async function validateToken(token: string): Promise<User | null> {
       clinicId: user.clinicId,
       permissions: user.permissions,
       tokenType: payload.type || 'access',
-      warnings: validationResult.warnings
+      warnings: validationResult.warnings,
     })
 
     return user
   } catch (error) {
     logger.error('Token validation error', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : undefined
+      stack: error instanceof Error ? error.stack : undefined,
     })
     return null
   }

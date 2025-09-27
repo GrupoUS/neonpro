@@ -1,20 +1,20 @@
 /**
  * TDD RED PHASE - IP Address Guard Missing Test
- * 
+ *
  * This test demonstrates the IP address guard missing bug where isMobileSubnetChange
  * is called without proper undefined checking for IP addresses, causing runtime errors.
- * 
+ *
  * Expected Behavior:
  * - EnhancedSessionManager should handle undefined IP addresses gracefully
  * - isMobileSubnetChange should only be called when both IP addresses are defined
  * - Session validation should work correctly with missing IP information
  * - Healthcare compliance should be maintained
- * 
+ *
  * Security: Critical - Session security and IP validation
  * Compliance: LGPD, ANVISA, CFM, OWASP Session Management
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { EnhancedSessionManager } from '../../security/enhanced-session-manager'
 
 // Mock the healthcare logger to avoid dependency issues
@@ -34,7 +34,7 @@ const mockSecurityUtils = {
 class TestSessionManager {
   private sessions = new Map<string, any>()
   private userSessions = new Map<string, Set<string>>()
-  
+
   config = {
     enableIPBinding: true,
     allowMobileSubnetChanges: true,
@@ -62,15 +62,15 @@ class TestSessionManager {
       permissions: [],
       isRealTimeSession: false,
     }
-    
+
     this.sessions.set(sessionId, session)
-    
+
     // Add to user session mapping
     if (!this.userSessions.has(userId)) {
       this.userSessions.set(userId, new Set())
     }
     this.userSessions.get(userId)!.add(sessionId)
-    
+
     return session
   }
 
@@ -83,7 +83,9 @@ class TestSessionManager {
 
     // BUG: Calling isMobileSubnetChange without undefined checking
     // This will throw TypeError if currentIP is undefined
-    if (session.ipAddress !== currentIP && this.isMobileSubnetChange(session.ipAddress, currentIP)) {
+    if (
+      session.ipAddress !== currentIP && this.isMobileSubnetChange(session.ipAddress, currentIP)
+    ) {
       session.ipAddress = currentIP
       session.ipChangeCount++
       session.lastIPChangeTime = new Date()
@@ -92,7 +94,7 @@ class TestSessionManager {
 
     session.lastActivity = new Date()
     session.consecutiveFailures = 0
-    
+
     return { isValid: true, action: 'allow', session }
   }
 
@@ -115,7 +117,7 @@ class TestSessionManager {
 
     session.lastActivity = new Date()
     session.consecutiveFailures = 0
-    
+
     return { isValid: true, action: 'allow', session }
   }
 
@@ -127,7 +129,7 @@ class TestSessionManager {
     // Simple implementation - check if first two octets match (mobile carrier subnet)
     const oldParts = oldIP.split('.')
     const newParts = newIP.split('.')
-    
+
     return oldParts[0] === newParts[0] && oldParts[1] === newParts[1]
   }
 
@@ -164,7 +166,7 @@ describe('TDD RED PHASE - IP Address Guard Missing', () => {
       const userId = 'user-123'
       const sessionId = 'session-123'
       const session = sessionManager.createSession(userId, sessionId, '192.168.1.1', 'Mozilla/5.0')
-      
+
       // Act & Assert: This should throw TypeError because currentIP is undefined
       expect(() => {
         sessionManager.validateSessionBuggy(sessionId, undefined, 'Mozilla/5.0')
@@ -260,8 +262,13 @@ describe('TDD RED PHASE - IP Address Guard Missing', () => {
       // Arrange: Create session with healthcare metadata
       const userId = 'doctor-123'
       const sessionId = 'medical-session-456'
-      const session = sessionManager.createSession(userId, sessionId, undefined, 'Medical User Agent')
-      
+      const session = sessionManager.createSession(
+        userId,
+        sessionId,
+        undefined,
+        'Medical User Agent',
+      )
+
       // Add compliance metadata
       session.complianceFlags = {
         lgpdCompliant: true,
@@ -271,7 +278,11 @@ describe('TDD RED PHASE - IP Address Guard Missing', () => {
       }
 
       // Act: Validate session with undefined IP
-      const result = sessionManager.validateSessionCorrect(sessionId, undefined, 'Medical User Agent')
+      const result = sessionManager.validateSessionCorrect(
+        sessionId,
+        undefined,
+        'Medical User Agent',
+      )
 
       // Assert: Should maintain compliance and session integrity
       expect(result.isValid).toBe(true)
@@ -300,7 +311,7 @@ describe('TDD RED PHASE - IP Address Guard Missing', () => {
       const userId = 'user-123'
       const sessionId = 'session-123'
       const session = sessionManager.createSession(userId, sessionId, undefined, 'Mozilla/5.0')
-      
+
       // Set security properties
       session.securityLevel = 'elevated'
       session.riskScore = 25
@@ -319,7 +330,7 @@ describe('TDD RED PHASE - IP Address Guard Missing', () => {
       // Arrange: Create multiple sessions
       const user1 = 'user-1'
       const user2 = 'user-2'
-      
+
       sessionManager.createSession(user1, 'session-1-1', '192.168.1.1', 'Agent 1')
       sessionManager.createSession(user1, 'session-1-2', undefined, 'Agent 2')
       sessionManager.createSession(user2, 'session-2-1', '10.0.0.1', 'Agent 3')

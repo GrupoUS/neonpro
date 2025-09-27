@@ -37,11 +37,11 @@ import {
   FONT_SIZE_MAP,
   type FontSize,
   type HighContrastTheme,
-} from '../../config/accessibility-theme'
-import { Alert, AlertDescription } from '../ui/alert'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+} from '../../config/accessibility-theme.js'
+import { Alert, AlertDescription } from '../ui/alert.js'
+import { Badge } from '../ui/badge.js'
+import { Button } from '../ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.js'
 
 // Types for accessibility features
 

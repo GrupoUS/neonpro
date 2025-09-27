@@ -5,28 +5,28 @@
  * healthcare compliance, privacy controls, and integrated treatment history.
  */
 
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Input } from '@/components/ui/input.js'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 // import { Textarea } from "@/components/ui/textarea";
-import { Label } from '@/components/ui/label'
+import { Label } from '@/components/ui/label.js'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '@/components/ui/select.js'
 // import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Progress } from '@/components/ui/progress.js'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { createClient } from '@/integrations/supabase/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/utils.js'
 import {
   Activity,
   AlertTriangle,

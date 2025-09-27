@@ -585,7 +585,97 @@ export function createPatientOutcomeKPI(
 }
 
 /**
+ * Get base score for risk level
+ * @param riskLevel - The risk level to get score for
+ * @returns Numerical score corresponding to the risk level
+ */
+function getRiskLevelScore(riskLevel: RiskLevel): number {
+  switch (riskLevel) {
+    case 'CRITICAL': return 100
+    case 'HIGH': return 75
+    case 'MEDIUM': return 50
+    case 'LOW': return 25
+    default: return 0
+  }
+}
+
+/**
+ * Apply target value adjustment to base score
+ * @param baseScore - Base risk score before target adjustment
+ * @param kpi - Clinical KPI containing target value information
+ * @returns Adjusted score based on target value performance
+ */
+function applyTargetValueAdjustment(baseScore: number, kpi: ClinicalKPI): number {
+  if (!kpi.targetValue) {
+    return baseScore
+  }
+
+  const targetRatio = kpi.value / kpi.targetValue
+  
+  if (targetRatio < 0.7) {
+    return baseScore * 1.5 // Increase risk if well below target
+  } else if (targetRatio > 1.1) {
+    return baseScore * 0.7 // Decrease risk if well above target
+  }
+  
+  return baseScore
+}
+
+/**
+ * Determine overall risk level based on average score
+ * @param averageScore - Average risk score across all KPIs
+ * @returns Object containing risk level classification and recommendations
+ */
+function determineOverallRiskLevel(averageScore: number): {
+  overallRisk: RiskLevel
+  recommendations: string[]
+} {
+  if (averageScore >= 80) {
+    return {
+      overallRisk: 'CRITICAL',
+      recommendations: ['Immediate intervention required']
+    }
+  } else if (averageScore >= 60) {
+    return {
+      overallRisk: 'HIGH',
+      recommendations: ['Enhanced monitoring and corrective actions needed']
+    }
+  } else if (averageScore >= 40) {
+    return {
+      overallRisk: 'MEDIUM',
+      recommendations: ['Regular monitoring and preventive measures recommended']
+    }
+  }
+  
+  return {
+    overallRisk: 'LOW',
+    recommendations: []
+  }
+}
+
+/**
+ * Process individual KPI for clinical risk calculation
+ * @param kpi - Clinical KPI to process for risk assessment
+ * @returns Object containing calculated score and criticality flag
+ */
+function processKPIForClinicalRisk(kpi: ClinicalKPI): {
+  score: number
+  isCritical: boolean
+} {
+  const baseScore = getRiskLevelScore(kpi.riskLevel)
+  const adjustedScore = applyTargetValueAdjustment(baseScore, kpi)
+  const isCritical = kpi.riskLevel === 'CRITICAL'
+  
+  return {
+    score: adjustedScore,
+    isCritical
+  }
+}
+
+/**
  * Calculate clinical risk score based on various KPIs
+ * @param kpis - Array of clinical KPIs to analyze for risk assessment
+ * @returns Object containing overall risk level, score, critical areas, and recommendations
  */
 export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
   overallRisk: RiskLevel
@@ -604,56 +694,20 @@ export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
 
   let totalScore = 0
   const criticalAreas: string[] = []
-  const recommendations: string[] = []
 
+  // Process each KPI
   kpis.forEach(kpi => {
-    let kpiScore = 0
-
-    // Calculate score based on risk level
-    switch (kpi.riskLevel) {
-      case 'CRITICAL':
-        kpiScore = 100
-        criticalAreas.push(kpi.name)
-        break
-      case 'HIGH':
-        kpiScore = 75
-        break
-      case 'MEDIUM':
-        kpiScore = 50
-        break
-      case 'LOW':
-        kpiScore = 25
-        break
+    const { score, isCritical } = processKPIForClinicalRisk(kpi)
+    
+    if (isCritical) {
+      criticalAreas.push(kpi.name)
     }
-
-    // Adjust score based on value vs target
-    if (kpi.targetValue) {
-      const targetRatio = kpi.value / kpi.targetValue
-      if (targetRatio < 0.7) {
-        kpiScore *= 1.5 // Increase risk if well below target
-      } else if (targetRatio > 1.1) {
-        kpiScore *= 0.7 // Decrease risk if well above target
-      }
-    }
-
-    totalScore += kpiScore
+    
+    totalScore += score
   })
 
   const averageScore = totalScore / kpis.length
-
-  let overallRisk: RiskLevel = 'LOW'
-  if (averageScore >= 80) {
-    overallRisk = 'CRITICAL'
-    recommendations.push('Immediate intervention required')
-  } else if (averageScore >= 60) {
-    overallRisk = 'HIGH'
-    recommendations.push('Enhanced monitoring and corrective actions needed')
-  } else if (averageScore >= 40) {
-    overallRisk = 'MEDIUM'
-    recommendations.push(
-      'Regular monitoring and preventive measures recommended',
-    )
-  }
+  const { overallRisk, recommendations } = determineOverallRiskLevel(averageScore)
 
   return {
     overallRisk,

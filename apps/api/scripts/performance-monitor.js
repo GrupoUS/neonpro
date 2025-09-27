@@ -7,9 +7,9 @@
  * in real-time for Vercel Edge Runtime deployment.
  */
 
-const fs = require('fs')
-const path = require('path')
-const https = require('https')
+const fs = require('node:fs')
+const path = require('node:path')
+const https = require('node:https')
 
 // Healthcare performance SLA requirements
 const HEALTHCARE_SLA = {
@@ -167,7 +167,7 @@ class HealthcarePerformanceMonitor {
       )
 
       request.on('error', error => {
-        const responseTime = Date.now() - startTime
+        const _responseTime = Date.now() - startTime
         console.warn(`  ${endpoint}: ERROR - ${error.message}`)
         reject(error)
       })
@@ -191,7 +191,7 @@ class HealthcarePerformanceMonitor {
       if (fs.existsSync(reportPath)) {
         const report = JSON.parse(fs.readFileSync(reportPath, 'utf8'))
 
-        if (report.summary && report.summary.totalBundleSize) {
+        if (report.summary?.totalBundleSize) {
           // Parse bundle size from report
           const bundleSizeStr = report.summary.totalBundleSize
           const bundleSize = this.parseBundleSize(bundleSizeStr)

@@ -19,8 +19,8 @@
 
 import { Context } from 'hono'
 import jwt from 'jsonwebtoken'
-import { createAdminClient } from '../clients/supabase'
-import { jwtValidator } from '../security/jwt-validator'
+import { createAdminClient } from '../clients/supabase.js'
+import { jwtValidator } from '../security/jwt-validator.js'
 
 // Token management interfaces
 interface TokenInfo {

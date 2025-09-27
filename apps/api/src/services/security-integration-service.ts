@@ -9,12 +9,15 @@
  * @version 1.0.0
  */
 
-import { JWTSecurityService, TokenValidationResult } from './jwt-security-service'
-import { AuthenticationContext } from '../middleware/enhanced-authentication-middleware'
-import { HealthcareSessionManagementService, HealthcareSession } from './healthcare-session-management-service'
-import { SecurityValidationService, SecurityValidationResult } from './security-validation-service'
-import { AuditTrailService, AuditEventType, AuditSeverity } from './audit-trail-service'
 import { Context, Next } from 'hono'
+import { AuthenticationContext } from '../middleware/enhanced-authentication-middleware.js'
+import { AuditEventType, AuditSeverity, AuditTrailService } from './audit-trail-service'
+import {
+  HealthcareSession,
+  HealthcareSessionManagementService,
+} from './healthcare-session-management-service'
+import { JWTSecurityService, TokenValidationResult } from './jwt-security-service'
+import { SecurityValidationResult, SecurityValidationService } from './security-validation-service'
 
 /**
  * Security integration configuration
@@ -103,7 +106,7 @@ export class SecurityIntegrationService {
     securityHeadersEnabled: true,
     rateLimitingEnabled: true,
     ipReputationEnabled: true,
-    deviceFingerprintingEnabled: true
+    deviceFingerprintingEnabled: true,
   }
 
   private static config: SecurityIntegrationConfig = { ...this.DEFAULT_CONFIG }
@@ -115,7 +118,7 @@ export class SecurityIntegrationService {
    */
   static async initialize(config: Partial<SecurityIntegrationConfig> = {}): Promise<void> {
     this.config = { ...this.DEFAULT_CONFIG, ...config }
-    
+
     try {
       // Initialize audit trail service
       if (this.config.enableAuditTrail) {
@@ -124,7 +127,7 @@ export class SecurityIntegrationService {
           logToDatabase: true,
           retentionDays: this.config.auditRetentionDays,
           enableRealTimeAlerts: this.config.enableRealTimeMonitoring,
-          sensitiveDataMasking: this.config.healthcareDataProtection
+          sensitiveDataMasking: this.config.healthcareDataProtection,
         })
       }
 
@@ -144,13 +147,21 @@ export class SecurityIntegrationService {
       this.isInitialized = true
 
       // Log initialization
-      await this.logSecurityEvent(AuditEventType.SYSTEM_STARTUP, 'Security integration service initialized', {
-        config: this.config
-      })
+      await this.logSecurityEvent(
+        AuditEventType.SYSTEM_STARTUP,
+        'Security integration service initialized',
+        {
+          config: this.config,
+        },
+      )
     } catch (error) {
-      await this.logSecurityEvent(AuditEventType.SYSTEM_ERROR, 'Failed to initialize security integration service', { 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      })
+      await this.logSecurityEvent(
+        AuditEventType.SYSTEM_ERROR,
+        'Failed to initialize security integration service',
+        {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+      )
       throw error
     }
   }
@@ -171,8 +182,10 @@ export class SecurityIntegrationService {
         c.set('securityContext', securityContext)
 
         // Handle security violations
-        if (securityContext.threatLevel === 'critical' || 
-            (securityContext.threatLevel === 'high' && securityContext.riskScore > 80)) {
+        if (
+          securityContext.threatLevel === 'critical' ||
+          (securityContext.threatLevel === 'high' && securityContext.riskScore > 80)
+        ) {
           return this.handleSecurityViolation(c, securityContext)
         }
 
@@ -194,13 +207,12 @@ export class SecurityIntegrationService {
         // Process response time
         const processingTime = Date.now() - startTime
         securityContext.metadata.processingTime = processingTime
-
       } catch (error) {
         const processingTime = Date.now() - startTime
-        
+
         // Log security error
         await this.logSecurityError(c, error instanceof Error ? error.message : 'Unknown error', {
-          processingTime
+          processingTime,
         })
 
         throw error
@@ -213,7 +225,7 @@ export class SecurityIntegrationService {
    */
   private static async performSecurityValidation(
     c: Context,
-    config: SecurityIntegrationConfig
+    config: SecurityIntegrationConfig,
   ): Promise<IntegratedSecurityContext> {
     const startTime = Date.now()
     const securityChecksPerformed: string[] = []
@@ -232,8 +244,8 @@ export class SecurityIntegrationService {
         requestTimestamp: new Date(),
         processingTime: 0,
         securityChecksPerformed: [],
-        eventsLogged: []
-      }
+        eventsLogged: [],
+      },
     }
 
     try {
@@ -243,12 +255,12 @@ export class SecurityIntegrationService {
           enableRateLimiting: config.rateLimitingEnabled,
           enableIPReputation: config.ipReputationEnabled,
           enableDeviceFingerprinting: config.deviceFingerprintingEnabled,
-          healthcareDataProtection: config.healthcareDataProtection
+          healthcareDataProtection: config.healthcareDataProtection,
         })
-        
+
         securityContext.securityValidation = securityValidation
         securityChecksPerformed.push('security_validation')
-        
+
         if (!securityValidation.isValid) {
           riskScore += (100 - securityValidation.score) / 2
           recommendations.push(...securityValidation.recommendations)
@@ -261,17 +273,17 @@ export class SecurityIntegrationService {
         securityContext.authenticationContext = authContext
         securityContext.isAuthenticated = authContext.isAuthenticated
         securityChecksPerformed.push('authentication')
-        
+
         if (authContext.isAuthenticated) {
           // Validate token if JWT authentication
           if (authContext.authMethod === 'jwt' && authContext.tokenPayload) {
             const tokenValidation = await JWTSecurityService.validateToken(
-              c.req.header('authorization')?.replace('Bearer ', '') || ''
+              c.req.header('authorization')?.replace('Bearer ', '') || '',
             )
-            
+
             securityContext.tokenValidation = tokenValidation
             securityChecksPerformed.push('jwt_validation')
-            
+
             if (!tokenValidation.isValid) {
               riskScore += 30
               recommendations.push('Token validation failed')
@@ -292,8 +304,11 @@ export class SecurityIntegrationService {
 
       // 3. Healthcare Compliance Validation
       if (config.enableHealthcareCompliance && securityContext.isAuthenticated) {
-        const complianceValidation = await this.performHealthcareComplianceValidation(c, securityContext)
-        
+        const complianceValidation = await this.performHealthcareComplianceValidation(
+          c,
+          securityContext,
+        )
+
         if (complianceValidation.hasViolations) {
           securityContext.complianceStatus = 'violation'
           riskScore += 40
@@ -303,7 +318,7 @@ export class SecurityIntegrationService {
           riskScore += 10
           recommendations.push(...complianceValidation.warnings)
         }
-        
+
         securityChecksPerformed.push('healthcare_compliance')
       }
 
@@ -311,7 +326,7 @@ export class SecurityIntegrationService {
       if (config.enableThreatDetection) {
         const threatDetection = await this.performThreatDetection(c, securityContext)
         securityChecksPerformed.push('threat_detection')
-        
+
         if (threatDetection.hasThreats) {
           riskScore += threatDetection.threatScore
           recommendations.push(...threatDetection.recommendations)
@@ -328,12 +343,11 @@ export class SecurityIntegrationService {
       securityContext.metadata.eventsLogged = eventsLogged
 
       return securityContext
-
     } catch (error) {
       // Log security validation error through audit trail
       // Note: Using console.error here as this is a critical security validation failure
       // that occurs before audit trail service is guaranteed to be available
-      
+
       // Fallback security context for errors
       return {
         ...securityContext,
@@ -345,8 +359,8 @@ export class SecurityIntegrationService {
           requestTimestamp: new Date(),
           processingTime: Date.now() - startTime,
           securityChecksPerformed: securityChecksPerformed,
-          eventsLogged
-        }
+          eventsLogged,
+        },
       }
     }
   }
@@ -356,13 +370,13 @@ export class SecurityIntegrationService {
    */
   private static async performAuthentication(
     c: Context,
-    config: SecurityIntegrationConfig
+    config: SecurityIntegrationConfig,
   ): Promise<AuthenticationContext> {
     const baseContext: AuthenticationContext = {
       isAuthenticated: false,
       authMethod: 'none',
       clientIP: this.getClientIP(c),
-      userAgent: c.req.header('user-agent')
+      userAgent: c.req.header('user-agent'),
     }
 
     // Try JWT authentication
@@ -372,7 +386,7 @@ export class SecurityIntegrationService {
         try {
           const token = authHeader.substring(7)
           const validationResult = await JWTSecurityService.validateToken(token)
-          
+
           if (validationResult.isValid && validationResult.payload) {
             return {
               ...baseContext,
@@ -386,11 +400,13 @@ export class SecurityIntegrationService {
               consentLevel: validationResult.payload.consentLevel,
               sessionType: validationResult.payload.sessionType,
               mfaVerified: validationResult.payload.mfaVerified,
-              tokenPayload: validationResult.payload
+              tokenPayload: validationResult.payload,
             }
           }
         } catch (error) {
-          await this.logSecurityEvent(AuditEventType.AUTH_FAILURE, 'JWT authentication failed', { error })
+          await this.logSecurityEvent(AuditEventType.AUTH_FAILURE, 'JWT authentication failed', {
+            error,
+          })
         }
       }
     }
@@ -417,12 +433,16 @@ export class SecurityIntegrationService {
                 patientId: session.patientId,
                 consentLevel: session.consentLevel,
                 sessionId: session.sessionId,
-                mfaVerified: session.mfaVerified
+                mfaVerified: session.mfaVerified,
               }
             }
           }
         } catch (error) {
-          await this.logSecurityEvent(AuditEventType.AUTH_FAILURE, 'Session authentication failed', { error })
+          await this.logSecurityEvent(
+            AuditEventType.AUTH_FAILURE,
+            'Session authentication failed',
+            { error },
+          )
         }
       }
     }
@@ -435,8 +455,10 @@ export class SecurityIntegrationService {
    */
   private static async performHealthcareComplianceValidation(
     c: Context,
-    securityContext: IntegratedSecurityContext
-  ): Promise<{ hasViolations: boolean; hasWarnings: boolean; violations: string[]; warnings: string[] }> {
+    securityContext: IntegratedSecurityContext,
+  ): Promise<
+    { hasViolations: boolean; hasWarnings: boolean; violations: string[]; warnings: string[] }
+  > {
     const violations: string[] = []
     const warnings: string[] = []
 
@@ -446,14 +468,18 @@ export class SecurityIntegrationService {
     }
 
     // Check consent requirements
-    if (securityContext.authenticationContext?.patientId && 
-        !securityContext.authenticationContext.consentLevel) {
+    if (
+      securityContext.authenticationContext?.patientId &&
+      !securityContext.authenticationContext.consentLevel
+    ) {
       violations.push('Patient data access requires consent')
     }
 
     // Check MFA requirements for sensitive operations
-    if (securityContext.authenticationContext?.sessionType === 'telemedicine' && 
-        !securityContext.authenticationContext.mfaVerified) {
+    if (
+      securityContext.authenticationContext?.sessionType === 'telemedicine' &&
+      !securityContext.authenticationContext.mfaVerified
+    ) {
       violations.push('MFA required for telemedicine sessions')
     }
 
@@ -466,7 +492,7 @@ export class SecurityIntegrationService {
       hasViolations: violations.length > 0,
       hasWarnings: warnings.length > 0,
       violations,
-      warnings
+      warnings,
     }
   }
 
@@ -475,7 +501,7 @@ export class SecurityIntegrationService {
    */
   private static async performThreatDetection(
     c: Context,
-    securityContext: IntegratedSecurityContext
+    securityContext: IntegratedSecurityContext,
   ): Promise<{ hasThreats: boolean; threatScore: number; recommendations: string[] }> {
     const recommendations: string[] = []
     let threatScore = 0
@@ -483,10 +509,18 @@ export class SecurityIntegrationService {
     // Check for suspicious user agents
     const userAgent = c.req.header('user-agent') || ''
     const suspiciousAgents = [
-      'sqlmap', 'nikto', 'nmap', 'masscan', 'zgrab',
-      'curl', 'wget', 'python-requests', 'bot', 'spider'
+      'sqlmap',
+      'nikto',
+      'nmap',
+      'masscan',
+      'zgrab',
+      'curl',
+      'wget',
+      'python-requests',
+      'bot',
+      'spider',
     ]
-    
+
     if (suspiciousAgents.some(agent => userAgent.toLowerCase().includes(agent))) {
       threatScore += 25
       recommendations.push('Suspicious user agent detected')
@@ -513,9 +547,9 @@ export class SecurityIntegrationService {
       /union.*select/i,
       /<script[^>]*>/i,
       /javascript:/i,
-      /\.\.\//i
+      /\.\.\//i,
     ]
-    
+
     for (const [_key, value] of Object.entries(query)) {
       if (typeof value === 'string') {
         for (const pattern of suspiciousPatterns) {
@@ -531,7 +565,7 @@ export class SecurityIntegrationService {
     return {
       hasThreats: threatScore > 0,
       threatScore,
-      recommendations
+      recommendations,
     }
   }
 
@@ -546,15 +580,15 @@ export class SecurityIntegrationService {
         message: 'Security violation detected',
         threatLevel: securityContext.threatLevel,
         riskScore: securityContext.riskScore,
-        recommendations: securityContext.recommendations
-      }
+        recommendations: securityContext.recommendations,
+      },
     }
 
     // Log security violation
     this.logSecurityEvent(AuditEventType.SECURITY_VIOLATION, 'Security violation detected', {
       threatLevel: securityContext.threatLevel,
       riskScore: securityContext.riskScore,
-      recommendations: securityContext.recommendations
+      recommendations: securityContext.recommendations,
     })
 
     // Update metrics
@@ -567,8 +601,13 @@ export class SecurityIntegrationService {
   /**
    * Log security access event
    */
-  private static async logSecurityAccessEvent(c: Context, securityContext: IntegratedSecurityContext): Promise<void> {
-    const eventType = securityContext.isAuthenticated ? AuditEventType.AUTH_SUCCESS : AuditEventType.AUTH_FAILURE
+  private static async logSecurityAccessEvent(
+    c: Context,
+    securityContext: IntegratedSecurityContext,
+  ): Promise<void> {
+    const eventType = securityContext.isAuthenticated
+      ? AuditEventType.AUTH_SUCCESS
+      : AuditEventType.AUTH_FAILURE
     const severity = this.getSeverityForThreatLevel(securityContext.threatLevel)
 
     await AuditTrailService.logEvent({
@@ -589,15 +628,19 @@ export class SecurityIntegrationService {
         complianceStatus: securityContext.complianceStatus,
         threatLevel: securityContext.threatLevel,
         recommendations: securityContext.recommendations,
-        securityChecksPerformed: securityContext.metadata.securityChecksPerformed
-      }
+        securityChecksPerformed: securityContext.metadata.securityChecksPerformed,
+      },
     })
   }
 
   /**
    * Log security event
    */
-  private static async logSecurityEvent(eventType: AuditEventType, description: string, metadata: Record<string, any>): Promise<void> {
+  private static async logSecurityEvent(
+    eventType: AuditEventType,
+    description: string,
+    metadata: Record<string, any>,
+  ): Promise<void> {
     await AuditTrailService.logEvent({
       eventType,
       severity: AuditSeverity.MEDIUM,
@@ -606,14 +649,18 @@ export class SecurityIntegrationService {
       description,
       outcome: 'success',
       ipAddress: 'system',
-      metadata
+      metadata,
     })
   }
 
   /**
    * Log security error
    */
-  private static async logSecurityError(c: Context, errorMessage: string, additionalData: Record<string, any>): Promise<void> {
+  private static async logSecurityError(
+    c: Context,
+    errorMessage: string,
+    additionalData: Record<string, any>,
+  ): Promise<void> {
     await AuditTrailService.logEvent({
       eventType: AuditEventType.SYSTEM_ERROR,
       severity: AuditSeverity.HIGH,
@@ -625,8 +672,8 @@ export class SecurityIntegrationService {
       userAgent: c.req.header('user-agent'),
       metadata: {
         error: errorMessage,
-        ...additionalData
-      }
+        ...additionalData,
+      },
     })
   }
 
@@ -645,8 +692,8 @@ export class SecurityIntegrationService {
       'X-Security-Metrics': JSON.stringify({
         riskScore: c.get('securityContext')?.riskScore || 0,
         threatLevel: c.get('securityContext')?.threatLevel || 'low',
-        complianceStatus: c.get('securityContext')?.complianceStatus || 'compliant'
-      })
+        complianceStatus: c.get('securityContext')?.complianceStatus || 'compliant',
+      }),
     }
 
     Object.entries(securityHeaders).forEach(([key, value]) => {
@@ -659,24 +706,26 @@ export class SecurityIntegrationService {
    */
   private static updateMetrics(securityContext: IntegratedSecurityContext): void {
     this.metrics.totalRequests++
-    
+
     if (securityContext.isAuthenticated) {
       this.metrics.authenticatedRequests++
     }
-    
+
     if (securityContext.threatLevel === 'critical') {
       this.metrics.blockedRequests++
     }
-    
-    if (!securityContext.isAuthenticated && 
-        securityContext.authenticationContext?.authMethod !== 'none') {
+
+    if (
+      !securityContext.isAuthenticated &&
+      securityContext.authenticationContext?.authMethod !== 'none'
+    ) {
       this.metrics.failedAuthentications++
     }
-    
+
     if (securityContext.complianceStatus === 'violation') {
       this.metrics.complianceViolations++
     }
-    
+
     if (securityContext.riskScore > 70) {
       this.metrics.highRiskRequests++
     }
@@ -716,12 +765,12 @@ export class SecurityIntegrationService {
       sessionManagement: 'healthy' as const,
       securityValidation: 'healthy' as const,
       auditTrail: 'healthy' as const,
-      healthcareCompliance: 'healthy' as const
+      healthcareCompliance: 'healthy' as const,
     }
-    
+
     const issues: string[] = []
     const recommendations: string[] = []
-    
+
     // Check JWT security
     try {
       if (!process.env.JWT_PRIVATE_KEY || !process.env.JWT_PUBLIC_KEY) {
@@ -733,7 +782,7 @@ export class SecurityIntegrationService {
       components.jwtSecurity = 'critical'
       issues.push('JWT security validation failed')
     }
-    
+
     // Check session management
     try {
       const sessionCount = HealthcareSessionManagementService.cleanupExpiredSessions()
@@ -746,7 +795,7 @@ export class SecurityIntegrationService {
       components.sessionManagement = 'critical'
       issues.push('Session management validation failed')
     }
-    
+
     // Check security validation
     try {
       // Simplified health check
@@ -759,7 +808,7 @@ export class SecurityIntegrationService {
       components.securityValidation = 'critical'
       issues.push('Security validation service failed')
     }
-    
+
     // Check audit trail
     try {
       if (!this.isInitialized) {
@@ -771,18 +820,18 @@ export class SecurityIntegrationService {
       components.auditTrail = 'critical'
       issues.push('Audit trail service failed')
     }
-    
+
     // Determine overall status
     const hasCritical = Object.values(components).some(status => status === 'critical')
     const hasWarning = Object.values(components).some(status => status === 'warning')
-    
+
     const status = hasCritical ? 'critical' : hasWarning ? 'warning' : 'healthy'
-    
+
     return {
       status,
       components,
       issues,
-      recommendations
+      recommendations,
     }
   }
 
@@ -791,21 +840,21 @@ export class SecurityIntegrationService {
    */
   private static registerSecurityAlerts(): void {
     // Register authentication failure alert
-    AuditTrailService.registerAlertHook(AuditEventType.AUTH_FAILURE, (event) => {
+    AuditTrailService.registerAlertHook(AuditEventType.AUTH_FAILURE, event => {
       // Security-critical console output for real-time alerting
       // These console statements are intentional for security monitoring
       console.warn('[SECURITY_ALERT] Authentication failure detected:', event)
     })
-    
+
     // Register security violation alert
-    AuditTrailService.registerAlertHook(AuditEventType.SECURITY_VIOLATION, (event) => {
-      // Security-critical console output for real-time alerting  
+    AuditTrailService.registerAlertHook(AuditEventType.SECURITY_VIOLATION, event => {
+      // Security-critical console output for real-time alerting
       // These console statements are intentional for security monitoring
       console.error('[SECURITY_ALERT] Security violation detected:', event)
     })
-    
+
     // Register data breach alert
-    AuditTrailService.registerAlertHook(AuditEventType.DATA_BREACH, (event) => {
+    AuditTrailService.registerAlertHook(AuditEventType.DATA_BREACH, event => {
       // Security-critical console output for real-time alerting
       // These console statements are intentional for security monitoring
       console.error('[SECURITY_ALERT] Data breach detected:', event)
@@ -817,15 +866,15 @@ export class SecurityIntegrationService {
    */
   private static getClientIP(c: Context): string {
     return c.req.header('cf-connecting-ip') ||
-           c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
-           c.req.header('x-real-ip') ||
-           'unknown'
+      c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+      c.req.header('x-real-ip') ||
+      'unknown'
   }
 
   private static isSecureRequest(c: Context): boolean {
     return c.req.header('x-forwarded-proto') === 'https' ||
-           c.req.header('cf-visitor')?.includes('https') ||
-           process.env.NODE_ENV !== 'production'
+      c.req.header('cf-visitor')?.includes('https') ||
+      process.env.NODE_ENV !== 'production'
   }
 
   private static extractSessionId(cookieHeader: string): string | null {
@@ -843,11 +892,16 @@ export class SecurityIntegrationService {
 
   private static getSeverityForThreatLevel(threatLevel: string): AuditSeverity {
     switch (threatLevel) {
-      case 'critical': return AuditSeverity.CRITICAL
-      case 'high': return AuditSeverity.HIGH
-      case 'medium': return AuditSeverity.MEDIUM
-      case 'low': return AuditSeverity.LOW
-      default: return AuditSeverity.LOW
+      case 'critical':
+        return AuditSeverity.CRITICAL
+      case 'high':
+        return AuditSeverity.HIGH
+      case 'medium':
+        return AuditSeverity.MEDIUM
+      case 'low':
+        return AuditSeverity.LOW
+      default:
+        return AuditSeverity.LOW
     }
   }
 
@@ -881,8 +935,8 @@ export class SecurityIntegrationService {
         successes: 0,
         failures: 0,
         mfaSuccesses: 0,
-        mfaFailures: 0
-      }
+        mfaFailures: 0,
+      },
     }
   }
 }

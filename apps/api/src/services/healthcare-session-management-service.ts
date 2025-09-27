@@ -10,9 +10,9 @@
  */
 
 import crypto from 'crypto'
-import { SessionCookieUtils } from '../security/session-cookie-utils'
-import { EnhancedSessionManager } from '../security/enhanced-session-manager'
-import { createCryptographyManager, type CryptographyManager } from '../utils/security/cryptography'
+import { EnhancedSessionManager } from '../security/enhanced-session-manager.js'
+import { SessionCookieUtils } from '../security/session-cookie-utils.js'
+import { createCryptographyManager, type CryptographyManager } from '../utils/security/cryptography.js'
 
 /**
  * Healthcare session data with compliance tracking
@@ -95,16 +95,16 @@ export class HealthcareSessionManagementService {
     mfaRequired: false,
     deviceRestriction: true,
     requireConsent: true,
-    auditLevel: 'comprehensive'
+    auditLevel: 'comprehensive',
   }
 
   // Initialize cryptography manager
-  private static cryptoManager: CryptographyManager;
+  private static cryptoManager: CryptographyManager
   private static initializeCrypto() {
     if (!HealthcareSessionManagementService.cryptoManager) {
-      HealthcareSessionManagementService.cryptoManager = createCryptographyManager();
+      HealthcareSessionManagementService.cryptoManager = createCryptographyManager()
       if (!HealthcareSessionManagementService.cryptoManager) {
-        throw new Error('CryptographyManager initialization failed');
+        throw new Error('CryptographyManager initialization failed')
       }
     }
   }
@@ -135,9 +135,9 @@ export class HealthcareSessionManagementService {
       userAgent: string
       deviceFingerprint?: string
       location?: { country: string; region: string; city: string }
-    }
+    },
   ): Promise<HealthcareSession> {
-    HealthcareSessionManagementService.initializeCrypto();
+    HealthcareSessionManagementService.initializeCrypto()
     const config = { ...this.DEFAULT_OPTIONS, ...options }
 
     // Check concurrent session limit
@@ -174,7 +174,7 @@ export class HealthcareSessionManagementService {
       deviceFingerprint: requestContext.deviceFingerprint || '',
       location: requestContext.location || { country: '', region: '', city: '' },
       dataAccessLog: [],
-      complianceFlags: this.initializeComplianceFlags()
+      complianceFlags: this.initializeComplianceFlags(),
     }
 
     // Store session
@@ -189,7 +189,7 @@ export class HealthcareSessionManagementService {
     // Log session creation
     await this.logSessionEvent('session_created', session, {
       concurrentSessions: this.userSessionMap.get(userId)!.size,
-      mfaRequired: config.mfaRequired
+      mfaRequired: config.mfaRequired,
     })
 
     return session
@@ -227,7 +227,7 @@ export class HealthcareSessionManagementService {
       consentLevel?: 'none' | 'basic' | 'full'
       sessionType?: 'standard' | 'telemedicine' | 'emergency'
       mfaVerified?: boolean
-    }
+    },
   ): Promise<boolean> {
     const session = this.getSession(sessionId)
 
@@ -259,7 +259,7 @@ export class HealthcareSessionManagementService {
    */
   static async logDataAccess(
     sessionId: string,
-    accessEntry: Omit<DataAccessEntry, 'timestamp'>
+    accessEntry: Omit<DataAccessEntry, 'timestamp'>,
   ): Promise<boolean> {
     const session = this.getSession(sessionId)
 
@@ -275,7 +275,7 @@ export class HealthcareSessionManagementService {
     // Create audit entry
     const auditEntry: DataAccessEntry = {
       ...accessEntry,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
 
     // Add to session log
@@ -296,7 +296,7 @@ export class HealthcareSessionManagementService {
   static validateSessionForAccess(
     sessionId: string,
     requiredConsentLevel: 'none' | 'basic' | 'full' = 'none',
-    requiredSessionType: 'standard' | 'telemedicine' | 'emergency' | 'all' = 'all'
+    requiredSessionType: 'standard' | 'telemedicine' | 'emergency' | 'all' = 'all',
   ): { isValid: boolean; session?: HealthcareSession; error?: string } {
     const session = this.getSession(sessionId)
 
@@ -339,7 +339,7 @@ export class HealthcareSessionManagementService {
     // Log session destruction
     this.logSessionEvent('session_destroyed', session, {
       sessionDuration: Date.now() - session.createdAt.getTime(),
-      dataAccessCount: session.dataAccessLog.length
+      dataAccessCount: session.dataAccessLog.length,
     })
 
     // Remove from sessions map
@@ -438,7 +438,7 @@ export class HealthcareSessionManagementService {
       lgpdCompliant: sessions.filter(s => s.complianceFlags.lgpdCompliant).length,
       mfaVerified: sessions.filter(s => s.mfaVerified).length,
       consentRequired: sessions.filter(s => s.consentLevel !== 'none').length,
-      auditTrailComplete: sessions.filter(s => s.complianceFlags.auditTrailEnabled).length
+      auditTrailComplete: sessions.filter(s => s.complianceFlags.auditTrailEnabled).length,
     }
 
     const riskIndicators = {
@@ -448,7 +448,7 @@ export class HealthcareSessionManagementService {
       unusualAccess: sessions
         .filter(s => s.dataAccessLog.length > 100)
         .map(s => s.sessionId),
-      expiredSessions: expiredSessions.map(s => s.sessionId)
+      expiredSessions: expiredSessions.map(s => s.sessionId),
     }
 
     return {
@@ -456,7 +456,7 @@ export class HealthcareSessionManagementService {
       activeSessions: activeSessions.length,
       expiredSessions: expiredSessions.length,
       complianceMetrics,
-      riskIndicators
+      riskIndicators,
     }
   }
 
@@ -486,13 +486,13 @@ export class HealthcareSessionManagementService {
    */
   private static getDefaultPermissions(role: string): string[] {
     const rolePermissions: Record<string, string[]> = {
-      'admin': ['*'],
-      'doctor': ['patient:read', 'patient:write', 'medical-record:read', 'prescription:write'],
-      'nurse': ['patient:read', 'medical-record:read', 'vital-signs:write'],
-      'specialist': ['patient:read', 'medical-record:read', 'specialist-reports:write'],
+      admin: ['*'],
+      doctor: ['patient:read', 'patient:write', 'medical-record:read', 'prescription:write'],
+      nurse: ['patient:read', 'medical-record:read', 'vital-signs:write'],
+      specialist: ['patient:read', 'medical-record:read', 'specialist-reports:write'],
       'emergency-medical-staff': ['patient:read', 'emergency-access:write'],
-      'receptionist': ['patient:read:basic', 'appointment:write'],
-      'medical-staff': ['patient:read:basic']
+      receptionist: ['patient:read:basic', 'appointment:write'],
+      'medical-staff': ['patient:read:basic'],
     }
 
     return rolePermissions[role] || []
@@ -514,7 +514,7 @@ export class HealthcareSessionManagementService {
 
       await this.logSessionEvent('session_limit_exceeded', oldestSession, {
         limit,
-        activeSessions: userSessions.length
+        activeSessions: userSessions.length,
       })
     }
   }
@@ -524,7 +524,7 @@ export class HealthcareSessionManagementService {
    */
   private static validateGeoRestriction(
     location: { country: string; region: string; city: string },
-    allowedCountries: string[]
+    allowedCountries: string[],
   ): void {
     if (!allowedCountries.includes(location.country)) {
       throw new Error(`Access denied from location: ${location.country}`)
@@ -543,14 +543,17 @@ export class HealthcareSessionManagementService {
   /**
    * Validate data access permissions
    */
-  private static validateDataAccess(session: HealthcareSession, access: Omit<DataAccessEntry, 'timestamp'>): boolean {
+  private static validateDataAccess(
+    session: HealthcareSession,
+    access: Omit<DataAccessEntry, 'timestamp'>,
+  ): boolean {
     // Check if user has required permissions
     const permissionMap: Record<string, string> = {
-      'patient': 'patient:read',
+      patient: 'patient:read',
       'medical-record': 'medical-record:read',
-      'prescription': 'prescription:write',
-      'appointment': 'appointment:write',
-      'lab-result': 'medical-record:read'
+      prescription: 'prescription:write',
+      appointment: 'appointment:write',
+      'lab-result': 'medical-record:read',
     }
 
     const requiredPermission = permissionMap[access.resourceType]
@@ -583,7 +586,7 @@ export class HealthcareSessionManagementService {
       encryptionApplied: true,
       accessControlApplied: true,
       auditTrailEnabled: true,
-      breachNotificationRequired: false
+      breachNotificationRequired: false,
     }
   }
 
@@ -605,22 +608,22 @@ export class HealthcareSessionManagementService {
    * Validate session with comprehensive checks
    */
   static async validateSession(sessionId: string): Promise<{
-    isValid: boolean;
-    session?: HealthcareSession;
-    error?: string;
+    isValid: boolean
+    session?: HealthcareSession
+    error?: string
     metadata?: {
-      validationTimestamp: Date;
-      securityChecksPerformed: string[];
-      riskScore: number;
-      recommendations: string[];
-    };
+      validationTimestamp: Date
+      securityChecksPerformed: string[]
+      riskScore: number
+      recommendations: string[]
+    }
   }> {
     try {
       // Validate input
       if (!sessionId || sessionId.trim() === '') {
         return {
           isValid: false,
-          error: 'Invalid session ID'
+          error: 'Invalid session ID',
         }
       }
 
@@ -632,7 +635,7 @@ export class HealthcareSessionManagementService {
         return {
           isValid: false,
           session: undefined,
-          error: 'Session not found or expired'
+          error: 'Session not found or expired',
         }
       }
 
@@ -648,7 +651,7 @@ export class HealthcareSessionManagementService {
         return {
           isValid: false,
           session: undefined,
-          error: 'Session not found or expired'
+          error: 'Session not found or expired',
         }
       }
 
@@ -657,7 +660,7 @@ export class HealthcareSessionManagementService {
         return {
           isValid: false,
           session: undefined,
-          error: 'MFA verification required for telemedicine sessions'
+          error: 'MFA verification required for telemedicine sessions',
         }
       }
 
@@ -694,7 +697,7 @@ export class HealthcareSessionManagementService {
 
       // Data access pattern analysis
       const recentAccessCount = session.dataAccessLog.filter(
-        entry => now.getTime() - entry.timestamp.getTime() < 60 * 60 * 1000
+        entry => now.getTime() - entry.timestamp.getTime() < 60 * 60 * 1000,
       ).length
       if (recentAccessCount > 100) {
         riskScore += 25
@@ -709,7 +712,7 @@ export class HealthcareSessionManagementService {
       await this.logSessionEvent('SESSION_VALIDATION', session, {
         isValid: true,
         riskScore,
-        securityChecksPerformed
+        securityChecksPerformed,
       })
 
       return {
@@ -719,14 +722,14 @@ export class HealthcareSessionManagementService {
           validationTimestamp: now,
           securityChecksPerformed,
           riskScore,
-          recommendations
-        }
+          recommendations,
+        },
       }
     } catch (error) {
       console.error('Session validation error:', error)
       return {
         isValid: false,
-        error: 'Session validation failed'
+        error: 'Session validation failed',
       }
     }
   }
@@ -737,7 +740,7 @@ export class HealthcareSessionManagementService {
   private static async logSessionEvent(
     eventType: string,
     session: HealthcareSession,
-    details: Record<string, any> = {}
+    details: Record<string, any> = {},
   ): Promise<void> {
     try {
       const logEntry = {
@@ -751,7 +754,7 @@ export class HealthcareSessionManagementService {
         sessionType: session.sessionType,
         ipAddress: session.ipAddress,
         userAgent: session.userAgent,
-        details
+        details,
       }
 
       console.info('[SESSION_EVENT]', JSON.stringify(logEntry))

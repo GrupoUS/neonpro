@@ -1,4 +1,4 @@
-import { BrazilianComplianceService } from '../brazilian-compliance'
+import { BrazilianComplianceService } from '../brazilian-compliance.js'
 import { LGPDComplianceOptions, PatientExportField } from './types'
 
 export class ExportLGPDCompliance {

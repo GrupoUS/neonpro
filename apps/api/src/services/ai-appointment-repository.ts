@@ -12,7 +12,7 @@
  * - LGPD-compliant data handling
  */
 
-import { prisma } from '../lib/prisma'
+import { prisma } from '../lib/prisma.js'
 
 export interface AIAppointmentQueryOptions {
   clinicId: string

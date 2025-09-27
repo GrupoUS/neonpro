@@ -33,7 +33,7 @@ import {
   // PaymentProcessingRequest,
   // ProcedureCode,
   // TaxInfo,
-} from '../billing-service'
+} from '../billing-service.js'
 
 /**
  * AI-Powered Financial Analytics Types

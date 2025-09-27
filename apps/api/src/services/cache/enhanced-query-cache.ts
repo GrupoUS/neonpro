@@ -9,7 +9,7 @@
  */
 
 import { createHash } from 'crypto'
-import { AguiQueryMessage, AguiResponseMessage } from '../agui-protocol/types'
+import { AguiQueryMessage, AguiResponseMessage } from '../agui-protocol/types.js'
 
 import { CacheManagementService } from '@neonpro/shared/services/cache-management'
 import {

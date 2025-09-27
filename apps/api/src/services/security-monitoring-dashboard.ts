@@ -3,8 +3,8 @@
  * Real-time security monitoring with comprehensive analytics and alerting
  */
 
-import { logger } from '@/utils/secure-logger'
-import { createServerClient } from '../clients/supabase'
+import { logger } from '@/utils/secure-logger.js'
+import { createServerClient } from '../clients/supabase.js'
 import { type SecurityAlert } from './enhanced-rls-security'
 
 export interface SecurityMetrics {

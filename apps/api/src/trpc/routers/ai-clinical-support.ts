@@ -16,11 +16,11 @@
 
 // Placeholder service - will be fixed after build completion
 // import { AIClinicalDecisionSupport } from '@neonpro/healthcare-core'
-import { AIClinicalDecisionSupport } from './placeholder-service'
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import * as z from 'zod'
 import { healthcareProcedure, protectedProcedure, router } from '../trpc'
+import { AIClinicalDecisionSupport } from './placeholder-service'
 
 // Initialize the AI clinical decision support service
 const aiClinicalService = AIClinicalDecisionSupport.getInstance()

@@ -4,7 +4,11 @@
  */
 
 import { z } from 'zod'
-import { HealthcareTRPCError, HealthcareErrorCategory, HealthcareErrorSeverity } from '../../utils/healthcare-errors'
+import {
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+  HealthcareTRPCError,
+} from '../../utils/healthcare-errors'
 
 // Local appointment schema definitions
 
@@ -32,7 +36,8 @@ export const UpdateAppointmentRequestSchema = z.object({
   duration: z.number().min(15).max(240).optional(),
   type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']).optional(),
   priority: z.enum(['low', 'medium', 'high', 'emergency']).optional(),
-  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']).optional(),
+  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
+    .optional(),
   notes: z.string().optional(),
   roomId: z.string().optional(),
   cancellationReason: z.string().optional(),
@@ -47,7 +52,9 @@ export const PaginationSchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).default('asc'),
   search: z.string().optional(),
   filters: z.object({
-    status: z.array(z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])).optional(),
+    status: z.array(
+      z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
+    ).optional(),
     type: z.array(z.enum(['consultation', 'procedure', 'follow_up', 'emergency'])).optional(),
     priority: z.array(z.enum(['low', 'medium', 'high', 'emergency'])).optional(),
     patientId: z.string().optional(),

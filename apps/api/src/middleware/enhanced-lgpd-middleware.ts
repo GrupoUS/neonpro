@@ -1,7 +1,7 @@
+import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { createAdminClient } from '../clients/supabase'
-import { logger } from "@/utils/healthcare-errors"
+import { createAdminClient } from '../clients/supabase.js'
 
 /**
  * Enhanced LGPD (Lei Geral de Proteção de Dados) compliance middleware
@@ -157,10 +157,10 @@ function requiresExplicitConsent(purpose: ProcessingPurpose): boolean {
  * Enhanced LGPD compliance middleware with client data protection focus
  */
 export function lgpdMiddleware(config: LGPDConfig = {}) {
-  const { 
-    strictMode = true, 
+  const {
+    strictMode = true,
     logAccess = true,
-    enforceDataResidency = true 
+    enforceDataResidency = true,
   } = config
 
   return async (c: Context, next: Next) => {
@@ -390,7 +390,7 @@ export const dataProtection = aestheticClinicLGPDMiddleware
 export function clientDataProtectionHeaders() {
   return async (c: Context, next: Next) => {
     await next()
-    
+
     // Add LGPD compliance headers
     c.header('X-LGPD-Compliant', 'true')
     c.header('X-Data-Residency', 'brazil-only')
@@ -399,13 +399,13 @@ export function clientDataProtectionHeaders() {
     c.header('X-LGPD-Processing-Basis', 'client-consent')
     c.header('X-Data-Retention', '365-days')
     c.header('X-Aesthetic-Service', 'true')
-    
+
     // Add security headers
     c.header('X-Content-Type-Options', 'nosniff')
     c.header('X-Frame-Options', 'DENY')
     c.header('X-XSS-Protection', '1; mode=block')
     c.header('Cache-Control', 'private, no-store')
-    
+
     // Add rate limiting headers
     c.header('X-Rate-Limit-Limit', '1000')
     c.header('X-Rate-Limit-Window', '3600')
@@ -469,15 +469,15 @@ async function exportClientData(_supabase: any, _userId: string): Promise<any> {
         rg: client.rg ? '[REDACTED_FOR_PRIVACY]' : undefined,
         address: client.address
           ? {
-              street: client.address.street,
-              number: client.address.number,
-              neighborhood: client.address.neighborhood,
-              city: client.address.city,
-              state: client.address.state,
-              postal_code: client.address.postal_code
-                ? '[REDACTED_FOR_PRIVACY]'
-                : undefined,
-            }
+            street: client.address.street,
+            number: client.address.number,
+            neighborhood: client.address.neighborhood,
+            city: client.address.city,
+            state: client.address.state,
+            postal_code: client.address.postal_code
+              ? '[REDACTED_FOR_PRIVACY]'
+              : undefined,
+          }
           : undefined,
         created_at: client.created_at,
         updated_at: client.updated_at,

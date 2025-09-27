@@ -1,6 +1,6 @@
 /**
  * 🔐 Cryptographic Operations Utility
- * 
+ *
  * Secure cryptographic operations for healthcare applications:
  * - Data encryption and decryption
  * - Secure hashing and salting
@@ -8,7 +8,7 @@
  * - Key generation and management
  * - Secure random number generation
  * - LGPD-compliant data anonymization
- * 
+ *
  * Features:
  * - AES-256 encryption for sensitive data
  * - SHA-256 with salt for password hashing
@@ -18,9 +18,22 @@
  * - Cryptographic algorithm agility
  */
 
-import { createHash, randomBytes, createCipheriv, createDecipheriv, createHmac, generateKeyPairSync, publicEncrypt, privateDecrypt, constants } from 'crypto'
-import { SecureLogger } from '../secure-logger'
-import { HealthcareError } from '../healthcare-errors'
+import {
+  constants,
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+  createHmac,
+  createSign,
+  createVerify,
+  generateKeyPairSync,
+  pbkdf2Sync,
+  privateDecrypt,
+  publicEncrypt,
+  randomBytes,
+} from 'crypto'
+import { HealthcareError } from '../healthcare-errors.js'
+import { SecureLogger } from '../secure-logger.js'
 
 export interface CryptoConfig {
   /**
@@ -96,7 +109,7 @@ export class CryptographyManager {
       lgpdCompliant: true,
       auditTrail: true,
       enableMetrics: true,
-      _service: 'CryptographyManager'
+      _service: 'CryptographyManager',
     })
 
     this.initializeKeys()
@@ -117,7 +130,7 @@ export class CryptographyManager {
           modulusLength: 2048,
           publicExponent: 0x10001,
           privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-          publicKeyEncoding: { type: 'spki', format: 'pem' }
+          publicKeyEncoding: { type: 'spki', format: 'pem' },
         })
 
         const keyPair: KeyPair = {
@@ -127,7 +140,7 @@ export class CryptographyManager {
           algorithm: 'rsa-sha256',
           keySize: 2048,
           created: new Date(),
-          expires: new Date(Date.now() + this.config.keyRotationDays * 24 * 60 * 60 * 1000)
+          expires: new Date(Date.now() + this.config.keyRotationDays * 24 * 60 * 60 * 1000),
         }
 
         this.keyStore.set(keyPair.keyId, keyPair)
@@ -141,7 +154,7 @@ export class CryptographyManager {
         'SECURITY',
         'CRITICAL',
         'Failed to initialize cryptographic keys',
-        { error: error instanceof Error ? error.message : String(error) }
+        { error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -150,9 +163,9 @@ export class CryptographyManager {
    * Encrypt sensitive data
    */
   async encrypt(
-    data: string | Buffer, 
+    data: string | Buffer,
     keyId: string = 'master',
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<EncryptedData> {
     try {
       const key = this.encryptionKeys.get(keyId)
@@ -161,7 +174,7 @@ export class CryptographyManager {
           'KEY_NOT_FOUND',
           'SECURITY',
           'HIGH',
-          `Encryption key not found: ${keyId}`
+          `Encryption key not found: ${keyId}`,
         )
       }
 
@@ -186,7 +199,7 @@ export class CryptographyManager {
         algorithm: this.config.encryptionAlgorithm,
         keyId,
         timestamp: new Date(),
-        metadata
+        metadata,
       }
 
       if (tag) {
@@ -196,18 +209,21 @@ export class CryptographyManager {
       this.logger.logWithMetrics('info', 'Data encrypted successfully', {
         algorithm: this.config.encryptionAlgorithm,
         keyId,
-        dataSize: typeof data === 'string' ? data.length : data.byteLength
+        dataSize: typeof data === 'string' ? data.length : data.byteLength,
       })
 
       return result
     } catch (error) {
-      this.logger.error('Encryption failed', error as Error, { keyId, dataSize: typeof data === 'string' ? data.length : data.byteLength })
+      this.logger.error('Encryption failed', error as Error, {
+        keyId,
+        dataSize: typeof data === 'string' ? data.length : data.byteLength,
+      })
       throw new HealthcareError(
         'ENCRYPTION_ERROR',
         'SECURITY',
         'HIGH',
         'Failed to encrypt data',
-        { keyId, error: error instanceof Error ? error.message : String(error) }
+        { keyId, error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -223,7 +239,7 @@ export class CryptographyManager {
           'KEY_NOT_FOUND',
           'SECURITY',
           'HIGH',
-          `Decryption key not found: ${encryptedData.keyId}`
+          `Decryption key not found: ${encryptedData.keyId}`,
         )
       }
 
@@ -238,7 +254,7 @@ export class CryptographyManager {
             'INVALID_CIPHERTEXT',
             'SECURITY',
             'HIGH',
-            'GCM mode requires authentication tag'
+            'GCM mode requires authentication tag',
           )
         }
 
@@ -253,24 +269,24 @@ export class CryptographyManager {
       this.logger.logWithMetrics('info', 'Data decrypted successfully', {
         algorithm: encryptedData.algorithm,
         keyId: encryptedData.keyId,
-        dataSize: decrypted.length
+        dataSize: decrypted.length,
       })
 
       return decrypted.toString('utf-8')
     } catch (error) {
-      this.logger.error('Decryption failed', error as Error, { 
+      this.logger.error('Decryption failed', error as Error, {
         algorithm: encryptedData.algorithm,
-        keyId: encryptedData.keyId 
+        keyId: encryptedData.keyId,
       })
       throw new HealthcareError(
         'DECRYPTION_ERROR',
         'SECURITY',
         'HIGH',
         'Failed to decrypt data',
-        { 
+        {
           keyId: encryptedData.keyId,
-          error: error instanceof Error ? error.message : String(error) 
-        }
+          error: error instanceof Error ? error.message : String(error),
+        },
       )
     }
   }
@@ -279,12 +295,12 @@ export class CryptographyManager {
    * Generate secure hash with salt
    */
   async hash(
-    data: string, 
+    data: string,
     options?: {
       salt?: string
       iterations?: number
       keyLength?: number
-    }
+    },
   ): Promise<HashResult> {
     try {
       const algorithm = this.config.hashAlgorithm
@@ -295,12 +311,8 @@ export class CryptographyManager {
       let hash: Buffer
 
       if (this.config.keyDerivationAlgorithm === 'pbkdf2') {
-        hash = createHash(algorithm).update(salt + data).digest()
-        
-        // Multiple iterations for better security
-        for (let i = 1; i < iterations; i++) {
-          hash = createHash(algorithm).update(hash).digest()
-        }
+        // Use built-in pbkdf2 for better performance and security
+        hash = pbkdf2Sync(data, salt, iterations, keyLength, algorithm)
       } else {
         // Fallback to simple hash with salt
         hash = createHmac(algorithm, salt).update(data).digest()
@@ -310,7 +322,7 @@ export class CryptographyManager {
         algorithm,
         iterations,
         keyLength,
-        saltLength: salt.length
+        saltLength: salt.length,
       })
 
       return {
@@ -318,22 +330,22 @@ export class CryptographyManager {
         salt,
         algorithm,
         iterations,
-        keyLength
+        keyLength,
       }
     } catch (error) {
-      this.logger.error('Hashing failed', error as Error, { 
+      this.logger.error('Hashing failed', error as Error, {
         algorithm: this.config.hashAlgorithm,
-        iterations: options?.iterations 
+        iterations: options?.iterations,
       })
       throw new HealthcareError(
         'HASHING_ERROR',
         'SECURITY',
         'HIGH',
         'Failed to hash data',
-        { 
+        {
           algorithm: this.config.hashAlgorithm,
-          error: error instanceof Error ? error.message : String(error) 
-        }
+          error: error instanceof Error ? error.message : String(error),
+        },
       )
     }
   }
@@ -346,14 +358,14 @@ export class CryptographyManager {
       const newHash = await this.hash(data, {
         salt: hashResult.salt,
         iterations: hashResult.iterations,
-        keyLength: hashResult.keyLength
+        keyLength: hashResult.keyLength,
       })
 
       const isValid = newHash.hash === hashResult.hash
 
       this.logger.logWithMetrics('info', 'Hash verification completed', {
         algorithm: hashResult.algorithm,
-        isValid
+        isValid,
       })
 
       return isValid
@@ -368,7 +380,7 @@ export class CryptographyManager {
    */
   async sign(
     data: string | Buffer,
-    keyId?: string
+    keyId?: string,
   ): Promise<DigitalSignature> {
     try {
       const keyPair = this.getLatestKeyPair()
@@ -380,47 +392,43 @@ export class CryptographyManager {
           'PRIVATE_KEY_NOT_FOUND',
           'SECURITY',
           'HIGH',
-          `Private key not found: ${actualKeyId}`
+          `Private key not found: ${actualKeyId}`,
         )
       }
 
       const dataToSign = typeof data === 'string' ? Buffer.from(data) : data
-      const signature = privateDecrypt(
-        {
-          key: privateKey,
-          padding: constants.RSA_PKCS1_PADDING
-        },
-        dataToSign
-      ).toString('base64')
+      const signer = createSign('RSA-SHA256')
+      signer.update(dataToSign)
+      const signature = signer.sign(privateKey, 'base64')
 
       const result: DigitalSignature = {
         signature,
         algorithm: this.config.signatureAlgorithm,
         keyId: actualKeyId,
-        timestamp: new Date()
+        timestamp: new Date(),
       }
 
       this.logger.logWithMetrics('info', 'Digital signature created', {
         algorithm: this.config.signatureAlgorithm,
         keyId: actualKeyId,
-        dataSize: dataToSign.length
+        dataSize: dataToSign.length,
       })
 
       return result
     } catch (error) {
       this.logger.error('Digital signature creation failed', error as Error, {
         algorithm: this.config.signatureAlgorithm,
-        keyId
+        keyId,
       })
       throw new HealthcareError(
         'SIGNATURE_ERROR',
         'SECURITY',
         'HIGH',
         'Failed to create digital signature',
-        { 
+        {
           keyId,
-          error: error instanceof Error ? error.message : String(error) 
-        }
+          error: error instanceof Error ? error.message : String(error),
+        },
       )
     }
   }
@@ -430,7 +438,7 @@ export class CryptographyManager {
    */
   async verifySignature(
     data: string | Buffer,
-    signature: DigitalSignature
+    signature: DigitalSignature,
   ): Promise<boolean> {
     try {
       const keyPair = this.getKeyPair(signature.keyId)
@@ -439,7 +447,7 @@ export class CryptographyManager {
           'PUBLIC_KEY_NOT_FOUND',
           'SECURITY',
           'HIGH',
-          `Public key not found: ${signature.keyId}`
+          `Public key not found: ${signature.keyId}`,
         )
       }
 
@@ -447,21 +455,14 @@ export class CryptographyManager {
       const signatureBuffer = Buffer.from(signature.signature, 'base64')
 
       try {
-        const decrypted = publicEncrypt(
-          {
-            key: keyPair.publicKey,
-            padding: constants.RSA_PKCS1_PADDING
-          },
-          signatureBuffer
-        )
-
-        // Simple comparison - in production, use proper signature verification
-        const isValid = decrypted.equals(dataToVerify)
+        const verifier = createVerify('RSA-SHA256')
+        verifier.update(dataToVerify)
+        const isValid = verifier.verify(keyPair.publicKey, signatureBuffer, 'base64')
 
         this.logger.logWithMetrics('info', 'Digital signature verified', {
           algorithm: signature.algorithm,
           keyId: signature.keyId,
-          isValid
+          isValid,
         })
 
         return isValid
@@ -471,7 +472,7 @@ export class CryptographyManager {
     } catch (error) {
       this.logger.error('Digital signature verification failed', error as Error, {
         algorithm: signature.algorithm,
-        keyId: signature.keyId
+        keyId: signature.keyId,
       })
       return false
     }
@@ -483,9 +484,9 @@ export class CryptographyManager {
   generateSecureBytes(length: number): Buffer {
     try {
       const bytes = randomBytes(length)
-      
+
       this.logger.logWithMetrics('info', 'Secure random bytes generated', {
-        length
+        length,
       })
 
       return bytes
@@ -496,7 +497,7 @@ export class CryptographyManager {
         'SECURITY',
         'CRITICAL',
         'Failed to generate secure random bytes',
-        { length, error: error instanceof Error ? error.message : String(error) }
+        { length, error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -515,7 +516,7 @@ export class CryptographyManager {
   async anonymizeData(
     data: Record<string, any>,
     fieldsToAnonymize: string[],
-    algorithm: 'hash' | 'encrypt' | 'replace' = 'hash'
+    algorithm: 'hash' | 'encrypt' | 'replace' = 'hash',
   ): Promise<Record<string, any>> {
     try {
       const anonymized = { ...data }
@@ -544,25 +545,25 @@ export class CryptographyManager {
 
       this.logger.logWithMetrics('info', 'Data anonymized for LGPD compliance', {
         fieldsAnonymized: fieldsToAnonymize.length,
-        algorithm
+        algorithm,
       })
 
       return anonymized
     } catch (error) {
       this.logger.error('Data anonymization failed', error as Error, {
         fieldsToAnonymize,
-        algorithm
+        algorithm,
       })
       throw new HealthcareError(
         'ANONYMIZATION_ERROR',
         'SECURITY',
         'HIGH',
         'Failed to anonymize data',
-        { 
+        {
           fieldsToAnonymize,
           algorithm,
-          error: error instanceof Error ? error.message : String(error) 
-        }
+          error: error instanceof Error ? error.message : String(error),
+        },
       )
     }
   }
@@ -572,12 +573,12 @@ export class CryptographyManager {
    */
   private generateAnonymizedValue(field: string, originalValue: string): string {
     const patterns: Record<string, string> = {
-      'email': 'anon@example.com',
-      'phone': '+XX XXX XXXXXXX',
-      'cpf': 'XXX.XXX.XXX-XX',
-      'cnpj': 'XX.XXX.XXX/XXXX-XX',
-      'name': 'Anonymized User',
-      'address': 'Anonymized Address'
+      email: 'anon@example.com',
+      phone: '+XX XXX XXXXXXX',
+      cpf: 'XXX.XXX.XXX-XX',
+      cnpj: 'XX.XXX.XXX/XXXX-XX',
+      name: 'Anonymized User',
+      address: 'Anonymized Address',
     }
 
     const fieldLower = field.toLowerCase()
@@ -602,7 +603,7 @@ export class CryptographyManager {
    */
   private getLatestKeyPair(): KeyPair {
     const validKeys = Array.from(this.keyStore.values()).filter(
-      key => !key.expires || key.expires > new Date()
+      key => !key.expires || key.expires > new Date(),
     )
 
     if (validKeys.length === 0) {
@@ -610,7 +611,7 @@ export class CryptographyManager {
         'NO_VALID_KEYS',
         'SECURITY',
         'CRITICAL',
-        'No valid cryptographic keys available'
+        'No valid cryptographic keys available',
       )
     }
 
@@ -645,7 +646,7 @@ export class CryptographyManager {
           modulusLength: 2048,
           publicExponent: 0x10001,
           privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-          publicKeyEncoding: { type: 'spki', format: 'pem' }
+          publicKeyEncoding: { type: 'spki', format: 'pem' },
         })
 
         const keyPair: KeyPair = {
@@ -655,7 +656,7 @@ export class CryptographyManager {
           algorithm: 'rsa-sha256',
           keySize: 2048,
           created: new Date(),
-          expires: new Date(Date.now() + this.config.keyRotationDays * 24 * 60 * 60 * 1000)
+          expires: new Date(Date.now() + this.config.keyRotationDays * 24 * 60 * 60 * 1000),
         }
 
         this.keyStore.set(newKeyId, keyPair)
@@ -666,7 +667,7 @@ export class CryptographyManager {
 
       this.logger.info('Cryptographic key rotation completed successfully', {
         newKeyId,
-        totalKeys: this.keyStore.size
+        totalKeys: this.keyStore.size,
       })
     } catch (error) {
       this.logger.error('Key rotation failed', error as Error)
@@ -675,7 +676,7 @@ export class CryptographyManager {
         'SECURITY',
         'CRITICAL',
         'Failed to rotate cryptographic keys',
-        { error: error instanceof Error ? error.message : String(error) }
+        { error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -710,7 +711,7 @@ export class CryptographyManager {
     supportedOperations: string[]
   } {
     const latestKey = this.getLatestKeyPair()
-    
+
     return {
       algorithm: this.config.signatureAlgorithm,
       keyCount: this.keyStore.size,
@@ -724,8 +725,8 @@ export class CryptographyManager {
         'sign',
         'verifySignature',
         'generateSecureBytes',
-        'anonymizeData'
-      ]
+        'anonymizeData',
+      ],
     }
   }
 }
@@ -739,17 +740,11 @@ export function createCryptographyManager(config?: Partial<CryptoConfig>): Crypt
     signatureAlgorithm: 'rsa-sha256',
     keyRotationDays: 90,
     enableHardwareSecurity: false,
-    secureRandomSource: 'crypto'
+    secureRandomSource: 'crypto',
   }
 
   return new CryptographyManager({ ...defaultConfig, ...config })
 }
 
 // Export types and classes
-export type {
-  CryptoConfig,
-  EncryptedData,
-  KeyPair,
-  HashResult,
-  DigitalSignature
-}
+export type { CryptoConfig, DigitalSignature, EncryptedData, HashResult, KeyPair }

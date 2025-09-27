@@ -10,7 +10,7 @@ import type {
   ErrorContext as LegacyErrorContext,
   ErrorEvent as LegacyErrorEvent,
   ErrorTrackingConfig as LegacyConfig,
-} from '../lib/error-tracking'
+} from '../lib/error-tracking.js'
 import { createHealthcareErrorTracker, HealthcareErrorTracker } from './error-tracking'
 
 // Global instance for backward compatibility

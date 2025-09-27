@@ -4,7 +4,7 @@
  * Security: Critical - RLS policies integration tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { RLSPoliciesService } from '../security/rls-policies'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
 import { SecurityValidationService } from '../services/security-validation-service'
@@ -44,7 +44,7 @@ describe('RLS Policies Service Integration Tests', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks()
-    
+
     // Initialize services
     rlsService = RLSPoliciesService
     sessionService = HealthcareSessionManagementService
@@ -99,7 +99,7 @@ describe('RLS Policies Service Integration Tests', () => {
       expect(result.constraints).toEqual(
         expect.objectContaining({
           healthcare_provider: 'Hospital São Lucas',
-        })
+        }),
       )
     })
 
@@ -281,7 +281,7 @@ describe('RLS Policies Service Integration Tests', () => {
 
       const filteredQuery = await rlsService.applyRLSFilters(
         queryRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(filteredQuery.filters).toBeDefined()
@@ -311,7 +311,7 @@ describe('RLS Policies Service Integration Tests', () => {
       }
 
       await expect(
-        rlsService.applyRLSFilters(maliciousQuery, 'session-123')
+        rlsService.applyRLSFilters(maliciousQuery, 'session-123'),
       ).rejects.toThrow('Invalid query parameters')
     })
 
@@ -339,7 +339,7 @@ describe('RLS Policies Service Integration Tests', () => {
       }
 
       await expect(
-        rlsService.applyRLSFilters(complexQuery, 'session-123')
+        rlsService.applyRLSFilters(complexQuery, 'session-123'),
       ).rejects.toThrow('Query complexity exceeds limits')
     })
   })
@@ -374,7 +374,7 @@ describe('RLS Policies Service Integration Tests', () => {
           resource_type: 'patient_data',
           action: 'read',
           policy_applied: expect.any(String),
-        })
+        }),
       )
     })
 
@@ -476,8 +476,8 @@ describe('RLS Policies Service Integration Tests', () => {
               resourceId: `patient-${i}`,
               action: 'read',
             },
-            'session-123'
-          )
+            'session-123',
+          ),
         )
       }
 
@@ -486,8 +486,7 @@ describe('RLS Policies Service Integration Tests', () => {
       const endTime = performance.now()
 
       const successfulResults = results.filter(
-        (result): result is PromiseFulfilledResult<any> =>
-          result.status === 'fulfilled'
+        (result): result is PromiseFulfilledResult<any> => result.status === 'fulfilled',
       )
 
       expect(successfulResults.length).toBe(concurrentRequests)

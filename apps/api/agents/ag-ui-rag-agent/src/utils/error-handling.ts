@@ -27,7 +27,7 @@ export function createAppError(
   message: string,
   code: string,
   statusCode = 500,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): AppError {
   const error = new Error(message) as AppError
   error.code = code
@@ -45,15 +45,15 @@ export function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message
   }
-  
+
   if (typeof error === 'string') {
     return error
   }
-  
+
   if (error && typeof error === 'object' && 'message' in error) {
     return String(error.message)
   }
-  
+
   return 'Unknown error'
 }
 
@@ -64,11 +64,11 @@ export function getErrorCode(error: unknown): string {
   if (error instanceof Error && 'code' in error) {
     return String(error.code)
   }
-  
+
   if (error && typeof error === 'object' && 'code' in error) {
     return String(error.code)
   }
-  
+
   return 'UNKNOWN_ERROR'
 }
 
@@ -79,16 +79,16 @@ export function logErrorWithContext(
   logger: any,
   errorType: string,
   error: unknown,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): void {
   const errorMessage = getErrorMessage(error)
   const errorCode = getErrorCode(error)
-  
+
   const logContext = {
     error: errorMessage,
     errorCode,
     timestamp: new Date().toISOString(),
-    ...context
+    ...context,
   }
 
   if (logger?.logError) {
@@ -107,7 +107,7 @@ export async function withErrorHandling<T>(
   operation: () => Promise<T>,
   errorType: string,
   logger?: any,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): Promise<T> {
   try {
     return await operation()
@@ -123,7 +123,7 @@ export async function withErrorHandling<T>(
 export function createValidationError(
   message: string,
   field?: string,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): AppError {
   return createAppError(
     message,
@@ -132,8 +132,8 @@ export function createValidationError(
     {
       ...context,
       field,
-      validation: true
-    }
+      validation: true,
+    },
   )
 }
 
@@ -143,7 +143,7 @@ export function createValidationError(
 export function createPermissionError(
   message: string,
   requiredPermission?: string,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): AppError {
   return createAppError(
     message,
@@ -152,8 +152,8 @@ export function createPermissionError(
     {
       ...context,
       requiredPermission,
-      permission: true
-    }
+      permission: true,
+    },
   )
 }
 
@@ -163,7 +163,7 @@ export function createPermissionError(
 export function createNotFoundError(
   resource: string,
   id?: string,
-  context?: ErrorContext
+  context?: ErrorContext,
 ): AppError {
   return createAppError(
     `${resource}${id ? ` with ID ${id}` : ''} not found`,
@@ -173,8 +173,8 @@ export function createNotFoundError(
       ...context,
       resource,
       resourceId: id,
-      notFound: true
-    }
+      notFound: true,
+    },
   )
 }
 
@@ -191,7 +191,7 @@ export const ErrorCodes = {
   SESSION_EXPIRED: 'SESSION_EXPIRED',
   INVALID_INPUT: 'INVALID_INPUT',
   EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
-  UNKNOWN_ERROR: 'UNKNOWN_ERROR'
+  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
 } as const
 
 /**
@@ -206,17 +206,22 @@ export const ErrorContext = {
     clinicId,
     sessionId,
     action,
-    resource: 'audit'
+    resource: 'audit',
   }),
 
   /**
    * Create data access context
    */
-  dataAccess: (userId: string, clinicId: string, resource: string, action: string): ErrorContext => ({
+  dataAccess: (
+    userId: string,
+    clinicId: string,
+    resource: string,
+    action: string,
+  ): ErrorContext => ({
     userId,
     clinicId,
     resource,
-    action
+    action,
   }),
 
   /**
@@ -226,7 +231,7 @@ export const ErrorContext = {
     sessionId,
     userId,
     clinicId,
-    resource: 'session'
+    resource: 'session',
   }),
 
   /**
@@ -237,6 +242,6 @@ export const ErrorContext = {
     clinicId,
     resource: 'conversation',
     action: 'conversation_operation',
-    metadata: { conversationId }
-  })
+    metadata: { conversationId },
+  }),
 }

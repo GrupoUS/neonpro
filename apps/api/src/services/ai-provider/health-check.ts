@@ -4,7 +4,7 @@
  */
 
 import { AIProviderOpt } from '@neonpro/shared'
-import { CircuitBreaker } from '../circuit-breaker'
+import { CircuitBreaker } from '../circuit-breaker.js'
 import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types'
 
 /**

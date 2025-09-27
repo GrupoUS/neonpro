@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useSignUp } from '@/hooks/useAuth'
+import { useSignUp } from '@/hooks/useAuth.js'
 import type { AuthError, ProfessionType } from '@neonpro/types'
 
 interface SignUpFormProps {

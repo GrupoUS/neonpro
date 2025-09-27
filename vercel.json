@@ -6,14 +6,7 @@
   "outputDirectory": "dist",
   "devCommand": "turbo run dev",
   "regions": ["gru1"],
-  "framework": null,
-  "functions": {
-    "apps/api/src/index.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
+  "framework": "vite",
 
   "rewrites": [
     {
@@ -48,7 +41,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com vercel.live; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com r2cdn.perplexity.ai; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         },
         {
           "key": "Referrer-Policy",
@@ -93,7 +86,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com vercel.live; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com r2cdn.perplexity.ai; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         },
         {
           "key": "Referrer-Policy",

@@ -1,5 +1,5 @@
-import { http, HttpResponse } from 'msw'
-import { setupServer } from 'msw/node'
+// Simple API mock handlers for healthcare platform
+// Using basic Node.js approach to avoid MSW compatibility issues
 
 // Mock data for aesthetic clinic
 export const mockPatients = [
@@ -55,118 +55,173 @@ export const mockProfessionals = [
   },
 ]
 
-// API handlers
-export const handlers = [
+// Mock API response generator
+export const createMockResponse = (success: boolean, data?: any, error?: string) => ({
+  success,
+  data,
+  error,
+  timestamp: new Date().toISOString(),
+})
+
+// API handlers - simplified approach
+export const mockApiHandlers = {
   // Patients API
-  http.get('/api/patients', () => {
-    return HttpResponse.json({
-      success: true,
-      data: mockPatients,
-      pagination: {
-        page: 1,
-        limit: 10,
-        total: 2,
-      },
-    })
-  }),
-
-  http.post('/api/patients', async ({ request }) => {
-    const patientData = await request.json()
-    const newPatient = {
-      id: '3',
-      ...patientData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-
-    return HttpResponse.json({
-      success: true,
-      data: newPatient,
-    })
-  }),
-
+  patients: {
+    list: () => Promise.resolve(createMockResponse(true, mockPatients)),
+    create: (data: any) => Promise.resolve(createMockResponse(true, { id: '3', ...data })),
+    update: (id: string, data: any) => Promise.resolve(createMockResponse(true, { id, ...data })),
+    delete: (id: string) => Promise.resolve(createMockResponse(true, { id })),
+    getById: (id: string) => Promise.resolve(createMockResponse(true, mockPatients.find(p => p.id === id))),
+  },
+  
   // Appointments API
-  http.get('/api/appointments', () => {
-    return HttpResponse.json({
-      success: true,
-      data: mockAppointments,
-    })
-  }),
-
-  http.post('/api/appointments', async ({ request }) => {
-    const appointmentData = await request.json()
-    const newAppointment = {
-      id: '2',
-      ...appointmentData,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }
-
-    return HttpResponse.json({
-      success: true,
-      data: newAppointment,
-    })
-  }),
-
+  appointments: {
+    list: () => Promise.resolve(createMockResponse(true, mockAppointments)),
+    create: (data: any) => Promise.resolve(createMockResponse(true, { id: '2', ...data })),
+    update: (id: string, data: any) => Promise.resolve(createMockResponse(true, { id, ...data })),
+    delete: (id: string) => Promise.resolve(createMockResponse(true, { id })),
+  },
+  
   // Professionals API
-  http.get('/api/professionals', () => {
-    return HttpResponse.json({
-      success: true,
-      data: mockProfessionals,
-    })
-  }),
-
+  professionals: {
+    list: () => Promise.resolve(createMockResponse(true, mockProfessionals)),
+    create: (data: any) => Promise.resolve(createMockResponse(true, { id: 'prof-2', ...data })),
+    update: (id: string, data: any) => Promise.resolve(createMockResponse(true, { id, ...data })),
+    delete: (id: string) => Promise.resolve(createMockResponse(true, { id })),
+  },
+  
   // Auth API
-  http.post('/api/auth/login', async ({ request }) => {
-    const { email, password } = await request.json()
-
-    if (email === 'test@example.com' && password === 'password123') {
-      return HttpResponse.json({
-        success: true,
-        data: {
+  auth: {
+    login: (credentials: { email: string; password: string }) => {
+      if (credentials.email === 'test@example.com' && credentials.password === 'password123') {
+        return Promise.resolve(createMockResponse(true, {
           user: {
             id: '1',
             email: 'test@example.com',
             name: 'Test User',
           },
           token: 'mock-jwt-token',
-        },
-      })
-    }
-
-    return HttpResponse.json(
-      {
-        success: false,
-        error: 'Invalid credentials',
-      },
-      { status: 401 },
-    )
-  }),
-
+        }))
+      }
+      return Promise.resolve(createMockResponse(false, null, 'Invalid credentials'))
+    },
+  },
+  
   // Health check
-  http.get('/api/health', () => {
-    return HttpResponse.json({
+  health: {
+    check: () => Promise.resolve({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
+    }),
+  },
+}
+
+// Mock fetch implementation
+export const createMockFetch = () => {
+  return async (url: string, options?: RequestInit) => {
+    const method = options?.method || 'GET'
+    const pathname = new URL(url, 'http://localhost').pathname
+    
+    // Handle different endpoints
+    if (pathname === '/api/patients') {
+      if (method === 'GET') {
+        return new Response(JSON.stringify(mockApiHandlers.patients.list()), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      } else if (method === 'POST') {
+        const data = JSON.parse(options?.body as string)
+        return new Response(JSON.stringify(await mockApiHandlers.patients.create(data)), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    }
+    
+    if (pathname.startsWith('/api/patients/')) {
+      const id = pathname.split('/')[3]
+      if (method === 'GET') {
+        return new Response(JSON.stringify(await mockApiHandlers.patients.getById(id)), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    }
+    
+    if (pathname === '/api/appointments') {
+      if (method === 'GET') {
+        return new Response(JSON.stringify(mockApiHandlers.appointments.list()), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      } else if (method === 'POST') {
+        const data = JSON.parse(options?.body as string)
+        return new Response(JSON.stringify(await mockApiHandlers.appointments.create(data)), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    }
+    
+    if (pathname === '/api/professionals') {
+      if (method === 'GET') {
+        return new Response(JSON.stringify(mockApiHandlers.professionals.list()), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    }
+    
+    if (pathname === '/api/auth/login') {
+      if (method === 'POST') {
+        const credentials = JSON.parse(options?.body as string)
+        return new Response(JSON.stringify(await mockApiHandlers.auth.login(credentials)), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    }
+    
+    if (pathname === '/api/health') {
+      return new Response(JSON.stringify(mockApiHandlers.health.check()), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
+    
+    // Default response for unhandled routes
+    return new Response(JSON.stringify({ error: 'Not found' }), {
+      status: 404,
+      headers: { 'Content-Type': 'application/json' },
     })
-  }),
-]
+  }
+}
 
-// Setup MSW server for API mocking in Node.js environment
-export const server = setupServer(...handlers)
+// Setup mock server lifecycle
+export const startMockServer = () => {
+  // Store original fetch
+  const originalFetch = global.fetch
+  
+  // Replace with mock fetch
+  global.fetch = createMockFetch() as any
+  
+  console.warn('🌐 Mock API server started (simplified approach)')
+  
+  // Return cleanup function
+  return () => {
+    global.fetch = originalFetch
+    console.warn('🌐 Mock API server stopped')
+  }
+}
 
-// Server lifecycle functions for test setup
-export const startServer = () =>
-  server.listen({
-    onUnhandledRequest: 'warn', // Warn about unhandled requests during development
-  })
+// Helper functions for test setup
+export const setupMockApi = () => {
+  const cleanup = startMockServer()
+  return { cleanup }
+}
 
-export const stopServer = () => server.close()
-
-export const resetServerHandlers = () => server.resetHandlers()
-
-// Utility to add custom handlers during tests
-export const addCustomHandlers = (newHandlers: any[]) => {
-  server.use(...newHandlers)
+export const resetMockHandlers = () => {
+  // Reset any custom handlers if needed
+  console.warn('🔄 Mock handlers reset')
 }

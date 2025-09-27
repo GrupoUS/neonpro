@@ -11,10 +11,10 @@
  * - CFM compliance for medical data operations
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import * as v from 'valibot'
-import { logger } from "@/utils/healthcare-errors"
 import { GlobalErrorHandler } from '../../middleware/error-handler'
 import {
   AppointmentSchema,

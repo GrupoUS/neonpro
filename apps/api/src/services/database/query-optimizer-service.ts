@@ -267,11 +267,11 @@ export class QueryOptimizerService {
       }, timeout)
 
       this.pool!.query(query, params)
-        .then(async (result) => {
+        .then(async result => {
           clearTimeout(timer)
           resolve(result.rows as T[])
         })
-        .catch(async (error) => {
+        .catch(async error => {
           clearTimeout(timer)
           reject(error)
         })

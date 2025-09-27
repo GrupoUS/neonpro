@@ -7,8 +7,8 @@
 
 import { Server as HttpServer } from 'http'
 import { Server as WebSocketServer } from 'ws'
-import { AguiService, createAguiService } from '../services/agui-protocol'
-import { logger } from '../utils/secure-logger'
+import { AguiService, createAguiService } from '../services/agui-protocol/service.js'
+import { logger } from '../utils/secure-logger.js'
 
 export interface WebSocketServerConfig {
   port: number

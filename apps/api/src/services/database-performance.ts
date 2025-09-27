@@ -10,7 +10,7 @@
  * - Brazilian healthcare compliance monitoring
  */
 
-import { QueryPerformanceMonitor } from '../utils/query-optimizer'
+import { QueryPerformanceMonitor } from '../utils/query-optimizer.js'
 
 // Database performance metrics
 export interface DatabaseMetrics {

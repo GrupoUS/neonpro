@@ -1,24 +1,24 @@
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Progress } from '@/components/ui/progress'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { apiClient as api } from '@/lib/api'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Input } from '@/components/ui/input.js'
+import { Progress } from '@/components/ui/progress.js'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+import { apiClient as api } from '@/lib/api.js'
 import {
   // Room,
-  RoomAllocation,
+  type RoomAllocation,
   // RoomSchedule,
   // OptimizationResult,
   // AestheticAppointment
-} from '@/types/aesthetic-scheduling'
+} from '@/types/aesthetic-scheduling.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
-// import { Label } from '@/components/ui/label';
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { Label } from '@/components/ui/label.js';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js';
 // import { Separator } from '@/components/ui/separator';
 import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'

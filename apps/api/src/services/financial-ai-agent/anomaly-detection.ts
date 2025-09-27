@@ -18,7 +18,7 @@ const randomUUID = () => {
   })
 }
 import { z } from 'zod'
-import { Billing } from '../billing-service'
+import { Billing } from '../billing-service.js'
 
 /**
  * Anomaly Detection Types

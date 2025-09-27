@@ -1,9 +1,9 @@
 /**
  * Comprehensive Mock Services for TDD GREEN Phase
- * 
+ *
  * Provides complete mock implementations with proper data structures
  * and return values to make failing tests pass.
- * 
+ *
  * Security: Critical - Mock services for testing healthcare systems
  * Compliance: LGPD, ANVISA, CFM
  */
@@ -16,12 +16,12 @@ const expectedPatientData = {
   gender: 'male',
   contact: {
     phone: '+55 11 9999-8888',
-    email: 'joao.silva@email.com'
+    email: 'joao.silva@email.com',
   },
   medicalRecordNumber: 'MRN-2024-001',
   healthcareProvider: 'Hospital São Lucas',
   consentLevel: 'full',
-  lastUpdated: new Date().toISOString()
+  lastUpdated: new Date().toISOString(),
 }
 
 const expectedMedicalRecord = {
@@ -35,12 +35,12 @@ const expectedMedicalRecord = {
       name: 'Losartan',
       dosage: '50mg',
       frequency: 'daily',
-      prescribedBy: 'Dr. Maria Santos'
-    }
+      prescribedBy: 'Dr. Maria Santos',
+    },
   ],
   notes: 'Patient presents with elevated blood pressure. Continue monitoring.',
   physician: 'Dr. Maria Santos',
-  cfmLicense: 'CRM-12345-SP'
+  cfmLicense: 'CRM-12345-SP',
 }
 
 // Mock Healthcare Data Service
@@ -76,8 +76,8 @@ export const MockHealthcareDataService = {
           cfmLicense: 'CRM-12345-SP',
           datePrescribed: '2024-01-15',
           refills: 3,
-          instructions: 'Take with food'
-        }
+          instructions: 'Take with food',
+        },
       ])
     }
     return Promise.resolve([])
@@ -98,8 +98,8 @@ export const MockHealthcareDataService = {
           status: 'scheduled',
           location: 'Cardiology Department, Room 101',
           telemedicine: false,
-          consentRecorded: true
-        }
+          consentRecorded: true,
+        },
       ])
     }
     return Promise.resolve([])
@@ -116,16 +116,16 @@ export const MockHealthcareDataService = {
           results: {
             hemoglobin: { value: 14.5, unit: 'g/dL', reference: '13.5-17.5', normal: true },
             whiteBloodCells: { value: 7.2, unit: 'K/μL', reference: '4.0-11.0', normal: true },
-            platelets: { value: 250, unit: 'K/μL', reference: '150-450', normal: true }
+            platelets: { value: 250, unit: 'K/μL', reference: '150-450', normal: true },
           },
           orderedBy: 'Dr. Maria Santos',
           cfmLicense: 'CRM-12345-SP',
-          laboratory: 'Clinical Lab São Lucas'
-        }
+          laboratory: 'Clinical Lab São Lucas',
+        },
       ])
     }
     return Promise.resolve([])
-  })
+  }),
 }
 
 // Mock Security Service
@@ -142,8 +142,8 @@ export const MockSecurityService = {
           patientId: 'patient-456',
           cfmLicense: 'CRM-12345-SP',
           iat: Math.floor(Date.now() / 1000),
-          exp: Math.floor(Date.now() / 1000) + 3600
-        }
+          exp: Math.floor(Date.now() / 1000) + 3600,
+        },
       })
     }
     if (token === 'invalid-token') {
@@ -157,9 +157,9 @@ export const MockSecurityService = {
     permission: string
     resource: string
   }) => {
-    const hasPermission = request.userId === 'user-123' && 
+    const hasPermission = request.userId === 'user-123' &&
       ['read_patient_data', 'write_patient_data'].includes(request.permission)
-    
+
     return Promise.resolve({
       hasPermission,
       userId: request.userId,
@@ -167,7 +167,7 @@ export const MockSecurityService = {
       requestedPermission: request.permission,
       grantedPermissions: hasPermission ? ['read_patient_data', 'write_patient_data'] : [],
       resource: request.resource,
-      action: 'read'
+      action: 'read',
     })
   }),
 
@@ -191,7 +191,7 @@ export const MockSecurityService = {
       resource: event.resource,
       action: event.action,
       outcome: 'success',
-      metadata: event.metadata
+      metadata: event.metadata,
     })
   }),
 
@@ -205,7 +205,7 @@ export const MockSecurityService = {
         cfmLicense: 'CRM-12345-SP',
         specialty: 'cardiology',
         isActive: true,
-        lastLogin: new Date().toISOString()
+        lastLogin: new Date().toISOString(),
       })
     }
     return Promise.resolve({ userId, roles: [], permissions: [], isActive: false })
@@ -220,12 +220,12 @@ export const MockSecurityService = {
       areas: {
         lgpd: { compliant: true, score: 98, violations: [] },
         anvisa: { compliant: true, score: 92, violations: [] },
-        cfm: { compliant: true, score: 100, violations: [] }
+        cfm: { compliant: true, score: 100, violations: [] },
       },
       lastAudit: new Date().toISOString(),
-      nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
+      nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
     })
-  })
+  }),
 }
 
 // Mock Audit Service
@@ -259,7 +259,7 @@ export const MockAuditService = {
       ipAddress: event.ipAddress,
       userAgent: event.userAgent,
       outcome: event.outcome,
-      metadata: event.metadata
+      metadata: event.metadata,
     })
   }),
 
@@ -278,20 +278,20 @@ export const MockAuditService = {
           userId: filters.userId || 'user-123',
           patientId: filters.patientId || 'patient-456',
           action: 'read',
-          resource: '/api/patients/patient-123'
-        }
+          resource: '/api/patients/patient-123',
+        },
       ],
       pagination: {
         page: filters.pagination?.page || 1,
         pageSize: filters.pagination?.pageSize || 50,
         totalEvents: 1,
-        totalPages: 1
+        totalPages: 1,
       },
       filters: {
         userId: filters.userId,
         patientId: filters.patientId,
-        dateRange: filters.dateRange
-      }
+        dateRange: filters.dateRange,
+      },
     })
   }),
 
@@ -309,25 +309,25 @@ export const MockAuditService = {
         complianceScore: 94,
         violations: 3,
         warnings: 12,
-        auditCompleteness: 98.5
+        auditCompleteness: 98.5,
       },
       details: {
         dataAccess: {
           total: 500,
           compliant: 495,
-          violations: 5
+          violations: 5,
         },
         consentManagement: {
           total: 300,
           compliant: 295,
-          violations: 5
+          violations: 5,
         },
         retentionPolicy: {
           total: 200,
           compliant: 200,
-          violations: 0
-        }
-      }
+          violations: 0,
+        },
+      },
     })
   }),
 
@@ -336,7 +336,7 @@ export const MockAuditService = {
       isCompliant: true,
       score: 94,
       violations: [],
-      lastChecked: new Date().toISOString()
+      lastChecked: new Date().toISOString(),
     })
   }),
 
@@ -351,9 +351,9 @@ export const MockAuditService = {
       downloadUrl: `/api/audit/exports/${params.format}/latest`,
       recordCount: 1250,
       generatedAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
     })
-  })
+  }),
 }
 
 // Mock Observability Manager
@@ -370,13 +370,13 @@ export const MockObservabilityManager = {
         hasLeak: false,
         error: 'Memory leak detection timeout exceeded',
         timeoutOccurred: true,
-        executionTimeMs: params.timeoutMs + 100
+        executionTimeMs: params.timeoutMs + 100,
       })
     }
 
-    const hasLeak = params.snapshots.length > 3 && 
-      params.snapshots[params.snapshots.length - 1].heapUsed > 
-      params.snapshots[0].heapUsed * 1.2 // 20% growth threshold
+    const hasLeak = params.snapshots.length > 3 &&
+      params.snapshots[params.snapshots.length - 1].heapUsed >
+        params.snapshots[0].heapUsed * 1.2 // 20% growth threshold
 
     return Promise.resolve({
       hasLeak,
@@ -384,15 +384,17 @@ export const MockObservabilityManager = {
       confidence: hasLeak ? 0.9 : 0.3,
       growthRate: hasLeak ? 0.25 : 0.05,
       estimatedLeakSize: hasLeak ? 15 * 1024 * 1024 : 0, // 15MB
-      recommendations: hasLeak ? [
-        'Memory leak detected - investigate recent code changes',
-        'Review object lifecycle management',
-        'Check for event listener leaks',
-        'Verify session cleanup processes'
-      ] : [
-        'Memory usage within normal parameters'
-      ],
-      urgency: hasLeak ? 'high' : 'low'
+      recommendations: hasLeak
+        ? [
+          'Memory leak detected - investigate recent code changes',
+          'Review object lifecycle management',
+          'Check for event listener leaks',
+          'Verify session cleanup processes',
+        ]
+        : [
+          'Memory usage within normal parameters',
+        ],
+      urgency: hasLeak ? 'high' : 'low',
     })
   }),
 
@@ -402,20 +404,21 @@ export const MockObservabilityManager = {
       largestConsumers: heapProfile.chunks.map((chunk: any) => ({
         type: chunk.type,
         percentage: (chunk.size / heapProfile.totalSize) * 100,
-        recommendation: chunk.size > heapProfile.totalSize * 0.3 ? 
-          `Consider optimizing ${chunk.type} usage` : `${chunk.type} usage acceptable`
+        recommendation: chunk.size > heapProfile.totalSize * 0.3
+          ? `Consider optimizing ${chunk.type} usage`
+          : `${chunk.type} usage acceptable`,
       })),
       potentialLeaks: heapProfile.chunks
         .filter((chunk: any) => chunk.type === 'event_listeners' && chunk.count > 1000)
         .map((chunk: any) => ({
           type: chunk.type,
           severity: 'high',
-          description: `High number of ${chunk.type} detected (${chunk.count})`
+          description: `High number of ${chunk.type} detected (${chunk.count})`,
         })),
       optimizationSuggestions: [
         'Consider implementing object pooling for frequently allocated objects',
-        'Review cache growth patterns'
-      ]
+        'Review cache growth patterns',
+      ],
     })
   }),
 
@@ -428,7 +431,7 @@ export const MockObservabilityManager = {
       monitoringId: 'monitor-' + Math.random().toString(36).substr(2, 9),
       isActive: true,
       config,
-      startTime: new Date()
+      startTime: new Date(),
     })
   }),
 
@@ -440,32 +443,41 @@ export const MockObservabilityManager = {
         currentUsageMb: 180,
         thresholdMb: 200,
         percentage: 90,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     ])
   }),
 
   analyzeSessionMemoryLeaks: vi.fn().mockImplementation((metrics: any) => {
-    const hasSessionLeaks = metrics.expiredSessionsNotCleaned > 0 || metrics.cleanupFailureRate > 0.3
-    
+    const hasSessionLeaks = metrics.expiredSessionsNotCleaned > 0 ||
+      metrics.cleanupFailureRate > 0.3
+
     return Promise.resolve({
       hasSessionLeaks,
-      estimatedLeakedMemory: hasSessionLeaks ? metrics.expiredSessionsNotCleaned * metrics.averageSessionMemory : 0,
-      leakSources: hasSessionLeaks ? [
-        'expired_sessions_not_cleaned',
-        'session_object_retention',
-        'cleanup_process_failures'
-      ] : [],
+      estimatedLeakedMemory: hasSessionLeaks
+        ? metrics.expiredSessionsNotCleaned * metrics.averageSessionMemory
+        : 0,
+      leakSources: hasSessionLeaks
+        ? [
+          'expired_sessions_not_cleaned',
+          'session_object_retention',
+          'cleanup_process_failures',
+        ]
+        : [],
       impact: {
-        memoryWasteMb: hasSessionLeaks ? metrics.expiredSessionsNotCleaned * metrics.averageSessionMemory / (1024 * 1024) : 0,
+        memoryWasteMb: hasSessionLeaks
+          ? metrics.expiredSessionsNotCleaned * metrics.averageSessionMemory / (1024 * 1024)
+          : 0,
         performanceImpact: hasSessionLeaks ? 'medium' : 'low',
-        complianceRisk: hasSessionLeaks ? 'high' : 'low'
+        complianceRisk: hasSessionLeaks ? 'high' : 'low',
       },
-      recommendations: hasSessionLeaks ? [
-        'Implement aggressive session cleanup',
-        'Add memory usage monitoring to session lifecycle',
-        'Review session object reference patterns'
-      ] : []
+      recommendations: hasSessionLeaks
+        ? [
+          'Implement aggressive session cleanup',
+          'Add memory usage monitoring to session lifecycle',
+          'Review session object reference patterns',
+        ]
+        : [],
     })
   }),
 
@@ -476,23 +488,23 @@ export const MockObservabilityManager = {
         usagePercent: 45,
         availableMb: 550,
         trend: 'stable',
-        alerts: 1
+        alerts: 1,
       },
       sessions: {
         activeCount: 25,
         cleanupEfficiency: 0.95,
-        averageMemoryPerSession: 1024 * 1024
+        averageMemoryPerSession: 1024 * 1024,
       },
       performance: {
         responseTimeMs: 150,
         throughput: 1000,
-        errorRate: 0.01
+        errorRate: 0.01,
       },
       compliance: {
         lgpdCompliant: true,
         auditTrailComplete: true,
-        dataRetentionApplied: true
-      }
+        dataRetentionApplied: true,
+      },
     })
   }),
 
@@ -504,22 +516,22 @@ export const MockObservabilityManager = {
       timestamp: new Date(Date.now() - (params.timeWindowHours - i) * 60 * 60 * 1000),
       memoryUsedMb: 100 + Math.random() * 50,
       sessionCount: 20 + Math.floor(Math.random() * 10),
-      loadAverage: 0.3 + Math.random() * 0.4
+      loadAverage: 0.3 + Math.random() * 0.4,
     }))
 
     return Promise.resolve({
       timeRange: {
         start: new Date(Date.now() - params.timeWindowHours * 60 * 60 * 1000),
         end: new Date(),
-        granularity: params.granularity
+        granularity: params.granularity,
       },
       dataPoints,
       trends: {
         memoryGrowthRate: 0.05,
         sessionGrowthRate: 0.02,
-        correlation: 0.65
+        correlation: 0.65,
       },
-      anomalies: []
+      anomalies: [],
     })
-  })
+  }),
 }

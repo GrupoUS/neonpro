@@ -10,13 +10,13 @@
  * - Compliance with Brazilian healthcare security standards
  */
 
+import { logger } from '@/utils/healthcare-errors.js'
 import crypto from 'crypto'
 import { qrcode } from 'qrcode'
 import { speakeasy } from 'speakeasy'
-import { createAdminClient } from '../clients/supabase'
-import { logger } from "@/utils/healthcare-errors"
+import { createCryptographyManager } from '../../utils/security/cryptography.js'
+import { createAdminClient } from '../clients/supabase.js'
 import { EnhancedSessionManager } from './enhanced-session-manager'
-import { createCryptographyManager } from '../../utils/security/cryptography'
 
 // TOTP Configuration
 const TOTP_CONFIG = {

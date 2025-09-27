@@ -3,8 +3,8 @@
  * Implements automatic certificate renewal for healthcare compliance
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import { readFileSync } from 'fs'
-import { logger } from "@/utils/healthcare-errors"
 
 interface CertificateInfo {
   cert: string
@@ -53,7 +53,9 @@ function parseCertificate(certPath: string): CertificateInfo | null {
       serialNumber: cert.serialNumber,
     }
   } catch (error) {
-    logger.error('Failed to parse certificate', { error: error instanceof Error ? error.message : String(error) })
+    logger.error('Failed to parse certificate', {
+      error: error instanceof Error ? error.message : String(error),
+    })
     return null
   }
 }
@@ -114,7 +116,9 @@ async function triggerCertificateRenewal(config: RenewalConfig): Promise<void> {
       await notifyManualRenewalRequired(config)
     }
   } catch (error) {
-    logger.error('Certificate renewal failed', { error: error instanceof Error ? error.message : String(error) })
+    logger.error('Certificate renewal failed', {
+      error: error instanceof Error ? error.message : String(error),
+    })
     await notifyRenewalFailure(error instanceof Error ? error : new Error(String(error)))
   }
 }

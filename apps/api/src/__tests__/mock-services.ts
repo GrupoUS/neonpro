@@ -9,12 +9,14 @@ export class MockHealthcareSessionManagementService {
   static async validateSession(_sessionId: string) {
     return {
       isValid: _sessionId === 'valid-session-id',
-      session: _sessionId === 'valid-session-id' ? {
-        id: _sessionId,
-        userId: 'user-123',
-        userRole: 'healthcare_professional',
-        isActive: true,
-      } : null
+      session: _sessionId === 'valid-session-id'
+        ? {
+          id: _sessionId,
+          userId: 'user-123',
+          userRole: 'healthcare_professional',
+          isActive: true,
+        }
+        : null,
     }
   }
 
@@ -23,7 +25,7 @@ export class MockHealthcareSessionManagementService {
       id: 'session-' + Math.random().toString(36).substr(2, 9),
       userId,
       isActive: true,
-      ...options
+      ...options,
     }
   }
 }
@@ -34,14 +36,14 @@ export class MockSecurityValidationService {
     return {
       isValid: true,
       threats: [],
-      score: 1.0
+      score: 1.0,
     }
   }
 
   static async validateSecurityContext(_context: any) {
     return {
       isValid: true,
-      issues: []
+      issues: [],
     }
   }
 
@@ -49,7 +51,7 @@ export class MockSecurityValidationService {
     return {
       isValid: true,
       securityScore: 95,
-      threats: []
+      threats: [],
     }
   }
 }
@@ -72,12 +74,14 @@ export class MockEnhancedSessionManager {
   static async validateSession(_sessionId: string) {
     return {
       isValid: _sessionId === 'valid-session-id',
-      session: _sessionId === 'valid-session-id' ? {
-        id: _sessionId,
-        userId: 'user-123',
-        userRole: 'healthcare_professional',
-        isActive: true,
-      } : null
+      session: _sessionId === 'valid-session-id'
+        ? {
+          id: _sessionId,
+          userId: 'user-123',
+          userRole: 'healthcare_professional',
+          isActive: true,
+        }
+        : null,
     }
   }
 
@@ -86,7 +90,7 @@ export class MockEnhancedSessionManager {
       id: 'session-' + Math.random().toString(36).substr(2, 9),
       userId,
       isActive: true,
-      ...options
+      ...options,
     }
   }
 
@@ -101,7 +105,7 @@ export class MockEnhancedSessionManager {
         patientId: 'patient-123',
         consentLevel: 'full' as const,
         mfaVerified: true,
-        expiresAt: new Date(Date.now() + 3600000) // 1 hour from now
+        expiresAt: new Date(Date.now() + 3600000), // 1 hour from now
       }
     }
     return null
@@ -119,20 +123,20 @@ export const SessionCookieUtils = {
     if (cookieHeader && cookieHeader.includes('session-123')) {
       return {
         isValid: true,
-        sessionId: 'session-123'
+        sessionId: 'session-123',
       }
     }
     return {
       isValid: false,
-      sessionId: null
+      sessionId: null,
     }
   },
-  extractSessionCookie: () => 'valid-session-cookie'
+  extractSessionCookie: () => 'valid-session-cookie',
 }
 
 export {
+  MockAuditTrailService as AuditTrailService,
+  MockEnhancedSessionManager as EnhancedSessionManager,
   MockHealthcareSessionManagementService as HealthcareSessionManagementService,
   MockSecurityValidationService as SecurityValidationService,
-  MockAuditTrailService as AuditTrailService,
-  MockEnhancedSessionManager as EnhancedSessionManager
 }

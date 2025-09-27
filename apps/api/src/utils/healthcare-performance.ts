@@ -10,7 +10,7 @@
  * - Performance monitoring and alerting
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma'
+import { type HealthcarePrismaClient } from '../clients/prisma.js'
 import { HealthcareLogger } from '../logging/healthcare-logger.js'
 
 // Performance metrics interface

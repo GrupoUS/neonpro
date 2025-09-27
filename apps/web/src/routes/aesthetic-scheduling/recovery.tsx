@@ -1,8 +1,8 @@
 import { RecoveryPlanning } from '@/components/aesthetic-scheduling/RecoveryPlanning'
-import { apiClient as api } from '@/lib/api'
+import { apiClient as api } from '@/lib/api.js'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import { logger } from '@/utils/logger'
+import { logger } from '@/utils/logger.js'
 
 
 // Define loader data type

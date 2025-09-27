@@ -15,11 +15,11 @@
  * @version 1.0.0
  */
 
+import { AuditService } from '@/services/audit-service.js'
+import { logger } from '@/utils/healthcare-errors.js'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { logger } from "@/utils/healthcare-errors"
-import { AuditService } from '@/services/audit-service'
+import { createCryptographyManager } from '../utils/security/cryptography.js'
 import { EnhancedSessionManager } from './enhanced-session-manager'
-import { createCryptographyManager } from '../../utils/security/cryptography'
 
 // Security Configuration Types
 export interface AestheticClinicSecurityConfig {
@@ -651,11 +651,16 @@ export class AestheticClinicSecurityService {
       const iv = this.cryptoManager.generateSecureBytes(16)
 
       // Encrypt image using CryptographyManager
-      const encryptedResult = await this.cryptoManager.encrypt(file, 'medical_image', { imageId, patientId: metadata.patientId })
+      const encryptedResult = await this.cryptoManager.encrypt(file, 'medical_image', {
+        imageId,
+        patientId: metadata.patientId,
+      })
       const encryptedBuffer = Buffer.from(encryptedResult.encrypted, 'base64')
 
       // Generate hash for integrity
-      const hashResult = await this.cryptoManager.hash(encryptedBuffer.toString('base64'), { iterations: 1 })
+      const hashResult = await this.cryptoManager.hash(encryptedBuffer.toString('base64'), {
+        iterations: 1,
+      })
       const imageHash = hashResult.hash
 
       // Apply watermark if enabled

@@ -1,6 +1,6 @@
+import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Simple in-memory rate limiting for chat endpoints
@@ -218,4 +218,4 @@ export function chatRateLimit() {
 /**
  * General rate limiting middleware (re-export from rate-limiting.ts)
  */
-export { rateLimitMiddleware as rateLimit } from './rate-limiting'
+export { rateLimitMiddleware as rateLimit } from './rate-limiting.js'

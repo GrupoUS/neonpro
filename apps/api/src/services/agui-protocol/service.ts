@@ -7,11 +7,11 @@
 
 import { EventEmitter } from 'events'
 import { v4 as uuidv4 } from 'uuid'
-import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service'
-import { ConversationContextService } from '../conversation'
-import type { ConversationMessage } from '../conversation/conversation-context-service'
-import { AgentPermissionService } from '../permissions'
-import { RealtimeSubscriptionService } from '../realtime'
+import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service.js'
+import { ConversationContextService } from '../conversation.js'
+import type { ConversationMessage } from '../conversation/conversation-context-service.js'
+import { AgentPermissionService } from '../permissions.js'
+import { RealtimeSubscriptionService } from '../realtime.js'
 import { AguiProtocol, AguiProtocolConfig } from './protocol'
 import { AguiAction, AguiHealthStatus, AguiSession, AguiSource, AguiUsageStats } from './types'
 

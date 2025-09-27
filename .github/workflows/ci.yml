@@ -13,16 +13,22 @@ env:
 jobs:
   quality-checks:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+        with:
+          # Fetch more commits for better caching
+          fetch-depth: 2
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Install pnpm globally
+        run: npm install -g pnpm
 
       - name: Enable Corepack
         run: corepack enable
@@ -31,35 +37,116 @@ jobs:
         uses: pnpm/action-setup@v4
         with:
           version: 8.15.0
+          
+      # Cache node_modules for faster builds
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            ~/.npm
+            ~/.cache/pnpm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
         
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
         
-      - name: Security Linting
-        run: pnpm lint:security
-        
-      - name: Code Quality
-        run: pnpm lint
-        
-      - name: Type Safety Check
-        run: pnpm type-check
-        
-      - name: Biome Format Check
-        run: pnpm biome:check
+      # Run checks in parallel for better performance
+      - name: Run Quality Checks in Parallel
+        run: |
+          # Start all checks in background
+          pnpm lint:security &
+          SECURITY_PID=$!
+          pnpm lint &
+          LINT_PID=$!
+          pnpm type-check &
+          TYPE_PID=$!
+          pnpm biome:check &
+          BIOME_PID=$!
+          
+          # Wait for all checks and collect exit codes
+          wait $SECURITY_PID
+          SECURITY_EXIT=$?
+          wait $LINT_PID
+          LINT_EXIT=$?
+          wait $TYPE_PID
+          TYPE_EXIT=$?
+          wait $BIOME_PID
+          BIOME_EXIT=$?
+          
+          # Report results
+          echo "Security linting exit code: $SECURITY_EXIT"
+          echo "Code linting exit code: $LINT_EXIT"
+          echo "Type checking exit code: $TYPE_EXIT"
+          echo "Biome checking exit code: $BIOME_EXIT"
+          
+          # Exit with error if any check failed
+          if [ $SECURITY_EXIT -ne 0 ] || [ $LINT_EXIT -ne 0 ] || [ $TYPE_EXIT -ne 0 ] || [ $BIOME_EXIT -ne 0 ]; then
+            echo "❌ One or more quality checks failed"
+            exit 1
+          fi
+          
+          echo "✅ All quality checks passed"
+          
+      # New: Accessibility Testing for UI Components
+      - name: Accessibility Testing
+        run: |
+          echo "🔍 Running accessibility checks on UI components..."
+          
+          # Find React component files
+          UI_FILES=$(find packages/ui/src -name "*.tsx" -o -name "*.jsx" | head -20)
+          
+          if [ ! -z "$UI_FILES" ]; then
+            echo "Checking accessibility in UI files..."
+            for file in $UI_FILES; do
+              if [ -f "$file" ]; then
+                # Check for basic accessibility patterns
+                echo "Checking: $file"
+                
+                # Check for missing alt text
+                if grep -q "<img" "$file" && ! grep -q "alt=" "$file"; then
+                  echo "⚠️ Accessibility warning: Missing alt text in $file"
+                fi
+                
+                # Check for unlabeled form inputs
+                if grep -q "<input" "$file" && ! grep -q -E "(aria-label|aria-labelledby|<label)" "$file"; then
+                  echo "⚠️ Accessibility warning: Consider adding labels to inputs in $file"
+                fi
+                
+                # Check for missing semantic HTML
+                if grep -q 'role="banner"' "$file"; then
+                  echo "❌ Accessibility error: Use semantic <header> instead of role='banner' in $file"
+                  exit 1
+                fi
+                
+                if grep -q 'role="main"' "$file"; then
+                  echo "❌ Accessibility error: Use semantic <main> instead of role='main' in $file"
+                  exit 1
+                fi
+              fi
+            done
+          fi
+          
+          echo "✅ Accessibility checks completed"
 
   unit-tests:
     runs-on: ubuntu-latest
     needs: quality-checks
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Install pnpm globally
+        run: npm install -g pnpm
 
       - name: Enable Corepack
         run: corepack enable
@@ -87,16 +174,19 @@ jobs:
   compliance-tests:
     runs-on: ubuntu-latest
     needs: quality-checks
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Install pnpm globally
+        run: npm install -g pnpm
 
       - name: Enable Corepack
         run: corepack enable
@@ -125,16 +215,19 @@ jobs:
     runs-on: ubuntu-latest
     needs: [unit-tests, compliance-tests]
     continue-on-error: true
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Install pnpm globally
+        run: npm install -g pnpm
 
       - name: Enable Corepack
         run: corepack enable

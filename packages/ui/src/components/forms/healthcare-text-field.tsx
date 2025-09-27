@@ -462,7 +462,7 @@ export const HealthcareTextField = forwardRef<
             role='alert'
             aria-live='polite'
           >
-            {validationErrors.map((error, index) => <p key={index}>{error}</p>)}
+            {validationErrors.map((error) => <p key={error}>{error}</p>)}
           </div>
         )}
 

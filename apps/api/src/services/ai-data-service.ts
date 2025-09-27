@@ -1,8 +1,8 @@
+import { logger } from '@/utils/healthcare-errors.js'
 import { Database } from '@neonpro/database'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
-import { logger } from "@/utils/healthcare-errors"
-import { aiValidationService } from './ai-validation-service'
 import { aiConnectionManager } from './ai-connection-manager'
+import { aiValidationService } from './ai-validation-service'
 
 // Browser-compatible mock implementations for Ottomator agent
 export interface OttomatorQuery {
@@ -39,8 +39,8 @@ class MockOttomatorBridge {
       sources: [],
       metadata: {
         error: 'BROWSER_ENVIRONMENT',
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     }
   }
 }
@@ -55,7 +55,7 @@ export function getOttomatorBridge() {
  *
  * Provides secure data access with Row Level Security (RLS) enforcement,
  * permission validation, and audit logging for all AI agent queries.
- * 
+ *
  * Security: LGPD compliant with proper input validation and audit logging
  * Performance: Optimized with connection pooling and query caching
  * Compliance: ANVISA, CFM, and healthcare data protection standards
@@ -180,7 +180,7 @@ export class AIDataService {
    * Execute database operation with connection pooling
    */
   private async executeWithConnection<T>(
-    operation: (supabase: SupabaseClient<Database>) => Promise<T>
+    operation: (supabase: SupabaseClient<Database>) => Promise<T>,
   ): Promise<T> {
     return await aiConnectionManager.executeWithConnection(operation)
   }
@@ -195,14 +195,14 @@ export class AIDataService {
     const sanitizedParams = aiValidationService.validateAndSanitizeQuery(
       'client_data',
       parameters,
-      this.permissionContext
+      this.permissionContext,
     )
 
     const { domain } = this.permissionContext
     const clientNames = sanitizedParams.clientNames || []
-    
+
     // Use connection pooling
-    return this.executeWithConnection(async (supabase) => {
+    return this.executeWithConnection(async supabase => {
       let query = supabase.from('clients').select(`
         id,
         name,
@@ -214,25 +214,25 @@ export class AIDataService {
         updated_at
       `)
 
-    // Apply domain filter
-    query = this.withDomainFilter(query, domain)
+      // Apply domain filter
+      query = this.withDomainFilter(query, domain)
 
-    // Filter by client names if specified
-    if (clientNames.length > 0) {
-      // Use ILIKE for case-insensitive search
-      const nameConditions = clientNames
-        .map(name => `name.ilike.%${name}%`)
-        .join(',')
-      query = query.or(nameConditions)
-    }
+      // Filter by client names if specified
+      if (clientNames.length > 0) {
+        // Use ILIKE for case-insensitive search
+        const nameConditions = clientNames
+          .map(name => `name.ilike.%${name}%`)
+          .join(',')
+        query = query.or(nameConditions)
+      }
 
-    // Role-based filtering
-    if (this.permissionContext.role === 'receptionist') {
-      // Receptionists see basic info only
-      query = query.select('id, name, email, phone')
-    }
+      // Role-based filtering
+      if (this.permissionContext.role === 'receptionist') {
+        // Receptionists see basic info only
+        query = query.select('id, name, email, phone')
+      }
 
-    const { data, error } = await query
+      const { data, error } = await query
 
       if (error) {
         await this.logAccess('client_data', sanitizedParams, 0, false)
@@ -240,9 +240,13 @@ export class AIDataService {
       }
 
       await this.logAccess('client_data', sanitizedParams, data?.length || 0)
-      
+
       // Validate output data
-      return aiValidationService.validateOutputData(data || [], 'client_data', this.permissionContext)
+      return aiValidationService.validateOutputData(
+        data || [],
+        'client_data',
+        this.permissionContext,
+      )
     })
   }
 
@@ -256,7 +260,7 @@ export class AIDataService {
     const sanitizedParams = aiValidationService.validateAndSanitizeQuery(
       'appointments',
       parameters,
-      this.permissionContext
+      this.permissionContext,
     )
 
     const { domain } = this.permissionContext
@@ -320,9 +324,13 @@ export class AIDataService {
     }
 
     await this.logAccess('appointments', sanitizedParams, data?.length || 0)
-    
+
     // Validate output data
-    return aiValidationService.validateOutputData(data || [], 'appointments', this.permissionContext)
+    return aiValidationService.validateOutputData(
+      data || [],
+      'appointments',
+      this.permissionContext,
+    )
   }
 
   /**
@@ -335,7 +343,7 @@ export class AIDataService {
     const sanitizedParams = aiValidationService.validateAndSanitizeQuery(
       'financial',
       parameters,
-      this.permissionContext
+      this.permissionContext,
     )
 
     const { domain } = this.permissionContext
@@ -384,7 +392,7 @@ export class AIDataService {
     }
 
     await this.logAccess('financial', sanitizedParams, 1)
-    
+
     // Validate output data
     return aiValidationService.validateOutputData(data, 'financial', this.permissionContext)
     return data

@@ -10,7 +10,7 @@ class HealthcareTRPCError extends Error {
     public code: string,
     public message: string,
     public type: string,
-    public context?: Record<string, unknown>
+    public context?: Record<string, unknown>,
   ) {
     super(message)
     this.name = 'HealthcareTRPCError'
@@ -37,25 +37,25 @@ class MockHealthAnalysisService {
   async gatherPatientAnalysisData(data: any) {
     return { hasMinimumData: true, dataPointCount: 5 }
   }
-  
+
   async buildHealthAnalysisPrompt(params: any) {
     return 'Health analysis prompt'
   }
-  
+
   async callHealthAnalysisAI(params: any) {
     return { content: 'Mock health analysis response', usage: { total_tokens: 100 } }
   }
-  
+
   async parseHealthAnalysisResponse(content: string) {
     return {
       insights: [],
       riskFactors: [],
       recommendations: [],
       followUp: { recommended: false },
-      metadata: { confidence: 0.8, dataPoints: 5, generatedAt: new Date().toISOString() }
+      metadata: { confidence: 0.8, dataPoints: 5, generatedAt: new Date().toISOString() },
     }
   }
-  
+
   async storeHealthAnalysis(data: any) {
     return `analysis_${Date.now()}`
   }
@@ -95,8 +95,6 @@ async function getAIUsageStats(userId: string) {
     lastUsed: null,
   }
 }
-
-
 
 export const aiRouter = router({
   /**
@@ -667,31 +665,31 @@ export const aiRouter = router({
               : undefined,
             messages: input.includeContent
               ? await (async () => {
-                  const msgs = await ctx.prisma.auditTrail.findMany({
-                    where: {
-                      resourceId: conversation.resourceId,
-                      action: 'AI_CHAT',
-                      resource: {
-                        in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'],
-                      },
+                const msgs = await ctx.prisma.auditTrail.findMany({
+                  where: {
+                    resourceId: conversation.resourceId,
+                    action: 'AI_CHAT',
+                    resource: {
+                      in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'],
                     },
-                    orderBy: { createdAt: 'asc' },
-                    select: {
-                      additionalInfo: true,
-                      createdAt: true,
-                    },
-                  })
-                  return msgs.map(msg => {
-                    const msgInfo = parseMessageInfo(msg.additionalInfo)
-                    return {
-                      id: msg.id,
-                      _role: msgInfo.role as 'user' | 'assistant' | 'system',
-                      content: msgInfo.content,
-                      usage: msgInfo.usage,
-                      createdAt: msg.createdAt.toISOString(),
-                    }
-                  })
-                })()
+                  },
+                  orderBy: { createdAt: 'asc' },
+                  select: {
+                    additionalInfo: true,
+                    createdAt: true,
+                  },
+                })
+                return msgs.map(msg => {
+                  const msgInfo = parseMessageInfo(msg.additionalInfo)
+                  return {
+                    id: msg.id,
+                    _role: msgInfo.role as 'user' | 'assistant' | 'system',
+                    content: msgInfo.content,
+                    usage: msgInfo.usage,
+                    createdAt: msg.createdAt.toISOString(),
+                  }
+                })
+              })()
               : undefined,
           }
         }),

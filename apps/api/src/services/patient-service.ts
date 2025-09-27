@@ -36,7 +36,7 @@ import {
   type HealthcareContext,
   type HealthcarePrismaClient,
   UnauthorizedHealthcareAccessError,
-} from '../clients/prisma'
+} from '../clients/prisma.js'
 
 // Service response interface
 export interface ServiceResponse<T = any> {
@@ -147,38 +147,38 @@ export class PatientService {
    * Set healthcare context for the service
    */
   /**
- * Sets the healthcare context for the service instance
- * 
- * Creates a new PatientService instance with the specified healthcare context,
- * enabling proper multi-tenant isolation and LGPD compliance.
- * 
- * @param {HealthcareContext} context - Healthcare context containing clinic, user, and role information
- * @returns {PatientService} New service instance with configured context
- * 
- * @example
- * ```typescript
- * const service = new PatientService();
- * const contextualService = service.withContext({
- *   clinicId: 'clinic-123',
- *   userId: 'user-456',
- *   role: 'admin'
- * });
- * ```
- */
+   * Sets the healthcare context for the service instance
+   *
+   * Creates a new PatientService instance with the specified healthcare context,
+   * enabling proper multi-tenant isolation and LGPD compliance.
+   *
+   * @param {HealthcareContext} context - Healthcare context containing clinic, user, and role information
+   * @returns {PatientService} New service instance with configured context
+   *
+   * @example
+   * ```typescript
+   * const service = new PatientService();
+   * const contextualService = service.withContext({
+   *   clinicId: 'clinic-123',
+   *   userId: 'user-456',
+   *   role: 'admin'
+   * });
+   * ```
+   */
   withContext(_context: HealthcareContext): PatientService {
     return new PatientService(context)
   }
 
   /**
    * Creates a new patient record with comprehensive LGPD compliance
-   * 
+   *
    * Creates a new patient in the healthcare system with Brazilian regulatory compliance,
    * including CPF validation, duplicate checking, and automatic LGPD consent setup.
    * The method performs comprehensive data validation and ensures proper multi-tenant isolation.
-   * 
+   *
    * @param {Partial<Patient>} patientData - Partial patient data containing required fields
    * @returns {Promise<ServiceResponse<Patient>>} Service response containing created patient or error details
-   * 
+   *
    * @example
    * ```typescript
    * const result = await patientService.createPatient({
@@ -189,21 +189,21 @@ export class PatientService {
    *   birthDate: new Date('1990-01-01'),
    *   gender: 'masculino'
    * });
-   * 
+   *
    * if (result.success) {
    *   console.log('Patient created:', result.data);
    * } else {
    *   console.error('Error:', result.error);
    * }
    * ```
-   * 
+   *
    * LGPD Compliance Notes:
    * - Automatically sets LGPD consent to true for new patients
    * - Generates audit trail for patient creation
    * - Validates CPF format and checks for duplicates
    * - Ensures data minimization principles
    * - Creates medical record number for identification
-   * 
+   *
    * Brazilian Healthcare Compliance:
    * - CFM (Conselho Federal de Medicina) record keeping requirements
    * - Multi-tenant isolation by clinic

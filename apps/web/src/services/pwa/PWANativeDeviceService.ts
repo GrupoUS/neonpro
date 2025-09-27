@@ -106,7 +106,7 @@ interface NotificationOptions {
   actions?: NotificationAction[]
 }
 
-import { logger } from '@/utils/logger'
+import { logger } from '@/utils/logger.js'
 
 export class PWANativeDeviceService {
   private static instance: PWANativeDeviceService
@@ -603,7 +603,7 @@ export class PWANativeDeviceService {
 
         notification.onclick = () => {
           notification.close()
-          if (options.data?.url) {
+          if (options.data?.url && typeof options.data.url === 'string') {
             window.open(options.data.url, '_blank')
           }
           resolve()

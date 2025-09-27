@@ -4,7 +4,7 @@
  * Global error handlers and tracking setup for the API
  */
 
-import { logger } from "@/utils/healthcare-errors"
+import { logger } from '@/utils/healthcare-errors'
 
 /**
  * Setup global error handlers for unhandled errors
@@ -85,29 +85,28 @@ export function errorTrackingMiddleware() {
  */
 export function globalErrorHandler(
   error: Error,
-  req?: any,
-  res?: any,
+  c?: any,
   next?: any,
-): void {
+): any {
   logger.error('Global error handler', {
     message: error.message,
     stack: error.stack,
     timestamp: new Date().toISOString(),
-    url: req?.url,
-    method: req?.method,
+    url: c?.req?.url,
+    method: c?.req?.method,
   })
 
-  if (res && !res.headersSent) {
-    res.status(500).json({
+  if (c && !c.res.headersSent) {
+    return c.json({
       error: 'Internal Server Error',
       message: process.env.NODE_ENV === 'development'
         ? error.message
         : 'An unexpected error occurred',
       timestamp: new Date().toISOString(),
-    })
+    }, 500)
   }
 
   if (next) {
-    next(error)
+    return next(error)
   }
 }

@@ -1,18 +1,18 @@
 // Enhanced AI Chat Route with Semantic Caching for NeonPro Aesthetic Clinic
 // Integrates semantic caching with existing AI chat infrastructure for optimized performance
+import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
 import { zValidator } from '@hono/zod-validator'
 import { AIProviderFactory } from '@neonpro/ai-services'
 import { type AIMessage } from '@neonpro/healthcare-core'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { z } from 'zod'
-import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
 
 // Import semantic caching components
-import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction'
 import AIProviderRouterService from '@/services/ai-provider-router'
 import { AuditTrailService } from '@/services/audit-trail'
 import { CacheKeyGenerator, SemanticCacheService } from '@/services/semantic-cache'
+import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction'
 
 // Import healthcare compliance utilities
 import { LGPDComplianceValidator } from '@/utils/lgpd-compliance-validator'
@@ -66,7 +66,7 @@ const semanticCache = new SemanticCacheService()
 const piiSanitizer = new HealthcareDataSanitizer(PIIRedactionLevel.HEALTHCARE)
 const aiRouter = new AIProviderRouterService(
   new SemanticCacheService(),
-  new AuditTrailService()
+  new AuditTrailService(),
 )
 const lgpdValidator = new LGPDComplianceValidator()
 
