@@ -1,24 +1,26 @@
 /**
  * @file Auth Context
- * 
+ *
  * Native Supabase authentication context following healthcare guidelines
  * Implements LGPD compliance and healthcare-specific features
- * 
+ *
  * @version 2.0.0
  * @author NeonPro Platform Team
  * Compliance: LGPD, ANVISA, CFM, WCAG 2.1 AA
  */
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { supabase } from '@/integrations/supabase/client'
-import type { 
-  AuthUser, 
-  AuthSession, 
-  AuthState, 
-  AuthCredentials, 
-  SignUpData, 
+import supabase from '@/integrations/supabase/client'
+import type {
+  AuthUser,
+  AuthSession,
+  AuthState,
+  AuthCredentials,
+  SignUpData,
   AuthError,
-  UseAuthReturn 
+  UseAuthReturn,
+  OAuthConfig,
+  PasswordResetRequest
 } from '@neonpro/types'
 import type { User as SupabaseUser, Session as SupabaseSession } from '@supabase/supabase-js'
 
@@ -38,29 +40,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Converter User do Supabase para nosso tipo personalizado
   const convertSupabaseUser = (supabaseUser: SupabaseUser | null): AuthUser | null => {
     if (!supabaseUser) return null
-    
+
     // Extrair metadados do usuário (dados customizados)
     const metadata = supabaseUser.user_metadata || {}
     const appMetadata = supabaseUser.app_metadata || {}
-    
+
     return {
       id: supabaseUser.id,
       email: supabaseUser.email || '',
       phone: supabaseUser.phone,
       emailVerified: !!supabaseUser.email_confirmed_at,
       phoneVerified: !!supabaseUser.phone_confirmed_at,
-      
+
       // Dados pessoais
       firstName: metadata.firstName || metadata.first_name,
       lastName: metadata.lastName || metadata.last_name,
       displayName: metadata.displayName || metadata.full_name,
       avatar: metadata.avatar || metadata.avatar_url,
-      
+
       // Dados profissionais
       profession: metadata.profession || appMetadata.profession,
       license: metadata.license,
       clinic: metadata.clinic,
-      
+
       // LGPD - configurações padrão se não existirem
       lgpdConsent: metadata.lgpdConsent || {
         version: '1.0',
@@ -74,12 +76,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           profiling: false,
         },
       },
-      
+
       dataRetention: metadata.dataRetention || {
         retentionDays: 2555, // 7 anos (padrão LGPD)
         lastReviewedAt: new Date(),
       },
-      
+
       // Preferências padrão
       preferences: metadata.preferences || {
         theme: 'system',
@@ -94,7 +96,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           shareData: false,
         },
       },
-      
+
       // Timestamps
       createdAt: new Date(supabaseUser.created_at),
       updatedAt: new Date(supabaseUser.updated_at || supabaseUser.created_at),
@@ -105,10 +107,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Converter Session do Supabase para nosso tipo
   const convertSupabaseSession = (supabaseSession: SupabaseSession | null): AuthSession | null => {
     if (!supabaseSession) return null
-    
+
     const user = convertSupabaseUser(supabaseSession.user)
     if (!user) return null
-    
+
     return {
       user,
       accessToken: supabaseSession.access_token,
@@ -122,7 +124,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const updateAuthState = (supabaseSession: SupabaseSession | null) => {
     const session = convertSupabaseSession(supabaseSession)
     const user = session?.user || null
-    
+
     setAuthState({
       user,
       session,
@@ -144,11 +146,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log(`[Auth] Estado alterado: ${event}`)
-      
+
       // Log para auditoria LGPD
       if (event === 'SIGNED_IN' && session?.user) {
         console.log(`[LGPD Audit] User login: ${session.user.id}`)
-        
+
         // Criar registro de audit log
         try {
           await supabase.from('audit_logs').insert({
@@ -164,7 +166,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       } else if (event === 'SIGNED_OUT') {
         console.log(`[LGPD Audit] User logout`)
       }
-      
+
       updateAuthState(session)
     })
 
@@ -175,7 +177,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signUp = async (data: SignUpData): Promise<{ error?: AuthError }> => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }))
-      
+
       const { error } = await supabase.auth.signUp({
         email: data.email,
         password: data.password,
@@ -202,22 +204,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
 
       if (error) {
-        return { 
-          error: { 
-            code: error.message, 
+        return {
+          error: {
+            code: error.message,
             message: error.message,
-            details: error.status?.toString() 
-          } 
+            details: error.status?.toString()
+          }
         }
       }
 
       return {}
     } catch (err) {
-      return { 
-        error: { 
-          code: 'SIGNUP_ERROR', 
-          message: 'Erro interno durante o cadastro' 
-        } 
+      return {
+        error: {
+          code: 'SIGNUP_ERROR',
+          message: 'Erro interno durante o cadastro'
+        }
       }
     }
   }
@@ -225,29 +227,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signIn = async (credentials: AuthCredentials): Promise<{ error?: AuthError }> => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }))
-      
+
       const { error } = await supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       })
 
       if (error) {
-        return { 
-          error: { 
-            code: error.message, 
+        return {
+          error: {
+            code: error.message,
             message: error.message,
-            details: error.status?.toString() 
-          } 
+            details: error.status?.toString()
+          }
         }
       }
 
       return {}
     } catch (err) {
-      return { 
-        error: { 
-          code: 'SIGNIN_ERROR', 
-          message: 'Erro interno durante o login' 
-        } 
+      return {
+        error: {
+          code: 'SIGNIN_ERROR',
+          message: 'Erro interno durante o login'
+        }
       }
     }
   }
@@ -255,80 +257,83 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async (): Promise<{ error?: AuthError }> => {
     try {
       const { error } = await supabase.auth.signOut()
-      
+
       if (error) {
-        return { 
-          error: { 
-            code: error.message, 
-            message: error.message 
-          } 
+        return {
+          error: {
+            code: error.message,
+            message: error.message
+          }
         }
       }
 
       return {}
     } catch (err) {
-      return { 
-        error: { 
-          code: 'SIGNOUT_ERROR', 
-          message: 'Erro interno durante o logout' 
-        } 
+      return {
+        error: {
+          code: 'SIGNOUT_ERROR',
+          message: 'Erro interno durante o logout'
+        }
       }
     }
   }
 
   // OAuth com Google seguindo guidelines
-  const signInWithOAuth = async (provider: 'google', redirectTo?: string): Promise<{ error?: AuthError }> => {
+  const signInWithOAuth = async (config: OAuthConfig): Promise<{ error?: AuthError }> => {
     try {
+      setAuthState(prev => ({ ...prev, isLoading: true }))
+
       const { error } = await supabase.auth.signInWithOAuth({
-        provider,
+        provider: config.provider,
         options: {
-          redirectTo: redirectTo || `${window.location.origin}/dashboard`,
+          redirectTo: config.redirectTo,
         },
       })
 
       if (error) {
-        return { 
-          error: { 
-            code: error.message, 
-            message: error.message 
-          } 
+        return {
+          error: {
+            code: error.message,
+            message: error.message,
+            details: error.status?.toString()
+          }
         }
       }
 
       return {}
     } catch (err) {
-      return { 
-        error: { 
-          code: 'OAUTH_ERROR', 
-          message: 'Erro interno durante login OAuth' 
-        } 
+      return {
+        error: {
+          code: 'OAUTH_ERROR',
+          message: 'Erro interno durante login OAuth'
+        }
       }
     }
   }
 
   // Recuperação de senha
-  const resetPassword = async (email: string): Promise<{ error?: AuthError }> => {
+  const resetPassword = async (request: PasswordResetRequest): Promise<{ error?: AuthError }> => {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(request.email, {
         redirectTo: `${window.location.origin}/auth/reset-password`,
       })
 
       if (error) {
-        return { 
-          error: { 
-            code: error.message, 
-            message: error.message 
-          } 
+        return {
+          error: {
+            code: error.message,
+            message: error.message
+          }
         }
       }
 
       return {}
     } catch (err) {
-      return { 
-        error: { 
-          code: 'RESET_PASSWORD_ERROR', 
-          message: 'Erro interno durante recuperação de senha' 
-        } 
+      return {
+        error: {
+          code: 'RESET_PASSWORD_ERROR',
+          message: 'Erro interno durante recuperação de senha'
+        }
       }
     }
   }
@@ -346,22 +351,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isLoading: authState.isLoading,
     isAuthenticated: authState.isAuthenticated,
     isEmailVerified: authState.isEmailVerified,
-    
+
     // Actions
     signUp,
     signIn,
     signOut,
-    
+
     // OAuth
     signInWithOAuth,
-    
+
     // Password management
     resetPassword,
     updatePassword,
-    
+
     // Email verification
     resendEmailVerification,
-    
+
     // User management
     updateProfile,
     deleteAccount,

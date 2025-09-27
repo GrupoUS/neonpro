@@ -49,7 +49,7 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-        'neonpro': '8px', // Standard border radius
+        neonpro: '8px', // Standard border radius
       },
       boxShadow: {
         // Neumorphic Design System from @apex-ui-ux-designer.md

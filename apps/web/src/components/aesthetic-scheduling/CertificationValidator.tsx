@@ -15,6 +15,12 @@ import {
   type CertificationValidation,
   type ProfessionalDetails,
 } from '@/types/aesthetic-scheduling.js'
+
+// Export interfaces for direct use
+export type { CertificationValidation, ProfessionalDetails }
+
+// Default export for backward compatibility
+export default CertificationValidator
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AlertTriangle,

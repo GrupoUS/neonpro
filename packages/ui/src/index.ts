@@ -15,23 +15,41 @@ export { cn } from "./lib/utils";
 // Export only enhanced components that don't have external dependency issues
 export { DashboardLayout, DashboardCard } from "./components/ui/dashboard-layout";
 
-// Temporary placeholders for components that need fixing
-export const Label = () => null;
-export const Select = () => null;
-export const SelectContent = () => null;
-export const SelectItem = () => null; 
-export const SelectTrigger = () => null;
-export const SelectValue = () => null;
+// Export working shadcn/ui components
+export { Label } from "./components/ui/label";
+export { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton
+} from "./components/ui/select";
+export { Checkbox } from "./components/ui/checkbox";
+export {
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+  useFormField
+} from "./components/ui/form";
+
+// Temporary placeholders for components not yet installed
 export const Textarea = () => null;
 export const Separator = () => null;
 export const Switch = () => null;
-export const Checkbox = () => null;
 export const RadioGroup = () => null;
 export const Calendar = () => null;
 export const Command = () => null;
 export const Dialog = () => null;
 export const DropdownMenu = () => null;
-export const Form = () => null;
 export const Popover = () => null;
 export const ScrollArea = () => null;
 export const Table = () => null;

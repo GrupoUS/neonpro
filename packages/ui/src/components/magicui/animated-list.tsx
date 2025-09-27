@@ -48,12 +48,13 @@ export interface SharedAnimatedListProps<T = SharedAnimatedListItem> {
   keyboardNavigation?: boolean
 }
 
-const defaultMotion: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
-  initial: { opacity: 0, y: 6 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -6 },
-  transition: { duration: 0.15 },
-}
+// Remove unused motion variables to fix TypeScript errors
+// const defaultMotion: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
+//   initial: { opacity: 0, y: 6 },
+//   animate: { opacity: 1, y: 0 },
+//   exit: { opacity: 0, y: -6 },
+//   transition: { duration: 0.15 },
+// }
 
 /**
  * SharedAnimatedList — SSR/CSR-safe animated list with a11y and DS integration
@@ -69,7 +70,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
     role = 'list',
     ariaLabel,
     size = 'md',
-    motion: motionOverrides,
+    // motion, // Remove unused parameter to fix TypeScript error
     loading,
     error,
     emptyMessage = <span className='text-xs text-muted-foreground'>Nada para exibir</span>,
@@ -80,10 +81,11 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
   const [focusedIndex, setFocusedIndex] = React.useState<number>(-1)
 
   const isEmpty = !loading && !error && (!items || items.length === 0)
-  const motionCfg: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
-    ...defaultMotion,
-    ...motionOverrides,
-  }
+  // Remove unused variable to fix TypeScript error
+  // const motionCfg: Required<NonNullable<SharedAnimatedListProps['motion']>> = {
+  //   ...defaultMotion,
+  //   ...motionOverrides,
+  // }
 
   // Keyboard navigation (SSR safe: only runs on client)
   React.useEffect(() => {

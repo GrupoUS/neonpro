@@ -10,9 +10,7 @@
     "tsBuildInfoFile": "./.tsbuildinfo-security",
     "allowImportingTsExtensions": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -24,8 +22,5 @@
     "src/monitoring/**/*",
     "src/types/**/*"
   ],
-  "references": [
-    { "path": "../database" },
-    { "path": "../healthcare-core" }
-  ]
+  "references": [{ "path": "../database" }, { "path": "../healthcare-core" }]
 }
