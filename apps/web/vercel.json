@@ -5,8 +5,7 @@
   "regions": ["gru1"],
   "trailingSlash": false,
   "cleanUrls": true,
-  "installCommand": "bun install --frozen-lockfile",
-  "buildCommand": "bun run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": null,
   "env": {

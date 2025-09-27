@@ -1,19 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "bun install",
-  "buildCommand": "cd apps/web && bun run build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
+  "installCommand": "npm ci",
+  "buildCommand": "cd apps/web && npm run build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
   "outputDirectory": "dist",
   "devCommand": "turbo run dev",
   "regions": ["gru1"],
-  "framework": null,
-  "functions": {
-    "apps/api/src/index.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
+  "framework": "vite",
 
   "rewrites": [
     {
