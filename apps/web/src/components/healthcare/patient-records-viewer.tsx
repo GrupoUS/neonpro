@@ -1,3 +1,52 @@
+/**
+ * Patient Records Viewer Component
+ * 
+ * Brazilian healthcare compliant patient medical records viewer with LGPD data protection.
+ * This component provides secure access to patient information including medical history,
+ * treatment records, and consent documentation while maintaining strict compliance with
+ * Brazilian healthcare regulations and data protection laws.
+ * 
+ * @component
+ * @example
+ * // Usage in patient management dashboard
+ * <PatientRecordsViewer 
+ *   patient={selectedPatient}
+ *   treatmentSessions={patientTreatments}
+ *   lgpdRecords={consentRecords}
+ *   onExportData={handleDataExport}
+ *   onRequestDataDeletion={handleDataDeletion}
+ *   healthcareContext={clinicContext}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant for healthcare information accessibility
+ * - LGPD (Lei 13.709/2018) compliant data access controls
+ * - Brazilian medical records security standards
+ * - Role-based access control for sensitive information
+ * - Audit trail for all data access and modifications
+ * - Mobile-responsive with medical data privacy considerations
+ * 
+ * @security
+ * - Encrypted data transmission and storage
+ * - Multi-factor authentication requirements
+ * - Data access logging and monitoring
+ * - Sensitive data masking based on user permissions
+ * - Automatic session timeout for security
+ * - Compliance with CFM data handling standards
+ * 
+ * @accessibility
+ * - High contrast support for medical data readability
+ * - Screen reader optimized for complex medical information
+ * - Keyboard navigation for accessibility compliance
+ * - Large text options for users with visual impairments
+ * 
+ * @compliance
+ * LGPD Lei 13.709/2018 - Data protection and patient rights
+ * CFM Resolution 2.217/2018 - Electronic medical records
+ * ANVISA RDC 15/2012 - Health information management
+ * ISO 27799 - Health information security management
+ */
+
 import * as React from 'react'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -17,6 +66,48 @@ import type {
   HealthcareContext 
 } from '@/types/healthcare'
 
+/**
+ * Props interface for PatientRecordsViewer component
+ * 
+ * Defines the configuration and callback handlers for secure patient records access.
+ * All data access is logged for compliance and audit purposes.
+ * 
+ * @interface PatientRecordsViewerProps
+ * 
+ * @property {PatientData} patient - Patient data object with complete medical information
+ *   Must include: personalInfo, medicalHistory, treatments, and consentRecords
+ * @property {TreatmentSession[]} treatmentSessions - Array of patient treatment sessions
+ *   Chronologically ordered medical procedures and interventions
+ * @property {LGPDConsentRecord[]} lgpdRecords - Array of LGPD consent and data processing records
+ *   Includes consent types, dates, and data processing authorizations
+ * @property {Function} [onUpdatePatient] - Optional callback for updating patient information
+ *   @param {PatientData} patient - Updated patient data
+ *   @returns {void}
+ * @property {Function} [onExportData] - Optional callback for exporting patient data
+ *   @param {string} patientId - Patient identifier for data export
+ *   @returns {void}
+ * @property {Function} [onRequestDataDeletion] - Optional callback for data deletion requests
+ *   @param {string} patientId - Patient identifier for deletion request
+ *   @returns {void}
+ * @property {string} [className] - Optional CSS classes for component styling
+ *   Should not override accessibility or security styles
+ * @property {HealthcareContext} [healthcareContext] - Healthcare context for compliance rules
+ *   Determines data access policies and retention periods
+ * 
+ * @example
+ * const props: PatientRecordsViewerProps = {
+ *   patient: patientData,
+ *   treatmentSessions: treatmentHistory,
+ *   lgpdRecords: consentDocumentation,
+ *   onExportData: (id) => exportService.exportPatientData(id),
+ *   onRequestDataDeletion: (id) => complianceService.handleDeletionRequest(id),
+ *   healthcareContext: clinicContext
+ * };
+ * 
+ * @security
+ * All callback functions must implement proper authentication and authorization
+ * checks before processing sensitive patient data operations.
+ */
 interface PatientRecordsViewerProps {
   patient: PatientData
   treatmentSessions: TreatmentSession[]
@@ -28,6 +119,31 @@ interface PatientRecordsViewerProps {
   healthcareContext?: HealthcareContext
 }
 
+/**
+ * Tab configuration interface for patient record sections
+ * 
+ * Defines the structure for organizing patient information into accessible
+ * and manageable sections with optional indicators for content volume.
+ * 
+ * @interface RecordTab
+ * 
+ * @property {string} id - Unique identifier for the tab section
+ *   Used for state management and accessibility references
+ * @property {string} label - Display label for the tab in Portuguese
+ *   Medical terminology should follow Brazilian healthcare standards
+ * @property {React.ReactNode} [icon] - Optional icon component for visual identification
+ *   Should use medical or healthcare-related icons when appropriate
+ * @property {number} [count] - Optional count of items in the section
+ *   Displayed as a badge to indicate volume of information
+ * 
+ * @example
+ * const tab: RecordTab = {
+ *   id: 'medical-history',
+ *   label: 'Histórico Médico',
+ *   icon: <MedicalIcon />,
+ *   count: patient.treatments.length
+ * };
+ */
 interface RecordTab {
   id: string
   label: string

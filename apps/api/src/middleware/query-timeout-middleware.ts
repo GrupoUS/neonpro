@@ -124,15 +124,6 @@ export class QueryTimeoutMiddleware {
     this.activeQueries.delete(queryId)
 
     // Log slow queries that didn't timeout
-    if (duration > timeout * 0.8 && duration < timeout) {
-      console.warn(
-        `[QueryTimeout] Query approaching timeout: ${duration}ms / ${timeout}ms`,
-        {
-          queryId,
-          route: url.pathname,
-          method: c.req.method,
-          _userId: metrics.userId,
-        },
       )
     }
   }
@@ -170,15 +161,6 @@ export class QueryTimeoutMiddleware {
     this.recordQueryMetrics(metrics)
     this.activeQueries.delete(queryId)
 
-    // Log timeout event
-    console.error(
-      `[QueryTimeout] Query timeout exceeded: ${duration}ms > ${timeout}ms`,
-      {
-        queryId,
-        route: url.pathname,
-        method: c.req.method,
-        _userId: metrics.userId,
-        userAgent: c.req.header('user-agent'),
       },
     )
 

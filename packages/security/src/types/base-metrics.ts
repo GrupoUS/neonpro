@@ -5,11 +5,11 @@
  * with compliance-aware design (LGPD/ANVISA/CFM) and extensible architecture.
  */
 
-// import type { RiskLevel, ComplianceFramework } from "../../audit/types";
+import type { RiskLevel as AuditRiskLevel, ComplianceFramework as AuditComplianceFramework } from "../audit/types"
 
 // Local type definitions to avoid circular dependencies
-type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR'
+type RiskLevel = AuditRiskLevel
+type ComplianceFramework = AuditComplianceFramework
 
 /**
  * Analytics event interface for tracking user interactions and system events
@@ -99,7 +99,10 @@ export type MetricStatus =
   | 'calculating'
 
 // Re-export types from audit module to avoid conflicts
-export type { ComplianceFramework, RiskLevel } from '../../audit/types'
+export type { ComplianceFramework as AuditComplianceFramework, RiskLevel as AuditRiskLevel } from '../audit/types'
+
+// Export local type aliases for compatibility
+export type { RiskLevel, ComplianceFramework }
 
 /**
  * Base metric interface - foundation for all analytics metrics
@@ -389,7 +392,7 @@ function extractRegion(metadata?: Record<string, unknown>): string | undefined {
     return `${location.city}, ${location.state}`
   }
 
-  return location?.state || location?.region
+  return (location?.state as string) || (location?.region as string)
 }
 
 /**
@@ -401,7 +404,7 @@ function extractCohort(metadata?: Record<string, unknown>): string | undefined {
   // Extract generalized demographic information
   const demographics = metadata.demographics as Record<string, unknown> | undefined
   if (demographics && typeof demographics.ageRange === 'string') {
-    return `age_${demographics.ageRange}` as string
+    return `age_${demographics.ageRange}`
   }
 
   return undefined

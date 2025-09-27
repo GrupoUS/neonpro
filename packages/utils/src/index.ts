@@ -28,8 +28,8 @@ export const truncateText = (text: string, maxLength: number = 100): string => {
 };
 
 // Re-exports
-export * from './date';
-export * from './validation';
+export * from './date.js';
+export * from './validation.js';
 
 // Logging utility
 export const createLogger = (name: string) => {

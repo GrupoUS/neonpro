@@ -23,8 +23,7 @@
   "dependencies": {
     "@neonpro/types": "workspace:*",
     "@neonpro/shared": "workspace:*",
-    "date-fns": "^3.6.0",
-    "valibot": "^1.1.0"
+    "date-fns": "^3.6.0"
   },
   "devDependencies": {
     "typescript": "^5.0.0"

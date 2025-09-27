@@ -1,3 +1,53 @@
+/**
+ * Healthcare Dashboard Component
+ * 
+ * Brazilian healthcare compliant operational dashboard for aesthetic clinic management.
+ * This component provides real-time metrics, patient care coordination, and operational
+ * oversight for healthcare providers while maintaining compliance with Brazilian
+ * healthcare regulations and data protection standards.
+ * 
+ * @component
+ * @example
+ * // Usage in clinic management system
+ * <HealthcareDashboard 
+ *   patients={clinicPatients}
+ *   treatments={availableTreatments}
+ *   sessions={scheduledSessions}
+ *   onScheduleSession={handleScheduling}
+ *   onPatientSelect={handlePatientSelection}
+ *   onViewSessionDetails={handleSessionDetails}
+ *   onEmergencyAlert={handleEmergencyAlert}
+ *   healthcareContext={clinicContext}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant for healthcare provider accessibility
+ * - Brazilian healthcare operational standards compliance
+ * - Real-time data updates with healthcare event streaming
+ * - Mobile-responsive design for clinical workflow support
+ * - Portuguese language interface optimized for Brazilian healthcare workers
+ * - Integration with clinic management and electronic health record systems
+ * 
+ * @security
+ * - Role-based access control for different healthcare provider levels
+ * - Encrypted data transmission for sensitive patient information
+ * - Audit logging for all dashboard interactions and data access
+ * - Compliance with CFM data access standards for medical professionals
+ * - Session timeout for unattended workstations in clinical environments
+ * 
+ * @accessibility
+ * - High contrast mode for clinical environments
+ * - Screen reader optimized for complex medical data presentation
+ * - Keyboard navigation support for hands-free clinical workflows
+ * - Large touch targets for glove compatibility in medical settings
+ * 
+ * @compliance
+ * CFM Resolution 2.217/2018 - Electronic health record access
+ * ANVISA RDC 15/2012 - Healthcare facility management
+ * LGPD Lei 13.709/2018 - Patient data protection in dashboards
+ * NR 32 - Workplace safety in healthcare services monitoring
+ */
+
 import * as React from 'react'
 import { format, startOfDay, endOfDay, subDays, isToday, isThisWeek } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -20,6 +70,54 @@ import type {
   HealthcareDashboardMetrics 
 } from '@/types/healthcare'
 
+/**
+ * Props interface for HealthcareDashboard component
+ * 
+ * Defines the configuration and callback handlers for the healthcare operations dashboard.
+ * Designed for clinical workflow optimization and real-time decision support.
+ * 
+ * @interface HealthcareDashboardProps
+ * 
+ * @property {PatientData[]} patients - Array of patient data for dashboard display
+ *   Used for patient metrics, scheduling, and care coordination
+ * @property {AestheticTreatment[]} treatments - Array of available aesthetic treatments
+ *   Used for treatment planning, scheduling, and utilization metrics
+ * @property {TreatmentSession[]} sessions - Array of scheduled treatment sessions
+ *   Chronologically ordered for scheduling and resource management
+ * @property {Function} [onScheduleSession] - Optional callback for scheduling new sessions
+ *   @param {string} patientId - Patient identifier for session scheduling
+ *   @param {string} treatmentId - Treatment identifier for session planning
+ *   @returns {void}
+ * @property {Function} [onPatientSelect] - Optional callback for patient selection actions
+ *   @param {PatientData} patient - Selected patient data
+ *   @returns {void}
+ * @property {Function} [onViewSessionDetails] - Optional callback for viewing session details
+ *   @param {string} sessionId - Session identifier for detailed view
+ *   @returns {void}
+ * @property {Function} [onEmergencyAlert] - Optional callback for emergency alert activation
+ *   @param {'medical' | 'facility' | 'security'} type - Type of emergency alert
+ *   @returns {void}
+ * @property {string} [className] - Optional CSS classes for component styling
+ *   Should maintain clinical readability and accessibility standards
+ * @property {HealthcareContext} [healthcareContext] - Healthcare context for data filtering
+ *   Determines scope of displayed metrics and available actions
+ * 
+ * @example
+ * const props: HealthcareDashboardProps = {
+ *   patients: clinicPatientList,
+ *   treatments: aestheticTreatmentCatalog,
+ *   sessions: todayScheduledSessions,
+ *   onScheduleSession: (patientId, treatmentId) => schedulingService.create(patientId, treatmentId),
+ *   onPatientSelect: (patient) => navigationService.navigateToPatient(patient.id),
+ *   onViewSessionDetails: (sessionId) => detailsService.showSession(sessionId),
+ *   onEmergencyAlert: (type) => emergencyService.activateAlert(type),
+ *   healthcareContext: clinicContext
+ * };
+ * 
+ * @security
+ * All callback functions must validate user permissions and implement
+ * proper audit logging as required by healthcare regulations.
+ */
 interface HealthcareDashboardProps {
   patients: PatientData[]
   treatments: AestheticTreatment[]
@@ -32,6 +130,31 @@ interface HealthcareDashboardProps {
   healthcareContext?: HealthcareContext
 }
 
+/**
+ * Dashboard widget visibility configuration
+ * 
+ * Controls the display of different dashboard widget categories based on user roles
+ * and clinical workflow requirements.
+ * 
+ * @interface DashboardWidgets
+ * 
+ * @property {boolean} showFinancial - Display financial metrics and billing information
+ *   Requires financial management permissions and compliance with CFM fee disclosure rules
+ * @property {boolean} showOperational - Display operational metrics and resource utilization
+ *   Includes room occupancy, equipment utilization, and staff scheduling
+ * @property {boolean} showPatientSatisfaction - Display patient feedback and satisfaction metrics
+ *   Includes post-treatment surveys and quality improvement indicators
+ * @property {boolean} showInventoryAlerts - Display medical supply and inventory alerts
+ *   Critical for aesthetic treatment availability and safety compliance
+ * 
+ * @example
+ * const widgets: DashboardWidgets = {
+ *   showFinancial: true,  // Clinic manager permissions
+ *   showOperational: true,  // Clinical coordinator role
+ *   showPatientSatisfaction: true,  // Quality management
+ *   showInventoryAlerts: true  // Supply management
+ * };
+ */
 interface DashboardWidgets {
   showFinancial: boolean
   showOperational: boolean
@@ -39,6 +162,35 @@ interface DashboardWidgets {
   showInventoryAlerts: boolean
 }
 
+/**
+ * Time filtering configuration for dashboard metrics
+ * 
+ * Defines time-based filtering options for healthcare performance metrics
+ * and operational data analysis.
+ * 
+ * @interface TimeFilter
+ * 
+ * @property {string} label - Display label for the time filter in Portuguese
+ *   Must be clear and clinically meaningful for healthcare workers
+ * @property {'today' | 'week' | 'month' | 'year'} value - Time filter identifier
+ *   Determines the scope of data aggregation and display
+ * @property {{start: Date; end: Date}} dateRange - Date range for filtering
+ *   Inclusive range for metric calculations and data queries
+ * 
+ * @example
+ * const filter: TimeFilter = {
+ *   label: 'Hoje',
+ *   value: 'today',
+ *   dateRange: {
+ *     start: startOfDay(new Date()),
+ *     end: endOfDay(new Date())
+ *   }
+ * };
+ * 
+ * @compliance
+ * Time ranges must align with Brazilian healthcare reporting requirements
+ * and clinical documentation standards.
+ */
 interface TimeFilter {
   label: string
   value: 'today' | 'week' | 'month' | 'year'

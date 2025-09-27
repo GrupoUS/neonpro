@@ -1,6 +1,26 @@
 /**
  * Patient Assessment Form Component
- * Brazilian healthcare compliant AI-powered patient assessment interface
+ * 
+ * Brazilian healthcare compliant AI-powered patient assessment interface for aesthetic clinics.
+ * This component provides a comprehensive form for collecting patient information including
+ * medical history, aesthetic goals, and risk factors to generate personalized treatment
+ * recommendations using AI analysis.
+ * 
+ * @component
+ * @example
+ * // Usage in a React component
+ * <PatientAssessmentForm 
+ *   patientId="123" 
+ *   onSuccess={(recommendations) => console.log(recommendations)}
+ *   onError={(error) => console.error(error)}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant accessibility features
+ * - Brazilian healthcare regulations compliance (LGPD, ANVISA, CFM)
+ * - Mobile-first responsive design with 44px+ touch targets
+ * - Real-time form validation and error handling
+ * - Integrates with tRPC for type-safe API communication
  */
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
@@ -40,11 +60,14 @@ import {
 } from 'lucide-react'
 import React, { useState } from 'react'
 
-interface PatientAssessmentFormProps {
-  patientId: string
-  onSuccess?: (recommendations: TreatmentRecommendation[]) => void
-  onError?: (error: Error) => void
-}
+/**
+ * Props for the PatientAssessmentForm component
+ * 
+ * @interface PatientAssessmentFormProps
+ * @property {string} patientId - Unique identifier for the patient
+ * @property {Function} [onSuccess] - Callback function triggered when treatment recommendations are successfully generated
+ * @property {Function} [onError] - Callback function triggered when an error occurs during form submission or API calls
+ */
 
 export function PatientAssessmentForm(
   { patientId, onSuccess, onError }: PatientAssessmentFormProps,
@@ -77,11 +100,11 @@ export function PatientAssessmentForm(
 
   // Generate recommendations mutation
   const generateMutation = trpc.aiClinicalSupport.generateTreatmentRecommendations.useMutation({
-    onSuccess: data => {
-      queryClient.invalidateQueries(['patients', patientId])
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['patients', patientId] } as any)
       onSuccess?.(data.recommendations)
     },
-    onError: error => {
+    onError: (error: any) => {
       onError?.(error as Error)
     },
   })
@@ -143,6 +166,19 @@ export function PatientAssessmentForm(
     'Gravidez ou amamentação',
   ]
 
+  /**
+   * Handles skin type selection changes
+   *
+   * Updates the assessment data with the selected skin type and calculates the corresponding
+   * Fitzpatrick scale value. This classification is critical for treatment recommendations as
+   * different skin types respond differently to aesthetic procedures and require customized approaches.
+   *
+   * @param {SkinType} skinType - The selected skin type (I-VI based on Fitzpatrick scale)
+   * @example
+   * handleSkinTypeChange('III') // Updates skin type to III and sets Fitzpatrick to 3
+   * @remarks
+   * Automatically calculates fitzpatrickScale from skinType string value
+   */
   const handleSkinTypeChange = (skinType: SkinType) => {
     setAssessmentData({
       ...assessmentData,
@@ -151,6 +187,22 @@ export function PatientAssessmentForm(
     })
   }
 
+  /**
+   * Handles array field changes for dynamic form fields
+   *
+   * Manages updates to array-based form fields including skin conditions, aesthetic goals,
+   * risk factors, and medical history. This handler supports both adding and removing items
+   * from these arrays based on the user interaction, with special handling for medical history fields.
+   *
+   * @param {field} field - The name of the field to update ('skinConditions', 'aestheticGoals', 'riskFactors', or medical history fields)
+   * @param {string[]} value - The array of values to set for the field
+   * @param {boolean} [isMedicalHistory=false] - Whether this is a medical history field (requires special handling)
+   * @example
+   * handleArrayFieldChange('aestheticGoals', ['Redução de rugas', 'Clareamento de manchas']) // Sets goals
+   * handleArrayFieldChange('medications', ['Aspirina'], true) // Updates medical history
+   * @remarks
+   * Medical history fields require nested object updates due to data structure
+   */
   const handleArrayFieldChange = (
     field:
       | 'skinConditions'
@@ -176,6 +228,22 @@ export function PatientAssessmentForm(
     }
   }
 
+  /**
+   * Handles budget range input changes
+   *
+   * Updates the minimum or maximum values in the budget range field with proper
+   * numeric validation and conversion. This ensures that budget values are stored
+   * as numbers for proper calculations and display formatting.
+   *
+   * @param {'min' | 'max'} field - Which budget field to update ('min' or 'max')
+   * @param {string} value - The string value from the input field
+   * @example
+   * handleBudgetChange('min', '1000') // Sets minimum budget to 1000 BRL
+   * handleBudgetChange('max', '5000') // Sets maximum budget to 5000 BRL
+   * @remarks
+   * Converts string to float, defaults to 0 if invalid input
+   * Uses Brazilian Real (BRL) currency as specified in form data
+   */
   const handleBudgetChange = (field: 'min' | 'max', value: string) => {
     const numValue = parseFloat(value) || 0
     setAssessmentData({
@@ -187,35 +255,89 @@ export function PatientAssessmentForm(
     })
   }
 
+  /**
+   * Adds a new tag to the specified field
+   *
+   * Handles the addition of new items to array-based fields with validation to prevent
+   * duplicates. This is used for dynamic tag-based inputs where users can add custom
+   * values like skin conditions, aesthetic goals, or risk factors.
+   *
+   * @param {field} field - The target field for adding the tag
+   * @param {string} value - The tag value to add
+   * @param {string[]} [options] - Optional array of valid options for validation
+   * @param {boolean} [isMedicalHistory=false] - Whether this is a medical history field
+   * @example
+   * handleAddTag('aestheticGoals', 'Redução de rugas') // Adds new aesthetic goal
+   * handleAddTag('medications', 'Aspirina', undefined, true) // Adds medication to medical history
+   * @remarks
+   * - Validates against empty strings and duplicate values
+   * - Trims whitespace from input values
+   * - Uses handleArrayFieldChange for actual state updates
+   */
   const handleAddTag = (
-    field: 'skinConditions' | 'aestheticGoals' | 'riskFactors',
+    field: 'skinConditions' | 'aestheticGoals' | 'riskFactors' | keyof PatientAssessment['medicalHistory'],
     value: string,
-    options: string[],
+    options?: string[],
     isMedicalHistory = false,
   ) => {
-    if (value.trim() && !options.includes(value.trim())) {
+    if (value.trim() && (!options || !options.includes(value.trim()))) {
       const currentValues = isMedicalHistory
         ? assessmentData
-          .medicalHistory![field as keyof typeof assessmentData.medicalHistory] as string[]
-        : assessmentData[field]
+          .medicalHistory?.[field as keyof typeof assessmentData.medicalHistory] as string[] || []
+        : (assessmentData[field] as string[]) || []
 
       handleArrayFieldChange(field, [...currentValues, value.trim()], isMedicalHistory)
     }
   }
 
+  /**
+   * Removes a tag from the specified field
+   *
+   * Handles the removal of items from array-based fields while maintaining
+   * the proper data structure. This is used for dynamic tag-based inputs where
+   * users can remove previously added values like skin conditions or aesthetic goals.
+   *
+   * @param {field} field - The target field for removing the tag
+   * @param {string} value - The tag value to remove
+   * @param {boolean} [isMedicalHistory=false] - Whether this is a medical history field
+   * @example
+   * handleRemoveTag('aestheticGoals', 'Redução de rugas') // Removes aesthetic goal
+   * handleRemoveTag('medications', 'Aspirina', true) // Removes medication from medical history
+   * @remarks
+   * - Creates new array without the specified value
+   * - Preserves original order of remaining items
+   * - Uses handleArrayFieldChange for actual state updates
+   */
   const handleRemoveTag = (
-    field: 'skinConditions' | 'aestheticGoals' | 'riskFactors',
+    field: 'skinConditions' | 'aestheticGoals' | 'riskFactors' | keyof PatientAssessment['medicalHistory'],
     value: string,
     isMedicalHistory = false,
   ) => {
     const currentValues = isMedicalHistory
       ? assessmentData
-        .medicalHistory![field as keyof typeof assessmentData.medicalHistory] as string[]
-      : assessmentData[field]
+        .medicalHistory?.[field as keyof typeof assessmentData.medicalHistory] as string[] || []
+      : (assessmentData[field] as string[]) || []
 
     handleArrayFieldChange(field, currentValues.filter(item => item !== value), isMedicalHistory)
   }
 
+  /**
+   * Handles form submission with validation and API call
+   *
+   * Validates the complete assessment data using Zod schema, generates a unique identifier,
+   * and submits the assessment to the AI clinical support system for treatment recommendations.
+   * This is the main entry point for processing patient assessments.
+   *
+   * @param {React.FormEvent} e - The form event object
+   * @example
+   * handleSubmit() // Validates and submits assessment data
+   * @remarks
+   * - Generates UUID for assessment tracking
+   * - Uses Zod schema for data validation
+   * - Integrates with tRPC for API communication
+   * - Handles both success and error callbacks
+   * - Triggers invalidation of patient queries for data consistency
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 

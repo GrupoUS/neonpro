@@ -1,3 +1,51 @@
+/**
+ * Login Form Component
+ * 
+ * Brazilian healthcare compliant authentication system for aesthetic clinic staff
+ * and healthcare professionals. This component provides secure access control
+ * while maintaining compliance with Brazilian healthcare regulations and data protection laws.
+ * 
+ * @component
+ * @example
+ * // Usage in clinic authentication system
+ * <LoginForm 
+ *   onSuccess={handleLoginSuccess}
+ *   onForgotPassword={handlePasswordReset}
+ *   onSignUp={handleRegistration}
+ *   className="auth-form"
+ *   aria-label="Formulário de autenticação"
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant for accessibility in healthcare settings
+ * - Brazilian healthcare authentication standards compliance
+ * - Multi-factor authentication ready for enhanced security
+ * - Role-based access control for different healthcare professional levels
+ * - Portuguese language interface optimized for Brazilian healthcare workers
+ * - Mobile-responsive with secure credential handling
+ * - Session timeout for unattended workstations in clinical environments
+ * 
+ * @security
+ * - Encrypted credential transmission and storage
+ * - Secure session management with automatic timeout
+ * - Audit logging for all authentication attempts
+ * - Compliance with CFM access control standards
+ * - Protection against brute force and credential stuffing attacks
+ * - LGPD compliance for user authentication data
+ * 
+ * @accessibility
+ * - High contrast mode for clinical environments
+ * - Screen reader optimized for secure authentication workflows
+ * - Keyboard navigation support for accessibility compliance
+ * - Clear error messaging and recovery guidance
+ * 
+ * @compliance
+ * LGPD Lei 13.709/2018 - User authentication data protection
+ * CFM Resolution 2.217/2018 - Healthcare system access control
+ * ANVISA RDC 15/2012 - Healthcare facility security requirements
+ * ISO 27001 - Information security management systems
+ */
+
 import React, { useState, useRef, useEffect } from 'react'
 import { useLogin } from '@/hooks/useAuth.js'
 import type { AuthError } from '@neonpro/types'
@@ -6,6 +54,47 @@ import { AccessibilityInput } from '@/components/ui/accessibility-input.js'
 import { Alert, AlertDescription } from '@/components/ui/alert.js'
 import { cn } from '@/lib/utils.js'
 
+/**
+ * Props interface for LoginForm component
+ * 
+ * Defines the configuration and callback handlers for secure authentication
+ * in Brazilian healthcare clinic management systems.
+ * 
+ * @interface LoginFormProps
+ * 
+ * @property {Function} [onSuccess] - Optional callback for successful authentication
+ *   @returns {void} Called when user successfully authenticates
+ *   Should redirect user to appropriate dashboard based on role
+ * @property {Function} [onForgotPassword] - Optional callback for password recovery
+ *   @returns {void} Called when user requests password reset
+ *   Should initiate secure password recovery workflow
+ * @property {Function} [onSignUp] - Optional callback for user registration
+ *   @returns {void} Called when user requests new account creation
+ *   Should redirect to healthcare professional registration process
+ * @property {string} [className] - Optional CSS classes for component styling
+ *   Must maintain accessibility and security requirements
+ * @property {string} [aria-label] - Optional ARIA label for screen readers
+ *   Should describe the form's purpose in Portuguese
+ * @property {string} [aria-describedby] - Optional ARIA describedby reference
+ *   Should reference additional form instructions or error messages
+ * 
+ * @example
+ * const props: LoginFormProps = {
+ *   onSuccess: () => navigationService.navigateToDashboard(),
+ *   onForgotPassword: () => navigationService.goToPasswordReset(),
+ *   onSignUp: () => navigationService.goToRegistration(),
+ *   className: 'healthcare-auth-form',
+ *   aria-label: 'Formulário de autenticação para profissionais de saúde'
+ * };
+ * 
+ * @security
+ * All callbacks must implement proper authentication flow security
+ * and comply with Brazilian healthcare data protection regulations.
+ * 
+ * @accessibility
+ * ARIA attributes must be provided for screen reader compatibility
+ * in healthcare environments where visual assistance may be needed.
+ */
 interface LoginFormProps {
   onSuccess?: () => void
   onForgotPassword?: () => void

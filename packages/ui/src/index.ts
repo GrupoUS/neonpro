@@ -44,7 +44,7 @@ export {
 // Temporary placeholders for components not yet installed
 export const Textarea = () => null;
 export const Separator = () => null;
-export const Switch = () => null;
+export { Switch } from "./components/ui/switch";
 export const RadioGroup = () => null;
 export const Calendar = () => null;
 export const Command = () => null;

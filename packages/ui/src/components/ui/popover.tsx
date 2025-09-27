@@ -26,7 +26,7 @@ function PopoverContent({
   return (
     // @ts-ignore React 19 JSX type compatibility
     <PopoverPrimitive.Portal>
-      // @ts-ignore React 19 JSX type compatibility
+      {/* @ts-ignore React 19 JSX type compatibility */}
       <PopoverPrimitive.Content
         data-slot='popover-content'
         align={align}

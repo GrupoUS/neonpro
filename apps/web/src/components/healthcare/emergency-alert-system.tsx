@@ -1,3 +1,52 @@
+/**
+ * Emergency Alert System Component
+ * 
+ * Brazilian healthcare compliant emergency management system for aesthetic clinics.
+ * This critical safety component provides real-time emergency alert creation, management,
+ * and response coordination for medical emergencies, facility incidents, and safety threats.
+ * Designed to comply with Brazilian healthcare regulations (ANVISA RDC 15/2012, CFM standards).
+ * 
+ * @component
+ * @example
+ * // Usage in emergency response dashboard
+ * <EmergencyAlertSystem 
+ *   patients={patientList}
+ *   activeAlerts={emergencyAlerts}
+ *   onCreateAlert={handleCreateAlert}
+ *   onUpdateAlert={handleUpdateAlert}
+ *   onResolveAlert={handleResolveAlert}
+ *   onContactEmergency={handleEmergencyContact}
+ *   healthcareContext={clinicContext}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant accessibility for emergency situations
+ * - Brazilian healthcare emergency protocols compliance
+ * - Real-time alert notifications and response tracking
+ * - Multi-language support (Portuguese primary)
+ * - Integration with emergency services (SAMU, Corpo de Bombeiros)
+ * - Audit trail for regulatory compliance and incident investigation
+ * - Mobile-responsive with 44px+ touch targets for emergency use
+ * 
+ * @security
+ * - Role-based access control for emergency response
+ * - Encrypted communication for sensitive emergency data
+ * - Audit logging for compliance with Brazilian healthcare regulations
+ * - LGPD compliance for patient data during emergencies
+ * 
+ * @accessibility
+ * - High contrast mode for emergency visibility
+ * - Screen reader optimized for stress situations
+ * - Keyboard navigation support
+ * - Large touch targets for emergency use
+ * 
+ * @compliance
+ * ANVISA RDC 15/2012 - Emergency response in healthcare facilities
+ * CFM Resolution 2.227/2018 - Medical emergency protocols
+ * LGPD Lei 13.709/2018 - Data protection during emergencies
+ * NR 32 - Workplace safety in healthcare services
+ */
+
 import * as React from 'react'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -18,6 +67,47 @@ import type {
   EmergencyResponse 
 } from '@/types/healthcare'
 
+/**
+ * Props interface for EmergencyAlertSystem component
+ * 
+ * Defines the configuration and callback handlers for the emergency alert system.
+ * All props are designed with fail-safety in mind for critical emergency scenarios.
+ * 
+ * @interface EmergencyAlertSystemProps
+ * 
+ * @property {PatientData[]} patients - Array of patient data for emergency patient selection
+ *   Must include at minimum: id, name, medicalRecordNumber, and emergencyContact
+ * @property {EmergencyAlert[]} activeAlerts - Currently active emergency alerts requiring response
+ *   Sorted by severity and timestamp for priority handling
+ * @property {Function} onCreateAlert - Callback for creating new emergency alerts
+ *   @param {Omit<EmergencyAlert, 'id' | 'createdAt' | 'updatedAt'>} alert - Alert data without system-generated fields
+ *   @returns {void}
+ * @property {Function} onUpdateAlert - Callback for updating alert status and response
+ *   @param {string} alertId - Unique identifier of the alert being updated
+ *   @param {EmergencyResponse} response - Response actions and status updates
+ *   @returns {void}
+ * @property {Function} onResolveAlert - Callback for marking alerts as resolved
+ *   @param {string} alertId - Unique identifier of the resolved alert
+ *   @returns {void}
+ * @property {Function} onContactEmergency - Callback for contacting external emergency services
+ *   @param {'ambulance' | 'fire' | 'police'} type - Type of emergency service to contact
+ *   @returns {void}
+ * @property {string} [className] - Optional CSS classes for component styling
+ *   Should not override emergency-critical styles
+ * @property {HealthcareContext} [healthcareContext] - Clinic/facility context for location-specific protocols
+ *   Used for determining response procedures and emergency contacts
+ * 
+ * @example
+ * const props: EmergencyAlertSystemProps = {
+ *   patients: clinicPatientList,
+ *   activeAlerts: currentEmergencyAlerts,
+ *   onCreateAlert: (alert) => emergencyService.create(alert),
+ *   onUpdateAlert: (id, response) => emergencyService.update(id, response),
+ *   onResolveAlert: (id) => emergencyService.resolve(id),
+ *   onContactEmergency: (type) => emergencyService.contactExternal(type),
+ *   healthcareContext: clinicContext
+ * };
+ */
 interface EmergencyAlertSystemProps {
   patients: PatientData[]
   activeAlerts: EmergencyAlert[]
@@ -29,6 +119,49 @@ interface EmergencyAlertSystemProps {
   healthcareContext?: HealthcareContext
 }
 
+/**
+ * State interface for emergency alert form
+ * 
+ * Manages the form state for creating new emergency alerts with comprehensive
+ * risk assessment and response planning fields.
+ * 
+ * @interface AlertFormState
+ * 
+ * @property {EmergencyAlert['type']} type - Type of emergency/alert
+ *   Options: 'medical', 'facility', 'security', 'environmental', 'other'
+ * @property {EmergencyAlert['severity']} severity - Alert severity level
+ *   Options: 'low', 'medium', 'high', 'critical' - determines response priority
+ * @property {string} [patientId] - Optional patient ID if patient-specific emergency
+ *   Required for medical emergencies involving specific patients
+ * @property {string} description - Detailed description of the emergency situation
+ *   Must include nature of emergency and immediate risks
+ * @property {string} location - Specific location within the facility
+ *   Format: "Floor/Room/Area" for emergency responder navigation
+ * @property {boolean} requiresMedicalAttention - Whether medical response is needed
+ *   Triggers automatic medical team notification
+ * @property {boolean} requiresEvacuation - Whether area evacuation is required
+ *   Triggers evacuation protocols and area lockdown procedures
+ * @property {string[]} affectedAreas - Areas affected by the emergency
+ *   Used for determining evacuation zones and access restrictions
+ * @property {string} estimatedDuration - Estimated duration of emergency situation
+ *   Format: "X horas/minutos" for resource planning and response coordination
+ * @property {string} additionalNotes - Additional context and special instructions
+ *   Include any special considerations or accessibility requirements
+ * 
+ * @example
+ * const formState: AlertFormState = {
+ *   type: 'medical',
+ *   severity: 'critical',
+ *   patientId: 'patient-123',
+ *   description: 'Paciente em parada cardiorrespiratória',
+ *   location: '2º Andar/Sala 205',
+ *   requiresMedicalAttention: true,
+ *   requiresEvacuation: false,
+ *   affectedAreas: ['Sala 205', 'Corredor 2'],
+ *   estimatedDuration: '30 minutos',
+ *   additionalNotes: 'Paciente com histórico cardíaco'
+ * };
+ */
 interface AlertFormState {
   type: EmergencyAlert['type']
   severity: EmergencyAlert['severity']
@@ -42,6 +175,37 @@ interface AlertFormState {
   additionalNotes: string
 }
 
+/**
+ * Emergency contact information interface
+ * 
+ * Defines the structure for emergency response team contacts and external
+ * emergency service providers for rapid response coordination.
+ * 
+ * @interface EmergencyContact
+ * 
+ * @property {string} name - Full name of the emergency contact person
+ *   Format: "Dr./Sr./Sra. [Nome Completo]" as per Brazilian conventions
+ * @property {string} role - Professional role or title of the contact
+ *   Medical: "Médico Plantonista", "Enfermeiro Chefe"
+ *   Administrative: "Coordenador de Emergência", "Segurança Patrimonial"
+ *   External: "SAMU", "Corpo de Bombeiros", "Polícia Militar"
+ * @property {string} phone - Contact phone number with country code
+ *   Format: "+55 XX XXXXX-XXXX" for Brazilian numbers
+ *   Must be validated for emergency response capability
+ * @property {boolean} available - Current availability status
+ *   Real-time status for emergency response planning
+ * @property {boolean} isOnCall - Whether contact is currently on emergency duty
+ *   Determines if contact should receive automatic emergency notifications
+ * 
+ * @example
+ * const contact: EmergencyContact = {
+ *   name: "Dr. Carlos Silva",
+ *   role: "Médico Plantonista",
+ *   phone: "+55 11 98765-4321",
+ *   available: true,
+ *   isOnCall: true
+ * };
+ */
 interface EmergencyContact {
   name: string
   role: string

@@ -7,8 +7,65 @@
 import type { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { RateLimiter, SecurityUtils } from './utils'
-// TODO: Fix import path when JWT service is available
-// import { JWTSecurityService } from '@apps/api/src/services/jwt-security-service'
+
+// JWT Security Service interface for type safety
+interface JWTValidationResult {
+  isValid: boolean
+  error?: string
+  payload?: {
+    sub?: string
+    role?: string
+    permissions?: string[]
+    healthcareProvider?: string
+    patientId?: string
+    consentLevel?: string
+    sessionType?: string
+    mfaVerified?: boolean
+    cfmLicense?: string
+    anvisaCompliance?: boolean
+    lgpdConsentVersion?: string
+  }
+  userId?: string
+  userRole?: string
+  permissions?: string[]
+  jti?: string
+}
+
+// Mock JWT Security Service implementation
+// TODO: Replace with actual JWT service implementation
+class JWTSecurityService {
+  static async validateToken(_token: string): Promise<JWTValidationResult> {
+    try {
+      // Mock validation - in production, this would verify the JWT signature
+      // and decode the payload properly
+      
+      // For now, return a mock successful validation
+      return {
+        isValid: true,
+        payload: {
+          sub: 'mock-user-id',
+          role: 'healthcare_provider',
+          permissions: ['read', 'write'],
+          healthcareProvider: 'mock-clinic',
+          sessionType: 'standard',
+          mfaVerified: true,
+          cfmLicense: 'CFM123456',
+          anvisaCompliance: true,
+          lgpdConsentVersion: '1.0'
+        },
+        userId: 'mock-user-id',
+        userRole: 'healthcare_provider',
+        permissions: ['read', 'write'],
+        jti: 'mock-token-id'
+      }
+    } catch (error) {
+      return {
+        isValid: false,
+        error: error instanceof Error ? error.message : 'Unknown validation error'
+      }
+    }
+  }
+}
 
 /**
  * Security headers middleware

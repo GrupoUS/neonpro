@@ -1,3 +1,54 @@
+/**
+ * Treatment Recommendations Dashboard Component
+ * 
+ * AI-powered treatment recommendation system for aesthetic medicine with Brazilian
+ * healthcare compliance. This component provides intelligent treatment suggestions
+ * based on patient assessment data, clinical guidelines, and evidence-based practices
+ * while adhering to CFM (Conselho Federal de Medicina) and ANVISA regulations.
+ * 
+ * @component
+ * @example
+ * // Usage in patient assessment workflow
+ * <TreatmentRecommendationsDashboard 
+ *   patientId="patient-123"
+ *   assessmentId="assessment-456"
+ *   onTreatmentPlanCreate={handlePlanCreation}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant for healthcare provider accessibility
+ * - Brazilian medical ethics compliance (CFM Resolution 2.227/2018)
+ * - AI recommendations with confidence scoring and clinical validation
+ * - Integration with electronic health records and treatment history
+ * - Portuguese language interface optimized for Brazilian healthcare professionals
+ * - Mobile-responsive for clinical workflow support
+ * 
+ * @security
+ * - Encrypted AI model communication and data processing
+ * - Patient data anonymization for AI analysis when appropriate
+ * - Audit logging of AI recommendations and clinical decisions
+ * - Compliance with LGPD for AI-processed health data
+ * - Clinical validation requirements before treatment implementation
+ * 
+ * @accessibility
+ * - High contrast display for clinical environments
+ * - Screen reader optimized for complex medical information
+ * - Clear confidence indicators for AI recommendations
+ * - Keyboard navigation support for clinical workflows
+ * 
+ * @compliance
+ * CFM Resolution 2.227/2018 - Telemedicine and AI in clinical practice
+ * ANVISA RDC 15/2012 - Medical device and treatment safety
+ * LGPD Lei 13.709/2018 - AI data processing and patient rights
+ * ISO 13485 - Medical device quality management for AI systems
+ * 
+ * @aiEthics
+ * - Human oversight requirement for all AI recommendations
+ * - Explainable AI with clinical reasoning transparency
+ * - Bias mitigation and fairness in treatment suggestions
+ * - Continuous monitoring of AI system performance and safety
+ */
+
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
@@ -25,6 +76,43 @@ import {
   TrendingUp,
 } from 'lucide-react'
 
+/**
+ * Props interface for TreatmentRecommendationsDashboard component
+ * 
+ * Defines the configuration and callback handlers for AI-powered treatment
+ * recommendation system with Brazilian healthcare compliance requirements.
+ * 
+ * @interface TreatmentRecommendationsDashboardProps
+ * 
+ * @property {string} patientId - Unique patient identifier
+ *   Used for fetching patient data and personalizing AI recommendations
+ *   Must be a valid patient record from the electronic health system
+ * @property {string} [assessmentId] - Optional assessment identifier
+ *   Links recommendations to specific patient assessment data
+ *   Provides context for AI analysis and treatment personalization
+ * @property {Function} [onTreatmentPlanCreate] - Optional callback for treatment plan creation
+ *   @param {TreatmentRecommendation[]} recommendations - Selected AI recommendations
+ *   @returns {void}
+ *   Called when healthcare provider finalizes treatment selection
+ * 
+ * @example
+ * const props: TreatmentRecommendationsDashboardProps = {
+ *   patientId: 'patient-123',
+ *   assessmentId: 'assessment-456',
+ *   onTreatmentPlanCreate: (recommendations) => {
+ *     treatmentService.createPlan(patientId, recommendations);
+ *   }
+ * };
+ * 
+ * @security
+ * Patient identifiers must be validated and authorized according to
+ * healthcare data access regulations and CFM standards.
+ * 
+ * @compliance
+ * All AI recommendations must be reviewed and approved by licensed
+ * healthcare professionals before implementation, as required by
+ * CFM Resolution 2.227/2018 for AI-assisted clinical decisions.
+ */
 interface TreatmentRecommendationsDashboardProps {
   patientId: string
   assessmentId?: string

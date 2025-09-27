@@ -1,7 +1,109 @@
+/**
+ * Healthcare Loading Component
+ * 
+ * Brazilian healthcare compliant loading indicator for aesthetic clinic applications.
+ * This component provides accessible loading states with healthcare-appropriate
+ * messaging and compliance considerations.
+ * 
+ * @component
+ * @example
+ * // Usage in healthcare data loading
+ * <HealthcareLoading 
+ *   variant="progress"
+ *   text="Carregando dados do paciente..."
+ *   progress={65}
+ *   accessible={true}
+ * />
+ * 
+ * @example
+ * // Usage for treatment processing
+ * <HealthcareLoading 
+ *   variant="spinner"
+ *   size="lg"
+ *   text="Processando informações do tratamento..."
+ *   accessible={true}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant loading state announcements
+ * - Brazilian healthcare loading standards compliance
+ * - Patient-appropriate loading messaging
+ * - Screen reader optimized for accessibility
+ * - Portuguese language loading messages
+ * - Mobile-responsive with appropriate sizing
+ * - Healthcare-specific loading contexts (patient data, treatments, etc.)
+ * 
+ * @accessibility
+ * - Screen reader announcements via ARIA live regions
+ * - Progress indicators with appropriate ARIA attributes
+ * - High contrast visibility for clinical environments
+ * - Clear loading status communication
+ * - Keyboard accessible loading states
+ * 
+ * @compliance
+ * WCAG 2.1 AA+ - Web content accessibility guidelines
+ * Brazilian Inclusion Law - Accessibility requirements
+ * Healthcare application usability standards
+ * 
+ * @patientExperience
+ * Loading states designed to reduce patient anxiety
+ * with clear communication and appropriate timing feedback.
+ */
+
 import * as React from 'react'
 import { useTranslation } from '@/lib/i18n/use-translation'
 import { cn } from '@/lib/utils.js'
 
+/**
+ * Props interface for HealthcareLoading component
+ * 
+ * Defines the configuration for accessible loading indicators in healthcare
+ * applications with Brazilian compliance requirements.
+ * 
+ * @interface HealthcareLoadingProps
+ * 
+ * @property {'sm' | 'md' | 'lg' | 'xl'} [size='md'] - Loading indicator size
+ *   - 'sm': Small (16x16px) - Suitable for inline loading
+ *   - 'md': Medium (24x24px) - Default size for most uses
+ *   - 'lg': Large (32x32px) - Suitable for main content loading
+ *   - 'xl': Extra Large (48x48px) - For prominent loading states
+ *   Size should be appropriate for context and importance
+ * @property {'spinner' | 'skeleton' | 'progress' | 'pulse'} [variant='spinner'] - Loading visual variant
+ *   - 'spinner': Rotating spinner animation
+ *   - 'skeleton': Skeleton placeholder for content loading
+ *   - 'progress': Progress bar with percentage completion
+ *   - 'pulse': Pulsing animation for subtle loading indication
+ *   Choice depends on type of content being loaded
+ * @property {string} [text] - Custom loading text in Portuguese
+ *   Overrides default translation with specific messaging
+ *   Should be clear and appropriate for healthcare context
+ * @property {string} [className] - Additional CSS classes
+ *   For custom styling while maintaining accessibility
+ *   Should not override critical accessibility styles
+ * @property {number} [progress] - Progress percentage for progress variant
+ *   Value between 0-100 for progress bar display
+ *   Required when variant is 'progress'
+ * @property {boolean} [accessible=true] - Enable accessibility features
+ *   Controls ARIA attributes and screen reader support
+ *   Should generally remain true for healthcare applications
+ * 
+ * @example
+ * const props: HealthcareLoadingProps = {
+ *   size: 'lg',
+ *   variant: 'progress',
+ *   text: 'Carregando histórico de tratamentos...',
+ *   progress: 75,
+ *   accessible: true
+ * };
+ * 
+ * @accessibility
+ * When accessible is true, component automatically provides
+ * appropriate ARIA attributes for screen reader support.
+ * 
+ * @localization
+ * Loading text should be provided in Portuguese for Brazilian
+ * healthcare applications, with fallback to translation system.
+ */
 export interface HealthcareLoadingProps {
   size?: 'sm' | 'md' | 'lg' | 'xl'
   variant?: 'spinner' | 'skeleton' | 'progress' | 'pulse'

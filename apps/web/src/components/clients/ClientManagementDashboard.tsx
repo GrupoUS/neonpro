@@ -1,8 +1,52 @@
 /**
  * Enhanced Client Management Dashboard with AI Analytics
- *
- * Comprehensive dashboard for client management with AI-powered insights,
- * retention analytics, and intelligent workflow automation.
+ * 
+ * Brazilian healthcare compliant client management dashboard with AI-powered insights
+ * for aesthetic clinics. This component provides comprehensive client relationship
+ * management while maintaining compliance with LGPD and Brazilian healthcare regulations.
+ * 
+ * @component
+ * @example
+ * // Usage in clinic management system
+ * <ClientManagementDashboard 
+ *   clinicId="clinic-123"
+ *   onClientSelect={handleClientSelection}
+ *   onCampaignCreate={handleCampaignCreation}
+ *   healthcareContext={clinicContext}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant for healthcare provider accessibility
+ * - LGPD (Lei 13.709/2018) compliant client data management
+ * - Brazilian healthcare client relationship management standards
+ * - AI-powered analytics with transparent decision support
+ * - Portuguese language interface optimized for Brazilian clinic staff
+ * - Mobile-responsive for clinical workflow support
+ * 
+ * @security
+ * - Encrypted client data transmission and storage
+ * - Role-based access control for sensitive client information
+ * - Audit logging for all client data access and modifications
+ * - Compliance with LGPD data minimization principles
+ * - AI analytics with anonymized data processing when appropriate
+ * 
+ * @accessibility
+ * - High contrast mode for clinical environments
+ * - Screen reader optimized for complex client data presentation
+ * - Keyboard navigation support for accessibility compliance
+ * - Clear data visualization for various accessibility needs
+ * 
+ * @compliance
+ * LGPD Lei 13.709/2018 - Client data protection and management
+ * CFM Resolution 2.217/2018 - Professional-client relationship standards
+ * ANVISA RDC 15/2012 - Healthcare facility management requirements
+ * Brazilian Consumer Protection Code - Client rights and service standards
+ * 
+ * @aiEthics
+ * - Human oversight requirement for all AI recommendations
+ * - Explainable AI with clear reasoning for client insights
+ * - Bias mitigation and fairness in client analytics
+ * - Continuous monitoring of AI system performance and accuracy
  */
 
 import { Alert, AlertDescription } from '@/components/ui/alert.js'
@@ -31,6 +75,43 @@ import {
 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
+/**
+ * Client metrics interface for dashboard analytics
+ * 
+ * Defines key performance indicators for client management in Brazilian
+ * aesthetic clinics with compliance considerations.
+ * 
+ * @interface ClientMetrics
+ * 
+ * @property {number} totalClients - Total number of registered clients
+ *   Count of all active clients in the clinic database
+ *   Used for overall business health assessment
+ * @property {number} newClientsThisMonth - New client acquisitions this month
+ *   Count of clients who registered in the current month
+ *   Important for growth trend analysis and marketing effectiveness
+ * @property {number} retentionRate - Client retention rate as percentage
+ *   Calculated as: (retained clients / total clients) * 100
+ *   Critical indicator of service quality and client satisfaction
+ * @property {number} highRiskClients - Number of high-risk clients
+ *   Clients identified as at risk of leaving due to various factors
+ *   Requires immediate intervention and retention strategies
+ * @property {number} averageSatisfaction - Average satisfaction score
+ *   Typically measured on a scale (1-5 or 1-10)
+ *   Key indicator of service quality and client experience
+ * 
+ * @example
+ * const metrics: ClientMetrics = {
+ *   totalClients: 1250,
+ *   newClientsThisMonth: 45,
+ *   retentionRate: 87.5,
+ *   highRiskClients: 23,
+ *   averageSatisfaction: 4.2
+ * };
+ * 
+ * @compliance
+ * Metrics collection must comply with LGPD data processing
+ * regulations and Brazilian consumer protection standards.
+ */
 // Types
 interface ClientMetrics {
   totalClients: number
@@ -40,6 +121,59 @@ interface ClientMetrics {
   averageSatisfaction: number
 }
 
+/**
+ * Retention analytics interface for client risk assessment
+ * 
+ * Comprehensive client retention analysis with AI-powered risk assessment
+ * and actionable recommendations for Brazilian aesthetic clinics.
+ * 
+ * @interface RetentionAnalytics
+ * 
+ * @property {string} clientId - Unique client identifier
+ *   Used for tracking individual client retention metrics
+ *   Must be linked to client management system
+ * @property {'low' | 'medium' | 'high'} riskLevel - Client retention risk level
+ *   - 'low': Client stable with high satisfaction
+ *   - 'medium': Client showing early signs of dissatisfaction
+ *   - 'high': Client at immediate risk of leaving
+ *   Determines urgency and type of intervention needed
+ * @property {number} riskScore - Numerical risk score (0-100)
+ *   Calculated based on multiple behavioral and satisfaction factors
+ *   Higher scores indicate greater retention risk
+ * @property {Array<{factor: string, impact: 'positive' | 'negative', weight: number, description: string}>} factors - Risk analysis factors
+ *   Individual factors contributing to risk assessment
+ *   Each factor has impact direction and weight in scoring
+ * @property {Array<{id: string, type: 'communication' | 'incentive' | 'intervention' | 'follow_up', priority: 'low' | 'medium' | 'high'} recommendations - Actionable recommendations
+ *   AI-generated retention strategies based on risk analysis
+ *   Prioritized for effective resource allocation
+ * 
+ * @example
+ * const analytics: RetentionAnalytics = {
+ *   clientId: 'client-123',
+ *   riskLevel: 'medium',
+ *   riskScore: 65,
+ *   factors: [
+ *     {
+ *       factor: 'Satisfaction Score',
+ *       impact: 'negative',
+ *       weight: 0.4,
+ *       description: 'Recent satisfaction survey showed decline'
+ *     }
+ *   ],
+ *   recommendations: [
+ *     {
+ *       id: 'rec-1',
+ *       type: 'communication',
+ *       priority: 'high',
+ *       title: 'Personal Follow-up Call'
+ *     }
+ *   ]
+ * };
+ * 
+ * @compliance
+ * AI analysis must comply with LGPD and provide transparent
+ * reasoning for all risk assessments and recommendations.
+ */
 interface RetentionAnalytics {
   clientId: string
   riskLevel: 'low' | 'medium' | 'high'

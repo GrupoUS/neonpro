@@ -340,7 +340,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
 
     switch (rule.type) {
       case 'map':
-        transformedValue = rule.logic.mapping[sourceValue] || sourceValue
+        transformedValue = rule.logic.mapping[String(sourceValue)] || sourceValue
         break
 
       case 'anonymize':
@@ -361,17 +361,30 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: Record<string, unknown>, fieldPath: string): unknown {
-    return fieldPath.split('.').reduce((obj, _key) => obj?.[_key], record)
+    return fieldPath.split('.').reduce<unknown>((obj, _key) => {
+      if (obj && typeof obj === 'object' && _key in (obj as Record<string, unknown>)) {
+        return (obj as Record<string, unknown>)[_key]
+      }
+      return undefined
+    }, record)
   }
 
   private setFieldValue(record: Record<string, unknown>, fieldPath: string, value: unknown): void {
     const keys = fieldPath.split('.')
     const lastKey = keys.pop()!
     const target = keys.reduce((obj, _key) => {
-      if (!obj[_key]) obj[_key] = {}
-      return obj[_key]
+      if (obj && typeof obj === 'object') {
+        const typedObj = obj as Record<string, unknown>
+        if (!typedObj[_key]) {
+          typedObj[_key] = {}
+        }
+        return typedObj[_key] as Record<string, unknown>
+      }
+      return obj
     }, record)
-    target[lastKey] = value
+    if (target && typeof target === 'object') {
+      (target as Record<string, unknown>)[lastKey] = value
+    }
   }
 
   private validateCompliance(_record: Record<string, unknown>, _rule: ValidationRule): boolean {

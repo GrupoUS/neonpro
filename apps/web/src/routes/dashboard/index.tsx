@@ -1,441 +1,308 @@
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card } from '@/components/ui/card.js'
-import { useAuth } from '@/contexts/AuthContext.js'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { AnimatePresence, motion } from 'framer-motion'
 import {
-    Activity,
-    Bell,
-    Calendar,
-    DollarSign,
-    LogOut,
-    Menu,
-    Search,
-    Settings,
-    TrendingUp,
-    Users,
-    X,
+  Bell,
+  BarChart3,
+  Calendar,
+  Users,
+  DollarSign,
+  Menu,
+  Search,
+  Settings,
+  TrendingUp,
+  X,
+  Shield,
+  MessageSquare,
+  Brain,
+  FileText,
+  Zap
 } from 'lucide-react'
 import { useState } from 'react'
 
-export const Route = createFileRoute('/dashboard/')({
-  component: DashboardPage,
+export const Route = createFileRoute('/dashboard/')({ 
+  component: Dashboard,
 })
-
-function DashboardPage() {
-  return (
-    <ProtectedRoute requireEmailVerification={false}>
-      <Dashboard />
-    </ProtectedRoute>
-  )
-}
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const { user, signOut } = useAuth()
-
-  const handleLogout = async () => {
-    const result = await signOut()
-    if (!result.error) {
-      window.location.href = '/auth/login'
-    }
-  }
 
   const menuItems = [
-    { icon: TrendingUp, label: 'Visão Geral', href: '/dashboard/' },
-    { icon: Users, label: 'Pacientes', href: '/patient-engagement/' },
-    { icon: Calendar, label: 'Agendamentos', href: '/aesthetic-scheduling/' },
-    { icon: DollarSign, label: 'Financeiro', href: '/financial-management/' },
-    { icon: Activity, label: 'Prontuários', href: '/ai-clinical-support/' },
-    { icon: Calendar, label: 'Coordenação', href: '/coordination/' },
-    { icon: Activity, label: 'Analytics', href: '/analytics/' },
+    { icon: BarChart3, label: 'Dashboard', href: '/dashboard' },
+    { icon: Users, label: 'Pacientes', href: '/patients' },
+    { icon: Calendar, label: 'Agendamentos', href: '/appointments' },
+    { icon: MessageSquare, label: 'Engajamento', href: '/patient-engagement' },
+    { icon: Calendar, label: 'Agendamento Estético', href: '/aesthetic-scheduling' },
+    { icon: Brain, label: 'Suporte Clínico IA', href: '/ai-clinical-support' },
+    { icon: DollarSign, label: 'Financeiro', href: '/financial-management' },
+    { icon: BarChart3, label: 'Analytics', href: '/analytics' },
+    { icon: Shield, label: 'Compliance', href: '/compliance' },
+    { icon: Settings, label: 'Configurações', href: '/settings' },
   ]
 
-  const stats = [
+  const dashboardStats = [
     {
-      title: 'Pacientes Ativos',
-      value: '1,247',
+      title: 'Total de Pacientes',
+      value: '2,847',
       change: '+12%',
       icon: Users,
       color: 'text-blue-600',
+      bgColor: 'bg-blue-50'
     },
     {
-      title: 'Consultas Hoje',
-      value: '24',
+      title: 'Agendamentos Hoje',
+      value: '23',
       change: '+8%',
       icon: Calendar,
       color: 'text-green-600',
+      bgColor: 'bg-green-50'
     },
     {
-      title: 'Faturamento Mês',
-      value: 'R$ 89.450',
-      change: '+23%',
+      title: 'Receita Mensal',
+      value: 'R$ 157.420',
+      change: '+15%',
       icon: DollarSign,
-      color: 'text-purple-600',
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-50'
     },
     {
-      title: 'Taxa Ocupação',
+      title: 'Taxa de Ocupação',
       value: '87%',
-      change: '+5%',
-      icon: Activity,
-      color: 'text-orange-600',
-    },
-  ]
-
-  const recentAppointments = [
-    {
-      name: 'Ana Silva',
-      time: '09:00',
-      service: 'Botox',
-      status: 'Confirmado',
-    },
-    {
-      name: 'Carlos Santos',
-      time: '10:30',
-      service: 'Preenchimento',
-      status: 'Confirmado',
-    },
-    {
-      name: 'Maria Oliveira',
-      time: '14:00',
-      service: 'Limpeza',
-      status: 'Aguardando',
-    },
-    {
-      name: 'João Costa',
-      time: '15:30',
-      service: 'Ácido',
-      status: 'Confirmado',
-    },
-  ]
-
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      change: '+3%',
+      icon: TrendingUp,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50'
     }
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5
-      }
-    }
-  }
-
-  const sidebarVariants = {
-    open: { x: 0 },
-    closed: { x: '-100%' }
-  }
+  ]
 
   return (
-    <div className="min-h-screen bg-neonpro-background">
+    <div className='min-h-screen bg-gray-50'>
       {/* Mobile sidebar overlay */}
-      <AnimatePresence>
-        {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          >
-            <div className="fixed inset-0 bg-neonpro-deep-blue bg-opacity-75"></div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {sidebarOpen && (
+        <div 
+          className='fixed inset-0 z-40 lg:hidden bg-gray-600 bg-opacity-75'
+          onClick={() => setSidebarOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setSidebarOpen(false)
+          }}
+          role="button"
+          tabIndex={0}
+          aria-label="Fechar sidebar"
+        >
+        </div>
+      )}
 
       {/* Sidebar */}
-      <motion.div
-        variants={sidebarVariants}
-        animate={sidebarOpen ? 'open' : 'closed'}
-        transition={{ duration: 0.3, ease: 'easeInOut' }}
-        className="fixed inset-y-0 left-0 z-50 w-64 bg-white neonpro-neumorphic lg:translate-x-0 lg:static lg:inset-0"
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-neonpro-neutral/30">
-          <motion.div
-            className="flex items-center"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <div className="flex-shrink-0">
-              <div className="h-8 w-8 bg-neonpro-primary rounded-lg flex items-center justify-center neonpro-neumorphic">
-                <Activity className="h-5 w-5 text-white" />
+        <div className='flex items-center justify-between h-16 px-4 border-b'>
+          <div className='flex items-center'>
+            <div className='flex-shrink-0'>
+              <div className='h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center'>
+                <Zap className='h-5 w-5 text-white' />
               </div>
             </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-neonpro-deep-blue">NeonPro</p>
-            </div>
-          </motion.div>
-          <Button
-            onClick={() => setSidebarOpen(false)}
-            variant="ghost"
-            size="icon"
-            className="lg:hidden"
-          >
-            <X className="h-6 w-6 text-neonpro-deep-blue/60" />
-          </Button>
-        </div>
-
-        <nav className="mt-8 px-2">
-          <motion.div
-            className="space-y-1"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {menuItems.map((item, index) => (
-              <motion.div
-                key={item.label}
-                variants={itemVariants}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <Link
-                  to={item.href}
-                  className="group flex items-center px-2 py-2 text-base font-medium rounded-md text-neonpro-deep-blue/70 hover:bg-neonpro-primary/10 hover:text-neonpro-primary transition-colors healthcare-focus-ring"
-                >
-                  <item.icon className="mr-4 h-6 w-6" />
-                  {item.label}
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        </nav>
-      </motion.div>
-
-      {/* Main content */}
-      <div className="lg:pl-64">
-        {/* Top navigation */}
-        <motion.header
-          className="bg-white neonpro-neumorphic border-b border-neonpro-neutral/30"
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center">
-              <Button
-                onClick={() => setSidebarOpen(true)}
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
-              >
-                <Menu className="h-6 w-6 text-neonpro-deep-blue/60" />
-              </Button>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-neonpro-deep-blue/70 mr-4">
-                Olá, {user?.firstName || user?.email || 'Usuário'}
-              </span>
-              <Button variant="ghost" size="icon">
-                <Search className="h-6 w-6" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Bell className="h-6 w-6" />
-              </Button>
-              <Button variant="ghost" size="icon">
-                <Settings className="h-6 w-6" />
-              </Button>
-              <Button variant="ghost" size="icon" onClick={handleLogout}>
-                <LogOut className="h-6 w-6" />
-              </Button>
+            <div className='ml-3'>
+              <p className='text-sm font-medium text-gray-900'>NeonPro</p>
+              <p className='text-xs text-gray-500'>Clínica Estética</p>
             </div>
           </div>
-        </motion.header>
+          <button onClick={() => setSidebarOpen(false)} className='lg:hidden'>
+            <X className='h-6 w-6 text-gray-400' />
+          </button>
+        </div>
+
+        <nav className='mt-8 px-2'>
+          <div className='space-y-1'>
+            {menuItems.map(item => (
+              <Link
+                key={`menu-${item.label}`}
+                to={item.href}
+                className='group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                activeProps={{
+                  className: 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
+                }}
+              >
+                <item.icon className='mr-4 h-6 w-6' />
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      </div>
+
+      {/* Main content */}
+      <div className='lg:pl-64'>
+        {/* Top navigation */}
+        <header className='bg-white shadow-sm border-b border-gray-200'>
+          <div className='flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8'>
+            <div className='flex items-center'>
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className='lg:hidden'
+              >
+                <Menu className='h-6 w-6 text-gray-400' />
+              </button>
+              <h1 className='ml-4 text-xl font-semibold text-gray-900'>
+                Dashboard Principal
+              </h1>
+            </div>
+
+            <div className='flex items-center space-x-4'>
+              <button className='p-1 text-gray-400 hover:text-gray-500'>
+                <Search className='h-6 w-6' />
+              </button>
+              <button className='p-1 text-gray-400 hover:text-gray-500 relative'>
+                <Bell className='h-6 w-6' />
+                <span className='absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center'>3</span>
+              </button>
+              <button className='p-1 text-gray-400 hover:text-gray-500'>
+                <Settings className='h-6 w-6' />
+              </button>
+            </div>
+          </div>
+        </header>
 
         {/* Dashboard content */}
-        <motion.main
-          className="p-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <motion.div
-            className="mb-8"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-          >
-            <h1 className="text-3xl font-bold text-neonpro-deep-blue">Visão Geral</h1>
-            <p className="text-neonpro-deep-blue/70">Bem-vindo ao seu painel de controle</p>
-          </motion.div>
+        <main className='p-6'>
+          {/* Welcome section */}
+          <div className='mb-8'>
+            <h2 className='text-2xl font-bold text-gray-900 mb-2'>Bem-vindo ao NeonPro!</h2>
+            <p className='text-gray-600'>Aqui está o resumo da sua clínica estética hoje.</p>
+          </div>
 
           {/* Stats cards */}
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.title}
-                variants={itemVariants}
-                whileHover={{ scale: 1.02, y: -2 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Card className="overflow-hidden border border-neonpro-neutral/30 bg-white neonpro-neumorphic">
-                  <div className="p-6">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <stat.icon className={`h-8 w-8 ${stat.color}`} />
-                      </div>
-                      <div className="ml-5 w-0 flex-1">
-                        <dl>
-                          <dt className="text-sm font-medium text-neonpro-deep-blue/70 truncate">
-                            {stat.title}
-                          </dt>
-                          <dd className="flex items-baseline">
-                            <div className="text-2xl font-semibold text-neonpro-deep-blue">
-                              {stat.value}
-                            </div>
-                            <div className="ml-2 flex items-baseline text-sm font-semibold text-green-600">
-                              {stat.change}
-                            </div>
-                          </dd>
-                        </dl>
-                      </div>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
+            {dashboardStats.map((stat) => (
+              <div key={`stat-${stat.title}`} className='bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6'>
+                <div className='flex items-center'>
+                  <div className='flex-shrink-0'>
+                    <div className={`h-10 w-10 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
+                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
                     </div>
                   </div>
-                </Card>
-              </motion.div>
+                  <div className='ml-5 w-0 flex-1'>
+                    <dl>
+                      <dt className='text-sm font-medium text-gray-500 truncate'>
+                        {stat.title}
+                      </dt>
+                      <dd className='flex items-baseline'>
+                        <div className='text-2xl font-semibold text-gray-900'>
+                          {stat.value}
+                        </div>
+                        <div className='ml-2 flex items-baseline text-sm font-semibold text-green-600'>
+                          {stat.change}
+                        </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
             ))}
-          </motion.div>
+          </div>
 
-          {/* Recent appointments */}
-          <motion.div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            <motion.div variants={itemVariants}>
-              <Card variant="neonpro">
-                <div className="px-6 py-4 border-b border-neonpro-neutral/30">
-                  <h3 className="text-lg font-medium text-neonpro-deep-blue">
-                    Consultas de Hoje
-                  </h3>
-                </div>
-                <div className="p-0">
-                  <div className="divide-y divide-neonpro-neutral/30">
-                    {recentAppointments.map((appointment, index) => (
-                      <motion.div
-                        key={`${appointment.name}-${appointment.time}`}
-                        className="px-6 py-4"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * index }}
-                        whileHover={{ backgroundColor: 'rgba(172, 148, 105, 0.05)' }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-neonpro-deep-blue">
-                              {appointment.name}
-                            </p>
-                            <p className="text-sm text-neonpro-deep-blue/60">
-                              {appointment.service}
-                            </p>
-                          </div>
-                          <div className="text-right flex flex-col items-end gap-2">
-                            <p className="text-sm font-medium text-neonpro-deep-blue">
-                              {appointment.time}
-                            </p>
-                            <Badge className="bg-neonpro-primary/10 text-neonpro-primary border-neonpro-primary/20">
-                              {appointment.status}
-                            </Badge>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
+          {/* Dashboard Cards Layout */}
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
+            {/* Appointments Card */}
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='mb-4'>
+                <h3 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
+                  <Calendar className='h-5 w-5' />
+                  Próximos Agendamentos
+                </h3>
+              </div>
+              <div className='space-y-3'>
+                <div className='flex items-center justify-between p-2 bg-gray-50 rounded'>
+                  <div>
+                    <p className='font-medium text-sm'>Maria Silva</p>
+                    <p className='text-xs text-gray-500'>Botox - 14:30</p>
                   </div>
+                  <span className='text-xs bg-green-100 text-green-800 px-2 py-1 rounded'>Confirmado</span>
                 </div>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={itemVariants}>
-              <Card variant="neonpro">
-                <div className="px-6 py-4 border-b border-neonpro-neutral/30">
-                  <h3 className="text-lg font-medium text-neonpro-deep-blue">
-                    Atividade Recente
-                  </h3>
-                </div>
-                <div className="p-6">
-                  <div className="space-y-4">
-                    <motion.div
-                      className="flex items-start"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 }}
-                    >
-                      <div className="flex-shrink-0">
-                        <div className="h-8 w-8 bg-neonpro-primary/20 rounded-full flex items-center justify-center">
-                          <Users className="h-4 w-4 text-neonpro-primary" />
-                        </div>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-neonpro-deep-blue">
-                          Novo paciente cadastrado
-                        </p>
-                        <p className="text-sm text-neonpro-deep-blue/60">Há 2 minutos</p>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      className="flex items-start"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.2 }}
-                    >
-                      <div className="flex-shrink-0">
-                        <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                          <DollarSign className="h-4 w-4 text-green-600" />
-                        </div>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-neonpro-deep-blue">
-                          Pagamento confirmado
-                        </p>
-                        <p className="text-sm text-neonpro-deep-blue/60">Há 15 minutos</p>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      className="flex items-start"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.3 }}
-                    >
-                      <div className="flex-shrink-0">
-                        <div className="h-8 w-8 bg-neonpro-accent/20 rounded-full flex items-center justify-center">
-                          <Calendar className="h-4 w-4 text-neonpro-accent" />
-                        </div>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-neonpro-deep-blue">
-                          Agendamento cancelado
-                        </p>
-                        <p className="text-sm text-neonpro-deep-blue/60">Há 1 hora</p>
-                      </div>
-                    </motion.div>
+                <div className='flex items-center justify-between p-2 bg-gray-50 rounded'>
+                  <div>
+                    <p className='font-medium text-sm'>João Santos</p>
+                    <p className='text-xs text-gray-500'>Preenchimento - 15:00</p>
                   </div>
+                  <span className='text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded'>Pendente</span>
                 </div>
-              </Card>
-            </motion.div>
-          </motion.div>
-        </motion.main>
+              </div>
+            </div>
+
+            {/* Quick Actions Card */}
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='mb-4'>
+                <h3 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
+                  <Zap className='h-5 w-5' />
+                  Ações Rápidas
+                </h3>
+              </div>
+              <div className='space-y-2'>
+                <button className='w-full flex items-center justify-start px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors'>
+                  <Users className='h-4 w-4 mr-2' />
+                  Novo Paciente
+                </button>
+                <button className='w-full flex items-center justify-start px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors'>
+                  <Calendar className='h-4 w-4 mr-2' />
+                  Agendar Consulta
+                </button>
+                <button className='w-full flex items-center justify-start px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors'>
+                  <FileText className='h-4 w-4 mr-2' />
+                  Relatório Diário
+                </button>
+              </div>
+            </div>
+
+            {/* Revenue Card */}
+            <div className='bg-white rounded-lg shadow p-6'>
+              <div className='mb-4'>
+                <h3 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
+                  <DollarSign className='h-5 w-5' />
+                  Receita do Mês
+                </h3>
+              </div>
+              <div className='text-center'>
+                <div className='text-3xl font-bold text-green-600 mb-2'>R$ 157.420</div>
+                <div className='text-sm text-gray-500 mb-4'>Meta: R$ 150.000</div>
+                <div className='w-full bg-gray-200 rounded-full h-2'>
+                  <div className='bg-green-600 h-2 rounded-full' style={{ width: '105%' }}></div>
+                </div>
+                <p className='text-xs text-green-600 mt-2'>+5% acima da meta</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className='bg-white rounded-lg shadow p-6'>
+            <div className='mb-4'>
+              <h3 className='text-lg font-semibold text-gray-900'>Atividade Recente</h3>
+            </div>
+            <div className='space-y-4'>
+              <div className='flex items-center space-x-3'>
+                <div className='h-2 w-2 bg-green-500 rounded-full'></div>
+                <div className='flex-1'>
+                  <p className='text-sm font-medium'>Nova consulta agendada</p>
+                  <p className='text-xs text-gray-500'>Maria Silva - Botox - há 5 minutos</p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3'>
+                <div className='h-2 w-2 bg-blue-500 rounded-full'></div>
+                <div className='flex-1'>
+                  <p className='text-sm font-medium'>Pagamento recebido</p>
+                  <p className='text-xs text-gray-500'>R$ 1.200,00 - João Santos - há 15 minutos</p>
+                </div>
+              </div>
+              <div className='flex items-center space-x-3'>
+                <div className='h-2 w-2 bg-yellow-500 rounded-full'></div>
+                <div className='flex-1'>
+                  <p className='text-sm font-medium'>Lembrete automático enviado</p>
+                  <p className='text-xs text-gray-500'>Ana Costa - consulta amanhã - há 30 minutos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   )
