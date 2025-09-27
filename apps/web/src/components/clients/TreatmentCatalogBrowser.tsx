@@ -49,6 +49,7 @@ import {
   // Heart,
   Star,
   // Activity,
+  X,
   Target,
   Zap,
 } from 'lucide-react'

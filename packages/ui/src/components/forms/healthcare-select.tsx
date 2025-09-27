@@ -295,7 +295,7 @@ export const HealthcareSelect = forwardRef<
         options = options.filter(
           option =>
             option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            option.description
+            (option as any).description
               ?.toLowerCase()
               .includes(searchTerm.toLowerCase()) ||
             option.medicalCode
@@ -388,11 +388,10 @@ export const HealthcareSelect = forwardRef<
       if (schema) {
         try {
           schema.parse(valueToValidate)
-        } catch (_validationError) {
-          if (_validationError instanceof z.ZodError) {
-            errors.push(
-              ..._validationError.errors.map(error => error.message),
-            )
+        } catch (validationError) {
+          if (validationError instanceof z.ZodError) {
+            const schemaErrors = (validationError as z.ZodError).issues.map((issue: z.ZodIssue) => issue.message)
+            errors.push(...schemaErrors)
           }
         }
       }

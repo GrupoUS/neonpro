@@ -2,34 +2,40 @@
   "name": "@neonpro/utils",
   "version": "0.1.0",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "description": "General utility functions for NeonPro aesthetic clinic platform, including date formatting and validation",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "bun x tsc -p tsconfig.json",
-    "dev": "tsc -w -p tsconfig.json",
-    "type-check": "tsc -p tsconfig.json --noEmit",
-    "clean": "rimraf dist",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
-    "lint": "echo 'lint placeholder'",
-    "prepare": "echo 'prepare script disabled for workspace install'"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "zod": "^3.22.0"
+    "@neonpro/types": "workspace:*",
+    "@neonpro/shared": "workspace:*",
+    "date-fns": "^3.6.0",
+    "valibot": "^1.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20.19.13",
-    "typescript": "^5.9.2"
+    "typescript": "^5.0.0"
   },
-  "publishConfig": {
-    "access": "restricted"
-  }
+  "keywords": [
+    "utils",
+    "utilities",
+    "date",
+    "validation",
+    "healthcare"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT"
 }

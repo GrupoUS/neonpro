@@ -198,9 +198,8 @@ export const HealthcareTextField = forwardRef<
           schema.parse(valueToValidate)
         } catch (validationError) {
           if (validationError instanceof z.ZodError) {
-            errors.push(
-              ...validationError.errors.map((err: z.ZodIssue) => err.message),
-            )
+            const schemaErrors = validationError.issues.map((issue: z.ZodIssue) => issue.message)
+            errors.push(...schemaErrors)
           }
         }
       }

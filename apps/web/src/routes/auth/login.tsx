@@ -3,14 +3,16 @@
  * 
  * Authentication login page with email/password and OAuth
  * Uses Supabase Auth with proper redirect handling
+ * Updated with shadcn/ui components and NeonPro branding
  * 
- * @version 1.0.0
+ * @version 2.0.0
  * @author NeonPro Platform Team
  */
 
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext.js'
+import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@neonpro/ui'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
@@ -66,49 +68,51 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+    <div className="min-h-screen flex items-center justify-center bg-neonpro-background p-4">
+      <Card className="w-full max-w-md" variant="neonpro">
+        <CardHeader className="text-center">
+          <CardTitle className="text-3xl font-extrabold text-neonpro-deep-blue">
             Entre na sua conta
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          </CardTitle>
+          <CardDescription className="text-neonpro-deep-blue/70">
             NeonPro - Plataforma de Gestão Estética
-          </p>
-        </div>
+          </CardDescription>
+        </CardHeader>
         
-        <div className="mt-8 space-y-6">
+        <CardContent className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
           
           {/* OAuth Login */}
-          <button
+          <Button
             onClick={handleGoogleLogin}
             disabled={loading}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            variant="neonpro-medical"
+            size="touch"
+            className="w-full"
           >
             {loading ? 'Carregando...' : 'Continuar com Google'}
-          </button>
+          </Button>
           
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+              <div className="w-full border-t border-neonpro-neutral/30" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">ou</span>
+              <span className="px-2 bg-card text-neonpro-deep-blue/60">ou</span>
             </div>
           </div>
           
           {/* Email/Password Login */}
-          <form className="space-y-6" onSubmit={handleEmailLogin}>
+          <form className="space-y-4" onSubmit={handleEmailLogin}>
             <div>
               <label htmlFor="email" className="sr-only">
                 Email
               </label>
-              <input
+              <Input
                 id="email"
                 name="email"
                 type="email"
@@ -116,8 +120,8 @@ function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Email"
+                className="text-accessible-base"
               />
             </div>
             
@@ -125,7 +129,7 @@ function LoginPage() {
               <label htmlFor="password" className="sr-only">
                 Senha
               </label>
-              <input
+              <Input
                 id="password"
                 name="password"
                 type="password"
@@ -133,29 +137,32 @@ function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
                 placeholder="Senha"
+                className="text-accessible-base"
               />
             </div>
             
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
-              >
-                {loading ? 'Entrando...' : 'Entrar com Email'}
-              </button>
-            </div>
+            <Button
+              type="submit"
+              disabled={loading}
+              variant="neonpro"
+              size="touch"
+              className="w-full"
+            >
+              {loading ? 'Entrando...' : 'Entrar com Email'}
+            </Button>
           </form>
           
           <div className="text-center">
-            <a href="/auth/signup" className="text-blue-600 hover:text-blue-500">
+            <a 
+              href="/auth/signup" 
+              className="text-neonpro-primary hover:text-neonpro-accent transition-colors text-accessible-sm"
+            >
               Não tem conta? Cadastre-se
             </a>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

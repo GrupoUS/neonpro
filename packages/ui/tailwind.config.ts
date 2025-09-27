@@ -38,11 +38,23 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+        // NeonPro Brand Colors from @apex-ui-ux-designer.md
+        'neonpro-primary': '#AC9469', // Golden Primary - Aesthetic Luxury
+        'neonpro-deep-blue': '#112031', // Healthcare Professional - Trust & Reliability
+        'neonpro-accent': '#d2aa60ff', // Gold Accent - Premium Services
+        'neonpro-neutral': '#B4AC9C', // Calming Light Beige
+        'neonpro-background': '#D2D0C8', // Soft Gray Background
       },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
+        'neonpro': '8px', // Standard border radius
+      },
+      boxShadow: {
+        // Neumorphic Design System from @apex-ui-ux-designer.md
+        'neumorphic-inset': 'inset 2px 2px 4px rgba(0,0,0,0.1)',
+        'neumorphic-raised': '4px 4px 8px rgba(0,0,0,0.15)',
       },
     },
   },

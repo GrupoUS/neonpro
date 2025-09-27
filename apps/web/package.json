@@ -36,9 +36,10 @@
     "@copilotkit/react-ui": "^1.10.4",
     "@copilotkit/runtime-client-gql": "^1.10.4",
     "@copilotkit/shared": "^1.10.4",
-    "@neonpro/shared": "workspace:*",
-    "@neonpro/types": "workspace:*",
-    "@neonpro/utils": "workspace:*",
+    "@neonpro/shared": "file:../../packages/shared",
+    "@neonpro/types": "file:../../packages/types",
+    "@neonpro/ui": "file:../../packages/ui",
+    "@neonpro/utils": "file:../../packages/utils",
     "@radix-ui/react-label": "2.1.7",
     "@radix-ui/react-progress": "^1.1.0",
     "@radix-ui/react-select": "2.2.6",
@@ -79,6 +80,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
+    "autoprefixer": "10.4.21",
     "dprint": "^0.45.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -86,6 +88,8 @@
     "jsdom": "^27.0.0",
     "oxlint": "^0.2.0",
     "playwright": "^1.40.0",
+    "postcss": "8.5.6",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.9.2",
     "vite": "^5.4.20",
     "vite-tsconfig-paths": "^5.1.4",
@@ -94,8 +98,5 @@
   "engines": {
     "node": ">=18.0.0",
     "bun": ">=1.0.0"
-  },
-  "workspaces": [
-    "."
-  ]
+  }
 }

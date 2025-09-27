@@ -63,92 +63,92 @@ interface CircularDependency {
 
 // Mock analyzer class (will be implemented in GREEN phase)
 class ImportDependencyAnalyzer {
-  async analyzeMonorepoImports(monorepoPath: string): Promise\u003cImportDependencyMap[]\u003e {
+  async analyzeMonorepoImports(_monorepoPath: string): Promise<ImportDependencyMap[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async validateWorkspaceProtocol(appPath: string): Promise\u003cWorkspaceProtocolViolation[]\u003e {
+  async validateWorkspaceProtocol(_appPath: string): Promise<WorkspaceProtocolViolation[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async detectCircularDependencies(): Promise\u003cCircularDependency[]\u003e {
+  async detectCircularDependencies(): Promise<CircularDependency[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async identifyMissingImports(expectedPatterns: Record\u003cstring, string[]\u003e): Promise\u003cMissingImport[]\u003e {
+  async identifyMissingImports(_expectedPatterns: Record<string, string[]>): Promise<MissingImport[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async detectIncorrectImports(): Promise\u003cIncorrectImport[]\u003e {
+  async detectIncorrectImports(): Promise<IncorrectImport[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 
-  async findUnusedImports(): Promise\u003cUnusedImport[]\u003e {
+  async findUnusedImports(): Promise<UnusedImport[]> {
     throw new Error('Not implemented - should fail in RED phase');
   }
 }
 
-describe('Import Dependency Validation (Contract Tests)', () =\u003e {
+describe('Import Dependency Validation (Contract Tests)', () => {
   let analyzer: ImportDependencyAnalyzer;
   const monorepoPath = '/home/vibecode/neonpro';
 
-  beforeEach(() =\u003e {
+  beforeEach(() => {
     analyzer = new ImportDependencyAnalyzer();
   });
 
-  describe('Workspace Protocol Validation', () =\u003e {
-    test('should validate all @neonpro/* packages use workspace: protocol', async () =\u003e {
+  describe('Workspace Protocol Validation', () => {
+    test('should validate all @neonpro/* packages use workspace: protocol', async () => {
       // RED: This test should FAIL initially
       const violations = await analyzer.validateWorkspaceProtocol('apps/api');
-      
+
       expect(violations).toBeDefined();
       expect(Array.isArray(violations)).toBe(true);
-      
+
       // Expected behavior: All @neonpro/* imports should use workspace: protocol
-      const internalPackageViolations = violations.filter(v =\u003e 
-        v.import_path.startsWith('@neonpro/') \u0026\u0026 
+      const internalPackageViolations = violations.filter(v =>
+        v.import_path.startsWith('@neonpro/') &&
         !v.current_protocol.startsWith('workspace:')
       );
-      
+
       expect(internalPackageViolations).toHaveLength(0);
     });
 
-    test('should identify workspace protocol violations in web app', async () =\u003e {
+    test('should identify workspace protocol violations in web app', async () => {
       // RED: This test should FAIL initially
       const violations = await analyzer.validateWorkspaceProtocol('apps/web');
-      
+
       expect(violations).toBeDefined();
-      
+
       // Expected: Web app should only use @neonpro/shared, @neonpro/utils, @neonpro/types
       const allowedPackages = ['@neonpro/shared', '@neonpro/utils', '@neonpro/types'];
-      const invalidImports = violations.filter(v =\u003e 
-        v.import_path.startsWith('@neonpro/') \u0026\u0026 
-        !allowedPackages.some(pkg =\u003e v.import_path.startsWith(pkg))
+      const invalidImports = violations.filter(v =>
+        v.import_path.startsWith('@neonpro/') &&
+        !allowedPackages.some(pkg => v.import_path.startsWith(pkg))
       );
-      
+
       expect(invalidImports).toHaveLength(0);
     });
   });
 
-  describe('Circular Dependency Detection', () =\u003e {
-    test('should detect circular dependencies between packages', async () =\u003e {
+  describe('Circular Dependency Detection', () => {
+    test('should detect circular dependencies between packages', async () => {
       // RED: This test should FAIL initially
       const circularDeps = await analyzer.detectCircularDependencies();
-      
+
       expect(circularDeps).toBeDefined();
       expect(Array.isArray(circularDeps)).toBe(true);
-      
+
       // Expected: No circular dependencies should exist
-      const criticalCircularDeps = circularDeps.filter(dep =\u003e dep.severity === 'critical');
+      const criticalCircularDeps = circularDeps.filter(dep => dep.severity === 'critical');
       expect(criticalCircularDeps).toHaveLength(0);
     });
 
-    test('should provide resolution suggestions for circular dependencies', async () =\u003e {
+    test('should provide resolution suggestions for circular dependencies', async () => {
       // RED: This test should FAIL initially
       const circularDeps = await analyzer.detectCircularDependencies();
-      
+
       // Expected: All detected circular dependencies should have resolution suggestions
-      circularDeps.forEach(dep =\u003e {
+      circularDeps.forEach(dep => {
         expect(dep.resolution_suggestion).toBeDefined();
         expect(dep.resolution_suggestion.length).toBeGreaterThan(0);
         expect(dep.cycle.length).toBeGreaterThan(1);
@@ -156,8 +156,8 @@ describe('Import Dependency Validation (Contract Tests)', () =\u003e {
     });
   });
 
-  describe('Missing Import Identification', () =\u003e {
-    test('should identify missing imports based on architecture documentation', async () =\u003e {
+  describe('Missing Import Identification', () => {
+    test('should identify missing imports based on architecture documentation', async () => {
       // Expected import patterns from NeonPro architecture
       const expectedPatterns = {
         'apps/api': ['@neonpro/database', '@neonpro/core-services', '@neonpro/security'],
@@ -166,55 +166,55 @@ describe('Import Dependency Validation (Contract Tests)', () =\u003e {
 
       // RED: This test should FAIL initially
       const missingImports = await analyzer.identifyMissingImports(expectedPatterns);
-      
+
       expect(missingImports).toBeDefined();
       expect(Array.isArray(missingImports)).toBe(true);
-      
+
       // Expected: All required packages should be properly imported
-      const highPriorityMissing = missingImports.filter(imp =\u003e imp.priority === 'high');
+      const highPriorityMissing = missingImports.filter(imp => imp.priority === 'high');
       expect(highPriorityMissing).toHaveLength(0);
     });
 
-    test('should prioritize missing imports correctly', async () =\u003e {
+    test('should prioritize missing imports correctly', async () => {
       const expectedPatterns = {
         'apps/api': ['@neonpro/security'] // Security is high priority
       };
 
       // RED: This test should FAIL initially
       const missingImports = await analyzer.identifyMissingImports(expectedPatterns);
-      
+
       // Expected: Security-related missing imports should be high priority
-      const securityMissing = missingImports.filter(imp =\u003e 
+      const securityMissing = missingImports.filter(imp =>
         imp.expected_package.includes('security')
       );
-      
-      securityMissing.forEach(imp =\u003e {
+
+      securityMissing.forEach(imp => {
         expect(imp.priority).toBe('high');
       });
     });
   });
 
-  describe('Incorrect Import Detection', () =\u003e {
-    test('should detect incorrect import paths', async () =\u003e {
+  describe('Incorrect Import Detection', () => {
+    test('should detect incorrect import paths', async () => {
       // RED: This test should FAIL initially
       const incorrectImports = await analyzer.detectIncorrectImports();
-      
+
       expect(incorrectImports).toBeDefined();
       expect(Array.isArray(incorrectImports)).toBe(true);
-      
+
       // Expected: All import paths should be correct
-      const wrongPackageImports = incorrectImports.filter(imp =\u003e 
+      const wrongPackageImports = incorrectImports.filter(imp =>
         imp.issue_type === 'wrong_package'
       );
       expect(wrongPackageImports).toHaveLength(0);
     });
 
-    test('should provide correct import path suggestions', async () =\u003e {
+    test('should provide correct import path suggestions', async () => {
       // RED: This test should FAIL initially
       const incorrectImports = await analyzer.detectIncorrectImports();
-      
+
       // Expected: All incorrect imports should have valid corrections
-      incorrectImports.forEach(imp =\u003e {
+      incorrectImports.forEach(imp => {
         expect(imp.correct_import_path).toBeDefined();
         expect(imp.correct_import_path).not.toBe(imp.current_import_path);
         expect(imp.correct_import_path.length).toBeGreaterThan(0);
@@ -222,53 +222,53 @@ describe('Import Dependency Validation (Contract Tests)', () =\u003e {
     });
   });
 
-  describe('Unused Import Detection', () =\u003e {
-    test('should identify unused imports safely', async () =\u003e {
+  describe('Unused Import Detection', () => {
+    test('should identify unused imports safely', async () => {
       // RED: This test should FAIL initially
       const unusedImports = await analyzer.findUnusedImports();
-      
+
       expect(unusedImports).toBeDefined();
       expect(Array.isArray(unusedImports)).toBe(true);
-      
+
       // Expected: All flagged unused imports should be safe to remove
-      const unsafeRemovals = unusedImports.filter(imp =\u003e !imp.can_safely_remove);
+      const unsafeRemovals = unusedImports.filter(imp => !imp.can_safely_remove);
       expect(unsafeRemovals).toHaveLength(0);
     });
 
-    test('should provide removal impact analysis', async () =\u003e {
+    test('should provide removal impact analysis', async () => {
       // RED: This test should FAIL initially
       const unusedImports = await analyzer.findUnusedImports();
-      
+
       // Expected: All unused imports should have impact analysis
-      unusedImports.forEach(imp =\u003e {
+      unusedImports.forEach(imp => {
         expect(imp.removal_impact).toBeDefined();
         expect(imp.removal_impact.length).toBeGreaterThan(0);
       });
     });
   });
 
-  describe('Complete Import Analysis Integration', () =\u003e {
-    test('should perform comprehensive import analysis of monorepo', async () =\u003e {
+  describe('Complete Import Analysis Integration', () => {
+    test('should perform comprehensive import analysis of monorepo', async () => {
       // RED: This test should FAIL initially
       const analysisResults = await analyzer.analyzeMonorepoImports(monorepoPath);
-      
+
       expect(analysisResults).toBeDefined();
       expect(Array.isArray(analysisResults)).toBe(true);
       expect(analysisResults.length).toBeGreaterThan(0);
-      
+
       // Expected: Analysis should cover all apps
-      const appNames = analysisResults.map(result =\u003e result.source_app);
+      const appNames = analysisResults.map(result => result.source_app);
       expect(appNames).toContain('apps/api');
       expect(appNames).toContain('apps/web');
     });
 
-    test('should validate package connections health', async () =\u003e {
+    test('should validate package connections health', async () => {
       // RED: This test should FAIL initially
       const analysisResults = await analyzer.analyzeMonorepoImports(monorepoPath);
-      
+
       // Expected: All package connections should be valid
-      analysisResults.forEach(result =\u003e {
-        const invalidConnections = result.target_packages.filter(conn =\u003e 
+      analysisResults.forEach(result => {
+        const invalidConnections = result.target_packages.filter(conn =>
           conn.connection_status !== 'valid'
         );
         expect(invalidConnections).toHaveLength(0);

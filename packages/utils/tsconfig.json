@@ -1,13 +1,19 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "noEmit": false,
+    "emitDeclarationOnly": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "paths": {
+      "@neonpro/types": ["../../packages/types/src/index.ts"],
+      "@neonpro/types/*": ["../../packages/types/src/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules"]

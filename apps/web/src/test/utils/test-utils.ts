@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import React from 'react'
 import { render, RenderOptions } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter } from '@tanstack/react-router'

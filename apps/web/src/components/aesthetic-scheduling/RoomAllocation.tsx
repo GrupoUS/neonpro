@@ -1,19 +1,19 @@
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Input } from '@/components/ui/input.js'
-import { Progress } from '@/components/ui/progress.js'
+import { 
+  Alert, AlertDescription, AlertTitle,
+  Badge, Button, Card, CardContent, CardHeader, CardTitle,
+  Input, Progress
+} from '@neonpro/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { apiClient as api } from '@/lib/api.js'
 import {
-  // Room,
+  type Room,
   type RoomAllocation,
-  // RoomSchedule,
-  // OptimizationResult,
-  // AestheticAppointment
+  type RoomSchedule,
+  type OptimizationResult,
+  type TimeSlot,
+  type TimeSlotString,
 } from '@/types/aesthetic-scheduling.js'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
@@ -71,18 +71,18 @@ export function RoomAllocation({
   const [isManualMode, setIsManualMode] = useState(false)
 
   // Fetch available rooms
-  const { data: rooms, isLoading: roomsLoading } = useQuery({
+  const { data: rooms, isLoading: roomsLoading } = useQuery<Room[]>({
     queryKey: ['rooms'],
     queryFn: async () => {
-      return await api.aestheticScheduling.getRooms()
+      return await (api as any).aestheticScheduling.getRooms()
     },
   })
 
   // Fetch room schedules
-  const { data: schedules, isLoading: schedulesLoading } = useQuery({
+  const { data: schedules, isLoading: schedulesLoading } = useQuery<RoomSchedule[]>({
     queryKey: ['room-schedules', selectedDate],
     queryFn: async () => {
-      return await api.aestheticScheduling.getRoomSchedules({
+      return await (api as any).aestheticScheduling.getRoomSchedules({
         date: selectedDate.toISOString(),
         includeAvailability: true,
       })
@@ -91,11 +91,11 @@ export function RoomAllocation({
   })
 
   // Fetch optimization suggestions
-  const { data: optimization, isLoading: optimizationLoading } = useQuery({
+  const { data: optimization, isLoading: optimizationLoading } = useQuery<OptimizationResult>({
     queryKey: ['room-optimization', appointmentId, treatmentPlanId, selectedDate],
     queryFn: async () => {
       if (appointmentId || treatmentPlanId) {
-        return await api.aestheticScheduling.optimizeRoomAllocation({
+        return await (api as any).aestheticScheduling.optimizeRoomAllocation({
           appointmentId,
           treatmentPlanId,
           date: selectedDate.toISOString(),
@@ -111,7 +111,7 @@ export function RoomAllocation({
   // Create allocation mutation
   const createAllocation = useMutation({
     mutationFn: async (allocation: Partial<RoomAllocation>) => {
-      return await api.aestheticScheduling.createRoomAllocation(allocation)
+      return await (api as any).aestheticScheduling.createRoomAllocation(allocation)
     },
     onSuccess: () => {
       // Refresh schedules
@@ -150,8 +150,8 @@ export function RoomAllocation({
     return format(date, 'HH:mm', { locale: ptBR })
   }
 
-  const generateTimeSlots = () => {
-    const slots = []
+  const generateTimeSlots = (): TimeSlotString[] => {
+    const slots: TimeSlotString[] = []
     let start = new Date(selectedDate)
     start.setHours(8, 0, 0, 0)
     const end = new Date(selectedDate)
@@ -160,8 +160,8 @@ export function RoomAllocation({
     while (start < end) {
       const slotEnd = addHours(start, 1)
       slots.push({
-        start: new Date(start),
-        end: slotEnd,
+        start: formatTime(start),
+        end: formatTime(slotEnd),
         id: `${formatTime(start)}-${formatTime(slotEnd)}`,
       })
       start = slotEnd
@@ -170,18 +170,20 @@ export function RoomAllocation({
     return slots
   }
 
-  const isTimeSlotAvailable = (roomId: string, timeSlot: { start: Date; end: Date }) => {
+  const isTimeSlotAvailable = (roomId: string, timeSlot: TimeSlotString) => {
     const roomSchedule = schedules?.find(s => s.roomId === roomId)
     if (!roomSchedule) return true
 
     return !roomSchedule.appointments.some(appointment => {
       const appointmentStart = parseISO(appointment.startTime)
       const appointmentEnd = parseISO(appointment.endTime)
+      const timeSlotStart = parseISO(timeSlot.start)
+      const timeSlotEnd = parseISO(timeSlot.end)
 
       return (
-        (timeSlot.start >= appointmentStart && timeSlot.start < appointmentEnd) ||
-        (timeSlot.end > appointmentStart && timeSlot.end <= appointmentEnd) ||
-        (timeSlot.start <= appointmentStart && timeSlot.end >= appointmentEnd)
+        (timeSlotStart >= appointmentStart && timeSlotStart < appointmentEnd) ||
+        (timeSlotEnd > appointmentStart && timeSlotEnd <= appointmentEnd) ||
+        (timeSlotStart <= appointmentStart && timeSlotEnd >= appointmentEnd)
       )
     })
   }
@@ -440,7 +442,8 @@ export function RoomAllocation({
                           .find(a => {
                             const start = parseISO(a.startTime)
                             const end = parseISO(a.endTime)
-                            return timeSlot.start >= start && timeSlot.start < end
+                            const timeSlotStart = parseISO(timeSlot.start)
+                            return timeSlotStart >= start && timeSlotStart < end
                           })
 
                         return (

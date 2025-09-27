@@ -1,2 +1,6 @@
-export * from './utils/ui-utils'
-export { cn } from './utils/ui-utils'
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}

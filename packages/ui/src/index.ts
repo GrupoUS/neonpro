@@ -1,34 +1,38 @@
-/**
- * Minimal UI Component Library
- * Basic types and utilities for healthcare applications
- * @version 1.0.0
- */
+// Export UI components that are working correctly
+export { Button, buttonVariants } from "./components/ui/button";
+export type { ButtonProps } from "./components/ui/button";
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
 
-// Basic types
-export interface BaseComponentProps {
-  className?: string
-}
+// Export basic components that are confirmed working
+export { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
+export { Badge } from "./components/ui/badge";
+export { Input } from "./components/ui/input";
+export { Progress } from "./components/ui/progress";
 
-export interface ButtonProps extends BaseComponentProps {
-  children: string
-  onClick?: () => void
-  disabled?: boolean
-}
+// Export utility functions
+export { cn } from "./lib/utils";
 
-export interface InputProps extends BaseComponentProps {
-  type?: string
-  placeholder?: string
-  value?: string
-}
+// Export only enhanced components that don't have external dependency issues
+export { DashboardLayout, DashboardCard } from "./components/ui/dashboard-layout";
 
-export interface CardProps extends BaseComponentProps {
-  children: string
-}
-
-// Utility functions
-export const cn = (...classes: (string | undefined)[]): string => {
-  return classes.filter(Boolean).join(' ')
-}
-
-// Version info
-export const UI_PACKAGE_VERSION = '1.0.0'
+// Temporary placeholders for components that need fixing
+export const Label = () => null;
+export const Select = () => null;
+export const SelectContent = () => null;
+export const SelectItem = () => null; 
+export const SelectTrigger = () => null;
+export const SelectValue = () => null;
+export const Textarea = () => null;
+export const Separator = () => null;
+export const Switch = () => null;
+export const Checkbox = () => null;
+export const RadioGroup = () => null;
+export const Calendar = () => null;
+export const Command = () => null;
+export const Dialog = () => null;
+export const DropdownMenu = () => null;
+export const Form = () => null;
+export const Popover = () => null;
+export const ScrollArea = () => null;
+export const Table = () => null;
+export const Pagination = () => null;

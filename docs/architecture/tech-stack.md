@@ -106,19 +106,32 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 ### Backend Technology Stack
 
-**tRPC v11.0.0** - End-to-End Type-Safe API Framework
+**Hono v4.9.7** - Edge-Optimized Web Framework
 
-- **Why**: Full TypeScript type safety, automatic client generation, Brazilian aesthetic clinic compliance
-- **Features**: Type-safe procedures, middleware composition, **real-time subscriptions**, Valibot validation
-- **Performance**: Zero runtime overhead, edge-compatible, <100ms aesthetic clinic API responses
+- **Why**: Lightweight, edge-compatible, fast, excellent TypeScript support, healthcare compliance
+- **Features**: Type-safe routing, middleware composition, healthcare validation, edge runtime optimization
+- **Performance**: <100ms API responses, 50x faster than Express, edge-native
+- **Migration**: From Express for enhanced performance and edge compatibility
+- **Healthcare Features**: Built-in LGPD compliance, audit logging, Brazilian identity validation
+
+**tRPC v11.0.0** - Type-Safe API Layer
+
+- **Why**: Full TypeScript type safety, automatic client generation, healthcare compliance
+- **Features**: Type-safe procedures, middleware composition, real-time subscriptions, Valibot validation
+- **Performance**: Zero runtime overhead, edge-compatible, <100ms healthcare API responses
 - **Real-time Integration**: Seamless integration with Supabase Realtime for automatic query invalidation
-- **Migration**: From Hono.dev for enhanced type safety and developer experience
+- **Usage**: Layered on top of Hono for enhanced type safety and developer experience
 
 **Node.js 20+** - Runtime Environment
 
 - **Why**: LTS stability, Vercel Functions compatibility, mature ecosystem
 - **Benefits**: Vercel optimization, npm compatibility, security updates
 - **Config**: ES modules, strict mode, serverless optimized
+
+- **Why**: PostgreSQL foundation, **real-time capabilities**, built-in auth, Brazilian data centers
+- **Features**: PostgreSQL 15+, **real-time subscriptions with TanStack Query integration**, storage, edge functions
+- **Benefits**: Reduced backend complexity, compliance features, **automatic query invalidation**
+- **Real-time Configuration**: 10 events/second rate limiting for healthcare compliance
 
 **Supabase v2.45.1** - Backend-as-a-Service Platform
 
@@ -127,20 +140,27 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Benefits**: Reduced backend complexity, compliance features, **automatic query invalidation**
 - **Real-time Configuration**: 10 events/second rate limiting for healthcare compliance
 
+- **Why**: ACID compliance, JSON support, excellent performance, mature ecosystem
+- **Benefits**: Data integrity, complex queries, JSON/JSONB support, full-text search
+- **Config**: Optimized workloads, proper indexing, connection pooling
+
 **PostgreSQL 15+** - Primary Database
 
 - **Why**: ACID compliance, JSON support, excellent performance, mature ecosystem
 - **Benefits**: Data integrity, complex queries, JSON/JSONB support, full-text search
 - **Config**: Optimized workloads, proper indexing, connection pooling
 
-**Prisma v5.7.0** - Next-Generation ORM
-
 - **Why**: Type-safe database access, Brazilian aesthetic clinic compliance, multi-schema support
 - **Features**: Auto-generated types, migration system, connection pooling, edge compatibility
 - **Benefits**: LGPD compliance, audit logging, Brazilian identity validation (CPF, CNS)
 - **Performance**: <50ms database queries, optimized for aesthetic clinic workflows
 
-**Valibot v0.30.0** - Primary Runtime Schema Validation
+**Prisma v5.7.0** - Next-Generation ORM
+
+- **Why**: Type-safe database access, Brazilian healthcare compliance, multi-schema support
+- **Features**: Auto-generated types, migration system, connection pooling, edge compatibility
+- **Benefits**: LGPD compliance, audit logging, Brazilian identity validation (CPF, CNS)
+- **Performance**: <50ms database queries, optimized for healthcare workflows
 
 - **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
 - **Features**: Brazilian aesthetic clinic validation (CPF, TUSS codes), streaming validation, composable schemas
@@ -148,7 +168,13 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Usage**: Primary validation library for all new development, tRPC input validation, aesthetic clinic data schemas
 - **Fallback Strategy**: Use Zod v4.22.0 when specific Valibot features are not available
 
-**Zod v4.22.0** - Secondary Runtime Schema Validation
+**Valibot v0.30.0** - Primary Runtime Schema Validation
+
+- **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
+- **Features**: Brazilian healthcare validation (CPF, medical codes), streaming validation, composable schemas
+- **Benefits**: Edge function compatibility, healthcare compliance, performance optimization
+- **Usage**: Primary validation library for all new development, tRPC input validation, healthcare data schemas
+- **Fallback Strategy**: Use Zod v4.22.0 when specific Valibot features are not available
 
 - **Why**: Mature ecosystem, extensive feature set, backward compatibility
 - **Features**: Comprehensive schema definitions, transformer functions, error handling
@@ -252,22 +278,40 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Why**: Vite-powered speed, Jest compatibility, TypeScript support
 - **Benefits**: Fast execution, hot module replacement, snapshot testing, coverage reports
 - **Performance**: 3-5x faster than Jest, ~12s test suite execution
+- **Healthcare Features**: LGPD compliance testing, healthcare scenario testing
 
 **Playwright v1.40.0** - End-to-End Testing
 
 - **Why**: Cross-browser testing, reliable automation, excellent debugging
 - **Benefits**: Multi-browser support, network interception, visual testing, mobile testing
-- **Config**: Brazilian Portuguese locale, aesthetic clinic-specific test scenarios
+- **Config**: Brazilian Portuguese locale, healthcare-specific test scenarios
+- **Healthcare Features**: Accessibility testing, LGPD compliance validation
 
 **React Testing Library v16.3.0** - Component Testing
 
 - **Why**: User-centric testing approach, accessibility focus, React integration
 - **Benefits**: Accessibility testing, user behavior simulation, maintainable tests
+- **Healthcare Features**: WCAG 2.1 AA compliance testing, healthcare component validation
 
 **MSW v2.10.5** - API Mocking
 
 - **Why**: Service Worker-based mocking, realistic network behavior, cross-platform support
 - **Benefits**: Realistic API responses, network error simulation, development server mocking
+- **Healthcare Features**: Healthcare API mocking, compliance scenario testing
+
+**Healthcare Testing Framework** - Comprehensive Testing Suite
+
+- **Why**: Healthcare-specific testing requirements, compliance validation
+- **Features**: LGPD compliance testing, ANVISA validation, healthcare scenario testing
+- **Benefits**: Comprehensive test coverage, compliance automation, healthcare workflow validation
+- **Implementation**: Custom healthcare testing framework with ≥95% coverage targets
+
+**Zod v4.22.0** - Secondary Runtime Schema Validation
+
+- **Why**: Mature ecosystem, extensive feature set, backward compatibility
+- **Features**: Comprehensive schema definitions, transformer functions, error handling
+- **Benefits**: Extensive documentation, community support, integrations
+- **Usage**: Fallback when Valibot lacks specific features, legacy code maintenance
 
 **Quality Tools**:
 

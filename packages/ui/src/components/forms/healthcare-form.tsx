@@ -217,12 +217,12 @@ export function HealthcareForm({
           if (validationError instanceof z.ZodError) {
             const fieldErrors: Record<string, string[]> = {}
 
-            validationError.errors.forEach((error: z.ZodIssue) => {
-              const field = error.path.join('.')
+            validationError.issues.forEach((issue: z.ZodIssue) => {
+              const field = issue.path.join('.')
               if (!fieldErrors[field]) {
                 fieldErrors[field] = []
               }
-              fieldErrors[field].push(error.message)
+              fieldErrors[field].push(issue.message)
             })
 
             setErrors(fieldErrors)

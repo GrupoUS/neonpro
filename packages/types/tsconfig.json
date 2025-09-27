@@ -5,11 +5,9 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "composite": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo",
-    "noEmit": false
+    "allowImportingTsExtensions": true,
+    "noEmit": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*", "**/__tests__/**"]
+  "exclude": ["node_modules", "dist"]
 }
