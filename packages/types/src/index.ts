@@ -37,5 +37,10 @@ export interface Treatment {
 
 export type HealthcareUser = Patient | Professional;
 
-export * from './guards.ts';
-export * from './validation.ts';
+export * from './common.js';
+export * from './database.js';
+export * from './healthcare.js';
+export * from './api.js';
+export * from './guards.js';
+export * from './validation.js';
+export * from './auth.js';

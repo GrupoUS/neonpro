@@ -1,11 +1,14 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 // Note: Some accessibility imports temporarily disabled for build stability
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
-import { CardTitle } from '@/components/ui/card.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Progress } from '@/components/ui/progress.js'
-import { Alert, AlertDescription } from '@/components/ui/alert.js'
-import { cn } from '@/lib/utils.js'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select'
+import { CardTitle } from '../../ui/card'
+import { Badge } from '../../ui/badge'
+import { Progress } from '../../ui/progress'
+import { Alert, AlertDescription } from '../../ui/alert'
+import { Input } from '../../ui/input'
+import { Label } from '../../ui/label'
+import { Button } from '../../ui/button'
+import { cn } from '../../lib/utils'
 import { 
   type BrazilianState, 
   type HealthcareContext, 
@@ -15,8 +18,8 @@ import {
   type BrazilianAddress,
   type EmergencyContact,
   type MedicalHistory
-} from '@/types/healthcare.js'
-import { HealthcareFormValidator } from '@/types/validation.js'
+} from '@/types/healthcare'
+import { HealthcareFormValidator } from '@/types/validation'
 
 // Temporary simple implementations for accessibility hooks
 const useTranslation = () => ({
@@ -82,6 +85,122 @@ interface AccessiblePatientRegistrationProps {
   className?: string
   validationLevel?: 'basic' | 'strict' | 'healthcare_critical'
 }
+
+// Simple accessibility wrapper components
+const HealthcareFormGroup: React.FC<{ 
+  label: string; 
+  healthcareContext: string; 
+  children: React.ReactNode 
+}> = ({ label, healthcareContext, children }) => (
+  <div className="space-y-2" role="group" aria-label={label}>
+    <h3 className="text-lg font-semibold">{label}</h3>
+    {children}
+  </div>
+)
+
+const AccessibilityInput: React.FC<{
+  id: string;
+  label: string;
+  required?: boolean;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  helperText?: string;
+  healthcareContext?: string;
+  lgpdSensitive?: boolean;
+  dataPurpose?: string;
+  screenReaderInstructions?: string;
+}> = ({ 
+  id, 
+  label, 
+  required = false, 
+  value, 
+  onChange, 
+  error, 
+  helperText, 
+  healthcareContext,
+  lgpdSensitive = false,
+  dataPurpose,
+  screenReaderInstructions 
+}) => (
+  <div className="space-y-1">
+    <Label htmlFor={id} className={required ? 'required' : ''}>
+      {label}
+    </Label>
+    <Input
+      id={id}
+      value={value}
+      onChange={onChange}
+      required={required}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : helperText ? `${id}-helper` : undefined}
+      aria-required={required}
+      data-lgpd-sensitive={lgpdSensitive}
+      data-purpose={dataPurpose}
+    />
+    {helperText && (
+      <span id={`${id}-helper`} className="text-sm text-gray-600">
+        {helperText}
+      </span>
+    )}
+    {error && (
+      <span id={`${id}-error`} className="text-sm text-red-600" role="alert">
+        {error}
+      </span>
+    )}
+  </div>
+)
+
+const AccessibilityLabel: React.FC<{ 
+  htmlFor: string; 
+  children: React.ReactNode;
+  required?: boolean;
+}> = ({ htmlFor, children, required = false }) => (
+  <Label htmlFor={htmlFor} className={required ? 'required' : ''}>
+    {children}
+  </Label>
+)
+
+const HealthcareFieldError: React.FC<{ 
+  error: string; 
+  fieldId: string;
+}> = ({ error, fieldId }) => (
+  <span id={`${fieldId}-error`} className="text-sm text-red-600" role="alert">
+    {error}
+  </span>
+)
+
+const KeyboardNavigationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="keyboard-nav-enabled">
+    {children}
+  </div>
+)
+
+const AccessibilityButton: React.FC<{
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: 'default' | 'outline' | 'ghost';
+  size?: 'default' | 'sm' | 'lg';
+  disabled?: boolean;
+  ariaLabel?: string;
+}> = ({ children, onClick, variant = 'default', size = 'default', disabled = false, ariaLabel }) => (
+  <Button 
+    onClick={onClick} 
+    variant={variant} 
+    size={size} 
+    disabled={disabled}
+    aria-label={ariaLabel}
+  >
+    {children}
+  </Button>
+)
+
+const HealthcareFormLoading: React.FC<{ message?: string }> = ({ message = 'Carregando...' }) => (
+  <div className="flex items-center justify-center p-4" role="status" aria-busy="true">
+    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+    <span>{message}</span>
+  </div>
+)
 
 // Brazilian state options
 const BRAZILIAN_STATES: Array<{ value: BrazilianState; label: string }> = [

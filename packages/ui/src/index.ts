@@ -1,44 +1,38 @@
-import * as React from "react";
+// Export UI components that are working correctly
+export { Button, buttonVariants } from "./components/ui/button";
+export type { ButtonProps } from "./components/ui/button";
+export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
 
-// Basic type exports for UI components
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
-  size?: "default" | "sm" | "lg" | "icon";
-}
+// Export basic components that are confirmed working
+export { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
+export { Badge } from "./components/ui/badge";
+export { Input } from "./components/ui/input";
+export { Progress } from "./components/ui/progress";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+// Export utility functions
+export { cn } from "./lib/utils";
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
+// Export only enhanced components that don't have external dependency issues
+export { DashboardLayout, DashboardCard } from "./components/ui/dashboard-layout";
 
-// Placeholder component functions (non-JSX stubs)
-export const Button = (props: ButtonProps) => {
-  // Stub: return null or a div for now
-  return React.createElement("button", { ...props, className: props.className || "btn-stub" });
-};
-
-export const Input = (props: InputProps) => {
-  return React.createElement("input", { ...props, className: props.className || "input-stub" });
-};
-
-export const Card = (props: CardProps) => {
-  return React.createElement("div", { ...props, className: props.className || "card-stub" });
-};
-
-export const CardHeader = (props: CardProps) => {
-  return React.createElement("div", { ...props, className: props.className || "card-header-stub" });
-};
-
-export const CardTitle = (props: React.HTMLAttributes<HTMLHeadingElement>) => {
-  return React.createElement("h3", { ...props, className: props.className || "card-title-stub" });
-};
-
-// Placeholder for other components
-export const Alert = () => null;
-export const Badge = () => null;
+// Temporary placeholders for components that need fixing
 export const Label = () => null;
 export const Select = () => null;
-export const Tabs = () => null;
+export const SelectContent = () => null;
+export const SelectItem = () => null; 
+export const SelectTrigger = () => null;
+export const SelectValue = () => null;
 export const Textarea = () => null;
-
-// Export cn from utils
-export { cn } from "./utils";
+export const Separator = () => null;
+export const Switch = () => null;
+export const Checkbox = () => null;
+export const RadioGroup = () => null;
+export const Calendar = () => null;
+export const Command = () => null;
+export const Dialog = () => null;
+export const DropdownMenu = () => null;
+export const Form = () => null;
+export const Popover = () => null;
+export const ScrollArea = () => null;
+export const Table = () => null;
+export const Pagination = () => null;

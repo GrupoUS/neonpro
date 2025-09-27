@@ -15,7 +15,9 @@ export default defineConfig({
   plugins: [
     TanStackRouterVite(),
     react(),
-    tsconfigPaths(),
+    tsconfigPaths({
+      ignoreConfigErrors: true,
+    }),
   ],
   root: '.',
   publicDir: 'public',

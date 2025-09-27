@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* NeonPro Brand Variables from @apex-ui-ux-designer.md */
+:root {
+  /* NeonPro Brand Palette */
+  --neonpro-primary: #AC9469; /* Golden Primary - Aesthetic Luxury */
+  --neonpro-deep-blue: #112031; /* Healthcare Professional - Trust & Reliability */
+  --neonpro-accent: #d2aa60ff; /* Gold Accent - Premium Services */
+  --neonpro-neutral: #B4AC9C; /* Calming Light Beige */
+  --neonpro-background: #D2D0C8; /* Soft Gray Background */
+
+  /* Standard shadcn/ui variables using NeonPro colors */
+  --background: 210 20% 98%;
+  --foreground: 222.2 84% 4.9%;
+  --card: 210 15% 95%;
+  --card-foreground: 222.2 84% 4.9%;
+  --popover: 210 20% 98%;
+  --popover-foreground: 222.2 84% 4.9%;
+  --primary: 41 52% 54%; /* NeonPro Primary adjusted for HSL */
+  --primary-foreground: 210 20% 98%;
+  --secondary: 210 40% 98%;
+  --secondary-foreground: 222.2 84% 4.9%;
+  --muted: 210 40% 98%;
+  --muted-foreground: 215 16% 47%;
+  --accent: 39 41% 60%; /* NeonPro Accent adjusted for HSL */
+  --accent-foreground: 222.2 84% 4.9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 210 20% 98%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 41 52% 54%;
+  --radius: 0.5rem;
+
+  /* Neumorphic Design System shadows */
+  --shadow-inset: inset 2px 2px 4px rgba(0,0,0,0.1);
+  --shadow-raised: 4px 4px 8px rgba(0,0,0,0.15);
+}
+
+.dark {
+  --background: 222.2 84% 4.9%;
+  --foreground: 210 40% 98%;
+  --card: 222.2 84% 4.9%;
+  --card-foreground: 210 40% 98%;
+  --popover: 222.2 84% 4.9%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 41 52% 54%;
+  --primary-foreground: 222.2 84% 4.9%;
+  --secondary: 217.2 32.6% 17.5%;
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217.2 32.6% 17.5%;
+  --muted-foreground: 215 20.2% 65.1%;
+  --accent: 39 41% 60%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217.2 32.6% 17.5%;
+  --input: 217.2 32.6% 17.5%;
+  --ring: 39 41% 60%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* NeonPro Aesthetic Enhancements */
+  .neonpro-glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
+
+  .neonpro-neumorphic {
+    box-shadow: var(--shadow-raised);
+    border-radius: 8px;
+  }
+
+  .neonpro-neumorphic-inset {
+    box-shadow: var(--shadow-inset);
+    border-radius: 8px;
+  }
+}

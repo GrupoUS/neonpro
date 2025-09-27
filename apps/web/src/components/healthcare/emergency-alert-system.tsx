@@ -247,43 +247,50 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
 
   const getSeverityColor = (severity: EmergencyAlert['severity']) => {
     switch (severity) {
-      case 'critical': return 'bg-red-600 text-white'
-      case 'high': return 'bg-red-500 text-white'
-      case 'medium': return 'bg-orange-500 text-white'
-      case 'low': return 'bg-yellow-500 text-white'
-      default: return 'bg-gray-500 text-white'
+      case 'critical': return 'bg-red-900 text-white font-bold border-2 border-red-700 shadow-lg'
+      case 'high': return 'bg-red-700 text-white font-semibold border-2 border-red-600 shadow-md'
+      case 'medium': return 'bg-orange-700 text-white font-medium border-2 border-orange-600'
+      case 'low': return 'bg-yellow-600 text-gray-900 font-medium border-2 border-yellow-500'
+      default: return 'bg-gray-700 text-white font-medium'
     }
   }
 
   const getTypeColor = (type: EmergencyAlert['type']) => {
     switch (type) {
-      case 'medical': return 'border-red-500 bg-red-50'
-      case 'facility': return 'border-orange-500 bg-orange-50'
-      case 'security': return 'border-purple-500 bg-purple-50'
-      default: return 'border-gray-500 bg-gray-50'
+      case 'medical': return 'border-red-700 bg-red-100 hover:bg-red-200'
+      case 'facility': return 'border-orange-700 bg-orange-100 hover:bg-orange-200'
+      case 'security': return 'border-purple-700 bg-purple-100 hover:bg-purple-200'
+      default: return 'border-gray-700 bg-gray-100 hover:bg-gray-200'
     }
   }
 
   return (
     <div className={cn('space-y-6', className)}>
-      {/* Evacuation Mode Banner */}
+      {/* Evacuation Mode Banner - Enhanced WCAG 2.1 AA+ Compliance */}
       {isEvacuationMode && (
-        <Alert className="border-red-500 bg-red-50">
+        <Alert variant="evacuation" className="border-4 animate-pulse">
           <AlertDescription className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-red-600 font-bold text-lg">🚨 MODO DE EVACUAÇÃO ATIVO</span>
-              <span className="text-red-600">
-                Siga as instruções da equipe e mantenha a calma.
-              </span>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl" aria-hidden="true">🚨</span>
+              <div>
+                <span className="font-bold text-xl block">
+                  MODO DE EVACUAÇÃO ATIVO
+                </span>
+                <span className="font-medium">
+                  Siga as instruções da equipe e mantenha a calma.
+                </span>
+              </div>
             </div>
-            <Button
+            <AccessibilityButton
               variant="outline"
-              size="sm"
+              size="lg"
               onClick={() => setIsEvacuationMode(false)}
-              className="border-red-500 text-red-600 hover:bg-red-100"
+              healthcareContext="emergency"
+              aria-label="Desativar modo de evacuação"
+              className="border-2 border-orange-800 text-orange-900 bg-orange-50 hover:bg-orange-100 font-semibold"
             >
               Desativar
-            </Button>
+            </AccessibilityButton>
           </AlertDescription>
         </Alert>
       )}
@@ -340,70 +347,102 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
             {sortedAlerts.map(alert => (
               <Card
                 key={alert.id}
-                className={cn('cursor-pointer transition-all hover:shadow-md', getTypeColor(alert.type))}
+                className={cn(
+                  'cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] min-h-[120px]',
+                  getTypeColor(alert.type),
+                  alert.severity === 'critical' && 'ring-2 ring-red-500 animate-pulse'
+                )}
                 onClick={() => setSelectedAlert(alert)}
+                role="button"
+                tabIndex={0}
+                aria-label={`Ver detalhes do alerta ${emergencyProtocols[alert.type].title} - ${alert.severity}`}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setSelectedAlert(alert)
+                  }
+                }}
               >
-                <CardHeader>
+                <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-base flex items-center gap-2">
-                        {alert.type === 'medical' && '🏥'}
-                        {alert.type === 'facility' && '🏢'}
-                        {alert.type === 'security' && '🛡️'}
+                      <CardTitle className="text-base flex items-center gap-2 font-bold">
+                        <span className="text-xl" aria-hidden="true">
+                          {alert.type === 'medical' && '🏥'}
+                          {alert.type === 'facility' && '🏢'}
+                          {alert.type === 'security' && '🛡️'}
+                        </span>
+                        <span className="sr-only">
+                          {alert.type === 'medical' && 'Emergência médica: '}
+                          {alert.type === 'facility' && 'Emergência de instalação: '}
+                          {alert.type === 'security' && 'Emergência de segurança: '}
+                        </span>
                         {emergencyProtocols[alert.type].title}
                       </CardTitle>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-sm font-medium mt-1">
                         {format(parseISO(alert.createdAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                       </p>
                     </div>
-                    <div className="flex gap-2">
-                      <Badge className={getSeverityColor(alert.severity)}>
+                    <div className="flex gap-2 flex-wrap">
+                      <Badge 
+                        className={getSeverityColor(alert.severity)}
+                        aria-label={`Severidade: ${alert.severity}`}
+                      >
                         {alert.severity === 'critical' && 'Crítico'}
                         {alert.severity === 'high' && 'Alto'}
                         {alert.severity === 'medium' && 'Médio'}
                         {alert.severity === 'low' && 'Baixo'}
                       </Badge>
-                      <Badge variant={alert.status === 'active' ? 'destructive' : 'secondary'}>
+                      <Badge 
+                        variant={alert.status === 'active' ? 'destructive' : 'secondary'}
+                        aria-label={`Status: ${alert.status}`}
+                      >
                         {alert.status === 'active' ? 'Ativo' : 'Resolvido'}
                       </Badge>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm mb-3">{alert.description}</p>
+                  <p className="text-sm mb-3 font-medium">{alert.description}</p>
                   
-                  <div className="space-y-2 text-xs">
-                    <div>
-                      <strong>Local:</strong> {alert.location}
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-1">
+                      <span className="font-semibold">Local:</span>
+                      <span>{alert.location}</span>
                     </div>
                     {alert.patientId && (
-                      <div>
-                        <strong>Paciente:</strong> {
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">Paciente:</span>
+                        <span>{
                           patients.find(p => p.personalInfo.cpf === alert.patientId)?.personalInfo.fullName || 'Desconhecido'
-                        }
+                        }</span>
                       </div>
                     )}
                     {alert.affectedAreas.length > 0 && (
-                      <div>
-                        <strong>Áreas Afetadas:</strong> {alert.affectedAreas.join(', ')}
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">Áreas Afetadas:</span>
+                        <span>{alert.affectedAreas.join(', ')}</span>
                       </div>
                     )}
                     {alert.requiresEvacuation && (
-                      <div className="text-red-600 font-medium">
-                        🚨 Requer evacuação
+                      <div className="text-red-900 font-bold bg-red-100 p-2 rounded border border-red-300">
+                        🚨 Requer evacuação imediata
                       </div>
                     )}
                   </div>
 
                   {alert.responses.length > 0 && (
-                    <div className="mt-3 pt-3 border-t">
-                      <p className="text-xs font-medium mb-1">
+                    <div className="mt-3 pt-3 border-t border-current">
+                      <p className="text-sm font-medium mb-1">
                         Respostas ({alert.responses.length})
                       </p>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-sm">
                         {alert.responses.slice(-2).map((response, index) => (
-                          <div key={index}>
-                            {response.action} - {format(parseISO(response.timestamp), 'HH:mm')}
+                          <div key={index} className="flex justify-between">
+                            <span>{response.action}</span>
+                            <span className="text-muted-foreground">
+                              {format(parseISO(response.timestamp), 'HH:mm')}
+                            </span>
                           </div>
                         ))}
                       </div>

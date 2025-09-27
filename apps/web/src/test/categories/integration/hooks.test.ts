@@ -299,8 +299,8 @@ describe('Healthcare Hooks Integration Tests', () => {
         (data, options) => {
           const startTime = performance.now()
 
-          // Simulate efficient processing
-          setTimeout(() => {
+          // Simulate efficient processing with proper cleanup
+          const timer = setTimeout(() => {
             const endTime = performance.now()
             const processingTime = endTime - startTime
 
@@ -314,6 +314,9 @@ describe('Healthcare Hooks Integration Tests', () => {
               })
             }
           }, 50) // Simulate fast processing
+
+          // Cleanup timer in test cleanup
+          return () => clearTimeout(timer)
         })
       )
 

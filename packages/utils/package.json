@@ -1,9 +1,16 @@
 {
   "name": "@neonpro/utils",
   "version": "0.1.0",
+  "type": "module",
   "description": "General utility functions for NeonPro aesthetic clinic platform, including date formatting and validation",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],

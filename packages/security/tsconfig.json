@@ -2,7 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
-    "module": "Node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
@@ -10,16 +11,12 @@
     "allowImportingTsExtensions": false
   },
   "include": [
-    "src/index.ts",
-    "src/utils.ts",
-    "src/console-manager.ts",
-    "src/cryptography.ts",
-    "src/encryption.ts",
-    "src/crypto-utils.ts"
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "dist",
+    "src/__tests__/**",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",

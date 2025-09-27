@@ -27,7 +27,6 @@ import {
   EyeOff,
   FileText,
   Lock,
-  Shield,
   Unlock,
   UserCheck,
 } from 'lucide-react'

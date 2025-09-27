@@ -1,9 +1,16 @@
 {
   "name": "@neonpro/security",
   "version": "0.1.0",
+  "type": "module",
   "description": "Security utilities for NeonPro aesthetic clinic platform, including auth guards, encryption, and LGPD compliance",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "files": [
     "dist"
   ],
@@ -15,10 +22,13 @@
   },
   "dependencies": {
     "@neonpro/types": "workspace:*",
-    "@neonpro/shared": "workspace:*",
-    "crypto": "builtin"
+    "@neonpro/shared": "workspace:*"
   },
   "devDependencies": {
+    "@types/bcryptjs": "3.0.0",
+    "@types/jsonwebtoken": "9.0.10",
+    "bcryptjs": "3.0.2",
+    "jsonwebtoken": "9.0.2",
     "typescript": "^5.0.0"
   },
   "keywords": [

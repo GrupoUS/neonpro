@@ -1,90 +1,30 @@
-import * as React from 'react'
-
-import { cn } from '../../utils'
+import { cn } from "../../lib/utils"
+import * as React from "react"
 
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    /** Back-compat props */
-    magic?: boolean
-    disableShine?: boolean
-    /** New explicit flag (optional) */
-    enableShineBorder?: boolean
-    /** Effect tuning */
-    shineDuration?: number
-    shineColor?: string | string[]
-    borderWidth?: number
+    readonly clientId?: string
+    readonly userRole?: 'admin' | 'aesthetician' | 'coordinator'
+    readonly lgpdCompliant?: boolean
+    readonly variant?: 'default' | 'neonpro' | 'glass'
   }
->(
-  (
-    {
-      className,
-      magic = false,
-      disableShine = false,
-      enableShineBorder,
-      shineDuration = 8,
-      shineColor = '#AC9469',
-      borderWidth = 1,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const show = enableShineBorder ?? (magic || !disableShine)
-    if (show) {
-      const duration = Math.max(0.1, shineDuration ?? 8)
-      const colorValue = Array.isArray(shineColor)
-        ? (shineColor[0] ?? '#AC9469')
-        : (shineColor ?? '#AC9469')
+>(({ className, variant = 'default', ...props }, ref) => {
+  const variantClasses = {
+    default: "rounded-lg border bg-card text-card-foreground shadow-sm",
+    neonpro: "rounded-lg border bg-card text-card-foreground neonpro-neumorphic",
+    glass: "rounded-lg border neonpro-glass"
+  }
 
-      return (
-        <div
-          ref={ref}
-          className={cn(
-            'relative rounded-xl bg-card text-card-foreground shadow overflow-hidden',
-            className,
-          )}
-          style={{
-            '--shine-duration': `${duration}s`,
-            '--shine-color': colorValue,
-            '--border-width': `${borderWidth}px`,
-          } as React.CSSProperties}
-          {...props}
-        >
-          {/* Shine border animation */}
-          <div
-            className='absolute inset-0 rounded-xl shine-border-animation'
-            aria-hidden='true'
-          />
-
-          {/* Content wrapper with border */}
-          <div
-            className={cn(
-              'relative z-10 rounded-xl border bg-card text-card-foreground',
-              'h-full w-full',
-            )}
-          >
-            {children}
-          </div>
-        </div>
-      )
-    }
-
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'rounded-xl border bg-card text-card-foreground shadow',
-          className,
-        )}
-        {...props}
-      >
-        {children}
-      </div>
-    )
-  },
-)
-Card.displayName = 'Card'
+  return (
+    <div
+      ref={ref}
+      className={cn(variantClasses[variant], className)}
+      {...props}
+    />
+  )
+})
+Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -92,43 +32,46 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex flex-col space-y-1.5 p-6', className)}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
     {...props}
   />
 ))
-CardHeader.displayName = 'CardHeader'
+CardHeader.displayName = "CardHeader"
 
 const CardTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <h3
     ref={ref}
-    className={cn('font-semibold leading-none tracking-tight', className)}
+    className={cn(
+      "text-2xl font-semibold leading-none tracking-tight",
+      className
+    )}
     {...props}
   />
 ))
-CardTitle.displayName = 'CardTitle'
+CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <div
+  <p
     ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
-CardDescription.displayName = 'CardDescription'
+CardDescription.displayName = "CardDescription"
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ))
-CardContent.displayName = 'CardContent'
+CardContent.displayName = "CardContent"
 
 const CardFooter = React.forwardRef<
   HTMLDivElement,
@@ -136,10 +79,10 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('flex items-center p-6 pt-0', className)}
+    className={cn("flex items-center p-6 pt-0", className)}
     {...props}
   />
 ))
-CardFooter.displayName = 'CardFooter'
+CardFooter.displayName = "CardFooter"
 
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }

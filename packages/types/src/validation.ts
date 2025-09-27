@@ -39,3 +39,15 @@ export const validateAppointment = (appointment: Partial<Appointment>): appointm
     validStatuses.includes(appointment.status)
   );
 };
+
+// Form validation types for healthcare forms
+export interface FormFieldError {
+  field: string;
+  message: string;
+}
+
+export interface FormValidationResult {
+  isValid: boolean;
+  errors: FormFieldError[];
+  data?: Record<string, any>;
+}

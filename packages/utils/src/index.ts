@@ -1,43 +1,22 @@
-import { format, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import { v, createParser } from 'valibot';
-import { Patient, Appointment } from '@neonpro/types';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-// Date formatting utils
-export const formatAppointmentDate = (date: string | Date): string => {
-  if (typeof date === 'string') {
-    date = parseISO(date);
+// Utility function for combining classes (shadcn/ui requirement)
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+// NeonPro Brand Utility Functions from @apex-ui-ux-designer.md
+export function getNeonProVariantClasses(variant: 'primary' | 'secondary' | 'accent' | 'medical' = 'primary') {
+  const variants = {
+    primary: 'bg-neonpro-primary hover:bg-neonpro-primary/90 text-white',
+    secondary: 'bg-neonpro-neutral hover:bg-neonpro-neutral/90 text-neonpro-deep-blue',
+    accent: 'bg-neonpro-accent hover:bg-neonpro-accent/90 text-neonpro-deep-blue',
+    medical: 'bg-neonpro-deep-blue hover:bg-neonpro-deep-blue/90 text-white'
   }
-  return format(date, 'dd/MM/yyyy HH:mm', { locale: ptBR });
-};
 
-export const formatPatientBirthDate = (date: string | Date): string => {
-  if (typeof date === 'string') {
-    date = parseISO(date);
-  }
-  return format(date, 'dd/MM/yyyy', { locale: ptBR });
-};
-
-// Validation helpers
-export const parsePatientData = createParser(
-  v.object({
-    name: v.string(),
-    email: v.string([v.email()]),
-    phone: v.string(),
-    medicalHistory: v.optional(v.string()),
-  })
-);
-
-export const validateAppointment = (appointment: Partial<Appointment>): boolean => {
-  return !!appointment.date && !!appointment.patientId && !!appointment.professionalId;
-};
-
-export const isValidCpf = (cpf: string): boolean => {
-  // Basic CPF validation stub for Brazilian healthcare
-  if (!cpf || cpf.length !== 11) return false;
-  // Add full validation logic later
-  return /^\d{11}$/.test(cpf);
-};
+  return variants[variant]
+}
 
 // General helpers
 export const capitalize = (str: string): string => {
@@ -48,6 +27,7 @@ export const truncateText = (text: string, maxLength: number = 100): string => {
   return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
 };
 
-// Export everything
-export * from './date'; // Placeholder
-export * from './validation'; // Placeholder
+// Re-exports
+export * from './date';
+export * from './validation';
+

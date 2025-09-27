@@ -12,7 +12,7 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "jsx": "react-jsx",
-    "strict": false,
+    "strict": true,
     "noResolve": false,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,

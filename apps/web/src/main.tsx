@@ -6,7 +6,8 @@ import { TRPCProvider } from './components/stubs/TRPCProvider.js'
 import { AuthProvider } from './contexts/AuthContext.js'
 import { routeTree } from './routeTree.gen.js'
 
-// Import PWA Styles
+// Import NeonPro Styles from @apex-ui-ux-designer.md
+import './styles/globals.css'
 import './styles/pwa.css'
 
 // Create the router with proper configuration
