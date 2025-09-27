@@ -1,43 +1,76 @@
-import { useState, useCallback } from 'react'
+import { useCallback } from 'react'
 
-export interface UseSchedulingSubmissionReturn {
+export interface SchedulingSubmission {
+  scheduleMutation: {
+    error: Error | null
+  }
   isSubmitting: boolean
-  error: string | null
-  submitScheduling: (data: any) => Promise<void>
-  resetError: () => void
+  handleSubmit: (data: any) => Promise<void>
 }
 
-export function useSchedulingSubmission(): UseSchedulingSubmissionReturn {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export function useSchedulingSubmission(
+  patientId: string,
+  onSuccess?: () => void,
+  onError?: (error: Error) => void
+): SchedulingSubmission {
 
-  const submitScheduling = useCallback(async (data: any) => {
-    setIsSubmitting(true)
-    setError(null)
-    
+  const handleSubmit = useCallback(async (data: any) => {
     try {
-      // TODO: Implement actual scheduling submission
-      console.log('Submitting scheduling data:', data)
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Success
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit scheduling')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [])
+      // Simulate API call - replace with actual implementation
+      console.log('Submitting scheduling data:', { patientId, ...data })
 
-  const resetError = useCallback(() => {
-    setError(null)
-  }, [])
+      // Simulate delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Simulate success
+      onSuccess?.()
+    } catch (error) {
+      onError?.(error as Error)
+      throw error
+    }
+  }, [patientId, onSuccess, onError])
 
   return {
-    isSubmitting,
-    error,
-    submitScheduling,
-    resetError
+    scheduleMutation: {
+      error: null
+    },
+    isSubmitting: false,
+    handleSubmit
+  }
+}
+
+export interface SchedulingData {
+  proceduresData: any[]
+  professionalsData: any[]
+  proceduresLoading: boolean
+  professionalsLoading: boolean
+}
+
+export function useSchedulingData(): SchedulingData {
+  // Mock data for now - replace with actual data fetching
+  return {
+    proceduresData: [],
+    professionalsData: [],
+    proceduresLoading: false,
+    professionalsLoading: false
+  }
+}
+
+export function useSchedulingForm(onSuccess?: () => void, onError?: (error: Error) => void) {
+  const handleSubmitForm = useCallback(async (e: React.FormEvent, data: any) => {
+    try {
+      // Process form data
+      return {
+        ...data,
+        submittedAt: new Date().toISOString()
+      }
+    } catch (error) {
+      onError?.(error as Error)
+      throw error
+    }
+  }, [onError])
+
+  return {
+    handleSubmitForm
   }
 }

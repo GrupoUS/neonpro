@@ -1,46 +1,33 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 
-export interface SpecialRequirement {
-  id: string
-  type: string
-  description: string
-  severity: 'low' | 'medium' | 'high'
+export interface SpecialRequirements {
+  specialRequirements: string[]
+  newRequirement: string
+  setNewRequirement: (requirement: string) => void
+  handleAddRequirement: () => void
+  handleRemoveRequirement: (index: number) => void
 }
 
-export interface UseSpecialRequirementsReturn {
-  requirements: SpecialRequirement[]
-  addRequirement: (requirement: Omit<SpecialRequirement, 'id'>) => void
-  removeRequirement: (id: string) => void
-  updateRequirement: (id: string, updates: Partial<SpecialRequirement>) => void
-}
+export function useSpecialRequirements(): SpecialRequirements {
+  const [specialRequirements, setSpecialRequirements] = useState<string[]>([])
+  const [newRequirement, setNewRequirement] = useState('')
 
-export function useSpecialRequirements(): UseSpecialRequirementsReturn {
-  const [requirements, setRequirements] = useState<SpecialRequirement[]>([])
-
-  const addRequirement = useCallback((requirement: Omit<SpecialRequirement, 'id'>) => {
-    const newRequirement: SpecialRequirement = {
-      ...requirement,
-      id: Date.now().toString()
+  const handleAddRequirement = useCallback(() => {
+    if (newRequirement.trim()) {
+      setSpecialRequirements(prev => [...prev, newRequirement.trim()])
+      setNewRequirement('')
     }
-    setRequirements(prev => [...prev, newRequirement])
-  }, [])
+  }, [newRequirement])
 
-  const removeRequirement = useCallback((id: string) => {
-    setRequirements(prev => prev.filter(req => req.id !== id))
-  }, [])
-
-  const updateRequirement = useCallback((id: string, updates: Partial<SpecialRequirement>) => {
-    setRequirements(prev => 
-      prev.map(req => 
-        req.id === id ? { ...req, ...updates } : req
-      )
-    )
+  const handleRemoveRequirement = useCallback((index: number) => {
+    setSpecialRequirements(prev => prev.filter((_, i) => i !== index))
   }, [])
 
   return {
-    requirements,
-    addRequirement,
-    removeRequirement,
-    updateRequirement
+    specialRequirements,
+    newRequirement,
+    setNewRequirement,
+    handleAddRequirement,
+    handleRemoveRequirement
   }
 }

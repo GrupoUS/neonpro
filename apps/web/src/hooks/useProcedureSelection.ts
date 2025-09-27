@@ -1,103 +1,45 @@
-import { useState, useCallback } from 'react'
-import { api } from '@/lib/api.js'
-import type { Treatment, ProfessionalSchedule } from '@/types/aesthetic-scheduling.js'
+import { useCallback, useState } from 'react'
 
-export function useProcedureSelection() {
-  const [selectedTreatment, setSelectedTreatment] = useState<Treatment | null>(null)
-  const [selectedProfessional, setSelectedProfessional] = useState<ProfessionalSchedule | null>(null)
-  const [treatments, setTreatments] = useState<Treatment[]>([])
-  const [professionals, setProfessionals] = useState<ProfessionalSchedule[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+export interface ProcedureSelection {
+  selectedProcedures: string[]
+  handleProcedureSelect: (procedureId: string, selected: boolean) => void
+  getSelectedProceduresData: (procedures: any[]) => any[]
+  getTotalEstimatedDuration: (procedures: any[]) => number
+  getTotalEstimatedCost: (procedures: any[]) => number
+}
 
-  const fetchTreatments = useCallback(async (category?: string) => {
-    setLoading(true)
-    setError(null)
-    
-    try {
-      const response = await api.treatment.getAll.query({ category })
-      setTreatments(response)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch treatments')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+export function useProcedureSelection(): ProcedureSelection {
+  const [selectedProcedures, setSelectedProcedures] = useState<string[]>([])
 
-  const fetchProfessionals = useCallback(async (specialty?: string) => {
-    setLoading(true)
-    setError(null)
-    
-    try {
-      const response = await api.professional.getAll.query({ specialty })
-      setProfessionals(response)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch professionals')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  const selectTreatment = useCallback((treatment: Treatment) => {
-    setSelectedTreatment(treatment)
-    // Auto-fetch professionals that can perform this treatment
-    fetchProfessionals(treatment.category)
-  }, [fetchProfessionals])
-
-  const selectProfessional = useCallback((professional: ProfessionalSchedule) => {
-    setSelectedProfessional(professional)
-  }, [])
-
-  const clearSelection = useCallback(() => {
-    setSelectedTreatment(null)
-    setSelectedProfessional(null)
-  }, [])
-
-  const getAvailableTimeSlots = useCallback((date: Date) => {
-    if (!selectedProfessional) return []
-    
-    // This would typically fetch from the API
-    // For now, return the professional's availability
-    return selectedProfessional.availability.filter(slot => 
-      slot.isAvailable && !slot.appointmentId
-    )
-  }, [selectedProfessional])
-
-  const validateSelection = useCallback(() => {
-    if (!selectedTreatment) {
-      return { valid: false, error: 'Please select a treatment' }
-    }
-    if (!selectedProfessional) {
-      return { valid: false, error: 'Please select a professional' }
-    }
-    
-    // Check if professional can perform this treatment
-    const canPerform = selectedProfessional.specialty === selectedTreatment.category ||
-      selectedProfessional.specialty === 'general'
-    
-    if (!canPerform) {
-      return { 
-        valid: false, 
-        error: 'Selected professional cannot perform this treatment' 
+  const handleProcedureSelect = useCallback((procedureId: string, selected: boolean) => {
+    setSelectedProcedures(prev => {
+      if (selected) {
+        return [...prev, procedureId]
+      } else {
+        return prev.filter(id => id !== procedureId)
       }
-    }
-    
-    return { valid: true, error: null }
-  }, [selectedTreatment, selectedProfessional])
+    })
+  }, [])
+
+  const getSelectedProceduresData = useCallback((procedures: any[]) => {
+    return procedures.filter(procedure => selectedProcedures.includes(procedure.id))
+  }, [selectedProcedures])
+
+  const getTotalEstimatedDuration = useCallback((procedures: any[]) => {
+    const selected = getSelectedProceduresData(procedures)
+    return selected.reduce((total, procedure) => total + (procedure.baseDuration || 0), 0)
+  }, [getSelectedProceduresData])
+
+  const getTotalEstimatedCost = useCallback((procedures: any[]) => {
+    const selected = getSelectedProceduresData(procedures)
+    return selected.reduce((total, procedure) => total + (procedure.basePrice || 0), 0)
+  }, [getSelectedProceduresData])
 
   return {
-    selectedTreatment,
-    selectedProfessional,
-    treatments,
-    professionals,
-    loading,
-    error,
-    fetchTreatments,
-    fetchProfessionals,
-    selectTreatment,
-    selectProfessional,
-    clearSelection,
-    getAvailableTimeSlots,
-    validateSelection
+    selectedProcedures,
+    handleProcedureSelect,
+    getSelectedProceduresData,
+    getTotalEstimatedDuration,
+    getTotalEstimatedCost
   }
 }

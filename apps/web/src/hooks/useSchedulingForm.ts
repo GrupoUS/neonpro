@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useSchedulingData } from './useSchedulingData'
 
 export interface FormField {
@@ -16,6 +16,7 @@ export interface UseSchedulingFormReturn {
   resetForm: () => void
   isFormValid: boolean
   submitForm: () => void
+  handleSubmitForm: (data: any, additionalData?: any) => void
 }
 
 export function useSchedulingForm(): UseSchedulingFormReturn {
@@ -26,12 +27,13 @@ export function useSchedulingForm(): UseSchedulingFormReturn {
     setFields(prev => ({
       ...prev,
       [name]: {
-        ...prev[name],
+        name,
         value,
-        error: undefined
+        error: undefined,
+        touched: prev[name]?.touched || false
       }
     }))
-    
+
     // Update scheduling data
     updateSchedulingData({ [name]: value })
   }, [updateSchedulingData])
@@ -40,7 +42,9 @@ export function useSchedulingForm(): UseSchedulingFormReturn {
     setFields(prev => ({
       ...prev,
       [name]: {
-        ...prev[name],
+        name,
+        value: prev[name]?.value,
+        error: prev[name]?.error,
         touched: true
       }
     }))
@@ -50,8 +54,10 @@ export function useSchedulingForm(): UseSchedulingFormReturn {
     setFields(prev => ({
       ...prev,
       [name]: {
-        ...prev[name],
-        error
+        name,
+        value: prev[name]?.value,
+        error,
+        touched: prev[name]?.touched || false
       }
     }))
   }, [])
@@ -61,13 +67,13 @@ export function useSchedulingForm(): UseSchedulingFormReturn {
     resetSchedulingData()
   }, [resetSchedulingData])
 
-  const isFormValid = Object.values(fields).every(field => 
+  const isFormValid = Object.values(fields).every(field =>
     !field.error && (!field.touched || field.value !== undefined)
   )
 
   const submitForm = useCallback(() => {
     // Mark all fields as touched
-    setFields(prev => 
+    setFields(prev =>
       Object.keys(prev).reduce((acc, key) => ({
         ...acc,
         [key]: {
@@ -78,6 +84,17 @@ export function useSchedulingForm(): UseSchedulingFormReturn {
     )
   }, [])
 
+  const handleSubmitForm = useCallback((data: any, additionalData?: any) => {
+    // Combine form data with additional data
+    const combinedData = { ...data, ...additionalData }
+
+    // Update scheduling data with combined data
+    updateSchedulingData(combinedData)
+
+    // Mark all fields as touched for validation
+    submitForm()
+  }, [updateSchedulingData, submitForm])
+
   return {
     fields,
     updateField,
@@ -85,6 +102,7 @@ export function useSchedulingForm(): UseSchedulingFormReturn {
     setFieldError,
     resetForm,
     isFormValid,
-    submitForm
+    submitForm,
+    handleSubmitForm
   }
 }

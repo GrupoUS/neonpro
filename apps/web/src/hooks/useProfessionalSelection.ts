@@ -5,6 +5,7 @@ import type { ProfessionalSchedule } from '@/types/aesthetic-scheduling.js'
 export function useProfessionalSelection() {
   const [selectedProfessional, setSelectedProfessional] = useState<ProfessionalSchedule | null>(null)
   const [professionals, setProfessionals] = useState<ProfessionalSchedule[]>([])
+  const [preferredProfessionals, setPreferredProfessionals] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -60,6 +61,16 @@ export function useProfessionalSelection() {
     })
   }, [professionals])
 
+  const handleProfessionalSelect = useCallback((professionalId: string, isPreferred: boolean) => {
+    setPreferredProfessionals(prev => {
+      if (isPreferred) {
+        return [...prev, professionalId]
+      } else {
+        return prev.filter(id => id !== professionalId)
+      }
+    })
+  }, [])
+
   const validateProfessionalSelection = useCallback((professionalId: string) => {
     const professional = getProfessionalById(professionalId)
     if (!professional) {
@@ -81,10 +92,12 @@ export function useProfessionalSelection() {
   return {
     selectedProfessional,
     professionals,
+    preferredProfessionals,
     loading,
     error,
     fetchProfessionals,
     selectProfessional,
+    handleProfessionalSelect,
     clearSelection,
     getProfessionalById,
     getProfessionalsBySpecialty,

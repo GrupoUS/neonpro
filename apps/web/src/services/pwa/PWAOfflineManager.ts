@@ -41,6 +41,7 @@ export interface SyncResult {
   conflicts: OfflineOperation[]
   duration: number
   bytesSynced: number
+  startTime: number
 }
 
 export interface ConflictResolutionStrategy {
@@ -58,6 +59,7 @@ interface ServerData {
 import { logger } from '@/utils/logger.js'
 
 export class PWAOfflineManager {
+  private static instance: PWAOfflineManager
   private queues: Map<string, OfflineQueue> = new Map()
   private isOnline = navigator.onLine
   private syncInProgress = false
@@ -292,6 +294,7 @@ export class PWAOfflineManager {
         conflicts: [],
         duration: 0,
         bytesSynced: 0,
+        startTime: Date.now()
       }
     }
 
@@ -311,6 +314,7 @@ export class PWAOfflineManager {
   }
 
   private async processOperations(queue: OfflineQueue): Promise<SyncResult> {
+    const startTime = Date.now()
     const result: SyncResult = {
       success: true,
       operationsProcessed: 0,
@@ -318,6 +322,7 @@ export class PWAOfflineManager {
       conflicts: [],
       duration: 0,
       bytesSynced: 0,
+      startTime
     }
 
     const operationsToProcess = queue.operations
@@ -358,7 +363,7 @@ export class PWAOfflineManager {
     this.queues.set(queue.id, queue)
     await this.saveQueue(queue)
 
-    result.duration = Date.now() - result.startTime
+    result.duration = Date.now() - startTime
     result.success = result.errors.length === 0
 
     return result
@@ -394,11 +399,11 @@ export class PWAOfflineManager {
       // Simulate API call - replace with actual implementation
       const apiResult = await this.executeApiOperation(operation)
 
-      if (apiResult.conflict) {
+      if (apiResult.conflict && apiResult.serverData) {
         // Handle conflict
         const resolution = await this.resolveConflict(operation, apiResult.serverData)
 
-        if (resolution.resolved) {
+        if (resolution.resolved && resolution.mergedData) {
           // Retry with resolved data
           const resolvedOperation = { ...operation, data: resolution.mergedData }
           return await this.executeApiOperation(resolvedOperation)
@@ -509,6 +514,7 @@ export class PWAOfflineManager {
             conflicts: [],
             duration: 0,
             bytesSynced: 0,
+            startTime: Date.now()
           })
         }
       }

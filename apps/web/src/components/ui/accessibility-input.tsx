@@ -10,12 +10,8 @@ export interface AccessibilityInputProps extends React.InputHTMLAttributes<HTMLI
   ariaLabel?: string
   healthcareContext?: 'medical' | 'personal' | 'emergency' | 'administrative'
   validationState?: 'none' | 'valid' | 'invalid' | 'warning'
-}
-
-export interface BrazilianHealthcareInputProps extends AccessibilityInputProps {
   // Brazilian format validation
   brazilianFormat?: 'cpf' | 'phone' | 'cep' | 'cnpj' | 'date'
-  
   // Healthcare-specific validation
   healthcareValidation?: {
     minAge?: number
@@ -23,20 +19,39 @@ export interface BrazilianHealthcareInputProps extends AccessibilityInputProps {
     bloodType?: boolean
     emergencyContact?: boolean
   }
-  
   // LGPD compliance
   lgpdSensitive?: boolean
   dataPurpose?: string
-  
+  // Accessibility enhancements
+  screenReaderInstructions?: string
+  voiceOverSupport?: boolean
+}
+
+export interface BrazilianHealthcareInputProps extends AccessibilityInputProps {
+  // Brazilian format validation
+  brazilianFormat?: 'cpf' | 'phone' | 'cep' | 'cnpj' | 'date'
+
+  // Healthcare-specific validation
+  healthcareValidation?: {
+    minAge?: number
+    maxAge?: number
+    bloodType?: boolean
+    emergencyContact?: boolean
+  }
+
+  // LGPD compliance
+  lgpdSensitive?: boolean
+  dataPurpose?: string
+
   // Accessibility enhancements
   screenReaderInstructions?: string
   voiceOverSupport?: boolean
 }
 
 const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInputProps>(
-  ({ 
-    className, 
-    type, 
+  ({
+    className,
+    type,
     label,
     error,
     helperText,
@@ -51,16 +66,17 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
     dataPurpose,
     screenReaderInstructions,
     voiceOverSupport = false,
-    ...props 
+    ...props
   }, ref) => {
     // Generate unique ID if not provided
-    const inputId = id || `input-${React.useId()}`
+    const generatedId = React.useId()
+    const inputId = id || `input-${generatedId}`
     const errorId = error ? `${inputId}-error` : undefined
     const helperId = helperText ? `${inputId}-helper` : undefined
     const instructionsId = screenReaderInstructions ? `${inputId}-instructions` : undefined
 
     // Healthcare-specific validation patterns
-    const healthcarePatterns = {
+    const healthcarePatterns: Record<string, { pattern?: string; inputMode?: string }> = {
       medical: {
         pattern: healthcareContext === 'medical' ? '[A-Za-z0-9\\s\\-\\.,]{1,100}' : undefined,
         inputMode: healthcareContext === 'medical' ? 'text' : undefined,
@@ -72,10 +88,13 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
       emergency: {
         inputMode: healthcareContext === 'emergency' ? 'tel' : undefined,
       },
+      administrative: {
+        inputMode: healthcareContext === 'administrative' ? 'text' : undefined,
+      },
     }
 
     // Brazilian format patterns
-    const brazilianPatterns = {
+    const brazilianPatterns: Record<string, { pattern: string; placeholder: string; maxLength: number; inputMode: 'numeric' | 'tel' }> = {
       cpf: {
         pattern: '^[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}-[0-9]{2}$',
         placeholder: '000.000.000-00',
@@ -108,43 +127,43 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
       },
     }
 
-    const healthcareProps = healthcareContext ? healthcarePatterns[healthcareContext] : {}
-    const brazilianProps = brazilianFormat ? brazilianPatterns[brazilianFormat] : {}
+    const healthcareProps = healthcareContext ? (healthcarePatterns[healthcareContext] || {}) : {}
+    const brazilianProps = brazilianFormat ? (brazilianPatterns[brazilianFormat] || {}) : {}
 
     // Format input value for Brazilian formats
     const formatInputValue = (value: string, format: string): string => {
       if (!format || !value) return value
 
       const cleanValue = value.replace(/\D/g, '')
-      
+
       switch (format) {
         case 'cpf':
           if (cleanValue.length <= 3) return cleanValue
           if (cleanValue.length <= 6) return `${cleanValue.slice(0, 3)}.${cleanValue.slice(3)}`
           if (cleanValue.length <= 9) return `${cleanValue.slice(0, 3)}.${cleanValue.slice(3, 6)}.${cleanValue.slice(6)}`
           return `${cleanValue.slice(0, 3)}.${cleanValue.slice(3, 6)}.${cleanValue.slice(6, 9)}-${cleanValue.slice(9, 11)}`
-        
+
         case 'phone':
           if (cleanValue.length <= 2) return cleanValue
           if (cleanValue.length <= 6) return `(${cleanValue.slice(0, 2)}) ${cleanValue.slice(2)}`
           return `(${cleanValue.slice(0, 2)}) ${cleanValue.slice(2, 7)}-${cleanValue.slice(7, 11)}`
-        
+
         case 'cep':
           if (cleanValue.length <= 5) return cleanValue
           return `${cleanValue.slice(0, 5)}-${cleanValue.slice(5, 8)}`
-        
+
         case 'cnpj':
           if (cleanValue.length <= 2) return cleanValue
           if (cleanValue.length <= 5) return `${cleanValue.slice(0, 2)}.${cleanValue.slice(2)}`
           if (cleanValue.length <= 8) return `${cleanValue.slice(0, 2)}.${cleanValue.slice(2, 5)}.${cleanValue.slice(5)}`
           if (cleanValue.length <= 12) return `${cleanValue.slice(0, 2)}.${cleanValue.slice(2, 5)}.${cleanValue.slice(5, 8)}/${cleanValue.slice(8)}`
           return `${cleanValue.slice(0, 2)}.${cleanValue.slice(2, 5)}.${cleanValue.slice(5, 8)}/${cleanValue.slice(8, 12)}-${cleanValue.slice(12, 14)}`
-        
+
         case 'date':
           if (cleanValue.length <= 2) return cleanValue
           if (cleanValue.length <= 4) return `${cleanValue.slice(0, 2)}/${cleanValue.slice(2)}`
           return `${cleanValue.slice(0, 2)}/${cleanValue.slice(2, 4)}/${cleanValue.slice(4, 8)}`
-        
+
         default:
           return value
       }
@@ -174,7 +193,7 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
     return (
       <div className="space-y-1.5">
         {label && (
-          <label 
+          <label
             htmlFor={inputId}
             className={cn(
               "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
@@ -190,16 +209,16 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
             )}
           </label>
         )}
-        
+
         {screenReaderInstructions && (
-          <div 
+          <div
             id={instructionsId}
             className="sr-only"
           >
             {screenReaderInstructions}
           </div>
         )}
-        
+
         <input
           type={type}
           id={inputId}
@@ -220,18 +239,18 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
           aria-invalid={validationState === 'invalid'}
           aria-describedby={cn(errorId, helperId, instructionsId)}
           aria-required={required}
-          placeholder={brazilianProps.placeholder || props.placeholder}
-          maxLength={brazilianProps.maxLength || props.maxLength}
-          inputMode={brazilianProps.inputMode || healthcareProps.inputMode || props.inputMode}
-          pattern={brazilianProps.pattern || healthcareProps.pattern || props.pattern}
+          placeholder={(brazilianProps as any)?.placeholder || props.placeholder}
+          maxLength={(brazilianProps as any)?.maxLength || props.maxLength}
+          inputMode={(brazilianProps as any)?.inputMode || (healthcareProps as any)?.inputMode || props.inputMode}
+          pattern={(brazilianProps as any)?.pattern || (healthcareProps as any)?.pattern || props.pattern}
           onChange={handleInputChange}
           {...healthcareProps}
           {...brazilianProps}
           {...props}
         />
-        
+
         {error && (
-          <div 
+          <div
             id={errorId}
             className="text-sm text-red-600 font-medium flex items-center gap-1"
             role="alert"
@@ -243,9 +262,9 @@ const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInput
             {error}
           </div>
         )}
-        
+
         {helperText && !error && (
-          <div 
+          <div
             id={helperId}
             className={cn(
               "text-sm text-muted-foreground",

@@ -603,7 +603,7 @@ export class PWANativeDeviceService {
 
         notification.onclick = () => {
           notification.close()
-          if (options.data?.url) {
+          if (options.data?.url && typeof options.data.url === 'string') {
             window.open(options.data.url, '_blank')
           }
           resolve()

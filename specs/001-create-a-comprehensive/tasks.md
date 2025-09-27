@@ -565,6 +565,7 @@
 **Agent**: @apex-ui-ux-designer (UI/UX validation, WCAG 2.1 AA+ compliance, frontend architecture)
 
 ### **Problem Analysis**
+
 - Site retorna HTTP 200 com HTML válido (1114 bytes)
 - JavaScript assets estão sendo servidos (628KB index--51DZTpE.js)
 - CSS assets carregando corretamente
@@ -690,6 +691,7 @@
 ### **Comprehensive Frontend Testing Action Plan**
 
 **Phase 4.1: URGENT - Site Recovery (T027-T028)**
+
 ```bash
 # Immediate priority: diagnose and fix loading issues
 @apex-ui-ux-designer "URGENT diagnosis of site loading problems"
@@ -697,6 +699,7 @@
 ```
 
 **Phase 4.2: HIGH - Core Functionality (T029-T030)**
+
 ```bash
 # Parallel testing of main features
 @apex-ui-ux-designer "Validate dashboard and main navigation"
@@ -704,6 +707,7 @@
 ```
 
 **Phase 4.3: MEDIUM - Quality & Compliance (T031-T035)**
+
 ```bash
 # Parallel quality validation
 @apex-ui-ux-designer "WCAG 2.1 AA+ accessibility validation"
@@ -714,6 +718,7 @@
 ```
 
 **Phase 4.4: TECHNICAL - Deep Analysis (T036-T038)**
+
 ```bash
 # Technical validation with other agents
 @code-reviewer "Technical JavaScript and build error analysis"

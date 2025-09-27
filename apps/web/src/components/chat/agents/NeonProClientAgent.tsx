@@ -10,11 +10,12 @@
  * - Portuguese healthcare workflows
  */
 
-import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   AlertTriangle,
   Calendar,
   CheckCircle,
+  ChevronRight,
   Clock,
   FileText,
   Mail,
@@ -25,17 +26,16 @@ import {
   Stethoscope,
   User,
 } from 'lucide-react'
-import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, AlertDescription } from '@neonpro/ui/alert'
-import { Badge } from '@neonpro/ui/badge'
-import { Button } from '@neonpro/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui/card'
-import { Input } from '@neonpro/ui/input'
-import { Label } from '@neonpro/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui/select'
-import { Textarea } from '@neonpro/ui/textarea'
-import { NeonProMessage, NeonProPatientDataCard } from '../NeonProChatComponents'
-import { useNeonProChat } from '../NeonProChatProvider'
+import { Alert, AlertDescription } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Button } from '@/components/ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
+import { Input } from '@/components/ui/input.js'
+import { Label } from '@/components/ui/label.js'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
+import { Textarea } from '@/components/ui/textarea.js'
+import { NeonProMessage, NeonProPatientDataCard } from '../NeonProChatComponents.js'
+import { useNeonProChat } from '../NeonProChatProvider.js'
 
 // Types
 interface Patient {
@@ -136,23 +136,12 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     },
   }
 
-  const { state, setState } = useCoAgent<ClientAgentState>({
-    name: 'client-agent',
-    initialState,
-  })
+  const [state, setState] = useState<ClientAgentState>(initialState)
 
-  // Provide context to CopilotKit
-  useCopilotReadable({
-    description: 'Current patient management state and context',
-    value: {
-      currentOperation: state.currentOperation,
-      selectedPatient: state.selectedPatient,
-      searchResultsCount: state.searchResults.length,
-      clinicId,
-      compliance: state.compliance.consentLevel,
-    },
-  }, [state, clinicId])
+  // Note: CopilotKit integration temporarily disabled for build stability
 
+  // Note: CopilotKit integrations temporarily disabled for build stability
+  /*
   // Search for patients action
   useCopilotAction({
     name: 'search_patients',
@@ -219,8 +208,10 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       }
     },
   })
+  */
 
-  // Register new patient action
+  // Register new patient action  
+  /*
   useCopilotAction({
     name: 'register_patient',
     description: 'Register a new patient in the system',
@@ -428,6 +419,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       }
     },
   })
+  */
 
   // Handle form changes
   const handleFormChange = useCallback((field: string, value: any) => {

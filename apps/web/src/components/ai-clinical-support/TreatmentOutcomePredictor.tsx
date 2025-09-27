@@ -5,11 +5,11 @@ import { Badge } from '@/components/ui/badge.js'
 import { Button } from '@/components/ui/button.js'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
 import { Progress } from '@/components/ui/progress.js'
-import { Separator } from '@/components/ui/separator'
-import { Slider } from '@/components/ui/slider'
+import { Separator } from '@/components/ui/separator.js'
+import { Slider } from '@/components/ui/slider.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { apiClient as api } from '@/lib/api.js'
-import { PredictionTimeline, TreatmentOutcomePrediction } from '@/types/ai-clinical-support.js'
+import { OutcomeTimeline, OutcomePrediction } from '@/types/ai-clinical-support.js'
 import { useQuery } from '@tanstack/react-query'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -176,7 +176,7 @@ export function TreatmentOutcomePredictor({
             Predição de Resultados
           </h2>
           <p className='text-gray-600 mt-1'>
-            Análise preditiva baseada em IA para {prediction.patientInfo?.name}
+            Análise preditiva baseada em IA para {(prediction as any)?.patientInfo?.name || 'Paciente'}
           </p>
         </div>
         <div className='flex items-center gap-2'>
@@ -239,7 +239,7 @@ export function TreatmentOutcomePredictor({
               <div>
                 <div className='text-sm text-gray-500'>Taxa de Sucesso</div>
                 <div className='text-lg font-bold text-green-600'>
-                  {(prediction.overallSuccessRate * 100).toFixed(1)}%
+                  {((prediction as any)?.overallSuccessRate * 100 || 0).toFixed(1)}%
                 </div>
               </div>
             </div>
@@ -253,7 +253,7 @@ export function TreatmentOutcomePredictor({
               <div>
                 <div className='text-sm text-gray-500'>Satisfação Esperada</div>
                 <div className='text-lg font-bold text-yellow-600'>
-                  {prediction.expectedSatisfactionScore}/10
+                  {(prediction as any)?.expectedSatisfactionScore || 0}/10
                 </div>
               </div>
             </div>
@@ -267,7 +267,7 @@ export function TreatmentOutcomePredictor({
               <div>
                 <div className='text-sm text-gray-500'>Tempo para Resultados</div>
                 <div className='text-lg font-bold text-blue-600'>
-                  {prediction.timeToVisibleResults} semanas
+                  {(prediction as any)?.timeToVisibleResults || 0} semanas
                 </div>
               </div>
             </div>
@@ -282,10 +282,10 @@ export function TreatmentOutcomePredictor({
                 <div className='text-sm text-gray-500'>Confiança da Predição</div>
                 <div
                   className={`text-lg font-bold ${
-                    getConfidenceColor(prediction.predictionConfidence)
+                    getConfidenceColor((prediction as any)?.predictionConfidence || 0)
                   }`}
                 >
-                  {(prediction.predictionConfidence * 100).toFixed(0)}%
+                  {((prediction as any)?.predictionConfidence * 100 || 0).toFixed(0)}%
                 </div>
               </div>
             </div>
@@ -294,7 +294,7 @@ export function TreatmentOutcomePredictor({
       </div>
 
       {/* Warning for Low Confidence */}
-      {prediction.predictionConfidence < confidenceThreshold[0] && (
+      {((prediction as any)?.predictionConfidence || 1) < confidenceThreshold[0] && (
         <Alert>
           <AlertTriangle className='h-4 w-4' />
           <AlertTitle>Baixa Confiança na Predição</AlertTitle>
@@ -327,7 +327,7 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {prediction.outcomeProbabilities.map(outcome => (
+                  {((prediction as any)?.outcomeProbabilities || []).map((outcome: any) => (
                     <div key={outcome.outcome} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center gap-2'>
@@ -364,7 +364,7 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {prediction.metrics.map(metric => (
+                  {((prediction as any)?.metrics || []).map((metric: any) => (
                     <div key={metric.name} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <span className='text-sm font-medium'>{metric.name}</span>
@@ -401,7 +401,7 @@ export function TreatmentOutcomePredictor({
             </CardHeader>
             <CardContent>
               <div className='space-y-6'>
-                {prediction.timeline.map((phase, index) => (
+                {((prediction as any)?.timeline || []).map((phase: any, index: number) => (
                   <TimelinePhase key={index} phase={phase} index={index} />
                 ))}
               </div>
@@ -421,9 +421,9 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
-                  {prediction.influencingFactors
-                    .filter(f => f.impact === 'positive')
-                    .map((factor, index) => (
+                  {((prediction as any)?.influencingFactors || [])
+                    .filter((f: any) => f.impact === 'positive')
+                    .map((factor: any, index: number) => (
                       <div key={index} className='flex items-start gap-3'>
                         <ThumbsUp className='h-4 w-4 text-green-500 mt-0.5 flex-shrink-0' />
                         <div className='flex-1'>
@@ -448,9 +448,9 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
-                  {prediction.influencingFactors
-                    .filter(f => f.impact === 'negative')
-                    .map((factor, index) => (
+                  {((prediction as any)?.influencingFactors || [])
+                    .filter((f: any) => f.impact === 'negative')
+                    .map((factor: any, index: number) => (
                       <div key={index} className='flex items-start gap-3'>
                         <ThumbsDown className='h-4 w-4 text-red-500 mt-0.5 flex-shrink-0' />
                         <div className='flex-1'>
@@ -482,7 +482,7 @@ export function TreatmentOutcomePredictor({
                 <div>
                   <h4 className='font-medium mb-3'>Comparação com Média de Pacientes</h4>
                   <div className='space-y-3'>
-                    {prediction.benchmarks.map((benchmark, index) => (
+                    {((prediction as any)?.benchmarks || []).map((benchmark: any, index: number) => (
                       <div key={index} className='grid grid-cols-3 gap-4 items-center'>
                         <span className='text-sm font-medium'>{benchmark.metric}</span>
                         <div className='text-center'>
@@ -515,7 +515,7 @@ export function TreatmentOutcomePredictor({
                 <div>
                   <h4 className='font-medium mb-3'>Alternativas de Tratamento</h4>
                   <div className='space-y-3'>
-                    {prediction.alternativeScenarios.map((scenario, index) => (
+                    {((prediction as any)?.alternativeScenarios || []).map((scenario: any, index: number) => (
                       <div key={index} className='border rounded-lg p-3'>
                         <div className='flex items-center justify-between mb-2'>
                           <h5 className='font-medium'>{scenario.scenarioName}</h5>

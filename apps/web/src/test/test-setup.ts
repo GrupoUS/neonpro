@@ -3,6 +3,7 @@ import { vi } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { setupDOMEnvironment } from './setup/environment'
+import { setupMockApi } from './mocks/handlers'
 
 // Setup DOM environment for tests
 const { dom } = setupDOMEnvironment()
@@ -52,8 +53,15 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
 global.fetch = vi.fn()
 
 // Setup global test configurations for healthcare compliance
+let mockApiCleanup: (() => void) | null = null
+
 beforeAll(() => {
   console.warn('🧪 Test environment setup complete - Healthcare compliance enabled')
+  
+  // Setup simplified mock API server
+  const { cleanup } = setupMockApi()
+  mockApiCleanup = cleanup
+  console.warn('🌐 Mock API server started (simplified approach)')
 
   // Mock performance API for healthcare timing measurements
   global.performance = {
@@ -358,6 +366,14 @@ afterEach(() => {
   vi.resetAllMocks()
 })
 
+// Cleanup mock API server after all tests
+afterAll(() => {
+  if (mockApiCleanup) {
+    mockApiCleanup()
+    console.warn('🌐 Mock API server stopped')
+  }
+})
+
 // Export for use in test files
 export const createMockQueryClient = () => {
   return {
@@ -397,4 +413,3 @@ export const createMockHealthcareData = () => ({
     isActive: true,
   },
 })
-

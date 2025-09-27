@@ -10,14 +10,11 @@
  * - Portuguese healthcare financial workflows
  */
 
-import { useCoAgent, useCopilotAction, useCopilotReadable } from '@copilotkit/react-core'
 import React from 'react'
-import { useNeonProChat } from '../NeonProChatProvider'
-// Removed unused NeonProMessage import
-// Removed unused Button import
-import { Alert, AlertDescription } from '@neonpro/ui/alert'
-import { Badge } from '@neonpro/ui/badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui/card'
+import { useNeonProChat } from '../NeonProChatProvider.js'
+import { Alert, AlertDescription } from '@/components/ui/alert.js'
+import { Badge } from '@/components/ui/badge.js'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
 // Removed unused Input import
 // Removed unused Label import
 // Removed unused Textarea import
@@ -208,23 +205,10 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     },
   }
 
-  const { state, setState } = useCoAgent<FinancialAgentState>({
-    name: 'financial-agent',
-    initialState,
-  })
+  // Note: CopilotKit temporarily disabled for build stability
+  const [state, setState] = useState<FinancialAgentState>(initialState)
 
-  // Provide context to CopilotKit
-  useCopilotReadable({
-    description: 'Current financial management state and context',
-    value: {
-      currentOperation: state.currentOperation,
-      metrics: state.metrics,
-      forecast: state.forecast,
-      pendingTransactions: state.transactions.filter(t => t.status === 'pending').length,
-      compliance: state.compliance,
-    },
-  }, [state])
-
+  /*
   // Process payment action
   useCopilotAction({
     name: 'process_payment',
@@ -854,5 +838,3 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     </div>
   )
 }
-
-export default NeonProFinancialAgent

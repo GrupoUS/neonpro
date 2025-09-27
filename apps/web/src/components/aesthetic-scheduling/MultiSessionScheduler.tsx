@@ -37,7 +37,7 @@ import { useSchedulingForm } from '@/hooks/useSchedulingForm.js'
 
 interface MultiSessionSchedulerProps {
   patientId: string
-  onSuccess?: (response: AestheticSchedulingResponse) => void
+  onSuccess?: () => void
   onError?: (error: Error) => void
 }
 
@@ -103,7 +103,7 @@ export function MultiSessionScheduler(
     professionalsLoading,
   } = useSchedulingData()
 
-  const { handleSubmitForm } = useSchedulingForm(onSuccess, onError)
+  const { handleSubmitForm } = useSchedulingForm()
 
   // Local state for urgency level
   const [urgencyLevel, setUrgencyLevel] = useState<'routine' | 'priority' | 'urgent'>('routine')
@@ -211,7 +211,7 @@ export function MultiSessionScheduler(
                                 </p>
                                 <div className='flex flex-wrap gap-2 mb-2'>
                                   <Badge variant='secondary'>{procedure.category}</Badge>
-                                  <Badge variant='outline'>{procedure.procedureType}</Badge>
+                                  <Badge variant='outline'>{procedure.category}</Badge>
                                   {procedure.requiresCertification && (
                                     <Badge variant='destructive' className='text-xs'>
                                       Requer Certificação
@@ -221,15 +221,15 @@ export function MultiSessionScheduler(
                                 <div className='text-sm text-gray-700'>
                                   <div className='flex justify-between'>
                                     <span>Duração:</span>
-                                    <span>{procedure.baseDuration} min</span>
+                                    <span>{procedure.duration} min</span>
                                   </div>
                                   <div className='flex justify-between'>
                                     <span>Valor:</span>
-                                    <span>R$ {procedure.basePrice.toLocaleString('pt-BR')}</span>
+                                    <span>R$ {procedure.price.toLocaleString('pt-BR')}</span>
                                   </div>
                                   <div className='flex justify-between'>
                                     <span>Sessões:</span>
-                                    <span>{procedure.minSessions}-{procedure.maxSessions}</span>
+                                    <span>Múltiplas sessões</span>
                                   </div>
                                 </div>
                               </div>
@@ -259,7 +259,7 @@ export function MultiSessionScheduler(
                   <div className='flex gap-2'>
                     <Input
                       type='date'
-                      onChange={e => e.target.value && handleAddDate(e.target.value)}
+                      onChange={e => e.target.value && handleAddDate(new Date(e.target.value))}
                       min={new Date().toISOString().split('T')[0]}
                       aria-label='Adicionar data preferencial'
                     />
@@ -269,7 +269,7 @@ export function MultiSessionScheduler(
                         const input = document.querySelector(
                           'input[type="date"]',
                         ) as HTMLInputElement
-                        if (input?.value) handleAddDate(input.value)
+                        if (input?.value) handleAddDate(new Date(input.value))
                       }}
                     >
                       Adicionar
@@ -384,7 +384,7 @@ export function MultiSessionScheduler(
                           <XCircle
                             className='h-3 w-3 ml-1'
                             onClick={() =>
-                              handleRemoveRequirement(requirement)}
+                              handleRemoveRequirement(index)}
                           />
                         </Badge>
                       ))}
@@ -410,8 +410,8 @@ export function MultiSessionScheduler(
                 <div>
                   <Label htmlFor='pregnancyStatus'>Status de Gravidez</Label>
                   <Select
-                    value={medicalHistory.pregnancyStatus}
-                    onValueChange={(value: PregnancyStatus) => updatePregnancyStatus(value)}
+                    value={medicalHistory.isPregnant ? 'pregnant' : 'not_pregnant'}
+                    onValueChange={(value: string) => updatePregnancyStatus(value === 'pregnant')}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -447,7 +447,7 @@ export function MultiSessionScheduler(
                           <XCircle
                             className='h-3 w-3 ml-1'
                             onClick={() =>
-                              handleRemoveContraindication(contraindication)}
+                              handleRemoveContraindication(index)}
                           />
                         </Badge>
                       ))}
@@ -477,7 +477,7 @@ export function MultiSessionScheduler(
                           <XCircle
                             className='h-3 w-3 ml-1'
                             onClick={() =>
-                              handleRemoveMedication(medication)}
+                              handleRemoveMedication(index)}
                           />
                         </Badge>
                       ))}
@@ -507,7 +507,7 @@ export function MultiSessionScheduler(
                           <XCircle
                             className='h-3 w-3 ml-1'
                             onClick={() =>
-                              handleRemoveAllergy(allergy)}
+                              handleRemoveAllergy(index)}
                           />
                         </Badge>
                       ))}
@@ -539,8 +539,8 @@ export function MultiSessionScheduler(
                           <div>
                             <span className='font-medium'>{procedure.name}</span>
                             <div className='text-sm text-gray-600'>
-                              {procedure.baseDuration} min • R${' '}
-                              {procedure.basePrice.toLocaleString('pt-BR')}
+                              {procedure.duration} min • R${' '}
+                              {procedure.price.toLocaleString('pt-BR')}
                             </div>
                           </div>
                         </div>

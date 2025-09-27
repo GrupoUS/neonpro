@@ -1,44 +1,38 @@
-import { useState, useCallback } from 'react'
-
-export interface SchedulingData {
-  patientId: string
-  professionalId: string
-  procedureId: string
-  dateTime: Date
-  duration: number
-  notes?: string
-}
+import { useEffect, useState } from 'react'
 
 export interface UseSchedulingDataReturn {
-  schedulingData: Partial<SchedulingData>
-  updateSchedulingData: (data: Partial<SchedulingData>) => void
-  resetSchedulingData: () => void
-  isDataValid: boolean
+  proceduresData: any[] | null
+  professionalsData: any[] | null
+  proceduresLoading: boolean
+  professionalsLoading: boolean
+  error: string | null
 }
 
 export function useSchedulingData(): UseSchedulingDataReturn {
-  const [schedulingData, setSchedulingData] = useState<Partial<SchedulingData>>({})
+  const [proceduresData, setProceduresData] = useState<any[] | null>(null)
+  const [professionalsData, setProfessionalsData] = useState<any[] | null>(null)
+  const [proceduresLoading, setProceduresLoading] = useState(false)
+  const [professionalsLoading, setProfessionalsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const updateSchedulingData = useCallback((data: Partial<SchedulingData>) => {
-    setSchedulingData(prev => ({ ...prev, ...data }))
+  useEffect(() => {
+    // Mock data loading - replace with actual API calls
+    setProceduresLoading(true)
+    setProfessionalsLoading(true)
+
+    setTimeout(() => {
+      setProceduresData([])
+      setProfessionalsData([])
+      setProceduresLoading(false)
+      setProfessionalsLoading(false)
+    }, 100)
   }, [])
-
-  const resetSchedulingData = useCallback(() => {
-    setSchedulingData({})
-  }, [])
-
-  const isDataValid = Boolean(
-    schedulingData.patientId &&
-    schedulingData.professionalId &&
-    schedulingData.procedureId &&
-    schedulingData.dateTime &&
-    schedulingData.duration
-  )
 
   return {
-    schedulingData,
-    updateSchedulingData,
-    resetSchedulingData,
-    isDataValid
+    proceduresData,
+    professionalsData,
+    proceduresLoading,
+    professionalsLoading,
+    error
   }
 }

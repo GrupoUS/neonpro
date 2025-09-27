@@ -43,7 +43,7 @@ const buttonVariants = cva(
 
 // Enhanced accessibility button props with healthcare compliance
 export interface AccessibilityButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>, 
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
   VariantProps<typeof buttonVariants> {
   asChild?: boolean
   loading?: boolean
@@ -68,7 +68,7 @@ export interface AccessibilityButtonProps
 }
 
 // Healthcare-specific action types
-type HealthcareAction = 
+type HealthcareAction =
   | 'emergency_call'
   | 'medical_procedure'
   | 'patient_alert'
@@ -77,11 +77,11 @@ type HealthcareAction =
   | 'data_access'
 
 const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityButtonProps>(
-  ({ 
-    className, 
-    variant, 
-    size, 
-    asChild = false, 
+  ({
+    className,
+    variant,
+    size,
+    asChild = false,
     loading = false,
     loadingText,
     ariaLabel,
@@ -100,12 +100,12 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
     screenReaderOnly = false,
     liveRegion,
     onClick,
-    ...props 
+    ...props
   }, ref) => {
     const Comp = asChild ? Slot : 'button'
     const [isConfirmed, setIsConfirmed] = React.useState(false)
     const [showConfirmation, setShowConfirmation] = React.useState(false)
-    
+
     // Healthcare-specific ARIA attributes and roles
     const healthcareAria = React.useMemo(() => {
       const baseAria: Record<string, string | boolean | undefined> = {
@@ -133,17 +133,17 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
           if (event.key === shortcutKey || (event.ctrlKey && event.key === shortcutKey)) {
             event.preventDefault()
             event.stopPropagation()
-            
+
             if (requiresConfirmation && !isConfirmed) {
               setShowConfirmation(true)
               return
             }
-            
+
             const syntheticEvent = new MouseEvent('click', {
               bubbles: true,
               cancelable: true,
             })
-            
+
             const button = ref as React.RefObject<HTMLButtonElement>
             button.current?.dispatchEvent(syntheticEvent)
           }
@@ -158,7 +158,7 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
     const handleConfirmation = () => {
       setIsConfirmed(true)
       setShowConfirmation(false)
-      
+
       // Trigger the original click
       setTimeout(() => {
         const syntheticEvent = new MouseEvent('click', {
@@ -192,7 +192,7 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
         announcementElement.className = 'sr-only'
         announcementElement.textContent = announcement
         document.body.appendChild(announcementElement)
-        
+
         setTimeout(() => {
           document.body.removeChild(announcementElement)
         }, 1000)
@@ -207,23 +207,23 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
     // Healthcare-specific styling classes
     const healthcareClasses = React.useMemo(() => {
       const classes: string[] = []
-      
+
       if (healthcareContext === 'emergency') {
         classes.push('border-2 border-red-300 shadow-lg')
       }
-      
+
       if (lgpdAction) {
         classes.push('border-l-4 border-purple-500')
       }
-      
+
       if (highContrastMode) {
         classes.push('border-2 border-current bg-black text-white')
       }
-      
+
       if (screenReaderOnly) {
         classes.push('sr-only')
       }
-      
+
       return classes.join(' ')
     }, [healthcareContext, lgpdAction, highContrastMode, screenReaderOnly])
 
@@ -285,7 +285,7 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
           ) : (
             children
           )}
-          
+
           {/* Shortcut key indicator */}
           {shortcutKey && (
             <span className="ml-2 text-xs opacity-60 bg-gray-200 px-1 py-0.5 rounded">
@@ -324,7 +324,7 @@ const AccessibilityButton = React.forwardRef<HTMLButtonElement, AccessibilityBut
 
         {/* LGPD Help Text */}
         {lgpdAction && (
-          <div 
+          <div
             id={`lgpd-${lgpdAction}-help`}
             className="sr-only"
           >
@@ -343,46 +343,45 @@ AccessibilityButton.displayName = 'AccessibilityButton'
 // Healthcare-specific button presets
 export const HealthcareButtons = {
   Emergency: (props: Omit<AccessibilityButtonProps, 'variant' | 'healthcareContext'>) => (
-    <AccessibilityButton 
-      variant="emergency" 
+    <AccessibilityButton
+      variant="emergency"
       healthcareContext="emergency"
       {...props}
     />
   ),
-  
+
   Medical: (props: Omit<AccessibilityButtonProps, 'variant' | 'healthcareContext'>) => (
-    <AccessibilityButton 
-      variant="medical" 
+    <AccessibilityButton
+      variant="medical"
       healthcareContext="medical"
       {...props}
     />
   ),
-  
+
   Success: (props: Omit<AccessibilityButtonProps, 'variant'>) => (
-    <AccessibilityButton 
+    <AccessibilityButton
       variant="success"
       {...props}
     />
   ),
-  
+
   Warning: (props: Omit<AccessibilityButtonProps, 'variant'>) => (
-    <AccessibilityButton 
+    <AccessibilityButton
       variant="warning"
       {...props}
     />
   ),
-  
+
   Info: (props: Omit<AccessibilityButtonProps, 'variant'>) => (
-    <AccessibilityButton 
+    <AccessibilityButton
       variant="info"
       {...props}
     />
   ),
-  
+
   LGPD: (props: Omit<AccessibilityButtonProps, 'lgpdAction'> & { lgpdAction: AccessibilityButtonProps['lgpdAction'] }) => (
-    <AccessibilityButton 
+    <AccessibilityButton
       variant="outline"
-      lgpdAction={props.lgpdAction}
       {...props}
     />
   ),
