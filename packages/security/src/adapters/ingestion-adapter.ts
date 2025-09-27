@@ -309,7 +309,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
 
       case 'format':
         if (rule.parameters.pattern) {
-          const regex = new RegExp(rule.parameters.pattern)
+          const regex = new RegExp(rule.parameters.pattern as string)
           return regex.test(String(fieldValue))
         }
         return true
@@ -317,10 +317,10 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
       case 'range':
         const numValue = Number(fieldValue)
         if (isNaN(numValue)) return false
-        if (rule.parameters.min !== undefined && numValue < rule.parameters.min) {
+        if (rule.parameters.min !== undefined && numValue < (rule.parameters.min as number)) {
           return false
         }
-        if (rule.parameters.max !== undefined && numValue > rule.parameters.max) {
+        if (rule.parameters.max !== undefined && numValue > (rule.parameters.max as number)) {
           return false
         }
         return true
@@ -340,7 +340,8 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
 
     switch (rule.type) {
       case 'map':
-        transformedValue = rule.logic.mapping[sourceValue] || sourceValue
+        const mapping = rule.logic.mapping as Record<string, unknown>
+        transformedValue = mapping[sourceValue as string] || sourceValue
         break
 
       case 'anonymize':
@@ -361,15 +362,15 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: Record<string, unknown>, fieldPath: string): unknown {
-    return fieldPath.split('.').reduce((obj, _key) => obj?.[_key], record)
+    return fieldPath.split('.').reduce((obj: any, key: string) => obj?.[key], record)
   }
 
   private setFieldValue(record: Record<string, unknown>, fieldPath: string, value: unknown): void {
     const keys = fieldPath.split('.')
     const lastKey = keys.pop()!
-    const target = keys.reduce((obj, _key) => {
-      if (!obj[_key]) obj[_key] = {}
-      return obj[_key]
+    const target = keys.reduce((obj: any, key: string) => {
+      if (!obj[key]) obj[key] = {}
+      return obj[key]
     }, record)
     target[lastKey] = value
   }

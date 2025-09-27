@@ -56,9 +56,13 @@ export const ModalTrigger = ({
 export const ModalBody = ({
   children,
   className,
+  titleId = 'modal-title',
+  describedBy,
 }: {
   children: ReactNode
   className?: string
+  titleId?: string
+  describedBy?: string
 }) => {
   const { open } = useModal()
 
@@ -95,6 +99,10 @@ export const ModalBody = ({
 
           <motion.div
             ref={modalRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
+            aria-describedby={describedBy}
             className={cn(
               'min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white dark:bg-neutral-950 border border-transparent dark:border-neutral-800 md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden',
               className,
@@ -190,6 +198,7 @@ const CloseIcon = () => {
     <button
       onClick={() => setOpen(false)}
       className='absolute top-4 right-4 group'
+      aria-label="Close modal"
     >
       <svg
         xmlns='http://www.w3.org/2000/svg'

@@ -19,8 +19,7 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "src/monitoring/**/*",
-    "src/types/**/*"
+    "src/monitoring/**/*"
   ],
   "references": [{ "path": "../database" }, { "path": "../healthcare-core" }]
 }

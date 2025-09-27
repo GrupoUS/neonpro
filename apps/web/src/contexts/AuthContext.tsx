@@ -22,7 +22,7 @@ import type {
   OAuthConfig,
   PasswordResetRequest
 } from '@neonpro/types'
-import type { User as SupabaseUser, Session as SupabaseSession } from '@supabase/supabase-js'
+import type { User as SupabaseUser, Session as SupabaseSession, AuthChangeEvent } from '@supabase/supabase-js'
 
 // Criar contexto de autenticação
 const AuthContext = createContext<UseAuthReturn | undefined>(undefined)
@@ -137,20 +137,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Inicializar autenticação seguindo as guidelines
   useEffect(() => {
     // Obter sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: SupabaseSession | null } }) => {
       updateAuthState(session)
     })
 
     // Escutar mudanças na autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log(`[Auth] Estado alterado: ${event}`)
-
+    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: SupabaseSession | null) => {
       // Log para auditoria LGPD
       if (event === 'SIGNED_IN' && session?.user) {
-        console.log(`[LGPD Audit] User login: ${session.user.id}`)
-
         // Criar registro de audit log
         try {
           await supabase.from('audit_logs').insert({
@@ -164,7 +160,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Failed to create audit log:', error)
         }
       } else if (event === 'SIGNED_OUT') {
-        console.log(`[LGPD Audit] User logout`)
       }
 
       updateAuthState(session)
