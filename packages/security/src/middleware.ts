@@ -403,8 +403,15 @@ async function validateJWT(_token: string): Promise<Record<string, unknown>> {
 }
 
 /**
- * LGPD consent validation implementation
- * Validates patient data access consent according to Brazilian LGPD requirements
+ * Determines whether access to a patient's data is permitted under LGPD rules.
+ *
+ * Evaluates explicit consent and policy exceptions: grants access for same-user requests, emergency sessions, or healthcare providers with a valid CFM license; otherwise requires that the user's consent level meets the requirement for the requested data type.
+ *
+ * @param userId - Identifier of the user requesting access
+ * @param patientId - Identifier of the patient whose data is being accessed
+ * @param sessionId - Optional session identifier used for audit logging
+ * @param dataType - The sensitivity of data being accessed (`basic`, `sensitive`, or `medical`)
+ * @returns `true` if access is permitted under LGPD rules, `false` otherwise
  */
 async function validateLGPDConsent(
   userId: string,

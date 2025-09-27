@@ -393,7 +393,10 @@ function extractRegion(metadata?: Record<string, unknown>): string | undefined {
 }
 
 /**
- * Extract demographic cohort from metadata
+ * Derives a demographic cohort identifier from metric metadata.
+ *
+ * @param metadata - Optional metadata object; when present may include a `demographics` object with an `ageRange` string (for example `"30-39"`).
+ * @returns The cohort string prefixed with `age_` (for example `age_30-39`) if `ageRange` exists, `undefined` otherwise.
  */
 function extractCohort(metadata?: Record<string, unknown>): string | undefined {
   if (!metadata) return undefined
@@ -513,8 +516,13 @@ export function validateMetricCompliance(metric: BaseMetric): MetricValidation {
 }
 
 /**
- * Aggregate multiple metrics using specified aggregation method
- */
+ * Compute a single numeric aggregate from an array of metrics using the chosen aggregation method.
+ *
+ * Supports: `sum`, `average`, `count`, `min`, `max`, `median`, `percentile` (95th), and `last_value`.
+ *
+ * @param metrics - Array of metrics whose `value` fields are aggregated
+ * @param aggregation - Aggregation method to apply; defaults to `average`
+ * @returns The aggregated numeric result. Returns `0` for an empty input or when the chosen aggregation cannot produce a value (e.g., percentile index out of bounds). For `count` returns the number of metrics; for `percentile` returns the 95th percentile; for `last_value` returns the most recent metric's value.
 export function aggregateMetrics(
   metrics: BaseMetric[],
   aggregation: MetricAggregation = 'average',

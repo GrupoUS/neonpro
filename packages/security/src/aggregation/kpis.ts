@@ -667,7 +667,14 @@ function getEmptySystemKPIs() {
 }
 
 /**
- * Utility function to create mock events for testing
+ * Produce an array of synthetic AnalyticsEvent objects for tests and development.
+ *
+ * The returned events cover a variety of healthcare-related event types with
+ * randomized timestamps within the last 7 days and randomized identifiers,
+ * session IDs, and properties appropriate to each event type.
+ *
+ * @param count - Number of mock events to generate (default: 10)
+ * @returns An array of `AnalyticsEvent` objects populated with realistic mock fields such as `id`, `type`, `timestamp`, `_userId`, `sessionId`, `properties`, and `_context`
  */
 export function createMockEvents(count: number = 10): AnalyticsEvent[] {
   const eventTypes = [

@@ -20,25 +20,17 @@ interface LoadingSpinnerProps {
 }
 
 /**
- * LoadingSpinner Component
- * 
- * A configurable loading spinner component for displaying loading states
- * throughout the healthcare application. Supports multiple sizes and optional text.
- * 
- * @example
- * ```tsx
- * // Basic usage
- * <LoadingSpinner />
- * 
- * // With custom size and text
- * <LoadingSpinner size="lg" text="Carregando dados do paciente..." />
- * 
- * // With custom styling
- * <LoadingSpinner className="mt-4" text="Processando LGPD consent" />
- * ```
- * 
- * @param {LoadingSpinnerProps} props - Component props
- * @returns {JSX.Element} Rendered loading spinner component
+ * Render a configurable loading spinner with an optional visible label and accessible labeling.
+ *
+ * The spinner supports predefined sizes, contextual color schemes for healthcare scenarios,
+ * and an option to disable animation for reduced-motion preferences. When `ariaLabel` is provided
+ * it is used for the control's accessible name; if `ariaLabel` differs from the visible `text`,
+ * an additional screen-reader-only label is included.
+ *
+ * @param healthcareContext - Optional semantic context to choose a color theme (`medical`, `administrative`, or `emergency`)
+ * @param reduceMotion - If true, disables the spin animation for reduced-motion accessibility
+ * @param ariaLabel - Explicit accessible name for the spinner; falls back to `text` or `'Carregando'` when not provided
+ * @returns The spinner element (icon plus optional visible label) ready to be rendered in the UI
  */
 export function LoadingSpinner({
   size = 'md',

@@ -41,6 +41,13 @@ interface CertificationValidatorProps {
   onError?: (error: Error) => void
 }
 
+/**
+ * Renders a Certification Validator UI for validating Brazilian CFM certifications for aesthetic procedures.
+ *
+ * @param onValidationComplete - Optional callback invoked with the resulting `CertificationValidation` when a validation succeeds.
+ * @param onError - Optional callback invoked with an `Error` when a validation fails.
+ * @returns The Certification Validator React element.
+ */
 export function CertificationValidator(
   { onValidationComplete, onError }: CertificationValidatorProps,
 ) {
