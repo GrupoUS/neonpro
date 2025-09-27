@@ -57,8 +57,12 @@ export interface SharedAnimatedListProps<T = SharedAnimatedListItem> {
 // }
 
 /**
- * SharedAnimatedList — SSR/CSR-safe animated list with a11y and DS integration
- * Tree-shakeable, no side-effects. Compatible with cn/twMerge.
+ * Renders an accessible, SSR/CSR-safe list with optional keyboard navigation, loading/error/empty states, and customizable item rendering.
+ *
+ * The list supports two container roles ('list' or 'listbox'), per-item roles ('listitem' or 'option'), density sizes ('sm' | 'md' | 'lg'), and an optional renderItem callback for full control over item markup. When keyboardNavigation is enabled, ArrowUp/ArrowDown/Home/End move focus among items. Loading, error, and empty states render single status items with appropriate ARIA attributes.
+ *
+ * @param props - Component props controlling items, rendering, appearance, accessibility, and behavior
+ * @returns The rendered list element
  */
 export function SharedAnimatedList<T = SharedAnimatedListItem>(
   props: SharedAnimatedListProps<T>,

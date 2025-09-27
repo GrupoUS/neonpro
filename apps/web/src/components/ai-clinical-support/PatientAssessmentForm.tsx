@@ -46,6 +46,16 @@ interface PatientAssessmentFormProps {
   onError?: (error: Error) => void
 }
 
+/**
+ * Renders a multi-tab patient assessment form that collects dermatologic, medical and aesthetic data and generates AI-driven treatment recommendations.
+ *
+ * The component manages local assessment state across four tabs (basic, medical, goals, summary), validates the completed assessment, and invokes a backend AI generation mutation. On successful generation it invalidates the patient cache and calls `onSuccess` with the returned recommendations; on failure it calls `onError`.
+ *
+ * @param patientId - Identifier of the patient the assessment belongs to
+ * @param onSuccess - Optional callback invoked with generated treatment recommendations after a successful generation
+ * @param onError - Optional callback invoked with an error when validation or generation fails
+ * @returns The rendered PatientAssessmentForm React element
+ */
 export function PatientAssessmentForm(
   { patientId, onSuccess, onError }: PatientAssessmentFormProps,
 ) {

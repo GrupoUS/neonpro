@@ -12,8 +12,13 @@ import { SupabaseGovernanceService } from './supabase-governance.service'
 let governanceServiceInstance: GovernanceService | null = null
 
 /**
- * Get or create the governance service instance
+ * Return the singleton governance service instance, creating it from Supabase configuration in environment variables when needed.
+ *
+ * Reads VITE_SUPABASE_URL or SUPABASE_URL and VITE_SUPABASE_ANON_KEY or SUPABASE_ANON_KEY to initialize the service if it has not been created.
+ *
  * @returns The singleton GovernanceService instance
+ * @throws Error if required Supabase environment variables are missing
+ * @throws Error if the service could not be initialized
  */
 export function getGovernanceService(): GovernanceService {
   if (!governanceServiceInstance) {

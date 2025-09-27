@@ -8,6 +8,14 @@ interface RadioGroupItemProps
   label?: string
 }
 
+/**
+ * Renders a styled radio group item with an optional accessible label.
+ *
+ * @param id - The id applied to the radio input and used to associate the label.
+ * @param label - Optional text label displayed next to the radio item.
+ * @param className - Additional CSS classes applied to the radio item container.
+ * @returns A React element representing the radio group item.
+ */
 function RadioGroupItem({ id, label, className, ...props }: RadioGroupItemProps) {
   return (
     <div className="flex items-center space-x-2">
@@ -41,6 +49,12 @@ function RadioGroupItem({ id, label, className, ...props }: RadioGroupItemProps)
   )
 }
 
+/**
+ * Renders a RadioGroup root with base grid spacing and optional custom classes.
+ *
+ * @param className - Additional CSS classes to append to the root container
+ * @returns The RadioGroup root element configured with the provided props
+ */
 function RadioGroup({
   className,
   ...props
