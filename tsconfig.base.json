@@ -69,7 +69,7 @@
     "maxNodeModuleJsDepth": 2,
     "disableSizeLimit": false,
     "disableReferencedProjectLoad": false,
-    "disableSolutionSearching": false,
+    "disableSolutionSearching": false
   },
   "exclude": ["node_modules", "dist", "build", "**/*.d.ts"],
   "references": [

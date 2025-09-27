@@ -44,11 +44,17 @@ function PaginationLink({
   className,
   isActive,
   size = 'icon',
+  children,
+  'aria-label': ariaLabel,
   ...props
 }: PaginationLinkProps) {
+  // Ensure accessibility by providing aria-label when no children content
+  const accessibleLabel = ariaLabel || (children ? undefined : `Go to page ${props.href || ''}`);
+  
   return (
     <a
       aria-current={isActive ? 'page' : undefined}
+      aria-label={accessibleLabel}
       data-slot='pagination-link'
       data-active={isActive}
       className={cn(
@@ -59,7 +65,9 @@ function PaginationLink({
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+    </a>
   )
 }
 

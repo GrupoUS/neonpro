@@ -3,6 +3,7 @@
 # NeonPro Healthcare Platform - Development Environment Setup
 # Automated setup script for developers joining the healthcare platform team
 # LGPD/ANVISA/CFM compliance requirements included
+# Uses Supabase Cloud (no Docker required)
 
 set -euo pipefail  # Exit on any error, undefined variable, or pipe failure
 

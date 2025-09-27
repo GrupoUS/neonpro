@@ -7,26 +7,21 @@ export const HEALTHCARE_CONSTANTS = {
     CRM_PATTERN: /^\d{4,6}\/[A-Z]{2}$/,
     COREN_PATTERN: /^\d{6}\/[A-Z]{2}$/,
   },
-  
+
   // LGPD compliance
   LGPD: {
     CONSENT_VERSION: '1.0',
     DEFAULT_RETENTION_DAYS: 2555, // ~7 years for medical records
     MINOR_AGE_THRESHOLD: 18,
-    DATA_CATEGORIES: [
-      'medical',
-      'personal', 
-      'administrative',
-      'financial'
-    ] as const,
+    DATA_CATEGORIES: ['medical', 'personal', 'administrative', 'financial'] as const,
   },
-  
+
   // ANVISA compliance
   ANVISA: {
     DEVICE_CLASSES: ['I', 'II', 'III', 'IV'] as const,
     REGISTRATION_PATTERN: /^\d{13}$/,
   },
-  
+
   // CFM (Medical Council) compliance
   CFM: {
     TELEMEDICINE_RULES: {
@@ -39,10 +34,10 @@ export const HEALTHCARE_CONSTANTS = {
       'enfermeiro',
       'fisioterapeuta',
       'psicologo',
-      'nutricionista'
+      'nutricionista',
     ] as const,
   },
-  
+
   // Application limits
   LIMITS: {
     MAX_FILE_SIZE_MB: 10,
@@ -51,15 +46,15 @@ export const HEALTHCARE_CONSTANTS = {
     SESSION_TIMEOUT_MINUTES: 30,
     PASSWORD_MIN_LENGTH: 8,
   },
-  
+
   // Date formats
   DATE_FORMATS: {
     BR_DATE: 'dd/MM/yyyy',
     BR_DATETIME: 'dd/MM/yyyy HH:mm',
     ISO_DATE: 'yyyy-MM-dd',
-    ISO_DATETIME: 'yyyy-MM-dd\'T\'HH:mm:ss.SSS\'Z\'',
+    ISO_DATETIME: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
   },
-  
+
   // API configuration
   API: {
     DEFAULT_PAGE_SIZE: 20,
@@ -67,12 +62,12 @@ export const HEALTHCARE_CONSTANTS = {
     TIMEOUT_MS: 30000,
     RETRY_ATTEMPTS: 3,
   },
-  
+
   // UI constants
   UI: {
     BREAKPOINTS: {
       SM: 640,
-      MD: 768, 
+      MD: 768,
       LG: 1024,
       XL: 1280,
       '2XL': 1536,
@@ -80,7 +75,7 @@ export const HEALTHCARE_CONSTANTS = {
     DEBOUNCE_MS: 300,
     TOAST_DURATION_MS: 5000,
   },
-} as const;
+} as const
 
 // Status options
 export const STATUS_OPTIONS = [
@@ -88,7 +83,7 @@ export const STATUS_OPTIONS = [
   { value: 'inactive', label: 'Inativo' },
   { value: 'pending', label: 'Pendente' },
   { value: 'archived', label: 'Arquivado' },
-] as const;
+] as const
 
 // Priority options
 export const PRIORITY_OPTIONS = [
@@ -96,7 +91,7 @@ export const PRIORITY_OPTIONS = [
   { value: 'medium', label: 'Média', color: 'yellow' },
   { value: 'high', label: 'Alta', color: 'orange' },
   { value: 'urgent', label: 'Urgente', color: 'red' },
-] as const;
+] as const
 
 // Brazilian states
 export const BRAZILIAN_STATES = [
@@ -127,7 +122,7 @@ export const BRAZILIAN_STATES = [
   { code: 'SP', name: 'São Paulo' },
   { code: 'SE', name: 'Sergipe' },
   { code: 'TO', name: 'Tocantins' },
-] as const;
+] as const
 
 // Error codes
 export const ERROR_CODES = {
@@ -135,25 +130,25 @@ export const ERROR_CODES = {
   INVALID_CREDENTIALS: 'AUTH_001',
   TOKEN_EXPIRED: 'AUTH_002',
   INSUFFICIENT_PERMISSIONS: 'AUTH_003',
-  
+
   // Validation
   INVALID_CPF: 'VAL_001',
   INVALID_EMAIL: 'VAL_002',
   REQUIRED_FIELD: 'VAL_003',
   INVALID_DATE: 'VAL_004',
-  
+
   // LGPD
   CONSENT_REQUIRED: 'LGPD_001',
   DATA_RETENTION_EXPIRED: 'LGPD_002',
   UNAUTHORIZED_DATA_ACCESS: 'LGPD_003',
-  
+
   // Business logic
   PATIENT_NOT_FOUND: 'BIZ_001',
   APPOINTMENT_CONFLICT: 'BIZ_002',
   PROFESSIONAL_UNAVAILABLE: 'BIZ_003',
-  
+
   // System
   DATABASE_ERROR: 'SYS_001',
   EXTERNAL_SERVICE_ERROR: 'SYS_002',
   RATE_LIMIT_EXCEEDED: 'SYS_003',
-} as const;
+} as const

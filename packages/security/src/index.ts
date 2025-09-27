@@ -299,3 +299,12 @@ export class HealthcareSecurityLogger {
 // Cryptography exports
 export { createCryptographyManager, cryptographyManager } from './cryptography'
 export type { CryptographyManager, HashResult } from './cryptography'
+
+// Secure crypto utilities
+export {
+  randomUUID,
+  createHash,
+  hashData,
+  generateSecureToken,
+  generateNonce
+} from './crypto-utils'

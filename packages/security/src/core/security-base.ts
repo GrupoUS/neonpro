@@ -7,7 +7,7 @@
  * @version 2.0.0
  */
 
-import { randomUUID, createHash } from 'crypto'
+import { randomUUID, createHash } from '../crypto-utils'
 
 // Common security interfaces
 export interface SecurityResult {
@@ -51,6 +51,8 @@ export const SECURITY_ERROR_CODES = {
 export class SecurityValidator {
   /**
    * Validate IP address format
+   * @param ip - The IP address string to validate
+   * @returns true if the IP address is valid IPv4 format, false otherwise
    */
   static isValidIP(ip: string): boolean {
     const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
@@ -59,6 +61,8 @@ export class SecurityValidator {
 
   /**
    * Extract IP subnet for mobile network tolerance
+   * @param ip - The IP address to extract subnet from
+   * @returns The first 3 octets of the IP address (subnet) or empty string if invalid
    */
   static extractIPSubnet(ip: string): string {
     if (!this.isValidIP(ip)) return ''
@@ -68,6 +72,8 @@ export class SecurityValidator {
 
   /**
    * Validate session ID format and entropy
+   * @param sessionId - The session ID to validate (must be 32-character hex string)
+   * @returns SecurityResult indicating validation success/failure with severity level
    */
   static validateSessionId(sessionId: string): SecurityResult {
     // Check format (32 character hex string)
@@ -96,6 +102,8 @@ export class SecurityValidator {
 
   /**
    * Calculate entropy of a string
+   * @param str - The input string to calculate entropy for
+   * @returns The Shannon entropy value (higher values indicate more randomness)
    */
   static calculateEntropy(str: string): number {
     const chars = str.split('')
@@ -115,6 +123,8 @@ export class SecurityValidator {
 
   /**
    * Generate secure random token with specified length
+   * @param length - The desired length of the token (default: 32)
+   * @returns A cryptographically secure random token string
    */
   static generateSecureToken(length: number = 32): string {
     return randomUUID().replace(/-/g, '').substring(0, length)
@@ -122,6 +132,8 @@ export class SecurityValidator {
 
   /**
    * Generate secure nonce
+   * @param length - The desired length of the nonce (default: 16)
+   * @returns A random alphanumeric nonce string
    */
   static generateNonce(length: number = 16): string {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -134,6 +146,8 @@ export class SecurityValidator {
 
   /**
    * Hash data for comparison
+   * @param data - The data string to hash
+   * @returns SHA-256 hex-encoded hash of the input data
    */
   static hashData(data: string): string {
     return createHash('sha256').update(data, 'utf8').digest('hex')
@@ -141,6 +155,9 @@ export class SecurityValidator {
 
   /**
    * Compare hashed data with plaintext
+   * @param plaintext - The plaintext data to compare
+   * @param hash - The hash to compare against
+   * @returns true if the plaintext hash matches the provided hash, false otherwise
    */
   static compareHash(plaintext: string, hash: string): boolean {
     return this.hashData(plaintext) === hash
@@ -160,6 +177,9 @@ export class SecurityRateLimiter {
 
   /**
    * Check if request is allowed with security context
+   * @param key - Unique identifier for rate limiting (e.g., user ID, IP address)
+   * @param context - Security context with IP, user agent, and other metadata
+   * @returns SecurityResult indicating if request is allowed or rate limited
    */
   checkLimit(key: string, context: ValidationContext): SecurityResult {
     if (!this.config.enableRateLimiting) {
@@ -224,6 +244,8 @@ export class SecurityRateLimiter {
 
   /**
    * Get remaining attempts
+   * @param key - Unique identifier to check remaining attempts for
+   * @returns Number of attempts remaining before rate limit is triggered
    */
   getRemainingAttempts(key: string): number {
     const record = this.attempts.get(key)
@@ -234,6 +256,7 @@ export class SecurityRateLimiter {
 
   /**
    * Reset rate limit for a key
+   * @param key - Unique identifier to reset rate limit for
    */
   reset(key: string): void {
     this.attempts.delete(key)
@@ -267,6 +290,9 @@ export class SecurityEventLogger {
 
   /**
    * Log security event
+   * @param eventType - Type of security event (e.g., 'login_attempt', 'session_created')
+   * @param severity - Event severity level
+   * @param details - Detailed event information including user context and metadata
    */
   logEvent(
     eventType: string,
@@ -282,10 +308,22 @@ export class SecurityEventLogger {
     }
 
     // In production, this would integrate with the audit log system
+    // For now, we use structured logging that respects security requirements
     if (process.env.NODE_ENV === 'production') {
-      console.log(JSON.stringify(event))
+      // Only log essential security events in production to avoid sensitive data exposure
+      const sanitizedEvent = {
+        id: event.id,
+        eventType: event.eventType,
+        severity: event.severity,
+        timestamp: event.timestamp,
+        action: event.details.action,
+        result: event.details.result
+      }
+      // TODO: Integrate with proper audit log system (e.g., Winston, structured logging service)
+      process.stdout.write(JSON.stringify(sanitizedEvent) + '\n')
     } else {
-      console.log(`[${severity.toUpperCase()}] ${eventType}:`, event)
+      // Development logging with full context for debugging
+      process.stdout.write(`[${severity.toUpperCase()}] ${eventType}: ${JSON.stringify(event)}\n`)
     }
   }
 }

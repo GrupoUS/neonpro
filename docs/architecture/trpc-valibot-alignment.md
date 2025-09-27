@@ -105,11 +105,11 @@ export const queryClient = new QueryClient({
 
 ## TanStack Query Integration Examples
 
-### Basic Query Hook with tRPC
+### Real-time Query Hook with tRPC + Supabase
 
 ```typescript
 // src/hooks/useAestheticProcedures.ts
-import { useQuery } from '@tanstack/react-query';
+import { useRealtimeQuery } from '@/hooks/realtime';
 import { trpcClient } from '@/lib/trpcClient';
 import * as v from 'valibot';
 
@@ -123,13 +123,17 @@ const ProcedureSchema = v.object({
 });
 
 export const useAestheticProcedures = () => {
-  return useQuery({
+  return useRealtimeQuery({
     queryKey: ['aesthetic-procedures'],
     queryFn: async () => {
       const data = await trpcClient.procedures.list.query();
       // Validate response with Valibot
       return v.parse(v.array(ProcedureSchema), data);
     },
+    table: 'procedures', // Supabase table for real-time updates
+    schema: 'public',
+    invalidateOn: ['INSERT', 'UPDATE', 'DELETE'],
+    enableOptimisticUpdates: true,
     staleTime: 10 * 60 * 1000, // 10 minutes
     select: (data) => data.sort((a, b) => a.name.localeCompare(b.name)),
   });
@@ -186,7 +190,30 @@ export const useCreateAppointment = () => {
 };
 ```
 
-### Infinite Query for Paginated Data
+### Real-time Integration Hook
+
+```typescript
+// src/hooks/useRealtimeAppointments.ts
+import { useRealtimeQuery } from '@/hooks/realtime';
+import { trpc } from '@/lib/trpc';
+
+export const useRealtimeAppointments = (params?: {
+  clientId?: string;
+  status?: string;
+  limit?: number;
+}) => {
+  return useRealtimeQuery({
+    queryKey: ['appointments', params],
+    queryFn: () => trpc.appointments?.list?.query?.(params),
+    table: 'appointments',
+    schema: 'public',
+    invalidateOn: ['INSERT', 'UPDATE', 'DELETE'],
+    enableOptimisticUpdates: true,
+    staleTime: 30 * 1000, // 30 seconds - shorter for real-time data
+    gcTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+```
 
 ```typescript
 // src/hooks/useInfiniteClients.ts
@@ -326,7 +353,124 @@ export const validateAppointment = (data: unknown) => {
 };
 ```
 
-## Prisma + Supabase Integration
+## Supabase Realtime + TanStack Query Integration
+
+### Overview
+
+The NeonPro platform integrates Supabase Realtime with TanStack Query to provide automatic data synchronization across all connected clients. This ensures that healthcare data is always up-to-date without manual refreshing.
+
+### Key Features
+
+- **Automatic Query Invalidation**: Queries are automatically refetched when underlying data changes
+- **Optimistic Updates**: UI updates immediately before server confirmation
+- **Healthcare Compliance**: Built-in audit logging for LGPD/ANVISA compliance
+- **Connection Management**: Robust connection handling with automatic reconnection
+
+### Setup
+
+#### 1. Provider Setup
+
+```typescript
+// src/App.tsx
+import { RealtimeQueryProvider } from './providers/RealtimeQueryProvider'
+
+function App() {
+  return (
+    <RealtimeQueryProvider>
+      {/* Your app content */}
+    </RealtimeQueryProvider>
+  )
+}
+```
+
+#### 2. Database Configuration
+
+Ensure your Supabase tables have Real-time enabled:
+
+```sql
+-- Enable realtime for appointments table
+ALTER PUBLICATION supabase_realtime ADD TABLE appointments;
+
+-- Enable realtime for patients table  
+ALTER PUBLICATION supabase_realtime ADD TABLE patients;
+
+-- Enable realtime for telemedicine_sessions table
+ALTER PUBLICATION supabase_realtime ADD TABLE telemedicine_sessions;
+```
+
+### Real-time Hook Usage
+
+#### Basic Real-time Query
+
+```typescript
+import { useRealtimeAppointments } from '@/hooks/realtime'
+
+function AppointmentList() {
+  const { data, isLoading } = useRealtimeAppointments({
+    status: 'scheduled',
+    limit: 50
+  })
+
+  // Data automatically updates when appointments change in the database
+  return (
+    <div>
+      {data?.map(appointment => (
+        <AppointmentCard key={appointment.id} appointment={appointment} />
+      ))}
+    </div>
+  )
+}
+```
+
+#### Real-time Mutations
+
+```typescript
+import { useCreateAppointment, useUpdateAppointment } from '@/hooks/realtime'
+
+function AppointmentForm() {
+  const createAppointment = useCreateAppointment()
+  const updateAppointment = useUpdateAppointment()
+
+  const handleCreate = async (data) => {
+    // Automatically invalidates related queries and broadcasts to other clients
+    await createAppointment.mutateAsync(data)
+  }
+
+  const handleUpdate = async (id, data) => {
+    // Updates are reflected in real-time across all connected clients
+    await updateAppointment.mutateAsync({ id, data })
+  }
+
+  return (
+    // Form UI
+  )
+}
+```
+
+### Healthcare Compliance Features
+
+#### Audit Logging
+
+All real-time events are automatically logged for compliance:
+
+```typescript
+// Automatic audit logging for healthcare compliance
+console.log('[AUDIT] Real-time appointment update received:', payload)
+console.log('[AUDIT] Real-time patient update received:', payload)  
+console.log('[AUDIT] Real-time telemedicine session update received:', payload)
+```
+
+#### LGPD Compliance
+
+- Patient data updates are logged for LGPD audit requirements
+- Sensitive data is automatically filtered in real-time events
+- Data access is tracked and logged
+
+#### Professional Council Compliance
+
+- Telemedicine session updates include CFM compliance logging
+- Professional actions are tracked in real-time
+- Session data is handled according to medical regulations
 
 ### Database Configuration
 
@@ -745,20 +889,27 @@ export const measureValidationPerformance = () => {
 
 ## Migration Strategy
 
-### Phase 1: Setup Infrastructure (Current)
-- ✅ tRPC client shim implementation
+### Phase 1: Setup Infrastructure (✅ COMPLETE)
+- ✅ tRPC client implementation with type safety
 - ✅ Basic Valibot schemas for new features
-- ✅ Zod fallback strategy
+- ✅ Zod fallback strategy  
+- ✅ **Supabase Realtime + TanStack Query integration**
+- ✅ **Real-time hooks with automatic query invalidation**
+- ✅ **Healthcare compliance logging for real-time events**
 
-### Phase 2: Incremental Migration
+### Phase 2: Incremental Migration (🔄 IN PROGRESS)
 - Convert high-traffic endpoints to Valibot
+- **Migrate existing queries to real-time enabled hooks**
 - Maintain Zod for complex validations
 - Monitor bundle size and performance
+- **Implement real-time features for critical healthcare workflows**
 
-### Phase 3: Optimization
+### Phase 3: Optimization (📋 PLANNED)
 - Remove Zod dependencies where possible
 - Optimize bundle splitting
 - Performance benchmarking
+- **Advanced real-time features (presence, collaborative editing)**
+- **Real-time analytics and monitoring**
 
 ## Related Documentation
 
@@ -769,11 +920,38 @@ export const measureValidationPerformance = () => {
 
 ## Next Steps
 
-1. **Stabilize Backend Router**: Complete tRPC v11 router implementation with stable contracts
-2. **Performance Optimization**: Implement bundle analysis and optimization strategies
-3. **Real-time Features**: Expand Supabase real-time integration across all entities
-4. **Testing Strategy**: Implement comprehensive testing for validation fallback scenarios
-5. **Documentation**: Create API documentation with interactive examples
+1. **✅ COMPLETE - Supabase Realtime Integration**: Implemented comprehensive real-time data synchronization with TanStack Query
+2. **🔄 IN PROGRESS - Backend Router Stabilization**: Complete tRPC v11 router implementation with stable contracts
+3. **📋 PLANNED - Performance Optimization**: Implement bundle analysis and optimization strategies
+4. **📋 PLANNED - Enhanced Real-time Features**: Expand Supabase real-time integration with presence and collaborative features
+5. **📋 PLANNED - Comprehensive Testing**: Implement testing for validation fallback scenarios and real-time functionality
+6. **📋 PLANNED - API Documentation**: Create interactive API documentation with real-time examples
+
+### Real-time Implementation Status
+
+- ✅ **Core Infrastructure**: Real-time hooks with automatic query invalidation
+- ✅ **Healthcare Compliance**: Audit logging for LGPD/ANVISA compliance  
+- ✅ **Provider Setup**: Global real-time connection management
+- ✅ **Example Implementation**: Complete appointment dashboard with real-time updates
+- ✅ **Documentation**: Comprehensive integration guide and API reference
+- ✅ **Testing Framework**: Basic test structure for real-time functionality
+
+### Usage Example
+
+```typescript
+// Before: Standard TanStack Query
+const { data } = useQuery({
+  queryKey: ['appointments'],
+  queryFn: () => trpc.appointments.list.query()
+})
+
+// After: Real-time enabled with automatic updates
+const { data } = useRealtimeAppointments({
+  status: 'scheduled',
+  limit: 50
+})
+// Data automatically updates when changes occur in the database
+```
 
 ---
 

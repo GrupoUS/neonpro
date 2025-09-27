@@ -1,16 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.json"],
-  "plugins": [
-    "typescript",
-    "react",
-    "jsx-a11y",
-    "import",
-    "promise",
-    "oxc"
-  ],
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "promise", "oxc"],
   "rules": {
-    // React 19 específico
     "react/jsx-no-target-blank": "error",
     "react/jsx-curly-brace-presence": [
       "error",
@@ -35,12 +27,8 @@
     "react/no-string-refs": "error",
     "react/no-unknown-property": "error",
     "react/require-render-return": "error",
-
-    // React Hooks específico
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
-
-    // Accessibility WCAG 2.1 AA+ obrigatório
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-is-valid": "error",
     "jsx-a11y/anchor-has-content": "error",
@@ -64,24 +52,16 @@
     "jsx-a11y/role-supports-aria-props": "error",
     "jsx-a11y/scope": "error",
     "jsx-a11y/tabindex-no-positive": "error",
-
-    // TypeScript para frontend
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/no-unsafe-assignment": "warn",
     "typescript/no-unsafe-member-access": "warn",
     "typescript/no-unsafe-call": "warn",
     "typescript/no-unsafe-return": "warn",
-
-    // Import organization para frontend
     "import/order": [
       "error",
       {
-        "groups": [
-          "builtin",
-          "external",
-          ["internal", "parent", "sibling", "index"]
-        ],
+        "groups": ["builtin", "external", ["internal", "parent", "sibling", "index"]],
         "newlines-between": "always",
         "pathGroups": [
           {
@@ -113,8 +93,6 @@
         "pathGroupsExcludedImportTypes": ["react"]
       }
     ],
-
-    // Performance para frontend
     "no-unused-vars": [
       "warn",
       {
@@ -124,8 +102,6 @@
     ],
     "prefer-const": "error",
     "no-var": "error",
-
-    // Console allowed in development
     "no-console": [
       "warn",
       {

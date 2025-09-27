@@ -129,8 +129,8 @@ export interface DataSubjectRequest {
   userId: string
   clientId?: string
   clinicId?: string
-  type: 'access' | 'deletion' | 'correction'
-  requestType?: string
+  type: 'access' | 'rectification' | 'erasure' | 'portability' | 'objection'
+  requestType?: 'access' | 'deletion' | 'correction'
   requestText?: string
   requestDescription?: string
   requestedData?: string[]

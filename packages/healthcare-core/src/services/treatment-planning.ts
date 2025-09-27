@@ -266,6 +266,7 @@ export class TreatmentPlanningService {
         expectedEndDate: new Date(Date.now() - 7 * 86400000),
         actualEndDate: new Date(Date.now() - 7 * 86400000),
         status: 'completed',
+        priority: 'medium' as const,
         procedures: [],
         createdAt: new Date(Date.now() - 35 * 86400000),
         updatedAt: new Date(Date.now() - 7 * 86400000)
@@ -278,6 +279,7 @@ export class TreatmentPlanningService {
         description: 'Tratamento em andamento',
         startDate: new Date(Date.now() - 7 * 86400000),
         status: 'active',
+        priority: 'high' as const,
         procedures: [],
         createdAt: new Date(Date.now() - 10 * 86400000),
         updatedAt: new Date()
@@ -435,7 +437,7 @@ export class TreatmentPlanningService {
     ] as TreatmentTemplate[]
   }
 
-  async createPlanFromTemplate(templateId: string, patientId: string): Promise<TreatmentPlan> {
+  async createPlanFromTemplate(_templateId: string, patientId: string): Promise<TreatmentPlan> {
     return {
       id: `plan_${Date.now()}`,
       patientId,
@@ -444,6 +446,7 @@ export class TreatmentPlanningService {
       description: 'Plano de tratamento baseado em template',
       startDate: new Date(),
       status: 'draft',
+      priority: 'medium' as const,
       procedures: [],
       createdAt: new Date(),
       updatedAt: new Date()

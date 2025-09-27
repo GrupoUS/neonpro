@@ -1,10 +1,10 @@
 /**
  * @file Login Component
  * 
- * Healthcare-compliant login form with Better Auth integration
+ * Healthcare-compliant login form with native Supabase Auth integration
  * Supports email/password and Google OAuth authentication
  * 
- * @version 1.0.0
+ * @version 2.0.0
  * @author NeonPro Platform Team
  * Compliance: LGPD, ANVISA, CFM, WCAG 2.1 AA
  */
@@ -12,7 +12,7 @@
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "@tanstack/react-router"
-import { signIn } from "@/lib/auth/client"
+import { supabase } from "@/integrations/supabase/client"
 
 interface LoginFormData {
   email: string
@@ -35,18 +35,20 @@ export function LoginComponent() {
     setError(null)
     
     try {
-      const result = await signIn.email({
+      const { data: result, error: authError } = await supabase.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       })
       
-      if (result.error) {
-        setError(result.error.message || "Erro ao fazer login")
+      if (authError) {
+        setError(authError.message || "Erro ao fazer login")
         return
       }
       
-      // Redirect to dashboard after successful login
-      navigate({ to: "/dashboard" })
+      if (result.user) {
+        // Redirect to dashboard after successful login
+        navigate({ to: "/dashboard" })
+      }
       
     } catch (err) {
       setError("Erro interno. Tente novamente.")
@@ -61,13 +63,15 @@ export function LoginComponent() {
     setError(null)
     
     try {
-      const result = await signIn.social({
-        provider: "google",
-        callbackURL: "/dashboard"
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
       })
       
-      if (result.error) {
-        setError(result.error.message || "Erro ao fazer login com Google")
+      if (authError) {
+        setError(authError.message || "Erro ao fazer login com Google")
       }
       
     } catch (err) {

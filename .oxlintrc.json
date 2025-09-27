@@ -16,13 +16,7 @@
     "no-console": [
       "warn",
       {
-        "allow": [
-          "warn",
-          "error",
-          "log",
-          "info",
-          "debug"
-        ]
+        "allow": ["warn", "error", "log", "info", "debug"]
       }
     ],
     "no-debugger": "error",
@@ -61,14 +55,7 @@
     "import/order": [
       "error",
       {
-        "groups": [
-          "builtin",
-          "external",
-          "internal",
-          "parent",
-          "sibling",
-          "index"
-        ],
+        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
         "newlines-between": "always"
       }
     ],
@@ -81,10 +68,7 @@
     "jsdoc/require-jsdoc": [
       "warn",
       {
-        "contexts": [
-          "FunctionExpression",
-          "ClassDeclaration"
-        ],
+        "contexts": ["FunctionExpression", "ClassDeclaration"],
         "require": {
           "FunctionExpression": true,
           "ClassDeclaration": true
@@ -107,21 +91,14 @@
     "no-warning-comments": [
       "warn",
       {
-        "terms": [
-          "todo",
-          "fixme",
-          "hack"
-        ],
+        "terms": ["todo", "fixme", "hack"],
         "location": "start"
       }
     ]
   },
   "overrides": [
     {
-      "files": [
-        "**/*.test.{ts,tsx}",
-        "**/*.spec.{ts,tsx}"
-      ],
+      "files": ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
       "rules": {
         "no-console": "off",
         "no-unused-vars": "off",
@@ -129,18 +106,14 @@
       }
     },
     {
-      "files": [
-        "**/*.config.{js,ts}"
-      ],
+      "files": ["**/*.config.{js,ts}"],
       "rules": {
         "no-console": "off",
         "import/no-extraneous-dependencies": "off"
       }
     },
     {
-      "files": [
-        "src/compliance/**/*.{ts,tsx}"
-      ],
+      "files": ["src/compliance/**/*.{ts,tsx}"],
       "rules": {
         "no-console": "error",
         "typescript/no-unsafe-assignment": "error",
@@ -153,9 +126,7 @@
       }
     },
     {
-      "files": [
-        "src/agents/**/*.{ts,tsx}"
-      ],
+      "files": ["src/agents/**/*.{ts,tsx}"],
       "rules": {
         "jsdoc/require-jsdoc": "error",
         "no-console": "warn"
@@ -180,9 +151,7 @@
       }
     },
     {
-      "files": [
-        "src/components/**/*.{tsx,ts}"
-      ],
+      "files": ["src/components/**/*.{tsx,ts}"],
       "rules": {
         "jsx-a11y/alt-text": "error",
         "jsx-a11y/anchor-is-valid": "error",
@@ -207,28 +176,19 @@
       }
     },
     {
-      "files": [
-        "**/orchestration/**/*.{ts,js}",
-        "**/tools/**/orchestration/**/*.{ts,js}"
-      ],
+      "files": ["**/orchestration/**/*.{ts,js}", "**/tools/**/orchestration/**/*.{ts,js}"],
       "rules": {
         "no-console": "off"
       }
     },
     {
-      "files": [
-        "**/tools/**/backend/**/*.{ts,js}",
-        "**/tools/**/setup.ts"
-      ],
+      "files": ["**/tools/**/backend/**/*.{ts,js}", "**/tools/**/setup.ts"],
       "rules": {
         "no-console": "off"
       }
     },
     {
-      "files": [
-        "**/audit*/**/*.{ts,js}",
-        "**/tools/**/audit*/**/*.{ts,js}"
-      ],
+      "files": ["**/audit*/**/*.{ts,js}", "**/tools/**/audit*/**/*.{ts,js}"],
       "rules": {
         "no-console": "off"
       }
@@ -286,10 +246,7 @@
       }
     },
     {
-      "files": [
-        "**/security/**/*.{ts,js}",
-        "**/encryption.ts"
-      ],
+      "files": ["**/security/**/*.{ts,js}", "**/encryption.ts"],
       "rules": {
         "no-restricted-imports": "off",
         "no-console": "off"

@@ -1,14 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.json"],
-  "plugins": [
-    "typescript",
-    "oxc",
-    "jsdoc",
-    "promise"
-  ],
+  "plugins": ["typescript", "oxc", "jsdoc", "promise"],
   "rules": {
-    // LGPD & Healthcare compliance
     "typescript/no-explicit-any": "error",
     "typescript/no-unsafe-assignment": "error",
     "typescript/no-unsafe-member-access": "error",
@@ -16,8 +10,6 @@
     "typescript/no-unsafe-return": "error",
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
-
-    // Data validation crítica
     "no-implicit-coercion": "error",
     "no-implicit-globals": "error",
     "no-mixed-operators": "error",
@@ -28,15 +20,11 @@
     "no-useless-call": "error",
     "no-useless-concat": "error",
     "no-useless-return": "error",
-
-    // Promise handling para operações críticas
     "promise/prefer-await-to-then": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
     "promise/catch-or-return": "error",
     "promise/no-nesting": "error",
-
-    // Documentação obrigatória para compliance
     "jsdoc/require-jsdoc": [
       "error",
       {
@@ -59,8 +47,6 @@
     "jsdoc/require-param": "error",
     "jsdoc/require-returns": "error",
     "jsdoc/check-param-names": "error",
-
-    // Data integrity
     "prefer-const": "error",
     "no-var": "error",
     "no-unused-vars": [
@@ -70,8 +56,6 @@
         "argsIgnorePattern": "^_"
       }
     ],
-
-    // Logging controlado para auditoria
     "no-console": [
       "warn",
       {
@@ -79,13 +63,9 @@
       }
     ],
     "no-debugger": "error",
-
-    // Performance para dados sensíveis
     "no-await-in-loop": "warn",
     "no-extra-bind": "error",
     "no-loop-func": "error",
-
-    // Code quality para compliance
     "complexity": ["warn", 10],
     "max-depth": ["warn", 5],
     "max-lines": ["warn", 400],

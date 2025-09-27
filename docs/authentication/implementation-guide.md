@@ -1,255 +1,342 @@
-# 🔐 Sistema de Autenticação NeonPro
+# Guia de Implementação - Autenticação Supabase
 
 ## Visão Geral
 
-Implementação completa de sistema de autenticação para plataforma de saúde NeonPro, utilizando Better Auth integrado com infraestrutura Supabase existente.
+Este guia detalha a implementação de autenticação usando Supabase CLI conectado ao servidor Brasil, substituindo qualquer implementação anterior com Docker ou Better Auth.
 
-## 🏗️ Arquitetura
+## Configuração do Supabase
 
-### Tecnologias Utilizadas
-- **Better Auth**: Framework de autenticação TypeScript
-- **Supabase**: Database e infraestrutura backend
-- **TanStack Router**: Roteamento frontend
-- **React Hook Form**: Validação de formulários
-- **JWT**: Tokens de sessão
+### 1. Instalação do Supabase CLI
 
-### Estrutura de Arquivos
-```
-apps/web/src/
-├── lib/auth/
-│   ├── client.ts          # Better Auth client config
-│   ├── server.ts          # Better Auth server config
-│   └── guards.tsx         # Route protection guards
-├── components/auth/
-│   └── LoginComponent.tsx # UI de login
-└── routes/
-    ├── auth/login.tsx     # Rota de login
-    └── dashboard.tsx      # Rota protegida
-```
-
-## 🔧 Configuração
-
-### 1. Dependências
 ```bash
-pnpm add better-auth
+npm install -g supabase
 ```
 
-### 2. Variáveis de Ambiente
-Copie `.env.example` para `.env.local`:
-```env
-DATABASE_URL="postgresql://user:password@localhost:5432/neonpro"
-SUPABASE_URL="https://your-project.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="your-service-role-key"
-BETTER_AUTH_SECRET="your-32-character-secret-key"
-GOOGLE_CLIENT_ID="your-google-client-id"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
+### 2. Configuração do Projeto
+
+```bash
+# Inicializar projeto Supabase
+supabase init
+
+# Login no Supabase (servidor Brasil)
+supabase login
+
+# Link com projeto existente no servidor Brasil
+supabase link --project-ref <project-ref>
 ```
 
-### 3. Integração com API
-```typescript
-// apps/api/src/index.ts
-import { authApp } from './routes/auth'
+### 3. Estrutura de Autenticação
 
-app.route('/api/auth', authApp)
+#### 3.1 Configuração de Políticas RLS
+
+```sql
+-- Habilitar RLS nas tabelas
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+
+-- Política para usuários verem apenas seus dados
+CREATE POLICY "Users can view own profile" ON profiles
+  FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own profile" ON profiles
+  FOR UPDATE USING (auth.uid() = user_id);
 ```
 
-## 🚀 Funcionalidades
+#### 3.2 Schema de Usuários
 
-### Autenticação
-- ✅ Login com email/senha
-- ✅ OAuth com Google
-- ✅ Verificação de email
-- ✅ Reset de senha
-- ✅ Gestão de sessões
+```sql
+-- Tabela de perfis de usuário
+CREATE TABLE profiles (
+  id UUID REFERENCES auth.users ON DELETE CASCADE,
+  email TEXT,
+  full_name TEXT,
+  avatar_url TEXT,
+  role TEXT DEFAULT 'user',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()),
+  PRIMARY KEY (id)
+);
 
-### Autorização
-- ✅ Proteção de rotas
-- ✅ Controle baseado em roles
-- ✅ Controle baseado em permissões
-- ✅ Acesso por clínica
+-- Função para criar perfil automaticamente
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, full_name)
+  VALUES (NEW.id, NEW.email, NEW.raw_user_meta_data->>'full_name');
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-### Compliance Healthcare
-- ✅ LGPD: Consentimento e auditoria
-- ✅ ANVISA: Validação profissional
-- ✅ CFM: Autorização médica
+-- Trigger para criar perfil
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+```
 
-## 💻 Uso
+## Implementação Backend
 
-### Login Component
-```tsx
-import { LoginComponent } from '@/components/auth/LoginComponent'
+### 1. Configuração do Cliente Supabase
 
-function LoginPage() {
-  return <LoginComponent />
+```javascript
+// config/supabase.js
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_ANON_KEY
+
+export const supabase = createClient(supabaseUrl, supabaseKey)
+```
+
+### 2. Middleware de Autenticação
+
+```javascript
+// middleware/auth.js
+import { supabase } from '../config/supabase.js'
+
+export const authenticateToken = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '')
+
+    if (!token) {
+      return res.status(401).json({ error: 'Token não fornecido' })
+    }
+
+    const { data: { user }, error } = await supabase.auth.getUser(token)
+
+    if (error || !user) {
+      return res.status(401).json({ error: 'Token inválido' })
+    }
+
+    req.user = user
+    next()
+  } catch (error) {
+    res.status(401).json({ error: 'Erro na autenticação' })
+  }
 }
 ```
 
-### Proteção de Rotas
-```tsx
-import { useAuthGuard } from '@/lib/auth/guards'
+### 3. Rotas de Autenticação
 
-export const Route = createFileRoute('/dashboard')({
-  beforeLoad: () => useAuthGuard({ requireAuth: true }),
-  component: DashboardPage
+```javascript
+// routes/auth.js
+import express from 'express'
+import { supabase } from '../config/supabase.js'
+
+const router = express.Router()
+
+// Registro
+router.post('/register', async (req, res) => {
+  try {
+    const { email, password, fullName } = req.body
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    })
+
+    if (error) {
+      return res.status(400).json({ error: error.message })
+    }
+
+    res.json({
+      message: 'Usuário criado com sucesso',
+      user: data.user,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Erro interno do servidor' })
+  }
 })
+
+// Login
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body
+
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      return res.status(400).json({ error: error.message })
+    }
+
+    res.json({
+      message: 'Login realizado com sucesso',
+      user: data.user,
+      session: data.session,
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Erro interno do servidor' })
+  }
+})
+
+// Logout
+router.post('/logout', async (req, res) => {
+  try {
+    const { error } = await supabase.auth.signOut()
+
+    if (error) {
+      return res.status(400).json({ error: error.message })
+    }
+
+    res.json({ message: 'Logout realizado com sucesso' })
+  } catch (error) {
+    res.status(500).json({ error: 'Erro interno do servidor' })
+  }
+})
+
+export default router
 ```
 
-### Guards de Autorização
-```tsx
-import { RoleGuard, PermissionGuard } from '@/lib/auth/guards'
+## Implementação Frontend
 
-// Por role
-<RoleGuard allowedRoles={['admin', 'doctor']}>
-  <AdminPanel />
-</RoleGuard>
+### 1. Configuração do Cliente
 
-// Por permissão
-<PermissionGuard requiredPermissions="patient_write">
-  <PatientForm />
-</PermissionGuard>
+```javascript
+// utils/supabase.js
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 ```
 
-### Hooks de Sessão
-```tsx
-import { useSession, signOut } from '@/lib/auth/client'
+### 2. Context de Autenticação
 
-function UserProfile() {
-  const { data: session } = useSession()
-  
-  return (
-    <div>
-      <p>Bem-vindo, {session?.user?.name}</p>
-      <button onClick={() => signOut()}>Sair</button>
-    </div>
-  )
+```javascript
+// contexts/AuthContext.js
+import { createContext, useContext, useEffect, useState } from 'react'
+import { supabase } from '../utils/supabase'
+
+const AuthContext = createContext()
+
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+  if (!context) {
+    throw new Error('useAuth deve ser usado dentro de AuthProvider')
+  }
+  return context
+}
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Verificar sessão inicial
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    // Ouvir mudanças na autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null)
+        setLoading(false)
+      },
+    )
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const signUp = async (email, password, fullName) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    })
+    return { data, error }
+  }
+
+  const signIn = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+    return { data, error }
+  }
+
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut()
+    return { error }
+  }
+
+  const value = {
+    user,
+    signUp,
+    signIn,
+    signOut,
+    loading,
+  }
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 ```
 
-## 🏥 Campos Healthcare
+## Variáveis de Ambiente
 
-### User Model
-```typescript
-interface User {
-  id: string
-  email: string
-  name: string
-  role: string                    // 'admin' | 'doctor' | 'nurse' | 'user'
-  clinicId: string               // Clínica associada
-  permissions: string[]          // Permissões específicas
-  healthcareProvider?: string    // Registro profissional
-  lgpdConsent: boolean          // Consentimento LGPD
-  lgpdConsentDate?: Date        // Data do consentimento
-}
+### Backend (.env)
+
+```
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
-### Roles Disponíveis
-- `admin`: Administrador do sistema
-- `doctor`: Médico com acesso completo
-- `nurse`: Enfermeiro com acesso limitado
-- `receptionist`: Recepcionista
-- `user`: Usuário básico
+### Frontend (.env.local)
 
-### Permissões Disponíveis
-- `patient_read`: Visualizar pacientes
-- `patient_write`: Editar pacientes
-- `appointment_read`: Visualizar agendamentos
-- `appointment_write`: Editar agendamentos
-- `report_read`: Visualizar relatórios
-- `admin_access`: Acesso administrativo
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
 
-## 🔒 Segurança
+## Comandos Supabase CLI
 
-### Sessões
-- Duração: 7 dias
-- Renovação automática: 24 horas
-- Cookie httpOnly e secure
-- Cache de 5 minutos
-
-### Auditoria
-- Log de autenticação
-- Tracking de sessões
-- Compliance LGPD
-- Metadados de acesso
-
-### Rate Limiting
-- 100 requests por minuto
-- Proteção contra força bruta
-- Bloqueio temporário
-
-## 🧪 Testes
-
-### Implementar Testes
 ```bash
-# Unit tests
-pnpm test:unit
+# Iniciar desenvolvimento local
+supabase start
 
-# Integration tests
-pnpm test:integration
+# Aplicar migrations
+supabase db push
 
-# E2E tests
-pnpm test:e2e
+# Gerar tipos TypeScript
+supabase gen types typescript --local > types/supabase.ts
+
+# Deploy das functions
+supabase functions deploy
+
+# Verificar status
+supabase status
 ```
 
-### Casos de Teste
-- [ ] Login com credenciais válidas
-- [ ] Login com credenciais inválidas
-- [ ] Proteção de rotas não autenticadas
-- [ ] Autorização por role
-- [ ] Autorização por permissão
-- [ ] OAuth com Google
-- [ ] Reset de senha
-- [ ] Verificação de email
+## Segurança
 
-## 📋 Próximos Passos
+### 1. Políticas RLS
 
-### Implementação Imediata
-1. Configurar variáveis de ambiente
-2. Instalar dependências
-3. Configurar Google OAuth
-4. Implementar email service
-5. Testes de integração
+- Sempre habilitar RLS nas tabelas sensíveis
+- Criar políticas específicas para cada operação
+- Testar políticas com diferentes usuários
 
-### Melhorias Futuras
-1. **Multi-factor Authentication (2FA)**
-2. **Single Sign-On (SSO)**
-3. **Biometric Authentication**
-4. **Advanced Role Management**
-5. **Compliance Dashboard**
+### 2. Validação
 
-## 🆘 Troubleshooting
+- Validar dados no backend
+- Sanitizar inputs
+- Usar rate limiting
 
-### Problemas Comuns
+### 3. Tokens
 
-**Erro: "BETTER_AUTH_SECRET not found"**
-```bash
-# Gerar secret
-openssl rand -base64 32
-```
-
-**Erro: "Database connection failed"**
-- Verificar DATABASE_URL
-- Confirmar Supabase credentials
-- Validar conectividade
-
-**Erro: "Google OAuth failed"**
-- Verificar GOOGLE_CLIENT_ID/SECRET
-- Configurar redirect URLs no Google Console
-- Validar domínios autorizados
-
-### Logs de Debug
-```bash
-DEBUG=neonpro:auth pnpm dev
-```
-
-## 📚 Referências
-
-- [Better Auth Documentation](https://better-auth.com)
-- [TanStack Router Auth Guide](https://tanstack.com/router/latest/docs/framework/react/guide/authentication)
-- [Supabase Auth Documentation](https://supabase.com/docs/guides/auth)
-- [LGPD Compliance Guide](https://www.gov.br/cidadania/pt-br/acesso-a-informacao/lgpd)
-
----
-
-**Versão**: 1.0.0  
-**Última Atualização**: 26/09/2025  
-**Autor**: NeonPro Platform Team
+- Configurar expiração adequada
+- Implementar refresh tokens
+- Validar tokens em todas as rotas protegidas

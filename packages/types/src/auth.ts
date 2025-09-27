@@ -2,34 +2,30 @@
 import { BaseEntity } from './common.js'
 
 // Estende o User do Supabase com dados específicos do healthcare
-export interface AuthUser {
-  id: string
+export interface AuthUser extends BaseEntity {
   email: string
   phone?: string
   emailVerified: boolean
   phoneVerified: boolean
-  
+
   // Dados pessoais (LGPD compliant)
   firstName?: string
   lastName?: string
   displayName?: string
   avatar?: string
-  
+
   // Dados profissionais específicos do healthcare
   profession?: ProfessionType
   license?: string // CRM, CRO, etc.
   clinic?: string
-  
+
   // Configurações de privacidade (LGPD)
-  lgpdConsent: AuthLGPDConsent
-  dataRetention: AuthDataRetentionPolicy
-  
+  lgpdConsent: HealthcareLGPDConsent
+  dataRetention: HealthcareDataRetentionPolicy
+
   // Configurações de usuário
   preferences: UserPreferences
-  
-  // Timestamps
-  createdAt: Date
-  updatedAt: Date
+
   lastLoginAt?: Date
 }
 
@@ -68,7 +64,7 @@ export interface AuthError {
   details?: string
 }
 
-export type ProfessionType = 
+export type ProfessionType =
   | 'medico'
   | 'enfermeiro'
   | 'fisioterapeuta'
@@ -92,7 +88,7 @@ export interface UserPreferences {
   }
 }
 
-export interface AuthLGPDConsent {
+export interface HealthcareLGPDConsent {
   version: string
   acceptedAt: Date
   ipAddress: string
@@ -105,18 +101,14 @@ export interface AuthLGPDConsent {
   }
 }
 
-export interface AuthDataRetentionPolicy {
+export interface HealthcareDataRetentionPolicy {
   retentionDays: number
   autoDeleteAt?: Date
   lastReviewedAt: Date
 }
 
 // Auth Provider types for OAuth
-export type AuthProvider = 
-  | 'google'
-  | 'facebook'
-  | 'apple'
-  | 'github'
+export type AuthProvider = 'google' | 'facebook' | 'apple' | 'github'
 
 export interface OAuthConfig {
   provider: AuthProvider
@@ -149,22 +141,22 @@ export interface UseAuthReturn {
   isLoading: boolean
   isAuthenticated: boolean
   isEmailVerified: boolean
-  
+
   // Actions
   signUp: (data: SignUpData) => Promise<{ error?: AuthError }>
   signIn: (credentials: AuthCredentials) => Promise<{ error?: AuthError }>
   signOut: () => Promise<{ error?: AuthError }>
-  
+
   // OAuth
   signInWithOAuth: (config: OAuthConfig) => Promise<{ error?: AuthError }>
-  
+
   // Password management
   resetPassword: (request: PasswordResetRequest) => Promise<{ error?: AuthError }>
   updatePassword: (update: PasswordUpdate) => Promise<{ error?: AuthError }>
-  
+
   // Email verification
   resendEmailVerification: (request: EmailVerificationRequest) => Promise<{ error?: AuthError }>
-  
+
   // User management
   updateProfile: (updates: Partial<AuthUser>) => Promise<{ error?: AuthError }>
   deleteAccount: () => Promise<{ error?: AuthError }>

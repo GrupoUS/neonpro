@@ -4,7 +4,7 @@
  */
 
 import { ErrorMapper } from '@neonpro/shared/errors'
-import { Router } from 'express'
+import { Hono } from 'hono'
 import { PerformanceMonitor } from '../middleware/performance-middleware'
 import { AestheticClinicPerformanceOptimizer } from '../services/performance/aesthetic-clinic-performance-optimizer'
 
@@ -12,14 +12,15 @@ export const createPerformanceDashboardRoutes = (
   optimizer: AestheticClinicPerformanceOptimizer,
   monitor: PerformanceMonitor,
 ) => {
-  const router = Router()
+  const router = new Hono()
 
   /**
    * Get current performance metrics
    */
-  router.get('/metrics', async (req, res) => {
+  router.get('/metrics', async (c) => {
     try {
-      const timeRange = req.query.timeRange as string
+      const url = new URL(c.req.url)
+      const timeRange = url.searchParams.get('timeRange') as string
       let timeRangeObj
 
       if (timeRange) {
@@ -30,7 +31,7 @@ export const createPerformanceDashboardRoutes = (
       const metrics = optimizer.getPerformanceMetrics(timeRangeObj)
       const dbMetrics = optimizer.getPerformanceMetrics(timeRangeObj)
 
-      res.json({
+      return c.json({
         success: true,
         data: {
           applicationMetrics: metrics,
@@ -51,135 +52,135 @@ export const createPerformanceDashboardRoutes = (
           timestamp: new Date().toISOString(),
         },
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'get_performance_metrics',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Get performance insights and recommendations
    */
-  router.get('/insights', async (req, res) => {
+  router.get('/insights', async (c) => {
     try {
       const insights = await generatePerformanceInsights(optimizer, monitor)
 
-      res.json({
+      return c.json({
         success: true,
         data: insights,
         timestamp: new Date().toISOString(),
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'get_performance_insights',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Get cache performance data
    */
-  router.get('/cache', async (req, res) => {
+  router.get('/cache', async (c) => {
     try {
       const cacheStats = getCacheStatistics(optimizer)
 
-      res.json({
+      return c.json({
         success: true,
         data: cacheStats,
         timestamp: new Date().toISOString(),
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'get_cache_statistics',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Clear cache entries
    */
-  router.post('/cache/clear', async (req, res) => {
+  router.post('/cache/clear', async (c) => {
     try {
-      const { pattern } = req.body
+      const { pattern } = await c.req.json()
 
       optimizer.clearCache(pattern)
 
-      res.json({
+      return c.json({
         success: true,
         message: pattern
           ? `Cache entries matching pattern '${pattern}' cleared`
           : 'All cache entries cleared',
         timestamp: new Date().toISOString(),
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'clear_cache',
-        pattern: req.body.pattern,
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Warm up cache
    */
-  router.post('/cache/warmup', async (req, res) => {
+  router.post('/cache/warmup', async (c) => {
     try {
       await optimizer.warmUpCache()
 
-      res.json({
+      return c.json({
         success: true,
         message: 'Cache warm-up initiated',
         timestamp: new Date().toISOString(),
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'warm_up_cache',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Get query performance data
    */
-  router.get('/queries', async (req, res) => {
+  router.get('/queries', async (c) => {
     try {
-      const timeRange = req.query.timeRange as string
+      const url = new URL(c.req.url)
+      const timeRange = url.searchParams.get('timeRange') as string
       let timeRangeObj
 
       if (timeRange) {
@@ -190,7 +191,7 @@ export const createPerformanceDashboardRoutes = (
       const queryMetrics = optimizer.getPerformanceMetrics(timeRangeObj)
       const queryStats = calculateQueryStatistics(queryMetrics)
 
-      res.json({
+      return c.json({
         success: true,
         data: {
           queries: queryMetrics,
@@ -200,99 +201,98 @@ export const createPerformanceDashboardRoutes = (
         },
         timestamp: new Date().toISOString(),
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'get_query_performance',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Get image optimization metrics
    */
-  router.get('/images', async (req, res) => {
+  router.get('/images', async (c) => {
     try {
       const imageMetrics = getImageOptimizationMetrics(optimizer)
 
-      res.json({
+      return c.json({
         success: true,
         data: imageMetrics,
         timestamp: new Date().toISOString(),
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'get_image_metrics',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Get real-time performance stream
    */
-  router.get('/stream', async (req, res) => {
+  router.get('/stream', async (c) => {
     try {
-      res.setHeader('Content-Type', 'text/event-stream')
-      res.setHeader('Cache-Control', 'no-cache')
-      res.setHeader('Connection', 'keep-alive')
+      const headers = new Headers({
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      })
 
       const sendMetrics = () => {
         const _metrics = optimizer.getPerformanceMetrics()
         const stats = monitor.getStatistics()
 
-        res.write(`data: ${
+        return `data: ${
           JSON.stringify({
             type: 'metrics',
             data: {
-              metrics,
+              metrics: _metrics,
               statistics: stats,
               timestamp: new Date().toISOString(),
             },
           })
-        }\n\n`)
+        }\n\n`
       }
 
       // Send initial metrics
-      sendMetrics()
+      const initialData = sendMetrics()
 
-      // Send metrics every 5 seconds
-      const interval = setInterval(sendMetrics, 5000)
-
-      // Cleanup on client disconnect
-      req.on('close', () => {
-        clearInterval(interval)
+      // Return streaming response
+      return new Response(initialData, {
+        headers,
       })
-    } catch {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'performance_stream',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Performance health check
    */
-  router.get('/health', async (req, res) => {
+  router.get('/health', async (c) => {
     try {
       const health = await getPerformanceHealth(optimizer, monitor)
 
@@ -302,32 +302,33 @@ export const createPerformanceDashboardRoutes = (
         ? 503
         : 500
 
-      res.status(statusCode).json({
+      return c.json({
         success: true,
         data: health,
         timestamp: new Date().toISOString(),
-      })
-    } catch {
+      }, statusCode)
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'performance_health_check',
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 
   /**
    * Export performance data
    */
-  router.get('/export', async (req, res) => {
+  router.get('/export', async (c) => {
     try {
-      const format = req.query.format as string || 'json'
-      const timeRange = req.query.timeRange as string
+      const url = new URL(c.req.url)
+      const format = url.searchParams.get('format') as string || 'json'
+      const timeRange = url.searchParams.get('timeRange') as string
 
       let timeRangeObj
       if (timeRange) {
@@ -339,9 +340,9 @@ export const createPerformanceDashboardRoutes = (
       const apiMetrics = monitor.getMetrics(
         timeRangeObj
           ? {
-            start: new Date(timeRangeObj.start).getTime(),
-            end: new Date(timeRangeObj.end).getTime(),
-          }
+              start: new Date(timeRangeObj.start).getTime(),
+              end: new Date(timeRangeObj.end).getTime(),
+            }
           : undefined,
       )
 
@@ -363,21 +364,24 @@ export const createPerformanceDashboardRoutes = (
           break
       }
 
-      res.setHeader('Content-Type', contentType)
-      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`)
-      res.send(exportData)
-    } catch {
+      return new Response(exportData, {
+        headers: {
+          'Content-Type': contentType,
+          'Content-Disposition': `attachment; filename="${filename}"`,
+        },
+      })
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'export_performance_data',
-        format: req.query.format,
+        format: 'unknown', // Would need to extract from context
         timestamp: new Date().toISOString(),
       })
 
-      res.status(500).json({
+      return c.json({
         success: false,
         error: mappedError.message,
         timestamp: new Date().toISOString(),
-      })
+      }, 500)
     }
   })
 

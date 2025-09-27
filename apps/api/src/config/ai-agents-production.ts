@@ -6,7 +6,7 @@
 export interface AIAgentsProductionConfig {
   // Core Configuration
   enabled: boolean
-  environment: 'production' | 'staging' | 'development'
+  environment: 'production' | 'staging' | 'development' | 'test'
   debug: boolean
   
   // Provider Configuration

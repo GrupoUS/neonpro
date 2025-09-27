@@ -6,7 +6,7 @@ export interface GovernanceEvent {
   _service: string
   action: string
   resourceId?: string
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
   severity?: 'info' | 'warn' | 'error'
 }
 
@@ -16,7 +16,7 @@ export interface EventLogger {
     kpiId: string,
     value?: number,
     status?: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void
   logEscalationTriggered(
     escalationId: string,
@@ -51,7 +51,7 @@ export class ConsoleEventLogger implements EventLogger {
     kpiId: string,
     value?: number,
     status?: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): void {
     this.log({
       _service: 'KPIService',

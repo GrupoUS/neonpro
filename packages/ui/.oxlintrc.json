@@ -1,15 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
   "extends": ["../../.oxlintrc.json"],
-  "plugins": [
-    "typescript",
-    "react",
-    "jsx-a11y",
-    "import",
-    "oxc"
-  ],
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "oxc"],
   "rules": {
-    // React component específico
     "react/jsx-no-target-blank": "error",
     "react/jsx-curly-brace-presence": [
       "error",
@@ -39,12 +32,8 @@
         "ignoreDOMComponents": true
       }
     ],
-
-    // React Hooks específico
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
-
-    // Accessibility WCAG 2.1 AA+ (obrigatório para componentes)
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-is-valid": "error",
     "jsx-a11y/anchor-has-content": "error",
@@ -67,24 +56,16 @@
     "jsx-a11y/role-supports-aria-props": "error",
     "jsx-a11y/scope": "error",
     "jsx-a11y/tabindex-no-positive": "error",
-
-    // TypeScript para componentes
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/no-unsafe-assignment": "warn",
     "typescript/no-unsafe-member-access": "warn",
     "typescript/no-unsafe-call": "warn",
     "typescript/no-unsafe-return": "warn",
-
-    // Import organization para componentes
     "import/order": [
       "error",
       {
-        "groups": [
-          "builtin",
-          "external",
-          ["internal", "parent", "sibling", "index"]
-        ],
+        "groups": ["builtin", "external", ["internal", "parent", "sibling", "index"]],
         "newlines-between": "always",
         "pathGroups": [
           {
@@ -106,8 +87,6 @@
         "pathGroupsExcludedImportTypes": ["react"]
       }
     ],
-
-    // Performance para componentes
     "no-unused-vars": [
       "warn",
       {
@@ -117,8 +96,6 @@
     ],
     "prefer-const": "error",
     "no-var": "error",
-
-    // Console permitido para desenvolvimento
     "no-console": [
       "warn",
       {

@@ -148,8 +148,8 @@ app.use('*', rateLimitMiddleware())
 // app.use('*', healthcareCSPMiddleware())
 
 // Query timeout middleware for <2s healthcare compliance (T064)
-import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware'
-const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
+// import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware'
+// const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
 // app.use('*', queryTimeoutMiddleware.middleware)
 
 // Compression and optimization middleware for HTTPS responses (T065)

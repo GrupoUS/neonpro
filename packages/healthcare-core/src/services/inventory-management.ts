@@ -246,7 +246,6 @@ export class InventoryManagementService {
   async createCategory(data: CreateCategoryInput): Promise<Category> {
     return {
       id: `category_${Date.now()}`,
-      clinicId: data.clinicId,
       ...data,
       isActive: data.isActive ?? true,
       createdAt: new Date()
