@@ -1,24 +1,24 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  Activity,
-  Bell,
-  Calendar,
-  DollarSign,
-  LogOut,
-  Menu,
-  Search,
-  Settings,
-  TrendingUp,
-  Users,
-  X,
-} from 'lucide-react'
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute.js'
-import { useAuth } from '@/contexts/AuthContext.js'
+import { Badge } from '@/components/ui/badge.js'
 import { Button } from '@/components/ui/button.js'
 import { Card } from '@/components/ui/card.js'
-import { Badge } from '@/components/ui/badge.js'
+import { useAuth } from '@/contexts/AuthContext.js'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { AnimatePresence, motion } from 'framer-motion'
+import {
+    Activity,
+    Bell,
+    Calendar,
+    DollarSign,
+    LogOut,
+    Menu,
+    Search,
+    Settings,
+    TrendingUp,
+    Users,
+    X,
+} from 'lucide-react'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/dashboard/')({
   component: DashboardPage,
@@ -163,7 +163,7 @@ function Dashboard() {
         className="fixed inset-y-0 left-0 z-50 w-64 bg-white neonpro-neumorphic lg:translate-x-0 lg:static lg:inset-0"
       >
         <div className="flex items-center justify-between h-16 px-4 border-b border-neonpro-neutral/30">
-          <motion.div 
+          <motion.div
             className="flex items-center"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -178,9 +178,9 @@ function Dashboard() {
               <p className="text-sm font-medium text-neonpro-deep-blue">NeonPro</p>
             </div>
           </motion.div>
-          <Button 
-            onClick={() => setSidebarOpen(false)} 
-            variant="ghost" 
+          <Button
+            onClick={() => setSidebarOpen(false)}
+            variant="ghost"
             size="icon"
             className="lg:hidden"
           >
@@ -189,7 +189,7 @@ function Dashboard() {
         </div>
 
         <nav className="mt-8 px-2">
-          <motion.div 
+          <motion.div
             className="space-y-1"
             variants={containerVariants}
             initial="hidden"
@@ -218,7 +218,7 @@ function Dashboard() {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top navigation */}
-        <motion.header 
+        <motion.header
           className="bg-white neonpro-neumorphic border-b border-neonpro-neutral/30"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -257,13 +257,13 @@ function Dashboard() {
         </motion.header>
 
         {/* Dashboard content */}
-        <motion.main 
+        <motion.main
           className="p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <motion.div 
+          <motion.div
             className="mb-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -274,7 +274,7 @@ function Dashboard() {
           </motion.div>
 
           {/* Stats cards */}
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
             variants={containerVariants}
             initial="hidden"
@@ -316,7 +316,7 @@ function Dashboard() {
           </motion.div>
 
           {/* Recent appointments */}
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-6"
             variants={containerVariants}
             initial="hidden"
@@ -332,8 +332,8 @@ function Dashboard() {
                 <div className="p-0">
                   <div className="divide-y divide-neonpro-neutral/30">
                     {recentAppointments.map((appointment, index) => (
-                      <motion.div 
-                        key={`${appointment.name}-${appointment.time}`} 
+                      <motion.div
+                        key={`${appointment.name}-${appointment.time}`}
                         className="px-6 py-4"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -374,7 +374,7 @@ function Dashboard() {
                 </div>
                 <div className="p-6">
                   <div className="space-y-4">
-                    <motion.div 
+                    <motion.div
                       className="flex items-start"
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -393,7 +393,7 @@ function Dashboard() {
                       </div>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                       className="flex items-start"
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -412,7 +412,7 @@ function Dashboard() {
                       </div>
                     </motion.div>
 
-                    <motion.div 
+                    <motion.div
                       className="flex items-start"
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}

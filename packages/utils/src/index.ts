@@ -31,7 +31,6 @@ export const truncateText = (text: string, maxLength: number = 100): string => {
 export * from './date';
 export * from './validation';
 
-
 // Logging utility
 export const createLogger = (name: string) => {
   return {

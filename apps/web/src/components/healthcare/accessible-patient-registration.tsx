@@ -207,7 +207,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   className,
   validationLevel = 'strict',
 }) => {
-  const { t, formatDate } = useTranslation()
+  const { t } = useTranslation()
   const { announce } = useScreenReaderAnnouncer()
   const { setFocus } = useFocusManagement()
   const { registerFocusable } = useKeyboardNavigation()
@@ -222,7 +222,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   // Form steps with proper typing
-  const formSteps = [
+  const formSteps = useMemo(() => [
     {
       id: 'personal' as const,
       title: t('forms.personalInfo'),
@@ -265,7 +265,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
       icon: '✅',
       context: 'administrative' as HealthcareContext,
     },
-  ]
+  ], [t])
 
   // Focus management for step changes
   const stepRef = useRef<HTMLDivElement>(null)
@@ -513,7 +513,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   }
 
   const renderStepContent = () => {
-    const currentStepData = formSteps[currentStep]
+    // const currentStepData = formSteps[currentStep] // Unused but kept for future reference
     
     switch (currentStep) {
       case 0: // Personal Info
