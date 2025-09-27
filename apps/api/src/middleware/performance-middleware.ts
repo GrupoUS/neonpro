@@ -4,7 +4,7 @@
  */
 
 import { Context, Next } from 'hono'
-import { AestheticClinicPerformanceOptimizer } from '../services/performance/aesthetic-clinic-performance-optimizer'
+import { AestheticClinicPerformanceOptimizer } from '../services/jwt-security-service.js'
 // import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface PerformanceMetrics {

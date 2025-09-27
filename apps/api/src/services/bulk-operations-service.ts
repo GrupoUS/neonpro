@@ -12,7 +12,7 @@
  */
 
 import { logger } from '@/utils/secure-logger.js'
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 
 export interface BulkOperationRequest {
   operationType:

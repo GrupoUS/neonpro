@@ -13,7 +13,7 @@
  * Compliance: LGPD, ANVISA, CFM, ISO 27001
  */
 
-import { PoolManager } from '../clients/prisma'
+import { PoolManager } from '../clients/prisma.js'
 
 // Configuration validation schemas
 const PoolConfigSchema = z.object({

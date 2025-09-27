@@ -32,8 +32,8 @@ import {
   publicEncrypt,
   randomBytes,
 } from 'crypto'
-import { HealthcareError } from '../healthcare-errors'
-import { SecureLogger } from '../secure-logger'
+import { HealthcareError } from '../healthcare-errors.js'
+import { SecureLogger } from '../secure-logger.js'
 
 export interface CryptoConfig {
   /**

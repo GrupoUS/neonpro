@@ -1,8 +1,8 @@
 import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { createAdminClient } from '../clients/supabase'
-import { jwtValidator } from '../security/jwt-validator'
+import { createAdminClient } from '../services/jwt-security-service.js'
+import { jwtValidator } from '../services/jwt-security-service.js'
 
 // Interface for validated user token data
 interface ValidatedUser {

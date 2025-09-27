@@ -22,7 +22,7 @@ interface User {
 /**
  * Extract token from authorization header
  */
-import { JWTSecurityService } from '../services/jwt-security-service'
+import { JWTSecurityService } from '../services/jwt-security-service.js'
 
 function extractToken(authHeader: string | undefined): string | null {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {

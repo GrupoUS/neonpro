@@ -19,7 +19,7 @@
 
 import { logger } from '@/utils/healthcare-errors.js'
 import { z } from 'zod'
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 
 // Brazilian Professional Council Types
 export const PROFESSIONAL_COUNCILS = {

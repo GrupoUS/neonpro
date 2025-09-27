@@ -14,7 +14,7 @@
 
 import type { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
-import { generateWithFailover } from '../config/ai'
+import { generateWithFailover } from '../config/ai.js'
 
 // No-Show Risk Levels
 export const NO_SHOW_RISK_LEVELS = {

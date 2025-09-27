@@ -19,7 +19,7 @@ export {
 } from './lgpd-compliance-validator'
 
 // Security and privacy utilities
-export { HealthcareLogger as HealthcareErrorLogger } from '../logging/healthcare-logger'
+export { HealthcareLogger as HealthcareErrorLogger } from '../logging/healthcare-logger.js'
 export { CryptographicAuditLogger as CryptoAudit, cryptographicAuditLogger } from './crypto-audit'
 export { PrivacyAlgorithms } from './privacy-algorithms'
 export { SecureLogger } from './secure-logger'

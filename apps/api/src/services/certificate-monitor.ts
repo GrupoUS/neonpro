@@ -2,8 +2,8 @@ import { exec } from 'child_process'
 import fs from 'fs'
 // import path from 'path';
 import { promisify } from 'util'
-import { TLSConfigManager } from '../config/tls-config'
-import { HealthcareLogger } from '../logging/healthcare-logger'
+import { TLSConfigManager } from '../config/tls-config.js'
+import { HealthcareLogger } from '../logging/healthcare-logger.js'
 
 const execAsync = promisify(exec)
 

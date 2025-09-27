@@ -4,7 +4,7 @@
  * Following KISS/YAGNI principles - leverages existing components
  */
 
-import { ServiceResponse } from '../types/shared'
+import { ServiceResponse } from '../types/shared.js'
 import { AIChatService } from './ai-chat-service'
 // Mock AgentConfig interface - would interface with Python agent in production
 export interface AgentConfig {

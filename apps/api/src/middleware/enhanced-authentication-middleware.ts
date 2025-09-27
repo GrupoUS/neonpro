@@ -10,14 +10,14 @@
  */
 
 import { Context, Next } from 'hono'
-import { SessionCookieUtils } from '../__tests__/mock-services'
+import { SessionCookieUtils } from '../security/session-cookie-utils.js'
 import {
   HealthcareJWTPayload,
   JWTSecurityService,
   TokenValidationResult,
-} from '../services/jwt-security-service'
+} from '../services/jwt-security-service.js'
 // Simple session manager for testing
-import { MockEnhancedSessionManager as EnhancedSessionManager } from '../__tests__/mock-services'
+import { MockEnhancedSessionManager as EnhancedSessionManager } from '../__tests__/mock-services.js'
 
 /**
  * Authentication context attached to request

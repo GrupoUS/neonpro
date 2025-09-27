@@ -9,8 +9,8 @@
 import { createClient } from '@supabase/supabase-js'
 import { EventEmitter } from 'events'
 import { v4 as uuidv4 } from 'uuid'
-import { ConversationContextService } from '../conversation/conversation-context-service'
-import { RealtimeSubscriptionService } from '../realtime/realtime-subscription-service'
+import { ConversationContextService } from '../conversation/conversation-context-service.js'
+import { RealtimeSubscriptionService } from '../realtime/realtime-subscription-service.js'
 import { AguiService, AguiServiceConfig, QueryContext } from './agui-protocol/service'
 import {
   AguiClientAnalyticsMessage,

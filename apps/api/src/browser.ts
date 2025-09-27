@@ -7,7 +7,7 @@ export { default as app } from './app.js'
 export * from './app.js'
 
 // Re-export commonly used types and utilities
-export * from './trpc.js'
+export * from './trpc/index.js'
 export * from './utils/index.js'
 
 // Note: Node.js specific functionality (server startup, graceful shutdown)

@@ -4,7 +4,7 @@
  * Implements LGPD Articles 7º, 11º, 18º with healthcare-specific data protection
  */
 
-import { LGPDDataCategory } from '../middleware/lgpd-compliance'
+import { LGPDDataCategory } from '../middleware/lgpd-compliance.js'
 
 // ============================================================================
 // Data Masking Configuration

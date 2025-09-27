@@ -5,8 +5,8 @@
  * for aesthetic clinic sessions with advanced features and security.
  */
 
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling'
-import { AestheticAguiService } from '../agui-protocol/aesthetic-service'
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling.js'
+import { AestheticAguiService } from '../agui-protocol/aesthetic-service.js'
 import { EnhancedAgentSessionService, EnhancedSessionData } from './enhanced-agent-session-service'
 
 export interface CopilotKitSessionConfig {

@@ -10,7 +10,7 @@
  */
 
 import { Context, Next } from 'hono'
-import { AuthenticationContext } from '../middleware/enhanced-authentication-middleware'
+import { AuthenticationContext } from '../middleware/enhanced-authentication-middleware.js'
 import { AuditEventType, AuditSeverity, AuditTrailService } from './audit-trail-service'
 import {
   HealthcareSession,

@@ -15,7 +15,7 @@
 
 import { logger } from '@/utils/healthcare-errors.js'
 import { z } from 'zod'
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 import { sanitizeForAI } from './ai-security-service'
 
 // LGPD Consent Types

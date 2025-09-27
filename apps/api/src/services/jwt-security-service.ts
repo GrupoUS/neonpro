@@ -10,7 +10,7 @@
  */
 
 import crypto from 'crypto'
-import { EnhancedSessionManager } from '../security/enhanced-session-manager'
+import { EnhancedSessionManager } from '../security/enhanced-session-manager.js'
 import jwt, { JwtPayload, SignOptions, VerifyOptions } from './jwt-fallback'
 
 /**

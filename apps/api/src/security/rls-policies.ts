@@ -4,7 +4,7 @@
  */
 
 import { createServerClient } from '../clients/supabase.js'
-import { healthcareLogger, SECURITY_EVENT_TYPES } from '../logging/healthcare-logger'
+import { healthcareLogger, SECURITY_EVENT_TYPES } from '../logging/healthcare-logger.js'
 
 export interface RLSContext {
   userId: string

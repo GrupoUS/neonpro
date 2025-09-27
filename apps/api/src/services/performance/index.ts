@@ -31,10 +31,10 @@ export { createWebSocketOptimizer } from './websocket-optimizer'
 export { createSecurityComplianceValidator } from './security-compliance-validator'
 
 // Performance monitoring middleware
-export { PerformanceMonitor } from '../../middleware/performance-middleware'
+export { PerformanceMonitor } from '../../middleware/performance-middleware.js'
 
 // Performance dashboard routes
-export { createPerformanceDashboardRoutes } from '../../routes/performance-dashboard'
+export { createPerformanceDashboardRoutes } from '../../routes/performance-dashboard.js'
 
 /**
  * Initialize complete performance optimization stack

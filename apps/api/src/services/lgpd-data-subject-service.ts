@@ -1,4 +1,4 @@
-import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma'
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma.js'
 import { type ExportOptions, type LGPDOperationResult } from '../types/lgpd.js'
 import { createHealthcareError } from './createHealthcareError.js'
 import { lgpdAuditService } from './lgpd-audit-service.js'

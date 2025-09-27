@@ -14,9 +14,9 @@
 import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { AestheticClinicSecurityService } from '../security/aesthetic-clinic-security-service'
-import { AestheticMFAService } from '../security/aesthetic-mfa-service'
-import { MedicalImageProtectionService } from '../security/medical-image-protection-service'
+import { AestheticClinicSecurityService } from '../services/jwt-security-service.js'
+import { AestheticMFAService } from '../services/jwt-security-service.js'
+import { MedicalImageProtectionService } from '../services/jwt-security-service.js'
 
 // Middleware Configuration
 const AESTHETIC_CLINIC_CONFIG = {

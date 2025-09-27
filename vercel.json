@@ -1,20 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "builds": [
-    {
-      "src": "apps/web/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "outputDirectory": "apps/web/dist",
-  "installCommand": "pnpm install --prefer-offline",
-  "buildCommand": "pnpm run build && cd apps/web && pnpm run build",
+  "installCommand": "bun install",
+  "buildCommand": "cd apps/web && bun run build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
+  "outputDirectory": "dist",
+  "devCommand": "turbo run dev",
   "regions": ["gru1"],
-  "framework": null,
+  "framework": "vite",
 
   "rewrites": [
     {
@@ -110,5 +102,28 @@
 
   "git": {
     "deploymentEnabled": true
-  }
+  },
+
+  "crons": [
+    {
+      "path": "/api/cleanup/ai-sessions",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cleanup/expired-data",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/health/system",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/compliance/daily-audit",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/compliance/lgpd-data-retention",
+      "schedule": "0 4 * * *"
+    }
+  ]
 }

@@ -4,8 +4,8 @@
  * Implements LGPD Articles 7º, 11º, 18º with patient-centric privacy controls
  */
 
-import { createAdminClient } from '../clients/supabase'
-import { LGPDDataCategory } from '../middleware/lgpd-compliance'
+import { createAdminClient } from '../clients/supabase.js'
+import { LGPDDataCategory } from '../middleware/lgpd-compliance.js'
 import DataMaskingService, { MaskingContext } from './data-masking-service'
 import DataRetentionService from './data-retention-service'
 import EnhancedLGPDConsentService, {

@@ -40,7 +40,7 @@ const createHash = cryptoModule.createHash || ((algorithm: string) => ({
 }))
 import { Redis } from 'ioredis'
 import { z } from 'zod'
-import { AguiQueryMessage, AguiResponseMessage, AguiSource } from '../agui-protocol/types'
+import { AguiQueryMessage, AguiResponseMessage, AguiSource } from '../agui-protocol/types.js'
 
 // Input validation schemas
 const CacheKeySchema = z.string().min(1).max(500)

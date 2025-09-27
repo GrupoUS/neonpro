@@ -4,7 +4,7 @@
  */
 
 import { createHash } from 'crypto'
-import { type HealthcarePrismaClient } from '../clients/prisma'
+import { type HealthcarePrismaClient } from '../clients/prisma.js'
 import {
   HealthcareQueryOptimizer,
   type PerformanceMetrics,

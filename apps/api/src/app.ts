@@ -1,5 +1,6 @@
 import { trpcServer } from '@hono/trpc-server'
-import { cors } from 'hono/cors'
+import { Context as HonoContext } from 'hono'
+import { cors } from './middleware/cors.js'
 import { errorHandler } from './middleware/error-handler.js'
 import { errorSanitizationMiddleware } from './middleware/error-sanitization.js'
 import copilotBridge from './routes/ai/copilot-bridge.js'
@@ -13,7 +14,7 @@ import chatRouter from './routes/chat.js'
 import { medicalRecords } from './routes/medical-records.js'
 import patientsRouter from './routes/patients.js'
 import v1Router from './routes/v1.js'
-import { Context } from './trpc/context.js'
+import { Context as TRPCContext } from './trpc/context.js'
 import { appRouter } from './trpc/router.js'
 
 // Import security and monitoring libraries
@@ -81,7 +82,7 @@ app.use(
   cors({
     origin: origin => {
       // Allow same-origin requests (no origin header)
-      if (!origin) return '*'
+      if (!origin) return true
 
       // Allowed origins based on environment
       const allowedOrigins = process.env.NODE_ENV === 'production'
@@ -98,7 +99,7 @@ app.use(
         ]
 
       // Check if origin is allowed
-      return allowedOrigins.includes(origin) ? origin : null
+      return allowedOrigins.includes(origin)
     },
     credentials: true,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -160,7 +161,7 @@ app.use('*', httpsMonitoringMiddleware.middleware)
 app.use('*', sensitiveDataExposureMiddleware())
 
 // Enhanced error handling middleware
-app.use('*', async (c, next) => {
+app.use('*', async (c: HonoContext, next: () => Promise<void>) => {
   const startTime = Date.now()
   const requestId = c.get('requestId')
 
@@ -264,7 +265,7 @@ app.route('/api/cleanup/expired-predictions', expiredPredictionsCleanup)
 // Mount tRPC router under /trpc for type-safe API access
 const tRPCHandle = trpcServer({
   router: appRouter,
-  createContext: async opts => {
+  createContext: async (opts: { req: { headers: Headers } }) => {
     // Create tRPC context from Hono request
     const headers = opts.req.headers
     const userId = headers.get('x-user-id') || headers.get('user-id')
@@ -280,7 +281,7 @@ const tRPCHandle = trpcServer({
         userAgent: headers.get('user-agent') || 'unknown',
         sessionId: headers.get('x-session-id') || headers.get('session-id') || 'unknown',
       },
-    } as Context
+    } as TRPCContext
   },
 })
 
@@ -288,7 +289,7 @@ const tRPCHandle = trpcServer({
 app.use('/trpc/*', tRPCHandle)
 
 // Basic health endpoints with enhanced monitoring
-app.get('/health', c => {
+app.get('/health', (c: HonoContext) => {
   const requestId = c.get('requestId')
 
   console.log('Health check requested', { requestId })
@@ -300,7 +301,7 @@ app.get('/health', c => {
   })
 })
 
-app.get('/v1/health', c => {
+app.get('/v1/health', (c: TRPCContext) => {
   const requestId = c.get('requestId')
 
   console.log('Detailed health check requested', { requestId })
@@ -334,7 +335,7 @@ app.get('/v1/health', c => {
   return c.json(healthData)
 })
 
-app.get('/v1/info', c => {
+app.get('/v1/info', (c: TRPCContext) => {
   const requestId = c.get('requestId')
 
   console.log('System info requested', { requestId })
@@ -371,7 +372,7 @@ app.get('/v1/info', c => {
 })
 
 // HTTPS monitoring endpoint (T066)
-app.get('/v1/monitoring/https', c => {
+app.get('/v1/monitoring/https', (c: TRPCContext) => {
   const requestId = c.get('requestId')
 
   console.log(
@@ -415,7 +416,7 @@ app.get('/v1/monitoring/https', c => {
 // Security endpoints (protected)
 app.get(
   '/v1/security/status',
-  /* ...getProtectedRoutesMiddleware(['admin']), */ c => {
+  /* ...getProtectedRoutesMiddleware(['admin']), */ (c: TRPCContext) => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -467,7 +468,7 @@ app.get(
 // LGPD compliance endpoint
 app.get(
   '/v1/compliance/lgpd',
-  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ c => {
+  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ (c: TRPCContext) => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -521,7 +522,7 @@ app.get(
 
 // Error tracking test endpoint (for development)
 if (process.env.NODE_ENV !== 'production') {
-  app.get('/v1/test/error', c => {
+  app.get('/v1/test/error', (c: TRPCContext) => {
     const requestId = c.get('requestId')
 
     console.warn('Error test endpoint called', { requestId })
@@ -543,7 +544,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.post('/api/security/csp-violations', cspViolationHandler())
 
 // 404 handler with logging
-app.notFound(c => {
+app.notFound((c: TRPCContext) => {
   const requestId = c.get('requestId')
 
   console.warn('Route not found', {

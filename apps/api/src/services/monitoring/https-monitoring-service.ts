@@ -5,7 +5,7 @@
  * for healthcare applications.
  */
 
-import { logger } from '../../utils/secure-logger'
+import { logger } from '../../utils/secure-logger.js'
 
 export interface TLSHandshakeMetrics {
   handshakeTimeMs: number

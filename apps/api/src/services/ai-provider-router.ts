@@ -58,20 +58,20 @@ export class HealthcareAIOptimizationUtils {
     return baseCost * providerMultiplier * complexity
   }
 }
-import { AuditTrailService } from './audit-trail'
-import { SemanticCacheService } from './semantic-cache'
+import { AuditTrailService } from './audit-trail.js'
+import { SemanticCacheService } from './semantic-cache.js'
 
 // Import modular components
-import { ProviderConfigManager } from './ai-provider/config'
-import { ProviderHealthMonitor } from './ai-provider/health-check'
-import { AISecurityManager } from './ai-provider/security'
+import { ProviderConfigManager } from './ai-provider/config.js'
+import { ProviderHealthMonitor } from './ai-provider/health-check.js'
+import { AISecurityManager } from './ai-provider/security.js'
 import {
   ProviderConfig,
   ProviderHealthCheck,
   RoutingRequest,
   RoutingResponse,
   RoutingStrategy,
-} from './ai-provider/types'
+} from './ai-provider/types.js'
 
 // ============================================================================
 // AI Provider Router Service

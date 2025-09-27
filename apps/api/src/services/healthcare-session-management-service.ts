@@ -10,9 +10,9 @@
  */
 
 import crypto from 'crypto'
-import { EnhancedSessionManager } from '../security/enhanced-session-manager'
-import { SessionCookieUtils } from '../security/session-cookie-utils'
-import { createCryptographyManager, type CryptographyManager } from '../utils/security/cryptography'
+import { EnhancedSessionManager } from '../security/enhanced-session-manager.js'
+import { SessionCookieUtils } from '../security/session-cookie-utils.js'
+import { createCryptographyManager, type CryptographyManager } from '../utils/security/cryptography.js'
 
 /**
  * Healthcare session data with compliance tracking

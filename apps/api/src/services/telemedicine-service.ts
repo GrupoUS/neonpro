@@ -5,7 +5,7 @@
 
 import { logger } from '@/utils/healthcare-errors.js'
 import { WebRTCSessionService } from '@neonpro/database'
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 import { HealthcareProfessionalAuthorizationService } from './healthcare-professional-authorization'
 
 export interface TelemedicineSessionInput {

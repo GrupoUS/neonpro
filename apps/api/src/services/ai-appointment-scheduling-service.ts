@@ -11,7 +11,7 @@
  * Following Task 9 architecture design and LGPD compliance
  */
 
-import { prisma } from '../lib/prisma'
+import { prisma } from '../lib/prisma.js'
 import {} from '@prisma/client'
 
 export interface NoShowPredictionFeatures {

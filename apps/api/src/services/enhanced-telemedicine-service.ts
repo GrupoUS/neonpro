@@ -7,7 +7,7 @@
 
 import { logger } from '@/utils/healthcare-errors.js'
 import { z } from 'zod'
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 import { aiSecurityService } from './ai-security-service'
 
 // Mock audit logger for startup - TODO: Replace with actual auditLogger

@@ -2,7 +2,7 @@
 // Comprehensive metrics system for LGPD, CFM, ANVISA compliance tracking
 // Note: Keep PII out of labels and logs
 
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 
 export type Timer = { start: bigint }
 

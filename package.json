@@ -28,8 +28,6 @@
   },
   "scripts": {
     "build": "turbo build",
-    "build:web": "turbo build --filter=@neonpro/web",
-    "build:api": "turbo build --filter=@neonpro/api",
     "dev": "turbo dev --concurrency=10",
     "dev:web": "turbo dev --filter=@neonpro/web",
     "dev:api": "turbo dev --filter=@neonpro/api",
@@ -142,6 +140,7 @@
     "supabase": "2.45.5",
     "tailwindcss": "4.1.13",
     "tar": "6.2.1",
+    "tsc-alias": "1.8.16",
     "tsup": "8.5.0",
     "typescript": "5.9.2",
     "undici": "7.16.0",

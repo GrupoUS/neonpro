@@ -13,7 +13,7 @@ import {
   getBrowserErrorTrackingHealth,
   initializeSentryBrowser,
   setBrowserUserContext,
-} from '../config/error-tracking-browser'
+} from '../config/error-tracking-browser.js'
 
 let isInitialized = false
 

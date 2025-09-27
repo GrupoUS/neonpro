@@ -14,8 +14,8 @@ import { logger } from '@/utils/healthcare-errors.js'
 import crypto from 'crypto'
 import { qrcode } from 'qrcode'
 import { speakeasy } from 'speakeasy'
-import { createCryptographyManager } from '../../utils/security/cryptography'
-import { createAdminClient } from '../clients/supabase'
+import { createCryptographyManager } from '../../utils/security/cryptography.js'
+import { createAdminClient } from '../clients/supabase.js'
 import { EnhancedSessionManager } from './enhanced-session-manager'
 
 // TOTP Configuration

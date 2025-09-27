@@ -7,9 +7,9 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
-import { Database } from '../../types/database'
-import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service'
-import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling'
+import { Database } from '../../types/database.js'
+import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service.js'
+import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling.js'
 import {
   AestheticAguiService,
   AestheticClientProfile,
@@ -17,7 +17,7 @@ import {
   // AestheticAguiMessageType,
   // AestheticSessionContext,
   AestheticTreatmentData,
-} from '../agui-protocol/aesthetic-service'
+} from '../agui-protocol/aesthetic-service.js'
 
 // Enhanced session types with CopilotKit integration
 export interface EnhancedSessionConfig {

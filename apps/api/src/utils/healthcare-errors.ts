@@ -10,8 +10,8 @@
  * - Error monitoring and alerting integration
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma'
-import { HealthcareLogger } from '../logging/healthcare-logger'
+import { type HealthcarePrismaClient } from '../clients/prisma.js'
+import { HealthcareLogger } from '../logging/healthcare-logger.js'
 
 // Healthcare error severity levels
 export enum HealthcareErrorSeverity {

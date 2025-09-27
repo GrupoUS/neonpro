@@ -4,8 +4,8 @@
  * Healthcare-specific retention policies and cleanup automation
  */
 
-import { createAdminClient } from '../clients/supabase'
-import { LGPDDataCategory } from '../middleware/lgpd-compliance'
+import { createAdminClient } from '../clients/supabase.js'
+import { LGPDDataCategory } from '../middleware/lgpd-compliance.js'
 
 // ============================================================================
 // Data Retention Configuration

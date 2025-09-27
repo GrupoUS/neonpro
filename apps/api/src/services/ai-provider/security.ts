@@ -22,7 +22,7 @@ export enum HealthcareAIUseCase {
   COMPLIANCE_CHECK = 'compliance_check',
   APPOINTMENT_SCHEDULING = 'appointment_scheduling',
 }
-import { AuditEventType, AuditTrailService } from '../audit-trail'
+import { AuditEventType, AuditTrailService } from '../audit-trail.js'
 import { RoutingRequest } from './types'
 
 /**

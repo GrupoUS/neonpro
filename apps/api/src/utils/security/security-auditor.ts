@@ -18,8 +18,8 @@
  * - Regulatory compliance reporting
  */
 
-import { HealthcareError } from '../healthcare-errors'
-import { SecureLogger } from '../secure-logger'
+import { HealthcareError } from '../healthcare-errors.js'
+import { SecureLogger } from '../secure-logger.js'
 import { SecurityConfig, SecurityValidator } from './security-validator'
 
 export interface AuditConfig {
@@ -905,22 +905,22 @@ export class SecurityAuditor {
         },
         securityMetrics: {
           vulnerabilities: {
-            critical: this.findings.filter(f => f.severity === 'critical' && !f.resolved).length,
-            high: this.findings.filter(f => f.severity === 'high' && !f.resolved).length,
-            medium: this.findings.filter(f => f.severity === 'medium' && !f.resolved).length,
-            low: this.findings.filter(f => f.severity === 'low' && !f.resolved).length,
+            critical: Array.from(this.findings.values()).filter(f => f.severity === 'critical' && !f.resolved).length,
+            high: Array.from(this.findings.values()).filter(f => f.severity === 'high' && !f.resolved).length,
+            medium: Array.from(this.findings.values()).filter(f => f.severity === 'medium' && !f.resolved).length,
+            low: Array.from(this.findings.values()).filter(f => f.severity === 'low' && !f.resolved).length,
           },
           compliance: {
-            passed: this.findings.filter(f => f.category === 'compliance' && f.resolved).length,
-            failed: this.findings.filter(f => f.category === 'compliance' && !f.resolved).length,
-            partial: this.findings.filter(f =>
+            passed: Array.from(this.findings.values()).filter(f => f.category === 'compliance' && f.resolved).length,
+            failed: Array.from(this.findings.values()).filter(f => f.category === 'compliance' && !f.resolved).length,
+            partial: Array.from(this.findings.values()).filter(f =>
               f.category === 'compliance' && f.severity === 'medium'
             ).length,
           },
           threats: {
             detected: metrics.suspiciousActivities,
             blocked: metrics.blockedRequests,
-            investigated: this.incidents.filter(i => i.status !== 'detected').length,
+            investigated: Array.from(this.incidents.values()).filter(i => i.status !== 'detected').length,
           },
         },
         recommendations: latestAudit?.recommendations || [],
@@ -960,7 +960,7 @@ export class SecurityAuditor {
    * Calculate compliance score for framework
    */
   private calculateComplianceScore(framework: string): number {
-    const frameworkFindings = this.findings.filter(f => f.complianceFramework === framework)
+    const frameworkFindings = Array.from(this.findings.values()).filter(f => f.complianceFramework === framework)
     if (frameworkFindings.length === 0) return 100
 
     const resolvedFindings = frameworkFindings.filter(f => f.resolved).length
@@ -995,7 +995,7 @@ export class SecurityAuditor {
    */
   getFindingsBySeverity(severity: 'low' | 'medium' | 'high' | 'critical'): AuditFinding[] {
     return Array.from(this.findings.values())
-      .filter(f => f.severity === severity && !f.resolved)
+      Array.from(this.findings.values()).filter(f => f.severity === severity && !f.resolved)
       .sort((a, b) => b.lastDetected.getTime() - a.lastDetected.getTime())
   }
 

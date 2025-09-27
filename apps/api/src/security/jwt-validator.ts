@@ -21,8 +21,8 @@
 
 import { Context } from 'hono'
 import jwt, { Algorithm, JwtPayload, VerifyOptions } from 'jsonwebtoken'
-import { healthcareLogger } from '../logging/healthcare-logger'
-import { secrets } from '../utils/secret-manager'
+import { healthcareLogger } from '../logging/healthcare-logger.js'
+import { secrets } from '../utils/secret-manager.js'
 
 // Security configuration interfaces
 interface JWTSecurityConfig {

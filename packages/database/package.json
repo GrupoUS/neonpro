@@ -8,9 +8,9 @@
   "types": "dist/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js"
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js",
+      "require": "./dist/src/index.js"
     },
     "./services/*": {
       "types": "./dist/services/*.d.ts",
@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "build": "bunx prisma generate && bun x tsc -b",
+    "build": "bunx prisma generate && tsc -b",
     "dev": "tsc -w -p tsconfig.json",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",

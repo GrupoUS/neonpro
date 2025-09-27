@@ -16,7 +16,7 @@ import crypto from 'crypto'
 import { createCipheriv, createDecipheriv, createHash } from 'crypto'
 import { ExifTool } from 'exiftool-vendored'
 import sharp from 'sharp'
-import { createAdminClient } from '../clients/supabase'
+import { createAdminClient } from '../clients/supabase.js'
 
 // Image Security Configuration
 const IMAGE_SECURITY_CONFIG = {
