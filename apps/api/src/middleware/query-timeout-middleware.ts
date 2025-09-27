@@ -56,88 +56,85 @@ export class QueryTimeoutMiddleware {
   }
 
   /**
-   * Express middleware function
+   * Hono middleware function
    */
-  middleware = (req: Request, res: Response, next: NextFunction): void => {
+  middleware = async (c: Context, next: Next): Promise<void> => {
     const queryId = this.generateQueryId()
     const startTime = performance.now()
+    const url = new URL(c.req.url)
 
     // Get timeout from header or use default
-    const timeoutHeader = req.headers[this.config.timeoutHeader.toLowerCase()]
+    const timeoutHeader = c.req.header(this.config.timeoutHeader)
     let timeout = this.config.defaultTimeout
 
     if (timeoutHeader) {
-      const headerTimeout = parseInt(timeoutHeader as string)
+      const headerTimeout = parseInt(timeoutHeader)
       if (!isNaN(headerTimeout) && headerTimeout > 0) {
         timeout = Math.min(headerTimeout, this.config.maxTimeout)
       }
     }
 
-    // Add query ID to request for tracking
-    req.queryId = queryId
-    req.queryTimeout = timeout
+    // Add query ID to context for tracking
+    c.set('queryId', queryId)
+    c.set('queryTimeout', timeout)
+    c.set('queryStartTime', startTime)
 
     // Track active query
     this.activeQueries.set(queryId, {
       startTime,
       timeout,
-      req,
+      req: c.req,
     })
 
     // Set up timeout timer
     const timeoutTimer = setTimeout(() => {
-      this.handleQueryTimeout(queryId, req, res)
+      this.handleQueryTimeout(queryId, c)
     }, timeout)
 
-    // Override res.end to track completion
-    const originalEnd = res.end
-    res.end = function(chunk?: any, encoding?: any) {
+    // Execute next middleware
+    try {
+      await next()
+    } catch (error) {
       clearTimeout(timeoutTimer)
-
-      const endTime = performance.now()
-      const duration = endTime - startTime
-
-      // Record metrics
-      const metrics: QueryMetrics = {
-        queryId,
-        startTime,
-        endTime,
-        duration,
-        timeout,
-        timedOut: false,
-        route: req.path,
-        method: req.method,
-        statusCode: res.statusCode,
-        responseSize: chunk ? chunk.length : 0,
-        userAgent: req.headers['user-agent'],
-        _userId: this.extractUserId(req),
-      }
-
-      this.recordQueryMetrics(metrics)
-      this.activeQueries.delete(queryId)
-
-      // Log slow queries that didn't timeout
-      if (duration > timeout * 0.8 && duration < timeout) {
-        console.warn(
-          `[QueryTimeout] Query approaching timeout: ${duration}ms / ${timeout}ms`,
-          {
-            queryId,
-            route: req.path,
-            method: req.method,
-            _userId: metrics.userId,
-          },
-        )
-      }
-
-      return originalEnd.call(this, chunk, encoding)
-    }.bind(this)
-
-    // Set up response compression if enabled
-    if (this.config.enableResponseCompression) {
-      this.setupResponseCompression(res)
+      throw error
     }
 
-    next()
+    clearTimeout(timeoutTimer)
+
+    const endTime = performance.now()
+    const duration = endTime - startTime
+
+    // Record metrics
+    const metrics: QueryMetrics = {
+      queryId,
+      startTime,
+      endTime,
+      duration,
+      timeout,
+      timedOut: false,
+      route: url.pathname,
+      method: c.req.method,
+      statusCode: c.res.status,
+      responseSize: 0, // Would need to calculate from response
+      userAgent: c.req.header('user-agent'),
+      _userId: this.extractUserId(c),
+    }
+
+    this.recordQueryMetrics(metrics)
+    this.activeQueries.delete(queryId)
+
+    // Log slow queries that didn't timeout
+    if (duration > timeout * 0.8 && duration < timeout) {
+      console.warn(
+        `[QueryTimeout] Query approaching timeout: ${duration}ms / ${timeout}ms`,
+        {
+          queryId,
+          route: url.pathname,
+          method: c.req.method,
+          _userId: metrics.userId,
+        },
+      )
+    }
   }
 
   /**
@@ -145,14 +142,14 @@ export class QueryTimeoutMiddleware {
    */
   private handleQueryTimeout(
     queryId: string,
-    req: Request,
-    res: Response,
+    c: Context,
   ): void {
     const activeQuery = this.activeQueries.get(queryId)
     if (!activeQuery) return
 
     const { startTime, timeout } = activeQuery
     const duration = performance.now() - startTime
+    const url = new URL(c.req.url)
 
     // Record timeout metrics
     const metrics: QueryMetrics = {
@@ -162,12 +159,12 @@ export class QueryTimeoutMiddleware {
       duration,
       timeout,
       timedOut: true,
-      route: req.path,
-      method: req.method,
+      route: url.pathname,
+      method: c.req.method,
       statusCode: 504, // Gateway Timeout
       responseSize: 0,
-      userAgent: req.headers['user-agent'],
-      _userId: this.extractUserId(req),
+      userAgent: c.req.header('user-agent'),
+      _userId: this.extractUserId(c),
     }
 
     this.recordQueryMetrics(metrics)
@@ -178,16 +175,17 @@ export class QueryTimeoutMiddleware {
       `[QueryTimeout] Query timeout exceeded: ${duration}ms > ${timeout}ms`,
       {
         queryId,
-        route: req.path,
-        method: req.method,
+        route: url.pathname,
+        method: c.req.method,
         _userId: metrics.userId,
-        userAgent: req.headers['user-agent'],
+        userAgent: c.req.header('user-agent'),
       },
     )
 
     // Send timeout response
-    if (!res.headersSent) {
-      res.status(504).json({
+    if (!c.res.headersSent) {
+      c.status(504)
+      c.json({
         error: 'Query timeout exceeded',
         message: 'The request took longer than the allowed time to process',
         queryId,
@@ -204,25 +202,27 @@ export class QueryTimeoutMiddleware {
   /**
    * Setup response compression
    */
-  private setupResponseCompression(res: Response): void {
+  private setupResponseCompression(c: Context): void {
     // Simple compression setup - in production, use compression middleware
-    const acceptEncoding = res.req.headers['accept-encoding']
+    const acceptEncoding = c.req.header('accept-encoding')
     if (acceptEncoding && acceptEncoding.includes('gzip')) {
-      res.setHeader('Content-Encoding', 'gzip')
+      c.header('Content-Encoding', 'gzip')
     }
   }
 
   /**
-   * Extract user ID from request
+   * Extract user ID from context
    */
-  private extractUserId(req: Request): string | undefined {
+  private extractUserId(c: Context): string | undefined {
     // Extract user ID from various possible sources
+    const url = new URL(c.req.url)
+    const searchParams = url.searchParams
+
     return (
-      req.headers.get('x-user-id') ||
-      req.headers.get('user-id') ||
-      req.query?.userId ||
-      (req.body as any)?.userId ||
-      (req.user as any)?.id
+      c.req.header('x-user-id') ||
+      c.req.header('user-id') ||
+      searchParams.get('userId') ||
+      (c.get('user') as any)?.id
     )
   }
 
@@ -451,7 +451,12 @@ export class QueryTimeoutMiddleware {
   /**
    * Generate health recommendations
    */
-  private generateHealthRecommendations(stats: any): string[] {
+  private generateHealthRecommendations(stats: {
+    timeoutRate: number
+    averageResponseTime: number
+    currentActiveQueries: number
+    routesWithMostTimeouts: [string, number][]
+  }): string[] {
     const recommendations: string[] = []
 
     if (stats.timeoutRate > 5) {
@@ -495,6 +500,37 @@ export class QueryTimeoutMiddleware {
   getQueryTimeout(c: Context): number | undefined {
     return c.get('queryTimeout')
   }
+
+  /**
+   * Select compression method based on accept-encoding header
+   */
+  private selectCompressionMethod(acceptEncoding: string): string {
+    if (!acceptEncoding) return 'none'
+
+    const encodings = acceptEncoding.split(',').map(e => e.trim())
+
+    // Check for Brotli (highest priority)
+    if (encodings.includes('br')) {
+      return 'br'
+    }
+
+    // Check for Gzip
+    if (encodings.includes('gzip')) {
+      return 'gzip'
+    }
+
+    // Check for deflate
+    if (encodings.includes('deflate')) {
+      return 'deflate'
+    }
+
+    // Check for wildcard (accept any encoding)
+    if (encodings.includes('*')) {
+      return 'br'
+    }
+
+    return 'none'
+  }
 }
 
 /**
@@ -508,16 +544,6 @@ export function createHealthcareTimeoutMiddleware(): QueryTimeoutMiddleware {
     enableTimeoutExtension: false, // Disable extension for healthcare compliance
     enableResponseCompression: true,
   })
-}
-
-// Extend Express Request interface
-declare global {
-  namespace Express {
-    interface Request {
-      queryId?: string
-      queryTimeout?: number
-    }
-  }
 }
 
 // Extend Hono Context for our custom properties

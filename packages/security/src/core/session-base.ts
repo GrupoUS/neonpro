@@ -188,6 +188,9 @@ export class BaseSessionManager {
 
   /**
    * Detect basic anomalies
+   * @param session - The session metadata to analyze
+   * @param context - Current validation context (IP, user agent, etc.)
+   * @returns SecurityResult with anomaly detection results and risk score
    */
   protected detectAnomalies(
     session: SessionMetadata,
@@ -232,6 +235,9 @@ export class BaseSessionManager {
 
   /**
    * Manage concurrent sessions
+   * @param userId - The user ID to manage sessions for
+   * @param currentSessionId - The current session ID being created
+   * @returns SecurityResult indicating if session management succeeded
    */
   protected manageConcurrentSessions(
     userId: string,
@@ -270,6 +276,9 @@ export class BaseSessionManager {
 
   /**
    * Create basic session
+   * @param userId - The user ID to create session for
+   * @param context - Validation context with IP, user agent, and metadata
+   * @returns Complete SessionMetadata object for the new session
    */
   protected createBaseSession(
     userId: string,
@@ -319,6 +328,8 @@ export class BaseSessionManager {
 
   /**
    * Remove session
+   * @param sessionId - The session ID to remove
+   * @returns true if session was found and removed, false otherwise
    */
   protected removeSession(sessionId: string): boolean {
     const session = this.sessions.get(sessionId)
@@ -340,6 +351,8 @@ export class BaseSessionManager {
 
   /**
    * Get session
+   * @param sessionId - The session ID to retrieve
+   * @returns SessionMetadata if found, undefined otherwise
    */
   getSession(sessionId: string): SessionMetadata | undefined {
     return this.sessions.get(sessionId)
@@ -347,6 +360,8 @@ export class BaseSessionManager {
 
   /**
    * Get user sessions
+   * @param userId - The user ID to get sessions for
+   * @returns Array of SessionMetadata for all user's active sessions
    */
   getUserSessions(userId: string): SessionMetadata[] {
     const sessionIds = this.userSessions.get(userId) || new Set()
@@ -357,6 +372,8 @@ export class BaseSessionManager {
 
   /**
    * Clean expired sessions
+   * @param maxInactiveHours - Maximum hours of inactivity before session expires (default: 24)
+   * @returns Number of sessions that were removed
    */
   cleanExpiredSessions(maxInactiveHours: number = 24): number {
     const cutoffTime = new Date(Date.now() - maxInactiveHours * 60 * 60 * 1000)
@@ -377,6 +394,7 @@ export class BaseSessionManager {
 
   /**
    * Get session statistics
+   * @returns Object containing session statistics including totals, security levels, and risk scores
    */
   getSessionStats(): {
     totalSessions: number

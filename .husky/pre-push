@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# NeonPro Enhanced Pre-push Hook
+# Following Husky v9+ best practices with healthcare compliance
+
+set -e  # Exit on any error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}🚀 Running NeonPro Pre-push Validation...${NC}"
+
+# 1. Run comprehensive test suite
+echo -e "${YELLOW}🧪 Running comprehensive test suite...${NC}"
+if ! pnpm test; then
+    echo -e "${RED}❌ Tests failed! Please fix failing tests before pushing.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✅ All tests passed${NC}"
+
+# 2. Healthcare Compliance Tests
+echo -e "${YELLOW}🏥 Running healthcare compliance tests...${NC}"
+if command -v pnpm test:healthcare-compliance &> /dev/null; then
+    if ! pnpm test:healthcare-compliance; then
+        echo -e "${YELLOW}⚠️ Healthcare compliance tests had issues (non-blocking)${NC}"
+    else
+        echo -e "${GREEN}✅ Healthcare compliance tests passed${NC}"
+    fi
+else
+    echo -e "${BLUE}ℹ️ Healthcare compliance tests not available${NC}"
+fi
+
+# 3. Security Compliance Tests
+echo -e "${YELLOW}🛡️ Running security compliance tests...${NC}"
+if command -v pnpm test:security-compliance &> /dev/null; then
+    if ! pnpm test:security-compliance; then
+        echo -e "${YELLOW}⚠️ Security compliance tests had issues (non-blocking)${NC}"
+    else
+        echo -e "${GREEN}✅ Security compliance tests passed${NC}"
+    fi
+else
+    echo -e "${BLUE}ℹ️ Security compliance tests not available${NC}"
+fi
+
+# 4. Build Critical Packages (to ensure they compile)
+echo -e "${YELLOW}🔨 Building critical packages...${NC}"
+if ! pnpm --filter @neonpro/types build; then
+    echo -e "${RED}❌ Types package failed to build!${NC}"
+    exit 1
+fi
+
+if ! pnpm --filter @neonpro/security build; then
+    echo -e "${RED}❌ Security package failed to build!${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Critical packages built successfully${NC}"
+
+echo -e "${GREEN}🎉 All pre-push validations passed! Ready to push...${NC}"

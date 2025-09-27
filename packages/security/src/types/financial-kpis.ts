@@ -463,19 +463,11 @@ export function createInsuranceClaimsKPI(params: {
  */
 
 /**
- * Calculate financial health score
+ * Get financial category weights based on healthcare best practices
+ * @returns Record mapping financial categories to their importance weights
  */
-export function calculateFinancialHealthScore(kpis: FinancialKPI[]): {
-  score: number
-  level: 'excellent' | 'good' | 'fair' | 'poor'
-  indicators: Array<{
-    category: FinancialCategory
-    performance: 'above' | 'at' | 'below' | 'critical'
-    impact: number
-  }>
-} {
-  // Scoring logic based on healthcare financial best practices
-  const categoryWeights: Record<FinancialCategory, number> = {
+function getFinancialCategoryWeights(): Record<FinancialCategory, number> {
+  return {
     revenue_cycle: 0.25,
     profitability: 0.2,
     accounts_receivable: 0.15,
@@ -489,54 +481,111 @@ export function calculateFinancialHealthScore(kpis: FinancialKPI[]): {
     denials_management: 0.0,
     patient_financial_experience: 0.0,
   }
+}
 
-  let weightedScore = 0
+/**
+ * Evaluate KPI performance level and score
+ * @param performance - Performance ratio (actual/target value)
+ * @returns Object containing performance level and corresponding score
+ */
+function evaluateKPIPerformance(performance: number): {
+  performanceLevel: 'above' | 'at' | 'below' | 'critical'
+  score: number
+} {
+  if (performance >= 1.1) {
+    return { performanceLevel: 'above', score: 100 }
+  } else if (performance >= 0.95) {
+    return { performanceLevel: 'at', score: 85 }
+  } else if (performance >= 0.8) {
+    return { performanceLevel: 'below', score: 65 }
+  } else {
+    return { performanceLevel: 'critical', score: 30 }
+  }
+}
+
+/**
+ * Determine health level based on weighted score
+ * @param weightedScore - The calculated weighted score from all KPIs
+ * @returns Health level classification based on score thresholds
+ */
+function determineHealthLevel(weightedScore: number): 'excellent' | 'good' | 'fair' | 'poor' {
+  if (weightedScore >= 90) return 'excellent'
+  if (weightedScore >= 75) return 'good'
+  if (weightedScore >= 60) return 'fair'
+  return 'poor'
+}
+
+/**
+ * Process individual KPI for financial health calculation
+ * @param kpi - The financial KPI to process
+ * @param categoryWeights - Mapping of categories to their weights
+ * @returns Object containing weighted contribution and performance indicator
+ */
+function processKPIForFinancialHealth(
+  kpi: FinancialKPI,
+  categoryWeights: Record<FinancialCategory, number>
+): {
+  weightedContribution: number
+  indicator: {
+    category: FinancialCategory
+    performance: 'above' | 'at' | 'below' | 'critical'
+    impact: number
+  }
+} {
+  const weight = categoryWeights[kpi.category] || 0
+  const targetValue = kpi.targetValue || kpi.value
+  const performanceRatio = kpi.value / targetValue
+  
+  const { performanceLevel, score } = evaluateKPIPerformance(performanceRatio)
+  const weightedContribution = score * weight
+
+  return {
+    weightedContribution,
+    indicator: {
+      category: kpi.category,
+      performance: performanceLevel,
+      impact: weight,
+    },
+  }
+}
+
+/**
+ * Calculate financial health score
+ * @param kpis - Array of financial KPIs to analyze
+ * @returns Object containing overall score, health level, and performance indicators
+ */
+export function calculateFinancialHealthScore(kpis: FinancialKPI[]): {
+  score: number
+  level: 'excellent' | 'good' | 'fair' | 'poor'
+  indicators: Array<{
+    category: FinancialCategory
+    performance: 'above' | 'at' | 'below' | 'critical'
+    impact: number
+  }>
+} {
+  const categoryWeights = getFinancialCategoryWeights()
+  
+  let totalWeightedScore = 0
   const indicators: Array<{
     category: FinancialCategory
     performance: 'above' | 'at' | 'below' | 'critical'
     impact: number
   }> = []
 
+  // Process each KPI
   kpis.forEach(kpi => {
-    const weight = categoryWeights[kpi.category] || 0
-    const targetValue = kpi.targetValue || kpi.value
-    const performance = kpi.value / targetValue
-
-    let performanceLevel: 'above' | 'at' | 'below' | 'critical'
-    let score: number
-
-    if (performance >= 1.1) {
-      performanceLevel = 'above'
-      score = 100
-    } else if (performance >= 0.95) {
-      performanceLevel = 'at'
-      score = 85
-    } else if (performance >= 0.8) {
-      performanceLevel = 'below'
-      score = 65
-    } else {
-      performanceLevel = 'critical'
-      score = 30
-    }
-
-    weightedScore += score * weight
-
-    indicators.push({
-      category: kpi.category,
-      performance: performanceLevel,
-      impact: weight,
-    })
+    const { weightedContribution, indicator } = processKPIForFinancialHealth(kpi, categoryWeights)
+    totalWeightedScore += weightedContribution
+    indicators.push(indicator)
   })
 
-  const level = weightedScore >= 90
-    ? 'excellent'
-    : weightedScore >= 75
-    ? 'good'
-    : weightedScore >= 60
-    ? 'fair'
-    : 'poor'
+  const level = determineHealthLevel(totalWeightedScore)
 
-  return { score: weightedScore, level, indicators }
+  return { 
+    score: totalWeightedScore, 
+    level, 
+    indicators 
+  }
 }
 
 /**

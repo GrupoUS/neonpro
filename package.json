@@ -57,7 +57,9 @@
     "test:regulatory-compliance": "vitest run --config vitest.config.ts --reporter=verbose apps/api/src/__tests__/services/",
     "test:compliance-report": "vitest run --config vitest.config.ts --reporter=verbose --coverage.dir=coverage-compliance",
     "test:audit-compliance": "vitest run --config vitest.config.ts --reporter=verbose",
-    "test:all-compliance": "pnpm test:healthcare-compliance && pnpm test:security-compliance && pnpm test:regulatory-compliance"
+    "test:all-compliance": "pnpm test:healthcare-compliance && pnpm test:security-compliance && pnpm test:regulatory-compliance",
+    "test:accessibility": "bash scripts/accessibility-check.sh",
+    "quality:complete": "pnpm lint && pnpm lint:security && pnpm type-check && pnpm biome:check && pnpm test:accessibility"
   },
   "keywords": [
     "neonpro",

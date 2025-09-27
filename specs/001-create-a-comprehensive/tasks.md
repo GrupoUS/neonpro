@@ -155,7 +155,7 @@
 
 **Agent: @apex-dev** (Structure analysis implementation)
 
-- [ ] T010 Implement monorepo structure discovery and analysis using serena MCP (GREEN phase)
+- [x] T010 Implement monorepo structure discovery and analysis using serena MCP (GREEN phase)
   - Use serena MCP to analyze `/home/vibecode/neonpro/apps` structure and dependencies
   - Map current app → package connections using `get_symbols_overview` and `find_symbol`
   - Generate current state documentation with import patterns and usage
@@ -165,21 +165,21 @@
 
 **Agent: @apex-dev** (Import dependency implementation - ATOMIC SUBTASKS)
 
-- [ ] T011a Scan import statements across monorepo using serena MCP (GREEN phase)
+- [x] T011a Scan import statements across monorepo using serena MCP (GREEN phase)
   - Use serena MCP `search_for_pattern` to find all import statements in `/apps` and `/packages`
   - Extract import paths, aliases, and usage patterns systematically
   - **Files**: `/home/vibecode/neonpro/specs/001-create-a-comprehensive/analysis/import-scan-results.json`
   - **Dependencies**: T010 (structure analysis)
   - **Success Criteria**: Complete import statement inventory, <5 minutes execution
 
-- [ ] T011b Validate workspace protocol usage and detect violations (GREEN phase)
+- [x] T011b Validate workspace protocol usage and detect violations (GREEN phase)
   - Check all `@neonpro/*` imports use `workspace:*` protocol in package.json files
   - Identify external vs internal package imports and validate patterns
   - **Files**: `/home/vibecode/neonpro/specs/001-create-a-comprehensive/analysis/workspace-protocol-validation.json`
   - **Dependencies**: T011a (import scan)
   - **Success Criteria**: Workspace protocol compliance validated, violations documented
 
-- [ ] T011c Identify missing imports using TypeScript compiler diagnostics (GREEN phase)
+- [x] T011c Identify missing imports using TypeScript compiler diagnostics (GREEN phase)
   - Run TypeScript compiler with `--noEmit` to detect missing import errors
   - Cross-reference with expected imports from architecture documentation
   - **Files**: `/home/vibecode/neonpro/specs/001-create-a-comprehensive/analysis/missing-imports.json`

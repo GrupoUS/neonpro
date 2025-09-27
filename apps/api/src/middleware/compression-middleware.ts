@@ -3,7 +3,7 @@
  * Configures compression and optimization for HTTPS responses to improve performance
  */
 
-import { createHash, randomBytes } from 'crypto'
+import { createHash, randomBytes } from 'node:crypto'
 import { Context, Next } from 'hono'
 // Use global performance API available in Node.js
 declare const performance: {
@@ -130,12 +130,12 @@ export class CompressionMiddleware {
     const url = new URL(c.req.url)
     // Enable ETag for conditional requests
     if (this.config.enableETag) {
-      this.setupETag(res)
+      this.setupETag(c)
     }
 
     // Enable Cache-Control headers
     if (this.config.enableCacheControl) {
-      this.setupCacheControl(req, res)
+      this.setupCacheControl(c)
     }
 
     // Enable Vary header for proper caching
@@ -150,7 +150,7 @@ export class CompressionMiddleware {
 
     // Enable preconditions checks
     if (this.config.enablePreconditionChecks) {
-      this.setupPreconditionChecks(req, res)
+      this.setupPreconditionChecks(c)
     }
 
     // Remove headers that shouldn't be compressed
@@ -406,7 +406,11 @@ export class CompressionMiddleware {
   /**
    * Generate health recommendations
    */
-  private generateHealthRecommendations(stats: any): string[] {
+  private generateHealthRecommendations(stats: {
+    compressionRate: number
+    averageCompressionRatio: number
+    totalRequests: number
+  }): string[] {
     const recommendations: string[] = []
 
     if (stats.compressionRate < 50) {

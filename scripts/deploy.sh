@@ -334,8 +334,8 @@ deploy_application() {
         "staging")
             log_info "Deploying to staging environment"
             
-            # Run staging deployment
-            log_step "Executing Staging Deployment"
+            # Run staging deployment (Web)
+            log_step "Executing Staging Deployment (Web)"
             # Try to build locally to enable --prebuilt (non-fatal if not supported)
             if ! npx vercel build --cwd apps/web --yes >/dev/null 2>&1; then
                 log_warning "vercel build not available or failed; proceeding with remote build"
@@ -362,11 +362,44 @@ deploy_application() {
             fi
             
             if [ -z "$DEPLOY_URL" ]; then
-                log_error "Failed to determine deployment URL"
+                log_error "Failed to determine Web deployment URL"
                 exit 1
             fi
             
-            log_success "Staging deployment completed: $DEPLOY_URL"
+            log_success "Staging Web deployment completed: $DEPLOY_URL"
+            
+            # Run staging deployment (API)
+            log_step "Executing Staging Deployment (API)"
+            # Try to build locally to enable --prebuilt (optional, may not be applicable for serverless-only projects)
+            if ! npx vercel build --cwd apps/api --yes >/dev/null 2>&1; then
+                log_warning "vercel build for API not available or failed; proceeding with remote build"
+            fi
+            
+            # Primary: deploy prebuilt and capture URL via JSON
+            API_DEPLOY_JSON=$(npx vercel deploy --cwd apps/api --prebuilt --yes --json || true)
+            API_DEPLOY_URL=$(echo "$API_DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            
+            # Fallback: remote build deploy if URL not captured
+            if [ -z "$API_DEPLOY_URL" ]; then
+                API_DEPLOY_JSON=$(npx vercel deploy --cwd apps/api --yes --json || true)
+                API_DEPLOY_URL=$(echo "$API_DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            fi
+            
+            # Final fallback: list recent deployments
+            if [ -z "$API_DEPLOY_URL" ]; then
+                log_warning "Could not parse API_DEPLOY_URL from JSON; attempting fallback via vercel ls --json"
+                API_DEPLOY_URL=$(npx vercel ls --cwd apps/api --json 2>/dev/null | jq -r '.[0].url // empty' || true)
+            fi
+            if [ -z "$API_DEPLOY_URL" ]; then
+                log_warning "Fallback via plain vercel ls parsing for API"
+                API_DEPLOY_URL=$(npx vercel ls --cwd apps/api 2>/dev/null | grep -oE 'https?://[^ ]+\.vercel\.app' | head -n1 || true)
+            fi
+            
+            if [ -z "$API_DEPLOY_URL" ]; then
+                log_warning "Failed to determine API deployment URL - API checks will fallback to Web URL"
+            else
+                log_success "Staging API deployment completed: $API_DEPLOY_URL"
+            fi
             ;;
         "production")
             log_info "Deploying to production environment"
@@ -381,8 +414,8 @@ deploy_application() {
             # Verify all health checks pass
             log_info "Running comprehensive health checks"
             
-            # Execute production deployment
-            log_step "Executing Production Deployment"
+            # Execute production deployment (Web)
+            log_step "Executing Production Deployment (Web)"
             # Try to build locally for prebuilt deployment
             if ! npx vercel build --cwd apps/web --yes >/dev/null 2>&1; then
                 log_warning "vercel build not available or failed; proceeding with remote build"
@@ -407,11 +440,41 @@ deploy_application() {
             fi
             
             if [ -z "$DEPLOY_URL" ]; then
-                log_error "Failed to determine deployment URL"
+                log_error "Failed to determine Web deployment URL"
                 exit 1
             fi
             
-            log_success "Production deployment completed: $DEPLOY_URL"
+            log_success "Production Web deployment completed: $DEPLOY_URL"
+            
+            # Execute production deployment (API)
+            log_step "Executing Production Deployment (API)"
+            if ! npx vercel build --cwd apps/api --yes >/dev/null 2>&1; then
+                log_warning "vercel build for API not available or failed; proceeding with remote build"
+            fi
+            
+            API_DEPLOY_JSON=$(npx vercel deploy --cwd apps/api --prebuilt --prod --yes --json || true)
+            API_DEPLOY_URL=$(echo "$API_DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            
+            if [ -z "$API_DEPLOY_URL" ]; then
+                API_DEPLOY_JSON=$(npx vercel deploy --cwd apps/api --prod --yes --json || true)
+                API_DEPLOY_URL=$(echo "$API_DEPLOY_JSON" | tr -d '\n' | sed -E 's/.*\"url\":\"([^\"]+)\".*/\1/')
+            fi
+            
+            if [ -z "$API_DEPLOY_URL" ]; then
+                log_warning "Could not parse API_DEPLOY_URL from JSON; attempting fallback via vercel ls --json"
+                API_DEPLOY_URL=$(npx vercel ls --cwd apps/api --json 2>/dev/null | jq -r '.[0].url // empty' || true)
+            fi
+            
+            if [ -z "$API_DEPLOY_URL" ]; then
+                log_warning "Fallback via plain vercel ls parsing for API"
+                API_DEPLOY_URL=$(npx vercel ls --cwd apps/api 2>/dev/null | grep -oE 'https?://[^ ]+\.vercel\.app' | head -n1 || true)
+            fi
+            
+            if [ -z "$API_DEPLOY_URL" ]; then
+                log_warning "Failed to determine API deployment URL - API checks will fallback to Web URL"
+            else
+                log_success "Production API deployment completed: $API_DEPLOY_URL"
+            fi
             ;;
         * )
             log_error "Invalid deployment target: $deployment_target"
@@ -493,25 +556,27 @@ post_deployment_checks() {
     log_step "Post-deployment Validation"
     
     local deployment_target="${1:-"staging"}"
-    local target_url=""
+    local WEB_TARGET_URL=""
+    local API_TARGET_URL=""
+    local default_url=""
     
     case "$deployment_target" in
         "staging")
-            target_url="${PRODUCTION_URL//-neonpro./-staging.neonpro.}"
+            default_url="${PRODUCTION_URL//-neonpro./-staging.neonpro.}"
             ;;
         "production")
-            target_url="$PRODUCTION_URL"
+            default_url="$PRODUCTION_URL"
             ;;
     esac
     
-    # Prefer the actual DEPLOY_URL captured during deployment
-    if [ -n "$DEPLOY_URL" ]; then
-        target_url="$DEPLOY_URL"
-    fi
+    # Determine target URLs
+    WEB_TARGET_URL="${DEPLOY_URL:-$default_url}"
+    API_TARGET_URL="${API_DEPLOY_URL:-$WEB_TARGET_URL}"
     
-    log_info "Validating deployment at: $target_url"
+    log_info "Validating Web at: $WEB_TARGET_URL"
+    log_info "Validating API at: $API_TARGET_URL"
     
-    # Health check with retry logic
+    # Health check with retry logic (API)
     local retry_count=0
     local max_retries="$MAX_RETRIES"
     local check_success=false
@@ -519,7 +584,7 @@ post_deployment_checks() {
     while [ $retry_count -lt $max_retries ]; do
         log_info "Health check attempt $((retry_count + 1))/$max_retries"
         
-        if curl -f -s --max-time "$TIMEOUT" "$target_url/health" >/dev/null 2>&1; then
+        if curl -f -s --max-time "$TIMEOUT" "$API_TARGET_URL/health" >/dev/null 2>&1; then
             log_success "Health check passed"
             check_success=true
             break
@@ -538,28 +603,36 @@ post_deployment_checks() {
     
     # Basic functionality checks
     log_step "Validating Core Functionality"
-    check_endpoint "$target_url" "/" "Homepage"
-    check_endpoint "$target_url" "/api/health" "Health API"
-    check_endpoint "$target_url" "/api/system/info" "System Info"
-    check_endpoint "$target_url" "/assets/favicon.ico" "Static Assets"
+    check_endpoint "$WEB_TARGET_URL" "/" "Homepage"
+    check_endpoint "$API_TARGET_URL" "/api/health" "Health API"
+    check_endpoint "$API_TARGET_URL" "/api/system/info" "System Info"
+    check_endpoint "$WEB_TARGET_URL" "/assets/favicon.ico" "Static Assets"
     
     # Security checks
     log_step "Security Validation"
-    check_security_headers "$target_url"
-    check_ssl "$target_url"
+    log_info "Validating Web security headers"
+    check_security_headers "$WEB_TARGET_URL"
+    if [ "$API_TARGET_URL" != "$WEB_TARGET_URL" ]; then
+        log_info "Validating API security headers"
+    fi
+    check_security_headers "$API_TARGET_URL"
+    check_ssl "$WEB_TARGET_URL"
+    if [ "$API_TARGET_URL" != "$WEB_TARGET_URL" ]; then
+        check_ssl "$API_TARGET_URL"
+    fi
     
     # Performance check
-    check_performance "$target_url"
+    check_performance "$WEB_TARGET_URL"
     
     # Healthcare compliance
     log_step "Healthcare Compliance Validation"
-    check_healthcare_compliance "$target_url"
+    check_healthcare_compliance "$API_TARGET_URL"
     
     # Compliance pages
     log_step "Legal Compliance Validation"
-    check_endpoint "$target_url" "/privacy" "Privacy Policy"
-    check_endpoint "$target_url" "/terms" "Terms of Service"
-    check_endpoint "$target_url" "/cookies" "Cookie Policy"
+    check_endpoint "$WEB_TARGET_URL" "/privacy" "Privacy Policy"
+    check_endpoint "$WEB_TARGET_URL" "/terms" "Terms of Service"
+    check_endpoint "$WEB_TARGET_URL" "/cookies" "Cookie Policy"
     
     log_success "Post-deployment validation completed"
 }

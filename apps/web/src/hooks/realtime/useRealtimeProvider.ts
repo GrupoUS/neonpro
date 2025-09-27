@@ -55,6 +55,36 @@ export function RealtimeProvider({ children }: { children: ReactNode }) {
         // Log for CFM compliance audit
         console.log('[AUDIT] Real-time telemedicine session update received:', payload)
       })
+      .on('broadcast', { event: 'chatbot-notification-scheduled' }, (payload) => {
+        // Invalidate chatbot notification queries
+        queryClient.invalidateQueries({ queryKey: ['chatbot', 'notifications'] })
+        
+        // Log for healthcare compliance audit
+        console.log('[CHATBOT-AUDIT] Real-time notification scheduled by agent:', payload)
+      })
+      .on('broadcast', { event: 'chatbot-data-updated' }, (payload) => {
+        // Invalidate all chatbot-related queries
+        queryClient.invalidateQueries({ queryKey: ['chatbot'] })
+        
+        // Log for healthcare compliance audit
+        console.log('[CHATBOT-AUDIT] Real-time data update for agents:', payload)
+      })
+      .on('broadcast', { event: 'service-category-updated' }, (payload) => {
+        // Invalidate service category queries
+        queryClient.invalidateQueries({ queryKey: ['chatbot', 'serviceCategories'] })
+        queryClient.invalidateQueries({ queryKey: ['services'] })
+        
+        // Log for healthcare compliance audit
+        console.log('[AUDIT] Real-time service category update received:', payload)
+      })
+      .on('broadcast', { event: 'appointment-template-updated' }, (payload) => {
+        // Invalidate appointment template queries
+        queryClient.invalidateQueries({ queryKey: ['chatbot', 'appointmentTemplates'] })
+        queryClient.invalidateQueries({ queryKey: ['appointments'] })
+        
+        // Log for healthcare compliance audit
+        console.log('[AUDIT] Real-time appointment template update received:', payload)
+      })
       .subscribe((status) => {
         connectionStatus.current = status === 'SUBSCRIBED' ? 'connected' : 'connecting'
         isConnected.current = status === 'SUBSCRIBED'
