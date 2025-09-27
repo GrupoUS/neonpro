@@ -3,11 +3,11 @@
  * Healthcare-compliant tRPC setup for NeonPro platform
  */
 
-export { createContext } from './context'
-export type { Context } from './context'
-export { appRouter } from './router'
-export type { AppRouter } from './router'
-export { patientProcedure, protectedProcedure, publicProcedure, router } from './trpc'
+export { createContext } from './context.js'
+export type { Context } from './context.js'
+export { appRouter } from './router.js'
+export type { AppRouter } from './router.js'
+export { patientProcedure, protectedProcedure, publicProcedure, router } from './trpc.js'
 
 // Export schemas for client-side validation
-export * from './schemas'
+export * from './schemas.js'

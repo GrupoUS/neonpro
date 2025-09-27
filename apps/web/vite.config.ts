@@ -17,9 +17,9 @@ import react from '@vitejs/plugin-react'
 let path: { resolve: (from: string, to: string) => string }
 try {
   // @ts-expect-error
-  path = require('path')
+  path = require('node:path')
 } catch {
-  path = { resolve: (from: string, to: string) => from + '/' + to }
+  path = { resolve: (from: string, to: string) => `${from}/${to}` }
 }
 // Fallback type declaration to suppress TS2307 for path
 declare module 'path' {

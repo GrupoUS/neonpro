@@ -9,7 +9,7 @@
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend'
 import { WebSocketSecurityMiddleware } from '../middleware/websocket-security-middleware'
 import { getErrorTrackingHealth } from '../services/error-tracking-init'

@@ -17,7 +17,7 @@
  * - Service type associations
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { z } from 'zod'
 import { createAdminClient } from '../clients/supabase'
 

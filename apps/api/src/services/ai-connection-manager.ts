@@ -10,11 +10,11 @@
  * Performance: Auto-scaling and optimization
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { createClient, SupabaseClient } from '@supabase/supabase-js'
 import { EventEmitter } from 'events'
 import { Redis } from 'ioredis'
-import { CircuitBreakerService } from './circuit-breaker/circuit-breaker-service'
+import { CircuitBreakerService } from './circuit-breaker/circuit-breaker-service.js'
 
 // ============================================================================
 // CONNECTION POOL CONFIGURATION

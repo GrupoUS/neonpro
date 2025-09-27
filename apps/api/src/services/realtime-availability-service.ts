@@ -12,9 +12,9 @@
  * - LGPD compliance
  */
 
-import { prisma } from '../lib/prisma'
-import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol'
-import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service'
+import { prisma } from '../lib/prisma.js'
+import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol.js'
+import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service.js'
 
 export interface RealTimeAvailability {
   professionalId: string

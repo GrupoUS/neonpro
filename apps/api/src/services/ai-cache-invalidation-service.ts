@@ -9,7 +9,7 @@
  * Performance: Real-time invalidation with event-driven architecture
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import {
   CacheBackend,
   CacheConfig,

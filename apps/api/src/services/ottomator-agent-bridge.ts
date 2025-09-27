@@ -5,7 +5,7 @@
  * Provides a unified interface for RAG-based healthcare data queries.
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import * as fs from 'fs'

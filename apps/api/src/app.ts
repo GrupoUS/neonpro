@@ -1,35 +1,35 @@
 import { trpcServer } from '@hono/trpc-server'
 import { cors } from 'hono/cors'
-import { errorHandler } from './middleware/error-handler'
-import { errorSanitizationMiddleware } from './middleware/error-sanitization'
-import copilotBridge from './routes/ai/copilot-bridge'
-import financialCopilotRouter from './routes/ai/financial-copilot'
-import aiRouter from './routes/ai/index'
-import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
-import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
-import appointmentsRouter from './routes/appointments'
-import { billing } from './routes/billing'
-import chatRouter from './routes/chat'
-import { medicalRecords } from './routes/medical-records'
-import patientsRouter from './routes/patients'
-import v1Router from './routes/v1'
-import { Context } from './trpc/context'
-import { appRouter } from './trpc/router'
+import { errorHandler } from './middleware/error-handler.js'
+import { errorSanitizationMiddleware } from './middleware/error-sanitization.js'
+import copilotBridge from './routes/ai/copilot-bridge.js'
+import financialCopilotRouter from './routes/ai/financial-copilot.js'
+import aiRouter from './routes/ai/index.js'
+import aiSessionsCleanup from './routes/api/cleanup/ai-sessions.js'
+import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions.js'
+import appointmentsRouter from './routes/appointments.js'
+import { billing } from './routes/billing.js'
+import chatRouter from './routes/chat.js'
+import { medicalRecords } from './routes/medical-records.js'
+import patientsRouter from './routes/patients.js'
+import v1Router from './routes/v1.js'
+import { Context } from './trpc/context.js'
+import { appRouter } from './trpc/router.js'
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
-import { initializeSentry, sentryMiddleware } from './lib/sentry'
-import { errorTracker } from './services/error-tracking-bridge'
-import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init'
+import { initializeSentry, sentryMiddleware } from './lib/sentry.js'
+import { errorTracker } from './services/error-tracking-bridge.js'
+import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init.js'
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
-import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator'
-import { cspViolationHandler } from './lib/security/csp'
+import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator.js'
+import { cspViolationHandler } from './lib/security/csp.js'
 import {
   errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
   globalErrorHandler,
-} from './middleware/error-tracking'
-import { rateLimitMiddleware } from './middleware/rate-limiting'
-import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer' // Extract middleware functions from security package
+} from './middleware/error-tracking.js'
+import { rateLimitMiddleware } from './middleware/rate-limiting.js'
+import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer.js' // Extract middleware functions from security package
  // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
 // Initialize monitoring and telemetry
@@ -119,7 +119,7 @@ app.use('*', sentryMiddleware())
 app.use('*', errorSanitizationMiddleware())
 
 // HTTP error handling middleware with rate limiting and DDoS protection
-import { httpErrorHandlingMiddleware } from './middleware/http-error-handling'
+import { httpErrorHandlingMiddleware } from './middleware/http-error-handling.js'
 app.use('*', httpErrorHandlingMiddleware())
 
 // Global error handler with enhanced error tracking
@@ -142,18 +142,18 @@ app.use('*', rateLimitMiddleware())
 // app.use('*', healthcareCSPMiddleware())
 
 // Query timeout middleware for <2s healthcare compliance (T064)
-import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware'
+import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware.js'
 const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
 app.use('*', queryTimeoutMiddleware.middleware)
 
 // Compression and optimization middleware for HTTPS responses (T065)
-import { CompressionMiddleware } from './middleware/compression-middleware'
+import { CompressionMiddleware } from './middleware/compression-middleware.js'
 const compressionMiddleware = new CompressionMiddleware()
 app.use('*', compressionMiddleware.middleware)
 
 // HTTPS handshake performance monitoring middleware (T066)
-import { httpsMonitoringMiddleware } from './middleware/https-monitoring-middleware'
-import { httpsMonitoringService } from './services/monitoring/https-monitoring-service'
+import { httpsMonitoringMiddleware } from './middleware/https-monitoring-middleware.js'
+import { httpsMonitoringService } from './services/monitoring/https-monitoring-service.js'
 app.use('*', httpsMonitoringMiddleware.middleware)
 
 // Sensitive data exposure monitoring

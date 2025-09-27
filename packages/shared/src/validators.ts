@@ -196,7 +196,7 @@ export const createPatientRequestSchema = z.object({
   phone: phoneValidator.optional(),
   birthDate: z.string().refine(date => {
     const parsed = new Date(date)
-    return !isNaN(parsed.getTime()) && parsed < new Date()
+    return !Number.isNaN(parsed.getTime()) && parsed < new Date()
   }, 'Data de nascimento inválida'),
   consent: z.object({
     given: z.boolean(),

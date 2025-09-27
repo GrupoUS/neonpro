@@ -10,7 +10,7 @@
  * - Compliance with Brazilian healthcare security standards
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import crypto from 'crypto'
 import { qrcode } from 'qrcode'
 import { speakeasy } from 'speakeasy'

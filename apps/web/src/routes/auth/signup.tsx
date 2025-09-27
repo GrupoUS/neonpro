@@ -7,12 +7,11 @@ export const Route = createFileRoute('/auth/signup')({
 })
 
 function SignUpPage() {
-  const { isLoggedIn } = useAuthStatus()
+  const { isAuthenticated } = useAuth()
 
-  // Redirecionamento client-side se já estiver logado
-  if (isLoggedIn) {
-    window.location.href = '/dashboard'
-    return null
+  // Redirecionamento se já estiver logado
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />
   }
 
   const handleSignUpSuccess = () => {

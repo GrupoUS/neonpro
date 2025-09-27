@@ -9,7 +9,7 @@
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import {
   CacheConfig,
   CacheDataSensitivity,

@@ -8,20 +8,25 @@
  * @author NeonPro Platform Team
  */
 
-import { createSupabaseClient } from '@/lib/supabase/client'
-import { signInWithProvider, signInWithEmail } from '@/lib/auth/oauth'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 export const Route = createFileRoute('/auth/login')({
-  component: LoginPage
+  component: LoginPage,
 })
 
 function LoginPage() {
+  const { signIn, signInWithOAuth, isAuthenticated, isLoading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" />
+  }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -29,14 +34,12 @@ function LoginPage() {
     setError(null)
 
     try {
-      const result = await signInWithEmail(email, password)
+      const result = await signIn({ email, password })
       
-      if (!result.success) {
-        setError(result.error)
-      } else {
-        // Success - redirect will be handled by the auth helper
-        console.log('Email login successful')
+      if (result.error) {
+        setError(result.error.message)
       }
+      // Success redirect handled by AuthContext
     } catch (err) {
       setError('Erro inesperado durante o login')
     } finally {
@@ -49,13 +52,13 @@ function LoginPage() {
     setError(null)
 
     try {
-      const result = await signInWithProvider('google', '/dashboard')
+      const result = await signInWithOAuth('google', '/dashboard')
       
-      if (!result.success) {
-        setError(result.error)
+      if (result.error) {
+        setError(result.error.message)
         setLoading(false)
       }
-      // For OAuth, the redirect happens automatically
+      // OAuth redirect happens automatically
     } catch (err) {
       setError('Erro inesperado durante o login com Google')
       setLoading(false)

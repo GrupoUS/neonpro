@@ -324,7 +324,7 @@ const validateClinicAccess = async (
   return await next()
 }
 
-import { requireAuth } from '../middleware/authn'
+import { requireAuth } from '../middleware/authn.js'
 
 // Routes with optimized caching and validation
 app.get(

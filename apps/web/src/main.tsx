@@ -9,8 +9,12 @@ import { routeTree } from './routeTree.gen.js'
 // Import PWA Styles
 import './styles/pwa.css'
 
-// Create the router
-const router = createRouter({ routeTree })
+// Create the router with proper configuration
+const router = createRouter({
+  routeTree,
+  defaultPreload: 'intent',
+  defaultPreloadStaleTime: 0,
+})
 
 // Register the router
 declare module '@tanstack/react-router' {

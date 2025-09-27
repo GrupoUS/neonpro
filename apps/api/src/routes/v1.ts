@@ -17,7 +17,7 @@
 import { auditLogger } from '@/utils/audit-logger'
 import { Hono } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { requireAuth } from '../middleware/auth'
+import { requireAuth } from '../middleware/auth.js'
 
 const v1Router = new Hono()
 

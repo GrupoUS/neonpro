@@ -11,7 +11,7 @@
  * Performance target: <150ms validation
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { PrismaClient } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 

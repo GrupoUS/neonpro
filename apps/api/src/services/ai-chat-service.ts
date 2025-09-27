@@ -46,8 +46,8 @@ export const createAIInsight = (
   confidence,
   timestamp: new Date(),
 })
-import { HealthcareLogger } from '../logging/healthcare-logger'
-import { ComprehensiveAuditService } from './audit-service'
+import { HealthcareLogger } from '../logging/healthcare-logger.js'
+import { ComprehensiveAuditService } from './audit-service.js'
 
 // Minimal audit interface to avoid tight coupling
 export interface AuditLogger {

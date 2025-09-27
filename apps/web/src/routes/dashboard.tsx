@@ -1,6 +1,6 @@
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { useAuth } from '@/contexts/AuthContext'
 import { createFileRoute } from '@tanstack/react-router'
-import { ProtectedRoute } from '@/components/auth'
-import { useAuth } from '@/hooks/useAuth'
 
 export const Route = createFileRoute('/dashboard')({
   component: DashboardPage,
@@ -61,7 +61,7 @@ function DashboardContent() {
               <p className="text-gray-600 mb-6">
                 Autenticação configurada com sucesso! Você está logado e pode acessar o sistema.
               </p>
-              
+
               {/* Informações do usuário */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto">
                 <h3 className="text-lg font-medium text-blue-900 mb-4">Seus Dados</h3>
@@ -82,7 +82,7 @@ function DashboardContent() {
                     Login/Logout, proteção de rotas e gerenciamento de sessão funcionando!
                   </p>
                 </div>
-                
+
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                   <h4 className="text-yellow-800 font-medium">🚧 Próximos Passos</h4>
                   <p className="text-yellow-700 text-sm">

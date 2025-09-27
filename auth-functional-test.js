@@ -35,16 +35,14 @@ globalThis.window = {
     href: 'https://neonpro.vercel.app',
   },
   localStorage: {
-    getItem: key => null,
-    setItem: (key, value) => {},
-    removeItem: key => {},
+    getItem: _key => null,
+    setItem: (_key, _value) => {},
+    removeItem: _key => {},
   },
 }
 
 // Import dynamically to avoid module issues
 async function testSupabaseConnectivity() {
-  console.log('🧪 Testing Supabase connectivity...')
-
   try {
     // Simple connectivity test using fetch
     const response = await fetch('https://ownkoxryswokcdanrdgj.supabase.co/rest/v1/', {
@@ -56,22 +54,17 @@ async function testSupabaseConnectivity() {
     })
 
     if (response.status === 200) {
-      console.log('✅ Supabase API: Conectividade OK')
       return true
     } else {
-      console.log(`❌ Supabase API: Status ${response.status}`)
       return false
     }
-  } catch (error) {
-    console.log(`❌ Supabase API: Erro de conectividade - ${error.message}`)
+  } catch (_error) {
     return false
   }
 }
 
 // Test Auth endpoint specifically
 async function testSupabaseAuthEndpoint() {
-  console.log('🧪 Testing Supabase Auth endpoint...')
-
   try {
     const response = await fetch('https://ownkoxryswokcdanrdgj.supabase.co/auth/v1/settings', {
       method: 'GET',
@@ -82,24 +75,18 @@ async function testSupabaseAuthEndpoint() {
     })
 
     if (response.status === 200) {
-      const settings = await response.json()
-      console.log('✅ Supabase Auth: Endpoint acessível')
-      console.log(`   Configurações: ${Object.keys(settings).length} propriedades`)
+      const _settings = await response.json()
       return true
     } else {
-      console.log(`❌ Supabase Auth: Status ${response.status}`)
       return false
     }
-  } catch (error) {
-    console.log(`❌ Supabase Auth: Erro - ${error.message}`)
+  } catch (_error) {
     return false
   }
 }
 
 // Test environment configuration
 function testEnvironmentConfiguration() {
-  console.log('🧪 Testing environment configuration...')
-
   const requiredVars = ['VITE_SUPABASE_URL', 'VITE_SUPABASE_ANON_KEY', 'VITE_PUBLIC_SITE_URL']
 
   let allConfigured = true
@@ -107,9 +94,7 @@ function testEnvironmentConfiguration() {
   requiredVars.forEach(varName => {
     const value = globalThis.import.meta.env[varName]
     if (value) {
-      console.log(`✅ ${varName}: Configurado`)
     } else {
-      console.log(`❌ ${varName}: Não configurado`)
       allConfigured = false
     }
   })
@@ -119,8 +104,6 @@ function testEnvironmentConfiguration() {
 
 // Test URL construction functions
 function testUrlConstruction() {
-  console.log('🧪 Testing URL construction...')
-
   try {
     function getSiteUrl() {
       if (typeof window === 'undefined') {
@@ -147,23 +130,17 @@ function testUrlConstruction() {
     const siteUrl = getSiteUrl()
     const oauthUrl = buildOAuthRedirectUrl('/dashboard')
 
-    console.log(`✅ Site URL: ${siteUrl}`)
-    console.log(`✅ OAuth Redirect: ${oauthUrl}`)
-
     return (
       siteUrl === 'https://neonpro.vercel.app' &&
       oauthUrl.includes('/auth/callback?next=%2Fdashboard')
     )
-  } catch (error) {
-    console.log(`❌ URL Construction: ${error.message}`)
+  } catch (_error) {
     return false
   }
 }
 
 // Test file presence
 function testFilePresence() {
-  console.log('🧪 Testing authentication file presence...')
-
   const authFiles = [
     'apps/web/src/lib/supabase/client.ts',
     'apps/web/src/lib/supabase/server.ts',
@@ -178,18 +155,12 @@ function testFilePresence() {
   ]
 
   // In this test environment, we'll assume files exist since manual verification confirms it
-  authFiles.forEach(file => {
-    console.log(`✅ ${file}: Presente`)
-  })
-
-  console.log('✅ Todos os arquivos de autenticação estão presentes')
+  authFiles.forEach(_file => {})
   return true
 }
 
 // Test healthcare compliance features
 function testHealthcareCompliance() {
-  console.log('🧪 Testing healthcare compliance features...')
-
   const complianceFeatures = [
     'LGPD audit logging',
     'Healthcare-specific headers',
@@ -198,18 +169,12 @@ function testHealthcareCompliance() {
     'Data retention configuration',
   ]
 
-  complianceFeatures.forEach(feature => {
-    console.log(`✅ ${feature}: Implementado`)
-  })
-
-  console.log('✅ Recursos de compliance healthcare implementados')
+  complianceFeatures.forEach(_feature => {})
   return true
 }
 
 // Main test runner
 async function runFunctionalTests() {
-  console.log('🚀 Iniciando Testes Funcionais de Autenticação Supabase...\n')
-
   const tests = [
     { name: 'Configuração de Ambiente', test: testEnvironmentConfiguration },
     { name: 'Conectividade Supabase', test: testSupabaseConnectivity },
@@ -220,41 +185,21 @@ async function runFunctionalTests() {
   ]
 
   let passed = 0
-  let total = tests.length
+  const total = tests.length
 
   for (const { name, test } of tests) {
     try {
-      console.log(`\n--- ${name} ---`)
       const result = await test()
       if (result) {
-        console.log(`✅ ${name}: PASSED`)
         passed++
       } else {
-        console.log(`❌ ${name}: FAILED`)
       }
-    } catch (error) {
-      console.log(`❌ ${name}: ERROR - ${error.message}`)
-    }
-    console.log('')
+    } catch (_error) {}
   }
-
-  console.log('=' * 50)
-  console.log(`📊 Resultados Finais: ${passed}/${total} testes passaram`)
 
   if (passed === total) {
-    console.log('🎉 SUCESSO! Sistema de autenticação está funcional e pronto para uso.')
-    console.log('\n📋 Próximos passos recomendados:')
-    console.log('1. Configurar OAuth Google no Supabase Dashboard')
-    console.log('2. Testar fluxo completo de login em ambiente de desenvolvimento')
-    console.log('3. Validar compliance com equipe de segurança')
   } else {
-    console.log('⚠️  Alguns testes falharam. Verificar configurações antes de prosseguir.')
   }
-
-  console.log('\n🔧 Configurações manuais necessárias no Supabase Dashboard:')
-  console.log('- Authentication > Providers > Google OAuth')
-  console.log('- Authentication > URL Configuration')
-  console.log('- Authentication > Email Templates')
 
   return passed === total
 }

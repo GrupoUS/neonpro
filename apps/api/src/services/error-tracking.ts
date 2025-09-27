@@ -14,6 +14,7 @@
 
 import { SpanStatusCode, trace } from '@opentelemetry/api'
 import * as Sentry from '@sentry/node'
+import { z } from 'zod'
 // Healthcare data patterns for redaction
 const HEALTHCARE_PATTERNS = {
   cpf: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g,

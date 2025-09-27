@@ -218,4 +218,4 @@ export function chatRateLimit() {
 /**
  * General rate limiting middleware (re-export from rate-limiting.ts)
  */
-export { rateLimitMiddleware as rateLimit } from './rate-limiting'
+export { rateLimitMiddleware as rateLimit } from './rate-limiting.js'

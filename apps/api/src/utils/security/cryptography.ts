@@ -24,7 +24,10 @@ import {
   createDecipheriv,
   createHash,
   createHmac,
+  createSign,
+  createVerify,
   generateKeyPairSync,
+  pbkdf2Sync,
   privateDecrypt,
   publicEncrypt,
   randomBytes,
@@ -308,12 +311,8 @@ export class CryptographyManager {
       let hash: Buffer
 
       if (this.config.keyDerivationAlgorithm === 'pbkdf2') {
-        hash = createHash(algorithm).update(salt + data).digest()
-
-        // Multiple iterations for better security
-        for (let i = 1; i < iterations; i++) {
-          hash = createHash(algorithm).update(hash).digest()
-        }
+        // Use built-in pbkdf2 for better performance and security
+        hash = pbkdf2Sync(data, salt, iterations, keyLength, algorithm)
       } else {
         // Fallback to simple hash with salt
         hash = createHmac(algorithm, salt).update(data).digest()
@@ -398,13 +397,9 @@ export class CryptographyManager {
       }
 
       const dataToSign = typeof data === 'string' ? Buffer.from(data) : data
-      const signature = privateDecrypt(
-        {
-          key: privateKey,
-          padding: constants.RSA_PKCS1_PADDING,
-        },
-        dataToSign,
-      ).toString('base64')
+      const signer = createSign('RSA-SHA256')
+      signer.update(dataToSign)
+      const signature = signer.sign(privateKey, 'base64')
 
       const result: DigitalSignature = {
         signature,
@@ -460,16 +455,9 @@ export class CryptographyManager {
       const signatureBuffer = Buffer.from(signature.signature, 'base64')
 
       try {
-        const decrypted = publicEncrypt(
-          {
-            key: keyPair.publicKey,
-            padding: constants.RSA_PKCS1_PADDING,
-          },
-          signatureBuffer,
-        )
-
-        // Simple comparison - in production, use proper signature verification
-        const isValid = decrypted.equals(dataToVerify)
+        const verifier = createVerify('RSA-SHA256')
+        verifier.update(dataToVerify)
+        const isValid = verifier.verify(keyPair.publicKey, signatureBuffer, 'base64')
 
         this.logger.logWithMetrics('info', 'Digital signature verified', {
           algorithm: signature.algorithm,

@@ -1,12 +1,20 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "npm ci",
-  "buildCommand": "cd apps/web && npm run build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
-  "outputDirectory": "dist",
-  "devCommand": "turbo run dev",
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "outputDirectory": "apps/web/dist",
+  "installCommand": "pnpm install --prefer-offline",
+  "buildCommand": "pnpm run build && cd apps/web && pnpm run build",
   "regions": ["gru1"],
-  "framework": "vite",
+  "framework": null,
 
   "rewrites": [
     {
@@ -41,7 +49,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com vercel.live; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com r2cdn.perplexity.ai; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         },
         {
           "key": "Referrer-Policy",
@@ -86,7 +94,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' *.vercel-analytics.com vercel.live; style-src 'self' 'unsafe-inline' *.googleapis.com; img-src 'self' data: https: *.google.com *.gstatic.com; connect-src 'self' https://api.supabase.com https://vercel.com wss: ws: *.supabase.co; font-src 'self' data: *.gstatic.com r2cdn.perplexity.ai; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         },
         {
           "key": "Referrer-Policy",
@@ -102,28 +110,5 @@
 
   "git": {
     "deploymentEnabled": true
-  },
-
-  "crons": [
-    {
-      "path": "/api/cleanup/ai-sessions",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cleanup/expired-data",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/health/system",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/compliance/daily-audit",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/compliance/lgpd-data-retention",
-      "schedule": "0 4 * * *"
-    }
-  ]
+  }
 }

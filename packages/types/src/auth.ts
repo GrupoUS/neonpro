@@ -1,5 +1,5 @@
 // Authentication types for NeonPro healthcare platform
-import { BaseEntity } from './common.js'
+import type { BaseEntity } from './common.js'
 
 // Estende o User do Supabase com dados específicos do healthcare
 export interface AuthUser extends BaseEntity {

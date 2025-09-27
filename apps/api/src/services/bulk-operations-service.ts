@@ -11,7 +11,7 @@
  * - Brazilian healthcare compliance
  */
 
-import { logger } from '@/utils/secure-logger'
+import { logger } from '@/utils/secure-logger.js'
 import { createAdminClient } from '../clients/supabase'
 
 export interface BulkOperationRequest {

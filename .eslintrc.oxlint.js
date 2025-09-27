@@ -1,11 +1,11 @@
 // Configuração ESLint como proxy para OxLint
 // Para IDEs que não suportam OxLint nativamente
 
-const { spawn } = require('child_process')
-const path = require('path')
+const { spawn } = require('node:child_process')
+const path = require('node:path')
 
-function runOxLint(filePath) {
-  return new Promise((resolve, reject) => {
+function _runOxLint(filePath) {
+  return new Promise((resolve, _reject) => {
     const oxlintPath = path.join(__dirname, 'scripts', 'oxlint-ide.sh')
     const child = spawn(oxlintPath, [filePath], {
       cwd: __dirname,
@@ -13,14 +13,14 @@ function runOxLint(filePath) {
     })
 
     let output = ''
-    let error = ''
+    let _error = ''
 
     child.stdout.on('data', data => {
       output += data.toString()
     })
 
     child.stderr.on('data', data => {
-      error += data.toString()
+      _error += data.toString()
     })
 
     child.on('close', code => {
@@ -28,11 +28,10 @@ function runOxLint(filePath) {
         try {
           const result = JSON.parse(output)
           resolve(result)
-        } catch (e) {
+        } catch (_e) {
           resolve({ diagnostics: [] })
         }
       } else {
-        console.error('OxLint error:', error)
         resolve({ diagnostics: [] })
       }
     })

@@ -9,7 +9,7 @@
  * Performance: Optimized validation with caching
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
 import { z } from 'zod'
 

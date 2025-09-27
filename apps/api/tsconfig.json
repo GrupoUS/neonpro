@@ -7,10 +7,10 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "lib": ["ES2022"],
-    "types": ["node", "vitest/globals"],
+    "types": ["node"],
     "jsx": "preserve",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
+    "module": "Node16",
+    "moduleResolution": "node16",
     "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": false,
     "paths": {

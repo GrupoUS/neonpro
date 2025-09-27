@@ -6,8 +6,8 @@
  */
 
 import { OpenAPIHono } from '@hono/zod-openapi'
-import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator'
-import { requireAuth } from '../../middleware/authn'
+import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator.js'
+import { requireAuth } from '../../middleware/authn.js'
 import { dataProtection } from '../../middleware/lgpd-middleware'
 import { getHealthcareContext, patientAccessMiddleware } from '../../middleware/prisma-rls'
 import { ComprehensiveAuditService } from '../../services/audit-service'

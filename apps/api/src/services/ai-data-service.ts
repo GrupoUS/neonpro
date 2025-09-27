@@ -1,4 +1,4 @@
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { Database } from '@neonpro/database'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
 import { aiConnectionManager } from './ai-connection-manager'

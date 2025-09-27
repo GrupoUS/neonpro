@@ -19,9 +19,9 @@
  * - Automated security incident response
  */
 
-import { HealthcareError } from '../healthcare-errors'
-import { LGPDComplianceValidator } from '../lgpd-compliance-validator'
-import { SecureLogger } from '../secure-logger'
+import { HealthcareError } from '../healthcare-errors.js'
+import { LGPDComplianceValidator } from '../lgpd-compliance-validator.js'
+import { SecureLogger } from '../secure-logger.js'
 
 export interface SecurityConfig {
   /**

@@ -1,5 +1,5 @@
+import path from 'node:path'
 import react from '@vitejs/plugin-react'
-import path from 'path'
 import { defineConfig } from 'vite'
 
 let visualizer: any
@@ -15,13 +15,12 @@ export default defineConfig(({ mode }) => {
   const baseConfig = {
     plugins: [
       react(),
-      visualizer &&
-        visualizer({
-          filename: 'bundle-analysis.html',
-          open: false,
-          gzipSize: true,
-          brotliSize: true,
-        }),
+      visualizer?.({
+        filename: 'bundle-analysis.html',
+        open: false,
+        gzipSize: true,
+        brotliSize: true,
+      }),
     ].filter(Boolean),
     root: './apps/web',
     publicDir: './public',
@@ -43,15 +42,15 @@ export default defineConfig(({ mode }) => {
         },
         {
           find: /^@\//,
-          replacement: path.resolve(__dirname, './apps/web/src/') + '/',
+          replacement: `${path.resolve(__dirname, './apps/web/src/')}/`,
         },
         {
           find: /^@components\//,
-          replacement: path.resolve(__dirname, './apps/web/src/components') + '/',
+          replacement: `${path.resolve(__dirname, './apps/web/src/components')}/`,
         },
         {
           find: /^@hooks\//,
-          replacement: path.resolve(__dirname, './apps/web/src/hooks') + '/',
+          replacement: `${path.resolve(__dirname, './apps/web/src/hooks')}/`,
         },
         {
           find: '@neonpro/ui/lib/utils',

@@ -15,10 +15,10 @@
  * @version 1.0.0
  */
 
-import { AuditService } from '@/services/audit-service'
-import { logger } from '@/utils/healthcare-errors'
+import { AuditService } from '@/services/audit-service.js'
+import { logger } from '@/utils/healthcare-errors.js'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { createCryptographyManager } from '../../utils/security/cryptography'
+import { createCryptographyManager } from '../utils/security/cryptography.js'
 import { EnhancedSessionManager } from './enhanced-session-manager'
 
 // Security Configuration Types

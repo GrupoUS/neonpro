@@ -11,7 +11,7 @@
  * - Compliance with healthcare image handling standards
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import crypto from 'crypto'
 import { createCipheriv, createDecipheriv, createHash } from 'crypto'
 import { ExifTool } from 'exiftool-vendored'

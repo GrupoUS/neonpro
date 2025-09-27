@@ -6,7 +6,7 @@
  */
 
 import { logger } from '@/utils/healthcare-errors'
-import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service'
+import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service.js'
 
 export interface TLSHandshakeInfo {
   sessionId: string

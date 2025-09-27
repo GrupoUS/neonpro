@@ -175,25 +175,27 @@ export const chatbotDataRouter = router({
     .input(NotificationQuerySchema)
     .query(async ({ ctx, input }) => {
       try {
-        const notifications = await ctx.prisma.scheduledNotification.findMany({
-          where: {
-            ...(input.status && { status: input.status }),
-            ...(input.type && { notificationType: input.type }),
-          },
-          orderBy: { scheduledFor: 'asc' },
-          skip: input.offset,
-          take: input.limit,
-        })
+        // Build where clause once for reuse
+        const whereClause = {
+          clinicId: ctx.user.clinicId,
+          ...(input.status && { status: input.status }),
+          ...(input.type && { notificationType: input.type }),
+        }
+
+        const [notifications, total] = await Promise.all([
+          ctx.prisma.scheduledNotification.findMany({
+            where: whereClause,
+            orderBy: { scheduledFor: 'asc' },
+            skip: input.offset,
+            take: input.limit,
+          }),
+          ctx.prisma.scheduledNotification.count({ where: whereClause }),
+        ])
 
         return {
           success: true,
           data: notifications,
-          total: await ctx.prisma.scheduledNotification.count({
-            where: {
-              ...(input.status && { status: input.status }),
-              ...(input.type && { notificationType: input.type }),
-            },
-          }),
+          total,
         }
       } catch (error) {
         throw new TRPCError({

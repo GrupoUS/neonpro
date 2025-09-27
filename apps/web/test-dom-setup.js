@@ -49,11 +49,12 @@ Object.defineProperty(global, 'URL', {
   configurable: true,
 })
 
-console.warn('✅ DOM setup successful')
-console.warn('document:', typeof document, document ? 'exists' : 'missing')
-console.warn('window:', typeof window, window ? 'exists' : 'missing')
-console.warn('navigator:', typeof navigator, navigator ? 'exists' : 'missing')
-console.warn('localStorage:', typeof localStorage, localStorage ? 'exists' : 'missing')
+// Debug logs for DOM setup validation
+// console.warn('✅ DOM setup successful')
+// console.warn('document:', typeof document, document ? 'exists' : 'missing')
+// console.warn('window:', typeof window, window ? 'exists' : 'missing')
+// console.warn('navigator:', typeof navigator, navigator ? 'exists' : 'missing')
+// console.warn('localStorage:', typeof localStorage, localStorage ? 'exists' : 'missing')
 
 // Test basic DOM manipulation
 const testDiv = document.createElement('div')
@@ -61,8 +62,9 @@ testDiv.textContent = 'Test Content'
 testDiv.setAttribute('data-testid', 'test-div')
 document.body.appendChild(testDiv)
 
-console.warn('✅ DOM manipulation successful')
-console.warn('Test div content:', document.querySelector('[data-testid="test-div"]')?.textContent)
+// Debug logs for DOM manipulation
+// console.warn('✅ DOM manipulation successful')
+// console.warn('Test div content:', document.querySelector('[data-testid="test-div"]')?.textContent)
 
 // Test testing-library queries
 try {
@@ -77,11 +79,10 @@ try {
     },
   }
 
-  const foundElement = screen.getByTestId('test-div')
-  console.warn('✅ Testing-library style queries successful')
-  console.warn('Found element:', foundElement.textContent)
-} catch (error) {
-  console.error('❌ Testing-library style queries failed:', error.message)
-}
+  const _foundElement = screen.getByTestId('test-div')
+  // Debug logs for testing-library queries
+  // console.warn('✅ Testing-library style queries successful')
+  // console.warn('Found element:', foundElement.textContent)
+} catch (_error) {}
 
-console.warn('🎉 All DOM setup tests passed!')
+// console.warn('🎉 All DOM setup tests passed!')

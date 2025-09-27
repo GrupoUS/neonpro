@@ -134,7 +134,7 @@ export async function shutdownBrowserErrorTracking(): Promise<void> {
 /**
  * Health check for browser error tracking systems
  */
-export function getBrowserErrorTrackingHealth() {
+export function getBrowserErrorTrackingSystemsHealth() {
   return {
     status: isInitialized ? 'healthy' : 'unhealthy',
     systems: {
@@ -229,9 +229,9 @@ export async function forceBrowserErrorTracking(
 }
 
 /**
- * Set browser user context (LGPD compliant)
+ * Set browser user context with sanitization (LGPD compliant)
  */
-export function setBrowserUserContext(user: {
+export function setSanitizedBrowserUserContext(user: {
   id: string
   email?: string
   role?: string

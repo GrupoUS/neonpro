@@ -14,7 +14,7 @@
  * Platform: NeonPro Healthcare Platform
  */
 
-import { logger } from '@/utils/healthcare-errors'
+import { logger } from '@/utils/healthcare-errors.js'
 import { Context } from 'hono'
 
 // Sensitive Field Classification
