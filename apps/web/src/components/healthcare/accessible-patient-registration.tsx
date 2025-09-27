@@ -1,5 +1,4 @@
-import * as React from 'react'
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useMemo } from 'react'
 // Note: Some accessibility imports temporarily disabled for build stability
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
 import { CardTitle } from '@/components/ui/card.js'
