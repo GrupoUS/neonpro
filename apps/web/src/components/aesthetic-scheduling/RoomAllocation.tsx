@@ -1,10 +1,10 @@
 'use client'
 
-import { 
+import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardHeader, CardTitle,
   Input, Progress
-} from '@neonpro/ui'
+} from '@/components/ui/index.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { apiClient as api } from '@/lib/api.js'
 import {

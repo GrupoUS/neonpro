@@ -1,55 +1,23 @@
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 // Note: Some accessibility imports temporarily disabled for build stability
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select'
-import { CardTitle } from '../../ui/card'
-import { Badge } from '../../ui/badge'
-import { Progress } from '../../ui/progress'
-import { Alert, AlertDescription } from '../../ui/alert'
-import { Input } from '../../ui/input'
-import { Label } from '../../ui/label'
-import { Button } from '../../ui/button'
-import { cn } from '../../lib/utils'
-import { 
-  type BrazilianState, 
-  type HealthcareContext, 
-  type PatientData, 
-  type LGPDConsent,
-  type BrazilianPersonalInfo,
-  type BrazilianAddress,
-  type EmergencyContact,
-  type MedicalHistory
-} from '@/types/healthcare'
-import { HealthcareFormValidator } from '@/types/validation'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Badge } from '@/components/ui/badge'
+import { Progress } from '@/components/ui/progress'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import {
+  type BrazilianState,
+  type HealthcareContext,
+  type PatientData
+} from '../../../types/healthcare'
+import { HealthcareFormValidator } from '@/lib/healthcare-form-validator'
 
-// Temporary simple implementations for accessibility hooks
-const useTranslation = () => ({
-  t: (key: string) => key,
-  formatDate: (date: string) => date
-})
-
-const useScreenReaderAnnouncer = () => ({
-  announce: (message: string | { message: string; politeness: string }) => {
-    if (typeof message === 'string') {
-      console.log('Screen reader:', message)
-    } else {
-      console.log('Screen reader:', message.message)
-    }
-  }
-})
-
-const useFocusManagement = () => ({
-  setFocus: (element: string | HTMLElement) => {
-    if (typeof element === 'string') {
-      console.log('Focus set to:', element)
-    } else {
-      console.log('Focus set to element')
-    }
-  }
-})
-
-const useKeyboardNavigation = () => ({
-  registerFocusable: (element: string) => console.log('Registered focusable:', element)
-})
+import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer.js'
+import { useKeyboardNavigation } from '@/components/ui/keyboard-navigation.js'
+import { useTranslation } from '@/lib/i18n/use-translation.js'
 
 // Type-safe form errors
 interface FormErrors {
@@ -239,7 +207,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   className,
   validationLevel = 'strict',
 }) => {
-  const { t, formatDate } = useTranslation()
+  const { t } = useTranslation()
   const { announce } = useScreenReaderAnnouncer()
   const { setFocus } = useFocusManagement()
   const { registerFocusable } = useKeyboardNavigation()
@@ -254,7 +222,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   // Form steps with proper typing
-  const formSteps = [
+  const formSteps = useMemo(() => [
     {
       id: 'personal' as const,
       title: t('forms.personalInfo'),
@@ -297,20 +265,23 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
       icon: '✅',
       context: 'administrative' as HealthcareContext,
     },
-  ]
+  ], [t])
 
   // Focus management for step changes
   const stepRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (stepRef.current) {
-      stepRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      // Check if scrollIntoView exists (it might not in test environments)
+      if (typeof stepRef.current.scrollIntoView === 'function') {
+        stepRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
       setFocus(stepRef.current)
       announce({
         message: `Etapa ${currentStep + 1}: ${formSteps[currentStep]?.title || 'Unknown'}`,
         politeness: 'polite',
       })
     }
-  }, [currentStep, announce, setFocus])
+  }, [currentStep, announce, setFocus, formSteps])
 
   // Type-safe field change handler
   const handleFieldChange = <T extends keyof PatientData>(
@@ -542,7 +513,7 @@ export const AccessiblePatientRegistration: React.FC<AccessiblePatientRegistrati
   }
 
   const renderStepContent = () => {
-    const currentStepData = formSteps[currentStep]
+    // const currentStepData = formSteps[currentStep] // Unused but kept for future reference
     
     switch (currentStep) {
       case 0: // Personal Info

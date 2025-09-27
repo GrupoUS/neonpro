@@ -25,7 +25,6 @@
     "src/types/**/*"
   ],
   "references": [
-    { "path": "../utils" },
     { "path": "../database" },
     { "path": "../healthcare-core" }
   ]

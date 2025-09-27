@@ -31,3 +31,23 @@ export const truncateText = (text: string, maxLength: number = 100): string => {
 export * from './date';
 export * from './validation';
 
+// Logging utility
+export const createLogger = (name: string) => {
+  return {
+    info: (message: string, meta?: any) => {
+      console.log(`[${name}] INFO: ${message}`, meta || "");
+    },
+    error: (message: string, meta?: any) => {
+      console.error(`[${name}] ERROR: ${message}`, meta || "");
+    },
+    warn: (message: string, meta?: any) => {
+      console.warn(`[${name}] WARN: ${message}`, meta || "");
+    },
+    debug: (message: string, meta?: any) => {
+      if (process.env.NODE_ENV === "development") {
+        console.debug(`[${name}] DEBUG: ${message}`, meta || "");
+      }
+    }
+  };
+};
+

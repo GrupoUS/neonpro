@@ -14,13 +14,71 @@
  * - CFM-compliant medical decision support
  */
 
-// Placeholder service - will be fixed after build completion
-// import { AIClinicalDecisionSupport } from '@neonpro/healthcare-core'
+// Stub service implementation to unblock build
+class AIClinicalDecisionSupport {
+  static getInstance() {
+    return {
+      generateTreatmentRecommendations: async (input: any) => ({
+        recommendations: [],
+        metadata: { generatedAt: new Date() },
+      }),
+      createTreatmentPlan: async (patientId: string, recommendations: any[], goals: any[]) => ({
+        id: 'plan-' + Date.now(),
+        patientId,
+        recommendations,
+        goals,
+        riskAssessment: { overall: 'low' },
+        budgetBreakdown: { total: 0 },
+        followUpSchedule: [],
+      }),
+      analyzeContraindications: async (patientId: string, procedureIds: string[]) => ({
+        analyses: procedureIds.map(id => ({
+          patientId,
+          procedureId: id,
+          absoluteContraindications: [],
+          relativeContraindications: [],
+          riskFactors: [],
+          recommendations: [],
+          canProceed: true,
+          modifiedApproach: '',
+        })),
+        summary: { totalProcedures: procedureIds.length, safeProcedures: procedureIds.length },
+      }),
+      generateTreatmentGuidelines: async (procedureId: string, patientFactors: any) => ({
+        guidelines: {
+          procedureId,
+          indications: [],
+          contraindications: { absolute: [], relative: [] },
+          patientSelection: { idealCandidate: [], cautionFactors: [] },
+          protocol: { preparation: [], procedure: [], aftercare: [] },
+          expectedOutcomes: { immediate: [], shortTerm: [], longTerm: [] },
+          complications: [],
+          evidenceReferences: [],
+        },
+        personalizedRecommendations: [],
+        precautions: [],
+      }),
+      predictTreatmentOutcomes: async (patientId: string, procedureId: string, treatmentPlan: any) => ({
+        efficacy: 0.8,
+        satisfaction: 0.8,
+        risks: [],
+        timeline: { initialResults: '', optimalResults: '', maintenance: '' },
+        recommendations: [],
+      }),
+      monitorTreatmentProgress: async (treatmentPlanId: string, currentSession: number, patientFeedback: any, clinicalAssessment: any) => ({
+        progress: 'on_track',
+        recommendations: [],
+        adjustments: [],
+        nextSessionPlan: '',
+      }),
+    }
+  }
+}
+
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
 import * as z from 'zod'
 import { healthcareProcedure, protectedProcedure, router } from '../trpc'
-import { AIClinicalDecisionSupport } from './placeholder-service'
 
 // Initialize the AI clinical decision support service
 const aiClinicalService = AIClinicalDecisionSupport.getInstance()

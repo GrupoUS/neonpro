@@ -68,7 +68,7 @@ export function TreatmentRecommendationsDashboard({
       //   patientId,
       //   limit: 10,
       // })
-      return { history: [] }
+      return { treatments: [] }
     },
     enabled: !!patientId,
   })

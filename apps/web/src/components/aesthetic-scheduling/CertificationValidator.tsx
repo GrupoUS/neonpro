@@ -3,11 +3,12 @@
  * Brazilian healthcare compliant CFM certification validation for aesthetic procedures
  */
 
-import { 
+import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
-  Input, Label, Progress
-} from '@neonpro/ui'
+  Input, Progress
+} from '@/components/ui/index.js'
+import { Label } from '@/components/ui/label.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { trpc } from '@/lib/trpc.js'
 import {

@@ -16,8 +16,8 @@ function SignUpPage() {
   }
 
   const handleSignUpSuccess = () => {
-    // Redirecionar para página de verificação de email
-    window.location.href = '/auth/verify-email?success=true'
+    // Redirecionar para página de login após cadastro bem-sucedido
+    window.location.href = '/auth/login?registered=true'
   }
 
   const handleSignIn = () => {

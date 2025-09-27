@@ -665,7 +665,7 @@ export const NeonProChatInterface: React.FC = () => {
             aria-live='polite'
             aria-atomic='false'
           >
-            {activeAgent?.messages.length === 0 ? (
+            {activeAgent && activeAgent.messages.length === 0 ? (
               <div
                 className='flex items-center justify-center h-full text-gray-500'
                 role='status'

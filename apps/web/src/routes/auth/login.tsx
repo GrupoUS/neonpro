@@ -12,7 +12,7 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext.js'
-import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@neonpro/ui'
+import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index.js'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
@@ -24,6 +24,10 @@ function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  
+  // Check if user was redirected from registration
+  const urlParams = new URLSearchParams(window.location.search)
+  const wasRegistered = urlParams.get('registered') === 'true'
 
   // Redirect if already authenticated
   if (isAuthenticated) {
@@ -80,6 +84,14 @@ function LoginPage() {
         </CardHeader>
         
         <CardContent className="space-y-6">
+          {wasRegistered && (
+            <Alert variant="default" className="border-green-200 bg-green-50">
+              <AlertDescription className="text-green-800">
+                Conta criada com sucesso! Faça login para acessar sua conta.
+              </AlertDescription>
+            </Alert>
+          )}
+          
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
