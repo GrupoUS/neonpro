@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.j
 import { apiClient as api } from '@/lib/api.js'
 import {
   // Room,
-  RoomAllocation,
+  type RoomAllocation,
   // RoomSchedule,
   // OptimizationResult,
   // AestheticAppointment

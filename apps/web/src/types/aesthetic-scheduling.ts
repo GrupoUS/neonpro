@@ -218,3 +218,112 @@ export interface CertificationValidation {
   professional?: string
   complianceStatus?: 'compliant' | 'warning' | 'non_compliant' | 'under_review'
 }
+
+// Recovery Planning Types
+export interface RecoveryPhase {
+  id: string
+  name: string
+  phase: string
+  phaseNumber: number
+  description: string
+  startDay: number
+  startDate?: Date // Added alternative to startDay
+  endDay: number
+  endDate?: Date // Added alternative to endDay
+  duration?: number // Added missing property
+  restrictions: string[]
+  activities: string[]
+  keyActivities?: string[] // Added alternative to activities
+  symptoms: string[]
+  tips: string[]
+  milestones?: string[] // Added missing property
+  warningSigns?: string[] // Added missing property
+}
+
+export interface RecoveryPlan {
+  id: string
+  patientId: string
+  procedureId: string
+  appointmentId?: string
+  phases: RecoveryPhase[]
+  totalDuration: number
+  totalRecoveryTime: number
+  specialInstructions: string[]
+  instructions?: string[]
+  followUpSchedule: FollowUpSchedule[]
+  followUpAppointments?: FollowUpSchedule[] // Added alternative to followUpSchedule
+  emergencyContacts: EmergencyContact[]
+  customization?: RecoveryCustomization
+}
+
+export interface FollowUpSchedule {
+  id: string
+  day: number
+  type: 'consultation' | 'procedure' | 'assessment'
+  duration: number
+  notes?: string
+}
+
+export interface EmergencyContact {
+  name: string
+  phone: string
+  role: string
+  availability: string
+}
+
+export interface RecoveryCustomization {
+  skinType: string
+  healingSpeed: 'slow' | 'normal' | 'fast'
+  painTolerance: 'low' | 'medium' | 'high'
+  lifestyle: string[]
+}
+
+// Treatment Package Types
+export interface TreatmentPackage {
+  id: string
+  name: string
+  description: string
+  procedures: TreatmentProcedure[]
+  totalSessions: number
+  sessionInterval: number
+  totalPrice: number
+  discountPercentage: number
+  duration: number
+  category: string
+  requirements: string[]
+}
+
+export interface TreatmentProcedure {
+  id: string
+  name: string
+  description: string
+  duration: number
+  price: number
+  session: number
+  requirements?: string[]
+}
+
+export interface TreatmentPackageResponse {
+  success: boolean
+  packageId?: string
+  message: string
+  scheduledSessions?: ScheduledSession[]
+}
+
+export interface ScheduledSession {
+  id: string
+  procedureId: string
+  date: Date
+  professionalId: string
+  roomId: string
+}
+
+// Room Allocation Types
+export interface RoomAllocation {
+  id: string
+  roomId: string
+  appointmentId: string
+  startTime: Date
+  endTime: Date
+  status: 'reserved' | 'occupied' | 'cleaning' | 'maintenance'
+}

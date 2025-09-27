@@ -520,7 +520,9 @@ export function CertificationValidator(
                             <div>
                               <Label className='text-sm font-medium text-gray-700'>Nome</Label>
                               <p className='text-sm text-gray-900'>
-                                {validationResults.professional.name}
+                                {validationResults.professional && typeof validationResults.professional === 'object' 
+                                  ? validationResults.professional.name 
+                                  : validationResults.professional || 'N/A'}
                               </p>
                             </div>
                             <div>
@@ -528,13 +530,17 @@ export function CertificationValidator(
                                 Especialização
                               </Label>
                               <p className='text-sm text-gray-900'>
-                                {validationResults.professional.specialty}
+                                {validationResults.professional && typeof validationResults.professional === 'object' 
+                                  ? validationResults.professional.specialty 
+                                  : 'N/A'}
                               </p>
                             </div>
                             <div>
                               <Label className='text-sm font-medium text-gray-700'>CRM</Label>
                               <p className='text-sm text-gray-900'>
-                                {validationResults.professional.councilNumber}
+                                {validationResults.professional && typeof validationResults.professional === 'object' 
+                                  ? validationResults.professional.councilNumber 
+                                  : 'N/A'}
                               </p>
                             </div>
                             <div>

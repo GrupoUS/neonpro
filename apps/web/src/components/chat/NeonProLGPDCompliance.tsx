@@ -11,16 +11,16 @@
  */
 
 import React, { useCallback, useState } from 'react'
-import { Alert, AlertDescription } from '@neonpro/ui/alert'
-import { Textarea } from '@neonpro/ui/textarea'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
-import { Input } from '../ui/input'
-import { Label } from '../ui/label'
+import { Alert, AlertDescription } from '../ui/alert'
+import { Textarea } from '../ui/textarea'
+import { Badge } from '../ui/badge.js'
+import { Button } from '../ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.js'
+import { Input } from '../ui/input.js'
+import { Label } from '../ui/label.js'
 // Removed unused Select imports
 import {
-  Audit,
+  Shield,
   CheckCircle,
   Download,
   Eye,

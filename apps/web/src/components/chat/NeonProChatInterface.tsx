@@ -26,10 +26,10 @@ import {
   Users,
 } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
-import { Alert, AlertDescription } from '../ui/alert'
-import { Badge } from '../ui/badge'
-import { Button } from '../ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
+import { Alert, AlertDescription } from '../ui/alert.js'
+import { Badge } from '../ui/badge.js'
+import { Button } from '../ui/button.js'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.js'
 import {
   AccessibilitySettingsPanel,
   AccessibleChatMessage,
@@ -37,8 +37,8 @@ import {
   AccessibleLoading,
   ScreenReaderAnnouncer,
   SkipLinks,
-} from './NeonProAccessibility'
-import { useNeonProChat } from './NeonProChatProvider'
+} from './NeonProAccessibility.js'
+import { useNeonProChat } from './NeonProChatProvider.js'
 import './accessibility.css'
 
 // Types
