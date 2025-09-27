@@ -327,8 +327,8 @@ export function PatientAssessmentForm(
                   </Label>
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.skinConditions?.map((condition, index) => (
-                        <Badge key={`skin-condition-${index}`} variant='secondary' className='cursor-pointer'>
+                      {assessmentData.skinConditions?.map((condition) => (
+                        <Badge key={condition} variant='secondary' className='cursor-pointer'>
                           {condition}
                           <X
                             className='h-3 w-3 ml-1'
@@ -423,8 +423,8 @@ export function PatientAssessmentForm(
                   </Label>
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.medicalHistory?.allergies?.map((allergy, index) => (
-                        <Badge key={`allergy-${index}`} variant='destructive' className='cursor-pointer'>
+                      {assessmentData.medicalHistory?.allergies?.map((allergy) => (
+                        <Badge key={allergy} variant='destructive' className='cursor-pointer'>
                           {allergy}
                           <X
                             className='h-3 w-3 ml-1'
@@ -455,8 +455,8 @@ export function PatientAssessmentForm(
                   </Label>
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.medicalHistory?.medications?.map((medication, index) => (
-                        <Badge key={`medication-${index}`} variant='secondary' className='cursor-pointer'>
+                      {assessmentData.medicalHistory?.medications?.map((medication) => (
+                        <Badge key={medication} variant='secondary' className='cursor-pointer'>
                           {medication}
                           <X
                             className='h-3 w-3 ml-1'
@@ -487,11 +487,8 @@ export function PatientAssessmentForm(
                   </Label>
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.medicalHistory?.previousTreatments?.map((
-                        treatment,
-                        index,
-                      ) => (
-                        <Badge key={index} variant='outline' className='cursor-pointer'>
+                      {assessmentData.medicalHistory?.previousTreatments?.map((treatment) => (
+                        <Badge key={treatment} variant='outline' className='cursor-pointer'>
                           {treatment}
                           <X
                             className='h-3 w-3 ml-1'
@@ -521,8 +518,8 @@ export function PatientAssessmentForm(
                   </Label>
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.medicalHistory?.chronicConditions?.map((condition, index) => (
-                        <Badge key={index} variant='destructive' className='cursor-pointer'>
+                      {assessmentData.medicalHistory?.chronicConditions?.map((condition) => (
+                        <Badge key={condition} variant='destructive' className='cursor-pointer'>
                           {condition}
                           <X
                             className='h-3 w-3 ml-1'
@@ -564,8 +561,8 @@ export function PatientAssessmentForm(
                 <CardContent className='space-y-4'>
                   <div className='space-y-3'>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.aestheticGoals?.map((goal, index) => (
-                        <Badge key={index} variant='default' className='cursor-pointer'>
+                      {assessmentData.aestheticGoals?.map((goal) => (
+                        <Badge key={goal} variant='default' className='cursor-pointer'>
                           {goal}
                           <X
                             className='h-3 w-3 ml-1'
@@ -675,8 +672,8 @@ export function PatientAssessmentForm(
               <CardContent className='space-y-4'>
                 <div className='space-y-3'>
                   <div className='flex flex-wrap gap-2'>
-                    {assessmentData.riskFactors?.map((factor, index) => (
-                      <Badge key={index} variant='destructive' className='cursor-pointer'>
+                    {assessmentData.riskFactors?.map((factor) => (
+                      <Badge key={factor} variant='destructive' className='cursor-pointer'>
                         {factor}
                         <X
                           className='h-3 w-3 ml-1'
@@ -737,8 +734,8 @@ export function PatientAssessmentForm(
                       <div className='mt-2'>
                         <span className='text-gray-600 text-sm'>Condições:</span>
                         <div className='flex flex-wrap gap-1 mt-1'>
-                          {assessmentData.skinConditions.map((condition, index) => (
-                            <Badge key={index} variant='outline' className='text-xs'>
+                          {assessmentData.skinConditions.map((condition) => (
+                            <Badge key={condition} variant='outline' className='text-xs'>
                               {condition}
                             </Badge>
                           ))}
@@ -780,8 +777,8 @@ export function PatientAssessmentForm(
                           <div>
                             <span className='text-gray-600'>Alergias:</span>
                             <div className='flex flex-wrap gap-1 mt-1'>
-                              {assessmentData.medicalHistory.allergies.map((allergy, index) => (
-                                <Badge key={index} variant='destructive' className='text-xs'>
+                              {assessmentData.medicalHistory.allergies.map((allergy) => (
+                                <Badge key={allergy} variant='destructive' className='text-xs'>
                                   {allergy}
                                 </Badge>
                               ))}
@@ -794,11 +791,8 @@ export function PatientAssessmentForm(
                           <div>
                             <span className='text-gray-600'>Medicamentos:</span>
                             <div className='flex flex-wrap gap-1 mt-1'>
-                              {assessmentData.medicalHistory.medications.map((
-                                medication,
-                                index,
-                              ) => (
-                                <Badge key={index} variant='secondary' className='text-xs'>
+                              {assessmentData.medicalHistory.medications.map((medication) => (
+                                <Badge key={medication} variant='secondary' className='text-xs'>
                                   {medication}
                                 </Badge>
                               ))}
@@ -813,8 +807,8 @@ export function PatientAssessmentForm(
                   <div>
                     <h3 className='font-medium text-gray-900 mb-2'>Objetivos Estéticos</h3>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.aestheticGoals.map((goal, index) => (
-                        <Badge key={index} variant='default'>
+                      {assessmentData.aestheticGoals.map((goal) => (
+                        <Badge key={goal} variant='default'>
                           {goal}
                         </Badge>
                       ))}
@@ -826,8 +820,8 @@ export function PatientAssessmentForm(
                   <div>
                     <h3 className='font-medium text-gray-900 mb-2'>Fatores de Risco</h3>
                     <div className='flex flex-wrap gap-2'>
-                      {assessmentData.riskFactors.map((factor, index) => (
-                        <Badge key={index} variant='destructive'>
+                      {assessmentData.riskFactors.map((factor) => (
+                        <Badge key={factor} variant='destructive'>
                           {factor}
                         </Badge>
                       ))}

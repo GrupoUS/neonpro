@@ -294,6 +294,16 @@ export class SupabaseGovernanceService implements GovernanceService {
     this.supabase = createClient(supabaseUrl, supabaseKey)
   }
 
+  // Health check method required by interface
+  async healthCheck(): Promise<boolean> {
+    try {
+      const { error } = await this.supabase.from('kpi_metrics').select('count', { count: 'exact', head: true })
+      return !error
+    } catch {
+      return false
+    }
+  }
+
   // Audit Trail Methods
   async createAuditEntry(
     entry: CreateAuditTrailEntry,

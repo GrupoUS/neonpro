@@ -18,17 +18,15 @@
 class AIClinicalDecisionSupport {
   static getInstance() {
     return {
-      generateTreatmentRecommendations: async (input: any) => ({
-        recommendations: [],
-        metadata: { generatedAt: new Date() },
-      }),
+      generateTreatmentRecommendations: async (_input: any) => [],
       createTreatmentPlan: async (patientId: string, recommendations: any[], goals: any[]) => ({
-        id: 'plan-' + Date.now(),
+        id: `plan-${Date.now()}`,
         patientId,
+        primaryGoals: goals,
         recommendations,
-        goals,
-        riskAssessment: { overall: 'low' },
-        budgetBreakdown: { total: 0 },
+        prioritizedPlan: [],
+        riskAssessment: { overall: 'low', factors: [], mitigations: [] },
+        budgetBreakdown: { total: 0, byPhase: [] },
         followUpSchedule: [],
       }),
       analyzeContraindications: async (patientId: string, procedureIds: string[]) => ({

@@ -92,6 +92,7 @@
     "clsx": "2.1.1",
     "dompurify": "3.2.7",
     "dotenv": "17.2.2",
+    "framer-motion": "^11.18.2",
     "ioredis": "5.8.0",
     "lodash-es": "4.17.21",
     "lodash.debounce": "4.0.8",

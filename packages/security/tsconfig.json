@@ -8,11 +8,10 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "tsBuildInfoFile": "./.tsbuildinfo-security",
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": false,
+    "skipLibCheck": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
@@ -21,11 +20,11 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx",
-    "src/monitoring/**/*",
-    "src/types/**/*"
+    "src/monitoring/**/*"
   ],
   "references": [
-    { "path": "../database" },
+    { "path": "../types" },
+    { "path": "../database" }, 
     { "path": "../healthcare-core" }
   ]
 }

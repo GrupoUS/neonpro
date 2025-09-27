@@ -17,7 +17,6 @@ export { SecurityEventLogger } from './security-event-logger'
 
 // Export convenient instances
 export { SecurityValidator as securityValidator } from './security-validator'
-export { SecurityEventLogger } from './security-event-logger'
 
 // Export singleton instance
 import { SecurityEventLogger } from './security-event-logger'

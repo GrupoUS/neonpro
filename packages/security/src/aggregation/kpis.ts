@@ -692,9 +692,9 @@ export function createMockEvents(count: number = 10): AnalyticsEvent[] {
       id: `mock_event_${i + 1}`,
       type: eventType,
       timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Last 7 days
-      _userId: `user_${Math.floor(Math.random() * 100)}`,
+      _userId: `user_${Math.floor(Math.random() * 100)}` as string,
       sessionId: `session_${Math.floor(Math.random() * 50)}`,
-      properties: generateMockProperties(eventType),
+      properties: generateMockProperties(eventType as string),
       _context: {
         userAgent: 'Healthcare System',
         ip: '127.0.0.1',

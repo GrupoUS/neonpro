@@ -1,5 +1,16 @@
 import React, { useState } from 'react'
 import { useSignUp } from '@/hooks/useAuth.js'
+import { 
+  Button, 
+  Input, 
+  Label, 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue,
+  Checkbox 
+} from '@neonpro/ui'
 import type { AuthError, ProfessionType } from '@neonpro/types'
 
 interface SignUpFormProps {
@@ -129,34 +140,32 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+              <Label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
                 Nome *
-              </label>
-              <input
+              </Label>
+              <Input
                 id="firstName"
                 name="firstName"
                 type="text"
                 required
                 value={formData.firstName}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="João"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+              <Label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
                 Sobrenome *
-              </label>
-              <input
+              </Label>
+              <Input
                 id="lastName"
                 name="lastName"
                 type="text"
                 required
                 value={formData.lastName}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Silva"
                 disabled={isLoading}
               />
@@ -164,10 +173,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+            <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email *
-            </label>
-            <input
+            </Label>
+            <Input
               id="email"
               name="email"
               type="email"
@@ -175,55 +184,56 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               required
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="seu@email.com"
               disabled={isLoading}
             />
           </div>
 
           <div>
-            <label htmlFor="profession" className="block text-sm font-medium text-gray-700 mb-1">
+            <Label htmlFor="profession" className="block text-sm font-medium text-gray-700 mb-1">
               Profissão *
-            </label>
-            <select
-              id="profession"
-              name="profession"
-              required
+            </Label>
+            <Select
               value={formData.profession}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              onValueChange={(value: ProfessionType) => {
+                setFormData(prev => ({ ...prev, profession: value }))
+                if (error) setError(null)
+              }}
               disabled={isLoading}
             >
-              <option value="">Selecione sua profissão</option>
-              {PROFESSION_OPTIONS.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione sua profissão" />
+              </SelectTrigger>
+              <SelectContent>
+                {PROFESSION_OPTIONS.map(option => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
-            <label htmlFor="license" className="block text-sm font-medium text-gray-700 mb-1">
+            <Label htmlFor="license" className="block text-sm font-medium text-gray-700 mb-1">
               Registro Profissional (CRM, CRO, etc.)
-            </label>
-            <input
+            </Label>
+            <Input
               id="license"
               name="license"
               type="text"
               value={formData.license}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="CRM 12345/SP"
               disabled={isLoading}
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+            <Label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               Senha *
-            </label>
-            <input
+            </Label>
+            <Input
               id="password"
               name="password"
               type="password"
@@ -231,7 +241,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               required
               value={formData.password}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
               disabled={isLoading}
             />
@@ -239,10 +248,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
           </div>
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+            <Label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
               Confirmar Senha *
-            </label>
-            <input
+            </Label>
+            <Input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
@@ -250,7 +259,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               required
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholder="••••••••"
               disabled={isLoading}
             />
@@ -258,12 +266,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
 
           <div className="space-y-3">
             <label className="flex items-start">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={agreements.lgpd}
-                onChange={(e) => handleCheckboxChange('lgpd', e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-0.5"
+                onCheckedChange={(checked) => handleCheckboxChange('lgpd', checked as boolean)}
                 disabled={isLoading}
+                className="mt-0.5"
               />
               <span className="ml-2 text-sm text-gray-600">
                 Aceito o tratamento dos meus dados pessoais de acordo com a{' '}
@@ -275,12 +282,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
             </label>
 
             <label className="flex items-start">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={agreements.terms}
-                onChange={(e) => handleCheckboxChange('terms', e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mt-0.5"
+                onCheckedChange={(checked) => handleCheckboxChange('terms', checked as boolean)}
                 disabled={isLoading}
+                className="mt-0.5"
               />
               <span className="ml-2 text-sm text-gray-600">
                 Aceito os{' '}
@@ -296,7 +302,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
             </label>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -309,19 +315,20 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
             ) : (
               'Criar Conta'
             )}
-          </button>
+          </Button>
         </form>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Já tem uma conta?{' '}
-            <button
+            <Button
+              variant="link"
               onClick={onSignIn}
-              className="text-blue-600 hover:text-blue-500 focus:outline-none focus:underline font-medium"
               disabled={isLoading}
+              className="p-0 h-auto text-blue-600 hover:text-blue-500 focus:outline-none focus:underline font-medium"
             >
               Faça login
-            </button>
+            </Button>
           </p>
         </div>
       </div>

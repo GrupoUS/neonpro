@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { TranslationProvider } from '@/lib/i18n/use-translation.js'
+import { TranslationProvider } from '@/lib/i18n/use-translation'
 import { ScreenReaderAnnouncerProvider } from '@/components/ui/screen-reader-announcer.js'
 import { SkipLinks } from '@/components/ui/screen-reader-announcer.js'
 
@@ -75,9 +75,9 @@ export const useAccessibility = () => {
     announcement.setAttribute('aria-atomic', 'true')
     announcement.className = 'sr-only'
     announcement.textContent = message
-    
+
     document.body.appendChild(announcement)
-    
+
     // Remove after announcement
     setTimeout(() => {
       document.body.removeChild(announcement)
@@ -95,7 +95,7 @@ export const useAccessibility = () => {
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     ) as HTMLElement[]
-    
+
     if (focusableElements.length === 0) return
 
     const firstElement = focusableElements[0]
@@ -138,7 +138,7 @@ export const useHighContrastMode = () => {
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-contrast: high)')
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setIsHighContrast(e.matches)
     }
@@ -160,7 +160,7 @@ export const useReducedMotion = () => {
 
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    
+
     const handleChange = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches)
     }
@@ -191,9 +191,9 @@ export const useScreenReader = () => {
       testElement.style.height = '1px'
       testElement.style.overflow = 'hidden'
       testElement.textContent = 'Screen reader detection test'
-      
+
       document.body.appendChild(testElement)
-      
+
       // Check if the element was read (this is an approximation)
       setTimeout(() => {
         document.body.removeChild(testElement)
@@ -229,14 +229,14 @@ export const AccessibilityValidator = {
     const interactiveElements = element.querySelectorAll(
       'button, [href], input, select, textarea, [role="button"], [role="link"]'
     )
-    
+
     for (const el of interactiveElements) {
-      const hasLabel = el.hasAttribute('aria-label') || 
+      const hasLabel = el.hasAttribute('aria-label') ||
                        el.hasAttribute('aria-labelledby') ||
                        el.textContent?.trim()
       if (!hasLabel) return false
     }
-    
+
     return true
   },
 
@@ -245,7 +245,7 @@ export const AccessibilityValidator = {
     const focusableElements = element.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
     )
-    
+
     // Check if all interactive elements are focusable
     return focusableElements.length > 0
   },

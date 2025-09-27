@@ -1,15 +1,15 @@
-import { Appointment, Patient } from './index.js';
+import { Appointment, Patient } from './index.js'
 
 // TypeScript-only validation helpers (no runtime validation library)
 export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
 
 export const isValidPhone = (phone: string): boolean => {
-  const phoneRegex = /^\+?[1-9]\d{1,14}$/;
-  return phoneRegex.test(phone.replace(/\s+/g, ''));
-};
+  const phoneRegex = /^\+?[1-9]\d{1,14}$/
+  return phoneRegex.test(phone.replace(/\s+/g, ''))
+}
 
 export const validatePatient = (patient: Partial<Patient>): patient is Patient => {
   return !!(
@@ -21,12 +21,14 @@ export const validatePatient = (patient: Partial<Patient>): patient is Patient =
     isValidPhone(patient.phone) &&
     typeof patient.consentGiven === 'boolean' &&
     patient.createdAt
-  );
-};
+  )
+}
 
-export const validateAppointment = (appointment: Partial<Appointment>): appointment is Appointment => {
-  const validTypes = ['consultation', 'treatment', 'follow-up'];
-  const validStatuses = ['scheduled', 'completed', 'cancelled'];
+export const validateAppointment = (
+  appointment: Partial<Appointment>
+): appointment is Appointment => {
+  const validTypes = ['consultation', 'treatment', 'follow-up']
+  const validStatuses = ['scheduled', 'completed', 'cancelled']
 
   return !!(
     appointment.id &&
@@ -37,17 +39,17 @@ export const validateAppointment = (appointment: Partial<Appointment>): appointm
     validTypes.includes(appointment.type) &&
     appointment.status &&
     validStatuses.includes(appointment.status)
-  );
-};
+  )
+}
 
 // Form validation types for healthcare forms
 export interface FormFieldError {
-  field: string;
-  message: string;
+  field: string
+  message: string
 }
 
 export interface FormValidationResult {
-  isValid: boolean;
-  errors: FormFieldError[];
-  data?: Record<string, any>;
+  isValid: boolean
+  errors: FormFieldError[]
+  data?: Record<string, any>
 }

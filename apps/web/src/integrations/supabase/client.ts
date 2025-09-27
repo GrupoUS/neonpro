@@ -13,3 +13,6 @@ export const supabase = supabaseCreateClient(supabaseUrl, supabaseAnonKey)
 export const createSupabaseClient = () => supabase
 // Back-compat named export expected by components
 export const createClient = createSupabaseClient
+
+// Default export for components expecting it
+export default supabase

@@ -7,7 +7,8 @@
 import type { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
 import { RateLimiter, SecurityUtils } from './utils'
-import { JWTSecurityService } from '@apps/api/src/services/jwt-security-service'
+// TODO: Fix import path when JWT service is available
+// import { JWTSecurityService } from '@apps/api/src/services/jwt-security-service'
 
 /**
  * Security headers middleware
@@ -424,7 +425,7 @@ async function validateLGPDConsent(
     }
 
     // Check for emergency access (always allowed)
-    const userContext = globalThis.userContext // Would normally come from request context
+    const userContext = (globalThis as any).userContext // Would normally come from request context
     if (userContext?.sessionType === 'emergency') {
       console.info('Emergency access granted - LGPD consent bypassed', { userId, patientId })
       return true

@@ -35,6 +35,10 @@ export default defineConfig({
     host: true,
     port: 8080,
     open: false,
+    watch: {
+      usePolling: true,
+      interval: 1000,
+    },
   },
   build: {
     outDir: 'dist',

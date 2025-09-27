@@ -13,7 +13,7 @@ import {
   type HealthcareContext,
   type PatientData
 } from '../../../types/healthcare'
-import { HealthcareFormValidator } from '@/lib/healthcare-form-validator'
+import { HealthcareFormValidator } from '@/types/validation'
 
 import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer.js'
 import { useKeyboardNavigation } from '@/components/ui/keyboard-navigation.js'
