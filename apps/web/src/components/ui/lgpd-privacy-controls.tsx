@@ -5,7 +5,7 @@ import { Button } from '../button'
 import { Alert, AlertDescription } from '../alert'
 import { MobileHealthcareButton } from '../mobile-healthcare-button'
 import { AccessibilityInput } from '../accessibility-input'
-import { cn } from '../../../lib/utils'
+import { cn } from '@/lib/utils'
 
 export interface LGPDPrivacyControlProps {
   patientId?: string

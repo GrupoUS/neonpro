@@ -6,8 +6,9 @@
 import { 
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
-  Input, Label, Progress
+  Input, Progress
 } from '@neonpro/ui'
+import { Label } from '@/components/ui/label.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { trpc } from '@/lib/trpc.js'
 import {

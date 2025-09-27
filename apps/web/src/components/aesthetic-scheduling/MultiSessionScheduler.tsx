@@ -3,11 +3,13 @@
  * Brazilian healthcare compliant aesthetic procedure scheduling with multi-session support
  */
 
-import { 
+import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
-  Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue
-} from '@neonpro/ui'
+  Input
+} from '@/components/ui/index.js'
+import { Label } from '@/components/ui/label.js'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import {
   type AestheticProcedure,

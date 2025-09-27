@@ -1,7 +1,7 @@
-import { 
+import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle
-} from '@neonpro/ui'
+} from '@/components/ui/index.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
 import { apiClient as api } from '@/lib/api.js'
 import { RecoveryPhase, RecoveryPlan } from '@/types/aesthetic-scheduling.js'

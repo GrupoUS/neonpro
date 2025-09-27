@@ -196,7 +196,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({
 
         {/* Error Announcement with proper ARIA */}
         {error && (
-          <Alert className="mb-4 healthcare-context-emergency" role="alert" aria-live="assertive">
+          <Alert 
+            id={errorId}
+            className="mb-4 healthcare-context-emergency" 
+            role="alert" 
+            aria-live="assertive"
+          >
             <AlertDescription>{error.message}</AlertDescription>
           </Alert>
         )}

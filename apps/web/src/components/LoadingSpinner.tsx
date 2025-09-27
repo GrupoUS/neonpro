@@ -63,7 +63,7 @@ export function LoadingSpinner({
     emergency: 'text-orange-600 animate-pulse',
   }
 
-  const colorClass = contextColors[healthcareContext] || 'text-blue-600'
+  const colorClass = healthcareContext ? contextColors[healthcareContext] : 'text-blue-600'
   const animationClass = reduceMotion ? '' : 'animate-spin'
 
   return (
