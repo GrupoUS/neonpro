@@ -4,11 +4,11 @@
  * Security: Critical - Enhanced session manager integration tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EnhancedSessionManager } from '../security/enhanced-session-manager'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
-import { SecurityValidationService } from '../services/security-validation-service'
 import { LGPDService } from '../services/lgpd-service'
+import { SecurityValidationService } from '../services/security-validation-service'
 
 // Mock external dependencies
 vi.mock('../services/healthcare-session-management-service', () => ({
@@ -55,7 +55,7 @@ describe('Enhanced Session Manager Integration Tests', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks()
-    
+
     // Initialize services
     sessionManager = EnhancedSessionManager
     sessionService = HealthcareSessionManagementService
@@ -582,7 +582,7 @@ describe('Enhanced Session Manager Integration Tests', () => {
   describe('Error Handling and Resilience', () => {
     it('should handle session creation failures gracefully', async () => {
       vi.spyOn(sessionService, 'createSession').mockRejectedValueOnce(
-        new Error('Database connection failed')
+        new Error('Database connection failed'),
       )
 
       const sessionConfig = {
@@ -601,7 +601,7 @@ describe('Enhanced Session Manager Integration Tests', () => {
     it('should implement circuit breaker pattern for session operations', async () => {
       // Simulate multiple failures
       vi.spyOn(sessionService, 'validateSession').mockRejectedValue(
-        new Error('Service unavailable')
+        new Error('Service unavailable'),
       )
 
       const requests = []
@@ -609,7 +609,7 @@ describe('Enhanced Session Manager Integration Tests', () => {
         requests.push(
           sessionManager.validateEnhancedSession({
             sessionId: 'session-123',
-          })
+          }),
         )
       }
 
@@ -617,7 +617,7 @@ describe('Enhanced Session Manager Integration Tests', () => {
 
       // Circuit breaker should activate after failures
       const circuitStatus = await sessionManager.getCircuitBreakerStatus('session_validation')
-      
+
       expect(circuitStatus.open).toBe(true)
       expect(circuitStatus.failureCount).toBeGreaterThan(3)
     })

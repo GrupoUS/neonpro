@@ -1,13 +1,17 @@
 /**
  * 🔄 Monitoring Integration Utility
- * 
+ *
  * Integrates SecureLogger with ObservabilityManager for comprehensive monitoring
  * and standardized logging patterns across all utilities.
  */
 
-import { SecureLogger, type LogContext } from './secure-logger'
-import { ObservabilityManager, type MetricDefinition, type HealthCheck } from './observability-manager'
-import { ErrorHandler, type ErrorContext } from './error-handler'
+import { type ErrorContext, ErrorHandler } from './error-handler'
+import {
+  type HealthCheck,
+  type MetricDefinition,
+  ObservabilityManager,
+} from './observability-manager'
+import { type LogContext, SecureLogger } from './secure-logger'
 
 export interface MonitoringConfig {
   enableStructuredLogging: boolean
@@ -36,7 +40,8 @@ export class MonitoringIntegration {
   private observability: ObservabilityManager
   private errorHandler: ErrorHandler
   private config: Required<MonitoringConfig>
-  private activeOperations: Map<string, { startTime: number; context: MonitoringContext }> = new Map()
+  private activeOperations: Map<string, { startTime: number; context: MonitoringContext }> =
+    new Map()
 
   constructor(config: MonitoringConfig) {
     this.config = {
@@ -48,7 +53,7 @@ export class MonitoringIntegration {
       logLevel: 'info',
       serviceVersion: '1.0.0',
       environment: 'development',
-      ...config
+      ...config,
     }
 
     // Initialize components
@@ -63,7 +68,7 @@ export class MonitoringIntegration {
       enablePerformanceTracking: this.config.enablePerformanceTracking,
       _service: 'monitoring-integration',
       environment: this.config.environment,
-      version: this.config.serviceVersion
+      version: this.config.serviceVersion,
     })
 
     this.observability = new ObservabilityManager({
@@ -72,7 +77,7 @@ export class MonitoringIntegration {
       environment: this.config.environment,
       enableMetrics: this.config.enableMetricsCollection,
       enableTracing: this.config.enableDistributedTracing,
-      enableHealthChecks: this.config.enableHealthChecks
+      enableHealthChecks: this.config.enableHealthChecks,
     })
 
     this.errorHandler = new ErrorHandler({
@@ -81,7 +86,7 @@ export class MonitoringIntegration {
       enableRecovery: true,
       enableLogging: true,
       enableMetrics: this.config.enableMetricsCollection,
-      logger: this.logger
+      logger: this.logger,
     })
 
     this.setupIntegration()
@@ -107,8 +112,8 @@ export class MonitoringIntegration {
         metricsCollection: this.config.enableMetricsCollection,
         healthChecks: this.config.enableHealthChecks,
         performanceTracking: this.config.enablePerformanceTracking,
-        distributedTracing: this.config.enableDistributedTracing
-      }
+        distributedTracing: this.config.enableDistributedTracing,
+      },
     })
   }
 
@@ -127,15 +132,15 @@ export class MonitoringIntegration {
             this.logger.debug('Health check test', { healthCheck: true })
             return { status: 'healthy', details: { message: 'Logging system operational' } }
           } catch (error) {
-            return { 
-              status: 'unhealthy', 
-              details: { 
-                message: 'Logging system failure', 
-                error: error instanceof Error ? error.message : String(error) 
-              } 
+            return {
+              status: 'unhealthy',
+              details: {
+                message: 'Logging system failure',
+                error: error instanceof Error ? error.message : String(error),
+              },
             }
           }
-        }
+        },
       },
       {
         id: 'metrics-collection',
@@ -144,23 +149,23 @@ export class MonitoringIntegration {
         check: async () => {
           try {
             const metrics = this.observability.getMetrics()
-            return { 
-              status: 'healthy', 
-              details: { 
+            return {
+              status: 'healthy',
+              details: {
                 message: 'Metrics collection operational',
-                metricsCount: Object.keys(metrics).length 
-              } 
+                metricsCount: Object.keys(metrics).length,
+              },
             }
           } catch (error) {
-            return { 
-              status: 'unhealthy', 
-              details: { 
-                message: 'Metrics collection failure', 
-                error: error instanceof Error ? error.message : String(error) 
-              } 
+            return {
+              status: 'unhealthy',
+              details: {
+                message: 'Metrics collection failure',
+                error: error instanceof Error ? error.message : String(error),
+              },
             }
           }
-        }
+        },
       },
       {
         id: 'error-handling',
@@ -173,16 +178,16 @@ export class MonitoringIntegration {
             this.handleError(testError, { context: 'health-check' })
             return { status: 'healthy', details: { message: 'Error handling operational' } }
           } catch (error) {
-            return { 
-              status: 'unhealthy', 
-              details: { 
-                message: 'Error handling failure', 
-                error: error instanceof Error ? error.message : String(error) 
-              } 
+            return {
+              status: 'unhealthy',
+              details: {
+                message: 'Error handling failure',
+                error: error instanceof Error ? error.message : String(error),
+              },
             }
           }
-        }
-      }
+        },
+      },
     ]
 
     healthChecks.forEach(check => {
@@ -203,7 +208,7 @@ export class MonitoringIntegration {
         collect: () => {
           // This would be implemented with actual metric collection
           return 0
-        }
+        },
       },
       {
         name: 'monitoring_operation_duration_seconds',
@@ -214,7 +219,7 @@ export class MonitoringIntegration {
         collect: () => {
           // This would be implemented with actual metric collection
           return 0
-        }
+        },
       },
       {
         name: 'monitoring_errors_total',
@@ -224,8 +229,8 @@ export class MonitoringIntegration {
         collect: () => {
           // This would be implemented with actual metric collection
           return 0
-        }
-      }
+        },
+      },
     ]
 
     metrics.forEach(metric => {
@@ -238,7 +243,7 @@ export class MonitoringIntegration {
    */
   startOperation(
     operationName: string,
-    context: Partial<MonitoringContext> = {}
+    context: Partial<MonitoringContext> = {},
   ): string {
     const traceId = this.generateTraceId()
     const spanId = this.generateSpanId()
@@ -250,12 +255,12 @@ export class MonitoringIntegration {
       component: context.component || 'unknown',
       version: this.config.serviceVersion,
       tags: context.tags || {},
-      ...context
+      ...context,
     }
 
     this.activeOperations.set(operationId, {
       startTime: Date.now(),
-      context: monitoringContext
+      context: monitoringContext,
     })
 
     // Log operation start
@@ -263,14 +268,14 @@ export class MonitoringIntegration {
       ...monitoringContext,
       operation: operationName,
       operationId,
-      phase: 'start'
+      phase: 'start',
     })
 
     // Record metric
     if (this.config.enableMetricsCollection) {
       this.observability.recordMetric('monitoring_operations_total', 1, {
         operation_type: operationName,
-        component: monitoringContext.component || 'unknown'
+        component: monitoringContext.component || 'unknown',
       })
     }
 
@@ -283,7 +288,7 @@ export class MonitoringIntegration {
   endOperation(
     operationId: string,
     result: 'success' | 'failure' | 'error',
-    details: any = {}
+    details: any = {},
   ): void {
     const operation = this.activeOperations.get(operationId)
     if (!operation) {
@@ -301,14 +306,14 @@ export class MonitoringIntegration {
       result,
       duration,
       phase: 'end',
-      details
+      details,
     })
 
     // Record duration metric
     if (this.config.enableMetricsCollection) {
       this.observability.recordMetric('monitoring_operation_duration_seconds', duration / 1000, {
         operation_type: context.operation || 'unknown',
-        component: context.component || 'unknown'
+        component: context.component || 'unknown',
       })
     }
 
@@ -316,7 +321,7 @@ export class MonitoringIntegration {
     if (result === 'error' && this.config.enableMetricsCollection) {
       this.observability.recordMetric('monitoring_errors_total', 1, {
         error_type: details.errorType || 'unknown',
-        component: context.component || 'unknown'
+        component: context.component || 'unknown',
       })
     }
 
@@ -330,11 +335,11 @@ export class MonitoringIntegration {
   logWithMonitoring(
     level: 'debug' | 'info' | 'warn' | 'error',
     message: string,
-    context: Partial<MonitoringContext> = {}
+    context: Partial<MonitoringContext> = {},
   ): void {
     const monitoringContext: MonitoringContext = {
       version: this.config.serviceVersion,
-      ...context
+      ...context,
     }
 
     this.logger[level](message, monitoringContext)
@@ -356,7 +361,7 @@ export class MonitoringIntegration {
     this.logger.logHttpRequest({
       ...context,
       component: 'http-server',
-      version: this.config.serviceVersion
+      version: this.config.serviceVersion,
     })
 
     // Record HTTP metrics
@@ -364,12 +369,12 @@ export class MonitoringIntegration {
       this.observability.recordMetric('http_requests_total', 1, {
         method: context.method,
         path: context.path,
-        status: context.statusCode.toString()
+        status: context.statusCode.toString(),
       })
 
       this.observability.recordMetric('http_request_duration_seconds', context.duration / 1000, {
         method: context.method,
-        path: context.path
+        path: context.path,
       })
     }
   }
@@ -381,24 +386,24 @@ export class MonitoringIntegration {
     operation: string,
     query: string,
     duration: number,
-    context: Partial<MonitoringContext> = {}
+    context: Partial<MonitoringContext> = {},
   ): void {
     this.logger.logDatabaseOperation(operation, query, duration, {
       component: 'database',
       version: this.config.serviceVersion,
-      ...context
+      ...context,
     })
 
     // Record database metrics
     if (this.config.enableMetricsCollection) {
       this.observability.recordMetric('database_operations_total', 1, {
         operation,
-        component: context.component || 'database'
+        component: context.component || 'database',
       })
 
       this.observability.recordMetric('database_operation_duration_seconds', duration / 1000, {
         operation,
-        component: context.component || 'database'
+        component: context.component || 'database',
       })
     }
   }
@@ -410,19 +415,19 @@ export class MonitoringIntegration {
     const monitoringContext: MonitoringContext = {
       component: context.component || 'unknown',
       version: this.config.serviceVersion,
-      ...context
+      ...context,
     }
 
     this.errorHandler.handleError(error, {
       ...context,
-      monitoringContext
+      monitoringContext,
     } as any)
 
     // Record error metrics
     if (this.config.enableMetricsCollection) {
       this.observability.recordMetric('monitoring_errors_total', 1, {
         error_type: error.name,
-        component: monitoringContext.component || 'unknown'
+        component: monitoringContext.component || 'unknown',
       })
     }
   }
@@ -442,7 +447,7 @@ export class MonitoringIntegration {
       metrics: this.observability.getMetrics(),
       loggerMetrics: this.logger.getMetrics(),
       activeOperations: this.activeOperations.size,
-      uptime: process.uptime()
+      uptime: process.uptime(),
     }
   }
 
@@ -478,7 +483,7 @@ export const DEFAULT_MONITORING_CONFIGS = {
     enableDistributedTracing: false,
     logLevel: 'debug' as const,
     serviceVersion: '1.0.0',
-    environment: 'development' as const
+    environment: 'development' as const,
   },
   staging: {
     enableStructuredLogging: true,
@@ -488,7 +493,7 @@ export const DEFAULT_MONITORING_CONFIGS = {
     enableDistributedTracing: true,
     logLevel: 'info' as const,
     serviceVersion: '1.0.0',
-    environment: 'staging' as const
+    environment: 'staging' as const,
   },
   production: {
     enableStructuredLogging: true,
@@ -498,8 +503,8 @@ export const DEFAULT_MONITORING_CONFIGS = {
     enableDistributedTracing: true,
     logLevel: 'warn' as const,
     serviceVersion: '1.0.0',
-    environment: 'production' as const
-  }
+    environment: 'production' as const,
+  },
 }
 
 // Export types

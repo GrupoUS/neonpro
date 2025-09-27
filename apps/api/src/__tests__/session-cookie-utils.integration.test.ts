@@ -4,7 +4,7 @@
  * Security: Critical - Session cookie utilities integration tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { SessionCookieUtils } from '../security/session-cookie-utils'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
 import { SecurityValidationService } from '../services/security-validation-service'
@@ -33,7 +33,7 @@ describe('Session Cookie Utils Integration Tests', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks()
-    
+
     // Initialize services
     cookieUtils = SessionCookieUtils
     sessionService = HealthcareSessionManagementService
@@ -88,7 +88,7 @@ describe('Session Cookie Utils Integration Tests', () => {
       const cookie = await cookieUtils.generateSessionCookie(sessionData)
 
       const decodedPayload = await cookieUtils.decodeCookiePayload(cookie.value)
-      
+
       expect(decodedPayload.sessionId).toBe('session-123')
       expect(decodedPayload.userRole).toBe('radiologist')
       expect(decodedPayload.healthcareProvider).toBe('Hospital São Lucas')
@@ -108,7 +108,7 @@ describe('Session Cookie Utils Integration Tests', () => {
       const cookie = await cookieUtils.generateSessionCookie(sessionData)
 
       const decodedPayload = await cookieUtils.decodeCookiePayload(cookie.value)
-      
+
       expect(decodedPayload.lgpdConsentVersion).toBe('1.0')
       expect(decodedPayload.dataProcessingConsent).toBe(true)
       expect(decodedPayload.complianceMetadata).toBeDefined()
@@ -118,7 +118,7 @@ describe('Session Cookie Utils Integration Tests', () => {
       const invalidSessionData = null
 
       await expect(
-        cookieUtils.generateSessionCookie(invalidSessionData)
+        cookieUtils.generateSessionCookie(invalidSessionData),
       ).rejects.toThrow('Invalid session data')
     })
   })
@@ -198,7 +198,9 @@ describe('Session Cookie Utils Integration Tests', () => {
       // Attempt to tamper with cookie value
       const decoded = JSON.parse(Buffer.from(cookie.value.split('.')[0], 'base64').toString())
       decoded.userRole = 'system_administrator' // Privilege escalation attempt
-      const tamperedValue = `${Buffer.from(JSON.stringify(decoded)).toString('base64')}.${cookie.value.split('.')[1]}`
+      const tamperedValue = `${Buffer.from(JSON.stringify(decoded)).toString('base64')}.${
+        cookie.value.split('.')[1]
+      }`
 
       const result = await cookieUtils.validateSessionCookie(tamperedValue)
 
@@ -490,7 +492,7 @@ describe('Session Cookie Utils Integration Tests', () => {
             sessionId: `session-${i}`,
             userId: `user-${i}`,
             userRole: 'physician',
-          })
+          }),
         )
       }
 
@@ -499,8 +501,7 @@ describe('Session Cookie Utils Integration Tests', () => {
       const endTime = performance.now()
 
       const successfulResults = results.filter(
-        (result): result is PromiseFulfilledResult<any> =>
-          result.status === 'fulfilled'
+        (result): result is PromiseFulfilledResult<any> => result.status === 'fulfilled',
       )
 
       expect(successfulResults.length).toBe(operationCount)
@@ -595,7 +596,7 @@ describe('Session Cookie Utils Integration Tests', () => {
       }
 
       await expect(
-        cookieUtils.generateSessionCookie(largeSessionData)
+        cookieUtils.generateSessionCookie(largeSessionData),
       ).rejects.toThrow('Cookie size exceeds limits')
     })
 

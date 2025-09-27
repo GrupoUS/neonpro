@@ -74,7 +74,7 @@ export function initializeSentryBrowser(): void {
       // Browser-specific integrations
       integrations: [
         Sentry.browserTracingIntegration({
-          requestInterceptor: (request) => {
+          requestInterceptor: request => {
             // Remove sensitive headers from browser requests
             if (request.headers) {
               delete request.headers.authorization
@@ -108,7 +108,7 @@ export function initializeSentryBrowser(): void {
         // Filter out sensitive data from browser breadcrumbs
         if (breadcrumb.data) {
           const sanitizedData = { ...breadcrumb.data }
-          
+
           // Remove sensitive fields
           const sensitiveFields = [
             'password',
@@ -122,13 +122,13 @@ export function initializeSentryBrowser(): void {
             'cvv',
             'expiry',
           ]
-          
+
           sensitiveFields.forEach(field => {
             if (field in sanitizedData) {
               ;(sanitizedData as any)[field] = '[Redacted]'
             }
           })
-          
+
           breadcrumb.data = sanitizedData
         }
         return breadcrumb

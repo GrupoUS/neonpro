@@ -777,11 +777,11 @@ export class EnhancedPerformanceOptimizationService {
       }, timeoutMs)
 
       fn()
-        .then(async (result) => {
+        .then(async result => {
           clearTimeout(timer)
           resolve(result)
         })
-        .catch(async (error) => {
+        .catch(async error => {
           clearTimeout(timer)
           reject(error)
         })

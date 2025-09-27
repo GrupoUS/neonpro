@@ -4,12 +4,12 @@
  * Routes to V2 implementation with backward compatibility
  */
 
-import { zValidator } from '@hono/zod-validator'
-import { Context, Hono, Next } from 'hono'
 import { AIChatService } from '@/services/ai-chat-service'
 import { ComprehensiveAuditService } from '@/services/audit-service'
 import { LGPDService } from '@/services/lgpd-service'
 import { PatientService } from '@/services/patient-service'
+import { zValidator } from '@hono/zod-validator'
+import { Context, Hono, Next } from 'hono'
 
 // Type definitions
 interface ServiceInterface {

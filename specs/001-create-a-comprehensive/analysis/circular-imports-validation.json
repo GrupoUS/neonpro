@@ -1,0 +1,325 @@
+{
+  "analysis_date": "2025-09-26T21:23:16.482413",
+  "task": "T011e - Circular import validation",
+  "method": "Dependency graph analysis with cycle detection",
+  "packages_analyzed": [
+    "healthcare-core",
+    "database",
+    "security",
+    "ai-services",
+    "ui",
+    "utils",
+    "shared",
+    "types"
+  ],
+  "dependency_graph": {
+    "healthcare-core": [
+      "database",
+      "ai-services",
+      "utils",
+      "security"
+    ],
+    "database": [
+      "utils",
+      "security"
+    ],
+    "security": [
+      "database",
+      "utils",
+      "core-services/analytics/ml"
+    ],
+    "ai-services": [
+      "healthcare-core",
+      "utils",
+      "shared"
+    ],
+    "ui": [
+      "healthcare-core",
+      "utils"
+    ],
+    "shared": [
+      "types"
+    ]
+  },
+  "circular_dependencies": [
+    {
+      "cycle_id": "cycle_1",
+      "packages_involved": [
+        "database",
+        "security",
+        "database"
+      ],
+      "cycle_length": 2,
+      "dependency_chain": "database \u2192 security \u2192 database",
+      "risk_level": "MEDIUM",
+      "impact": "Circular dependency can cause build issues and runtime errors"
+    },
+    {
+      "cycle_id": "cycle_2",
+      "packages_involved": [
+        "healthcare-core",
+        "ai-services",
+        "healthcare-core"
+      ],
+      "cycle_length": 2,
+      "dependency_chain": "healthcare-core \u2192 ai-services \u2192 healthcare-core",
+      "risk_level": "MEDIUM",
+      "impact": "Circular dependency can cause build issues and runtime errors"
+    }
+  ],
+  "dependency_chains": {},
+  "risk_assessment": {
+    "overall_risk": "MEDIUM",
+    "status": "LIMITED_CIRCULAR_DEPENDENCIES",
+    "recommendation": "Review and refactor identified cycles"
+  },
+  "summary": {
+    "total_packages": 8,
+    "circular_dependencies_found": 2,
+    "risk_level": "MEDIUM",
+    "affected_packages": [
+      "ai-services",
+      "database",
+      "healthcare-core",
+      "security"
+    ]
+  },
+  "packages_info": {
+    "healthcare-core": {
+      "path": "/home/vibecode/neonpro/packages/healthcare-core",
+      "internal_dependencies": [
+        "database",
+        "ai-services",
+        "utils",
+        "security"
+      ],
+      "external_dependencies": [],
+      "import_statements": []
+    },
+    "database": {
+      "path": "/home/vibecode/neonpro/packages/database",
+      "internal_dependencies": [
+        "utils"
+      ],
+      "external_dependencies": [],
+      "import_statements": [
+        {
+          "file": "scripts/sync-types.ts",
+          "import": "@neonpro/security"
+        },
+        {
+          "file": "src/client-full.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/logging.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/migration.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/utils/validation.ts",
+          "import": "@neonpro/utils"
+        }
+      ]
+    },
+    "security": {
+      "path": "/home/vibecode/neonpro/packages/security",
+      "internal_dependencies": [
+        "database",
+        "utils"
+      ],
+      "external_dependencies": [],
+      "import_statements": [
+        {
+          "file": "src/ml/index.ts",
+          "import": "@neonpro/core-services/analytics/ml"
+        },
+        {
+          "file": "src/ml/index.d.ts",
+          "import": "@neonpro/core-services/analytics/ml"
+        },
+        {
+          "file": "src/ml/index.js",
+          "import": "@neonpro/core-services/analytics/ml"
+        },
+        {
+          "file": "src/analytics/ml/index.ts",
+          "import": "@neonpro/core-services/analytics/ml"
+        },
+        {
+          "file": "src/analytics/ml/index.d.ts",
+          "import": "@neonpro/core-services/analytics/ml"
+        },
+        {
+          "file": "src/analytics/ml/index.js",
+          "import": "@neonpro/core-services/analytics/ml"
+        }
+      ]
+    },
+    "ai-services": {
+      "path": "/home/vibecode/neonpro/packages/ai-services",
+      "internal_dependencies": [
+        "utils"
+      ],
+      "external_dependencies": [],
+      "import_statements": [
+        {
+          "file": "src/services/pii-redaction.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/services/clinical-ai-service.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/healthcare-compliance-service.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/provider-management-service.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/chat-service.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/clinical-decision-support/PredictiveHealthAnalytics.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/clinical-decision-support/AestheticTreatmentAdvisor.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/clinical-decision-support/ClinicalDecisionSupportEngine.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/services/clinical-decision-support/AGUIProtocolIntegration.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/providers/provider-factory.ts",
+          "import": "@neonpro/utils"
+        },
+        {
+          "file": "src/providers/provider-factory.ts",
+          "import": "@neonpro/healthcare-core"
+        },
+        {
+          "file": "src/providers/base-ai-provider.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/providers/base-provider.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/providers/google-ai-provider.ts",
+          "import": "@neonpro/shared"
+        },
+        {
+          "file": "src/providers/ai-provider-factory.ts",
+          "import": "@neonpro/shared"
+        }
+      ]
+    },
+    "ui": {
+      "path": "/home/vibecode/neonpro/packages/ui",
+      "internal_dependencies": [
+        "healthcare-core",
+        "utils"
+      ],
+      "external_dependencies": [],
+      "import_statements": []
+    },
+    "utils": {
+      "path": "/home/vibecode/neonpro/packages/utils",
+      "internal_dependencies": [],
+      "external_dependencies": [],
+      "import_statements": []
+    },
+    "shared": {
+      "path": "/home/vibecode/neonpro/packages/shared",
+      "internal_dependencies": [
+        "types"
+      ],
+      "external_dependencies": [],
+      "import_statements": []
+    },
+    "types": {
+      "path": "/home/vibecode/neonpro/packages/types",
+      "internal_dependencies": [],
+      "external_dependencies": [],
+      "import_statements": []
+    }
+  }
+}

@@ -7,6 +7,7 @@
 
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared'
+import * as v from 'valibot'
 import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator'
 import { requireAuth } from '../../middleware/authn'
 import { dataProtection } from '../../middleware/lgpd-middleware'
@@ -14,7 +15,6 @@ import { ComprehensiveAuditService } from '../../services/audit-service'
 import { LGPDService } from '../../services/lgpd-service'
 import { NotificationService } from '../../services/notification-service'
 import { PatientService } from '../../services/patient-service'
-import * as v from 'valibot'
 
 const app = new OpenAPIHono()
 

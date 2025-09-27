@@ -194,7 +194,9 @@ export class PerformanceMonitor {
     const requests = new Map<string, { count: number; resetTime: number }>()
 
     return async (c: Context, next: Next) => {
-      const key = options.keyGenerator ? options.keyGenerator(c) : c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'
+      const key = options.keyGenerator
+        ? options.keyGenerator(c)
+        : c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown'
       const now = Date.now()
 
       let record = requests.get(key)

@@ -19,12 +19,26 @@ const NotificationQuerySchema = z.object({
   limit: z.number().optional().default(50),
   offset: z.number().optional().default(0),
   status: z.enum(['scheduled', 'sent', 'failed', 'cancelled']).optional(),
-  type: z.enum(['reminder_24h', 'reminder_1h', 'confirmation', 'followup', 'cancellation', 'rescheduled']).optional(),
+  type: z.enum([
+    'reminder_24h',
+    'reminder_1h',
+    'confirmation',
+    'followup',
+    'cancellation',
+    'rescheduled',
+  ]).optional(),
   clinicId: z.string().optional(),
 })
 
 const ScheduleNotificationSchema = z.object({
-  notificationType: z.enum(['reminder_24h', 'reminder_1h', 'confirmation', 'followup', 'cancellation', 'rescheduled']),
+  notificationType: z.enum([
+    'reminder_24h',
+    'reminder_1h',
+    'confirmation',
+    'followup',
+    'cancellation',
+    'rescheduled',
+  ]),
   recipientEmail: z.string().email().optional(),
   recipientPhone: z.string().optional(),
   title: z.string().min(1).max(255),
@@ -51,7 +65,16 @@ const CreateServiceCategorySchema = z.object({
 // Appointment Template Schemas
 const AppointmentTemplateQuerySchema = z.object({
   clinicId: z.string().optional(),
-  category: z.enum(['consultation', 'facial', 'body', 'laser', 'injectable', 'surgery', 'followup', 'emergency']).optional(),
+  category: z.enum([
+    'consultation',
+    'facial',
+    'body',
+    'laser',
+    'injectable',
+    'surgery',
+    'followup',
+    'emergency',
+  ]).optional(),
   isActive: z.boolean().optional().default(true),
   isDefault: z.boolean().optional(),
 })
@@ -59,7 +82,16 @@ const AppointmentTemplateQuerySchema = z.object({
 const CreateAppointmentTemplateSchema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().optional(),
-  category: z.enum(['consultation', 'facial', 'body', 'laser', 'injectable', 'surgery', 'followup', 'emergency']),
+  category: z.enum([
+    'consultation',
+    'facial',
+    'body',
+    'laser',
+    'injectable',
+    'surgery',
+    'followup',
+    'emergency',
+  ]),
   serviceTypeId: z.string(),
   duration: z.number().int().min(15).max(480).default(60),
   price: z.number().min(0).default(0),
@@ -111,7 +143,9 @@ const CreateProfessionalServiceSchema = z.object({
   professionalId: z.string(),
   serviceId: z.string(),
   isPrimary: z.boolean().optional().default(false),
-  proficiencyLevel: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).default('intermediate'),
+  proficiencyLevel: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).default(
+    'intermediate',
+  ),
   hourlyRate: z.number().min(0).optional(),
   notes: z.string().optional(),
 })

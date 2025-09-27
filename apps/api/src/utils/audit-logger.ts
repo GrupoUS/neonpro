@@ -31,7 +31,7 @@ export const AUDIT_CATEGORIES = {
 
 export type AuditCategory = keyof typeof AUDIT_CATEGORIES
 
-export type AuditAction = 
+export type AuditAction =
   | 'CREATE'
   | 'UPDATE'
   | 'DELETE'
@@ -163,7 +163,7 @@ class AuditLogger {
     patientId: string,
     userId: string,
     details?: any,
-    result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS'
+    result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS',
   ): void {
     this.logAudit({
       userId,
@@ -187,7 +187,7 @@ class AuditLogger {
     amount?: number,
     paymentMethod?: string,
     details?: any,
-    result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS'
+    result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS',
   ): void {
     this.logAudit({
       userId,
@@ -217,7 +217,7 @@ class AuditLogger {
     professionalId: string,
     patientId?: string,
     details?: any,
-    result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS'
+    result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS',
   ): void {
     this.logAudit({
       professionalId,
@@ -244,7 +244,7 @@ class AuditLogger {
     patientId?: string,
     professionalId?: string,
     result: 'SUCCESS' | 'FAILURE' | 'PENDING' = 'SUCCESS',
-    details?: any
+    details?: any,
   ): void {
     this.logAudit({
       userId,
@@ -274,7 +274,7 @@ class AuditLogger {
     recordType: string,
     action: 'VIEW' | 'EXPORT' | 'UPDATE',
     result: 'SUCCESS' | 'FAILURE' = 'SUCCESS',
-    details?: any
+    details?: any,
   ): void {
     this.logAudit({
       userId,
@@ -307,10 +307,10 @@ class AuditLogger {
     entityId: string,
     entityType: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): AuditLogEntry[] {
     // In a real implementation, this would query the audit database
-    return this.auditQueue.filter(entry => 
+    return this.auditQueue.filter(entry =>
       entry.resourceId === entityId &&
       entry.resource === entityType &&
       (!startDate || new Date(entry.timestamp) >= startDate) &&
@@ -323,7 +323,7 @@ class AuditLogger {
    */
   generateComplianceReport(
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): {
     totalEvents: number
     byCategory: Record<AuditCategory, number>
@@ -356,15 +356,15 @@ class AuditLogger {
     filteredEntries.forEach(entry => {
       // Count by category
       report.byCategory[entry.category] = (report.byCategory[entry.category] || 0) + 1
-      
+
       // Count by result
       report.byResult[entry.result]++
-      
+
       // Count by risk level
       if (entry.risk) {
         report.riskDistribution[entry.risk.level]++
       }
-      
+
       // Check for compliance issues
       if (entry.compliance && !entry.compliance.lgpd) {
         report.complianceIssues.push(`LGPD violation in ${entry.category}:${entry.action}`)
@@ -395,7 +395,9 @@ class AuditLogger {
     }
   }
 
-  private assessRisk(entry: AuditLogEntry): { level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; factors?: string[] } {
+  private assessRisk(
+    entry: AuditLogEntry,
+  ): { level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; factors?: string[] } {
     const factors: string[] = []
     let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW'
 
@@ -450,7 +452,9 @@ class AuditLogger {
     }
   }
 
-  private increaseRiskLevel(current: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  private increaseRiskLevel(
+    current: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
+  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     const levels = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] as const
     const currentIndex = levels.indexOf(current)
     return levels[Math.min(currentIndex + 1, levels.length - 1)]
@@ -460,7 +464,7 @@ class AuditLogger {
     // In a real implementation, this would persist the audit logs to a secure database
     const processed = [...this.auditQueue]
     this.auditQueue = []
-    
+
     // Log processing completion
     this.logger.info(`Processed ${processed.length} audit events`, {
       auditType: 'batch_processing',
@@ -483,5 +487,5 @@ export const auditLogger = createAuditLogger({
 })
 
 // Export types and constants
-export type { AuditLoggerConfig, AuditLogEntry }
-export { type AuditCategory, type AuditAction }
+export type { AuditLogEntry, AuditLoggerConfig }
+export { type AuditAction, type AuditCategory }

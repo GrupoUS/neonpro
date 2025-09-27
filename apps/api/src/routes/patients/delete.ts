@@ -244,7 +244,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
         requestedBy: userId,
         reason: deletionReason,
       })
-      .catch(async (err) => {
+      .catch(async err => {
         console.error('LGPD data deletion processing failed:', err)
       })
 
@@ -276,7 +276,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
         complianceContext: 'LGPD',
         sensitivityLevel: 'critical',
       })
-      .catch(async (err) => {
+      .catch(async err => {
         console.error('Audit logging failed:', err)
       })
 
@@ -297,7 +297,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
           priority: 'high',
           lgpdConsent: true,
         })
-        .catch(async (err) => {
+        .catch(async err => {
           console.error('Deletion notification failed:', err)
         })
     }

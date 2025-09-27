@@ -1,24 +1,24 @@
 /**
  * AI Agent Cache Invalidation Service
- * 
+ *
  * Provides intelligent cache invalidation for AI agent data with
  * healthcare compliance and performance optimization
- * 
+ *
  * Features: Multi-tier cache invalidation
  * Compliance: LGPD, ANVISA, CFM
  * Performance: Real-time invalidation with event-driven architecture
  */
 
-import { 
-  CacheBackend, 
-  CacheConfig, 
-  CacheEntry, 
+import { logger } from '@/utils/healthcare-errors'
+import {
+  CacheBackend,
+  CacheConfig,
   CacheDataSensitivity,
-  CacheTier 
+  CacheEntry,
+  CacheTier,
 } from '@neonpro/shared/src/services/cache-management'
 import { RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend'
 import { PermissionContext, QueryIntent } from '@neonpro/types'
-import { logger } from "@/utils/healthcare-errors"
 import { EventEmitter } from 'events'
 
 // ============================================================================
@@ -59,7 +59,7 @@ export class AICacheInvalidationService extends EventEmitter {
     cacheHits: 0,
     cacheMisses: 0,
     avgInvalidationTime: 0,
-    lastInvalidation: null as Date | null
+    lastInvalidation: null as Date | null,
   }
 
   constructor(cacheBackend: CacheBackend) {
@@ -80,7 +80,7 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'client',
         action: 'invalidate',
         priority: 'high',
-        ttl: 300 // 5 minutes
+        ttl: 300, // 5 minutes
       },
       {
         id: 'appointment_change',
@@ -88,7 +88,7 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'appointment',
         action: 'invalidate',
         priority: 'medium',
-        ttl: 600 // 10 minutes
+        ttl: 600, // 10 minutes
       },
       {
         id: 'financial_data_change',
@@ -96,7 +96,7 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'financial',
         action: 'invalidate',
         priority: 'critical',
-        ttl: 1800 // 30 minutes
+        ttl: 1800, // 30 minutes
       },
       {
         id: 'medical_data_change',
@@ -104,7 +104,7 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'medical',
         action: 'invalidate',
         priority: 'high',
-        ttl: 900 // 15 minutes
+        ttl: 900, // 15 minutes
       },
       {
         id: 'agent_session_change',
@@ -112,7 +112,7 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'agent_session',
         action: 'invalidate',
         priority: 'high',
-        ttl: 300 // 5 minutes
+        ttl: 300, // 5 minutes
       },
       {
         id: 'permission_change',
@@ -120,7 +120,7 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'client',
         action: 'invalidate',
         priority: 'critical',
-        ttl: 0 // Immediate invalidation
+        ttl: 0, // Immediate invalidation
       },
       {
         id: 'domain_data_change',
@@ -128,8 +128,8 @@ export class AICacheInvalidationService extends EventEmitter {
         entityType: 'client',
         action: 'invalidate',
         priority: 'high',
-        ttl: 600 // 10 minutes
-      }
+        ttl: 600, // 10 minutes
+      },
     ]
 
     defaultRules.forEach(rule => {
@@ -150,7 +150,7 @@ export class AICacheInvalidationService extends EventEmitter {
 
       // Add to processing queue
       this.eventQueue.push(event)
-      
+
       // Emit event for external listeners
       this.emit('cache:invalidation', event)
 
@@ -158,9 +158,8 @@ export class AICacheInvalidationService extends EventEmitter {
         type: event.type,
         entityType: event.entityType,
         entityId: event.entityId,
-        domain: event.domain
+        domain: event.domain,
       })
-
     } catch (error) {
       logger.error('Failed to handle cache invalidation event', { error, event })
     }
@@ -216,7 +215,8 @@ export class AICacheInvalidationService extends EventEmitter {
       logger.error('Failed to process cache invalidation queue', { error })
     } finally {
       this.processing = false
-      this.stats.avgInvalidationTime = (this.stats.avgInvalidationTime + (Date.now() - startTime)) / 2
+      this.stats.avgInvalidationTime = (this.stats.avgInvalidationTime + (Date.now() - startTime)) /
+        2
     }
   }
 
@@ -244,9 +244,8 @@ export class AICacheInvalidationService extends EventEmitter {
       logger.debug('Cache invalidation processed', {
         event: event.type,
         entityType: event.entityType,
-        processingTime: Date.now() - startTime
+        processingTime: Date.now() - startTime,
       })
-
     } catch (error) {
       logger.error('Failed to process cache invalidation event', { error, event })
     }
@@ -272,7 +271,10 @@ export class AICacheInvalidationService extends EventEmitter {
   /**
    * Apply invalidation rule
    */
-  private async applyInvalidationRule(rule: CacheInvalidationRule, event: CacheInvalidationEvent): Promise<void> {
+  private async applyInvalidationRule(
+    rule: CacheInvalidationRule,
+    event: CacheInvalidationEvent,
+  ): Promise<void> {
     const cacheKeys = await this.generateCacheKeys(rule, event)
 
     switch (rule.action) {
@@ -291,7 +293,10 @@ export class AICacheInvalidationService extends EventEmitter {
   /**
    * Generate cache keys for invalidation
    */
-  private async generateCacheKeys(rule: CacheInvalidationRule, event: CacheInvalidationEvent): Promise<string[]> {
+  private async generateCacheKeys(
+    rule: CacheInvalidationRule,
+    event: CacheInvalidationEvent,
+  ): Promise<string[]> {
     const keys: string[] = []
 
     // Generate keys based on event and rule
@@ -353,10 +358,10 @@ export class AICacheInvalidationService extends EventEmitter {
    */
   private getPriorityValue(priority: string): number {
     const priorityMap = {
-      'low': 1,
-      'medium': 2,
-      'high': 3,
-      'critical': 4
+      low: 1,
+      medium: 2,
+      high: 3,
+      critical: 4,
     }
     return priorityMap[priority as keyof typeof priorityMap] || 1
   }
@@ -367,7 +372,7 @@ export class AICacheInvalidationService extends EventEmitter {
   async invalidateByQueryContext(
     intent: QueryIntent,
     permissionContext: PermissionContext,
-    reason: string
+    reason: string,
   ): Promise<void> {
     const event: CacheInvalidationEvent = {
       type: 'data_change',
@@ -375,7 +380,7 @@ export class AICacheInvalidationService extends EventEmitter {
       userId: permissionContext.userId,
       domain: permissionContext.domain,
       timestamp: new Date(),
-      reason
+      reason,
     }
 
     await this.handleDataChange(event)
@@ -386,10 +391,10 @@ export class AICacheInvalidationService extends EventEmitter {
    */
   private mapIntentToEntityType(intent: QueryIntent): CacheInvalidationEvent['entityType'] {
     const mapping: Record<QueryIntent, CacheInvalidationEvent['entityType']> = {
-      'client_data': 'client',
-      'appointments': 'appointment',
-      'financial': 'financial',
-      'medical': 'medical'
+      client_data: 'client',
+      appointments: 'appointment',
+      financial: 'financial',
+      medical: 'medical',
     }
 
     return mapping[intent] || 'client'
@@ -404,7 +409,7 @@ export class AICacheInvalidationService extends EventEmitter {
       entityType: 'client',
       domain,
       timestamp: new Date(),
-      reason
+      reason,
     }
 
     await this.handleDataChange(event)
@@ -419,7 +424,7 @@ export class AICacheInvalidationService extends EventEmitter {
       entityType: 'client',
       userId,
       timestamp: new Date(),
-      reason
+      reason,
     }
 
     await this.handleDataChange(event)
@@ -431,20 +436,19 @@ export class AICacheInvalidationService extends EventEmitter {
   async invalidateAll(reason: string): Promise<void> {
     try {
       logger.warn('Complete cache invalidation requested', { reason })
-      
+
       // Clear all cache entries with AI prefix
       await this.cacheBackend.clear()
-      
+
       // Reset statistics
       this.stats.totalInvalidations = 0
       this.stats.cacheHits = 0
       this.stats.cacheMisses = 0
-      
+
       // Emit emergency event
       this.emit('cache:emergency_invalidation', { reason, timestamp: new Date() })
-      
+
       logger.info('Complete cache invalidation completed', { reason })
-      
     } catch (error) {
       logger.error('Failed to perform complete cache invalidation', { error, reason })
     }
@@ -486,19 +490,19 @@ export class AICacheInvalidationService extends EventEmitter {
     try {
       // Test cache connectivity
       await this.cacheBackend.get('health_check')
-      
+
       return {
         healthy: true,
         queueSize: this.eventQueue.length,
         processing: this.processing,
-        lastInvalidation: this.stats.lastInvalidation || undefined
+        lastInvalidation: this.stats.lastInvalidation || undefined,
       }
     } catch (error) {
       logger.error('Cache health check failed', { error })
       return {
         healthy: false,
         queueSize: this.eventQueue.length,
-        processing: this.processing
+        processing: this.processing,
       }
     }
   }

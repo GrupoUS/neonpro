@@ -16,9 +16,9 @@ const getCrypto = () => {
     return {
       createHash: () => ({
         update: () => ({
-          digest: (encoding: string) => Math.random().toString(36).substring(7)
-        })
-      })
+          digest: (encoding: string) => Math.random().toString(36).substring(7),
+        }),
+      }),
     }
   }
 }
@@ -35,8 +35,8 @@ const createHash = cryptoModule.createHash || ((algorithm: string) => ({
         hash = hash & hash // Convert to 32-bit integer
       }
       return Math.abs(hash).toString(16)
-    }
-  })
+    },
+  }),
 }))
 import { Redis } from 'ioredis'
 import { z } from 'zod'

@@ -3,8 +3,8 @@
  * Testing Express-to-Hono migration fixes
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { Context } from 'hono'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { QueryTimeoutMiddleware } from '../../middleware/query-timeout-middleware'
 
 // Mock Hono Context
@@ -83,7 +83,7 @@ describe('QueryTimeoutMiddleware - Express-to-Hono Migration', () => {
 
     it('should properly handle Hono context in middleware execution', async () => {
       const next = vi.fn()
-      
+
       // This should work after fixing the migration
       await expect(middleware.middleware(mockContext, next)).resolves.not.toThrow()
     })
@@ -93,16 +93,16 @@ describe('QueryTimeoutMiddleware - Express-to-Hono Migration', () => {
     it('should properly set query tracking using Hono context', async () => {
       // This test will pass after fixing the migration
       const next = vi.fn()
-      
+
       await middleware.middleware(mockContext, next)
-      
+
       // Verify that context methods were called correctly
       expect(mockContext.set).toHaveBeenCalled()
     })
 
     it('should extract user ID using Hono context patterns', () => {
       // This test now passes after fixing extractUserId method
-      mockContext.req.header = vi.fn((name) => {
+      mockContext.req.header = vi.fn(name => {
         if (name === 'x-user-id') return 'user-123'
         return undefined
       })
@@ -116,7 +116,7 @@ describe('QueryTimeoutMiddleware - Express-to-Hono Migration', () => {
     it('should handle timeout using Hono response patterns', () => {
       // This test will pass after fixing handleQueryTimeout method
       const queryId = 'test-query'
-      
+
       expect(() => {
         // @ts-ignore - intentionally accessing private method for testing
         middleware['handleQueryTimeout'](queryId, mockContext)

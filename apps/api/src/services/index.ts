@@ -41,9 +41,9 @@ export * from './index-optimizer'
 export * from './metrics'
 
 // Security & Audit
+export * from './ai-cache-invalidation-service'
 export * from './ai-security-service'
 export * from './ai-validation-service'
-export * from './ai-cache-invalidation-service'
 export * from './audit-service'
 export * from './lgpd-audit-service'
 export * from './lgpd-consent-service'

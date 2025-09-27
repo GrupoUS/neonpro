@@ -1,18 +1,23 @@
 /**
  * Healthcare Session Management Service Integration Tests
- * 
+ *
  * Comprehensive integration tests for healthcare-compliant session management
  * with LGPD compliance, patient data access logging, and audit trail integration.
- * 
+ *
  * Security: Critical - Healthcare session management service tests
  * Test Coverage: Healthcare Session Management Service
  * Compliance: LGPD, ANVISA, CFM, HIPAA
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { HealthcareSessionManagementService, HealthcareSession, SessionValidationResult, DataAccessEntry } from '../services/healthcare-session-management-service'
-import { JWTSecurityService } from '../services/jwt-security-service'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuditTrailService } from '../services/audit-trail-service'
+import {
+  DataAccessEntry,
+  HealthcareSession,
+  HealthcareSessionManagementService,
+  SessionValidationResult,
+} from '../services/healthcare-session-management-service'
+import { JWTSecurityService } from '../services/jwt-security-service'
 import { SecurityValidationService } from '../services/security-validation-service'
 
 // Mock date utilities for consistent testing
@@ -27,7 +32,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset services
     sessionService = HealthcareSessionManagementService
     jwtService = JWTSecurityService
@@ -62,7 +67,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
           anvisaCompliance: true,
-        }
+        },
       )
 
       expect(session).toBeDefined()
@@ -88,8 +93,8 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           {
             // Missing LGPD consent
             patientId: 'patient-456',
-          }
-        )
+          },
+        ),
       ).rejects.toThrow('LGPD consent is required for healthcare sessions')
     })
 
@@ -107,8 +112,8 @@ describe('Healthcare Session Management Service Integration Tests', () => {
               retentionPeriod: 365,
             },
             // Missing CFM license
-          }
-        )
+          },
+        ),
       ).rejects.toThrow('CFM license is required for healthcare professionals')
     })
 
@@ -126,7 +131,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       const expectedExpiry = new Date(mockDate.getTime() + 30 * 60 * 1000) // 30 minutes
@@ -150,12 +155,12 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       // Validate session
       const result = await sessionService.validateSession(session.id)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.session).toEqual(session)
       expect(result.warnings).toHaveLength(0)
@@ -176,7 +181,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       // Manually expire session
@@ -184,14 +189,14 @@ describe('Healthcare Session Management Service Integration Tests', () => {
 
       // Validate expired session
       const result = await sessionService.validateSession(session.id)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.error).toContain('expired')
     })
 
     it('should reject non-existent sessions', async () => {
       const result = await sessionService.validateSession('non-existent-session')
-      
+
       expect(result.isValid).toBe(false)
       expect(result.error).toContain('not found')
     })
@@ -211,7 +216,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       // Mock current time to be near expiry
@@ -219,7 +224,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       vi.setSystemTime(nearExpiryTime)
 
       const result = await sessionService.validateSession(session.id)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.warnings).toContain('Session expires in 2 minutes')
     })
@@ -241,7 +246,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       }
 
       const result = await sessionService.logDataAccess(sessionId, accessEntry)
-      
+
       expect(result).toBe(true)
     })
 
@@ -259,7 +264,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       }
 
       await expect(
-        sessionService.logDataAccess('invalid-session', accessEntry)
+        sessionService.logDataAccess('invalid-session', accessEntry),
       ).rejects.toThrow('Invalid session')
     })
 
@@ -278,7 +283,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       const accessEntry: Omit<DataAccessEntry, 'timestamp'> = {
@@ -294,7 +299,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       }
 
       await expect(
-        sessionService.logDataAccess(session.id, accessEntry)
+        sessionService.logDataAccess(session.id, accessEntry),
       ).rejects.toThrow('Insufficient LGPD consent for sensitive data access')
     })
 
@@ -312,7 +317,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       const accessEntry: Omit<DataAccessEntry, 'timestamp'> = {
@@ -328,7 +333,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       }
 
       const result = await sessionService.logDataAccess(session.id, accessEntry)
-      
+
       expect(result).toBe(true)
     })
   })
@@ -348,13 +353,13 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       await sessionService.expireSession(session.id, 'user_logout')
 
       const result = await sessionService.validateSession(session.id)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.error).toContain('expired')
     })
@@ -374,7 +379,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       const session2 = await sessionService.createSession(
@@ -390,14 +395,14 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       await sessionService.revokeAllUserSessions('user-123', 'security_incident')
 
       const result1 = await sessionService.validateSession(session1.id)
       const result2 = await sessionService.validateSession(session2.id)
-      
+
       expect(result1.isValid).toBe(false)
       expect(result2.isValid).toBe(false)
       expect(result1.error).toContain('revoked')
@@ -419,7 +424,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       await sessionService.createSession(
@@ -435,12 +440,12 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-67890-SP',
           specialty: 'neurology',
-        }
+        },
       )
 
       // Clean up expired sessions
       const cleanedCount = await sessionService.cleanupExpiredSessions()
-      
+
       expect(cleanedCount).toBeGreaterThanOrEqual(0)
     })
   })
@@ -461,7 +466,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
           patientId: 'patient-456',
-        }
+        },
       )
 
       // Log some data access
@@ -509,7 +514,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
           anvisaCompliance: true,
-        }
+        },
       )
 
       const report = await sessionService.generateComplianceReport({
@@ -540,11 +545,11 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       const auditResult = await sessionService.auditSessionCompliance(session.id)
-      
+
       expect(auditResult).toBeDefined()
       expect(auditResult.sessionId).toBe(session.id)
       expect(auditResult.isCompliant).toBe(true)
@@ -570,7 +575,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       expect(spy).toHaveBeenCalledWith(
@@ -582,7 +587,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
             healthcareProvider: 'Hospital São Lucas',
             lgpdConsentVersion: '1.0',
           }),
-        })
+        }),
       )
     })
 
@@ -600,7 +605,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       vi.spyOn(validationService, 'validateSessionSecurity').mockResolvedValueOnce({
@@ -610,7 +615,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       })
 
       const securityResult = await sessionService.validateSessionSecurity(session.id)
-      
+
       expect(securityResult.isValid).toBe(true)
       expect(securityResult.securityScore).toBe(95)
     })
@@ -629,7 +634,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       // Log data access from different IP addresses
@@ -658,7 +663,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
       })
 
       const threatResult = await sessionService.detectSuspiciousActivity(session.id)
-      
+
       expect(threatResult.hasThreats).toBe(true)
       expect(threatResult.threats).toContain('multiple_ip_addresses')
     })
@@ -680,7 +685,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
       const endTime = performance.now()
 
@@ -702,7 +707,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
           },
           cfmLicense: 'CRM-12345-SP',
           specialty: 'cardiology',
-        }
+        },
       )
 
       const startTime = performance.now()
@@ -717,7 +722,7 @@ describe('Healthcare Session Management Service Integration Tests', () => {
   describe('Error Handling', () => {
     it('should handle missing required parameters gracefully', async () => {
       await expect(
-        sessionService.createSession('', 'healthcare_professional', 'Hospital São Lucas')
+        sessionService.createSession('', 'healthcare_professional', 'Hospital São Lucas'),
       ).rejects.toThrow('User ID is required')
     })
 
@@ -735,14 +740,14 @@ describe('Healthcare Session Management Service Integration Tests', () => {
               retentionPeriod: 365,
             },
             cfmLicense: 'CRM-12345-SP',
-          }
-        )
+          },
+        ),
       ).rejects.toThrow('LGPD consent version is required')
     })
 
     it('should handle database connection errors gracefully', async () => {
       vi.spyOn(sessionService, 'createSession').mockRejectedValueOnce(
-        new Error('Database connection failed')
+        new Error('Database connection failed'),
       )
 
       await expect(
@@ -758,8 +763,8 @@ describe('Healthcare Session Management Service Integration Tests', () => {
               retentionPeriod: 365,
             },
             cfmLicense: 'CRM-12345-SP',
-          }
-        )
+          },
+        ),
       ).rejects.toThrow('Database connection failed')
     })
   })

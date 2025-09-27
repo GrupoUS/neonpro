@@ -1,16 +1,22 @@
 /**
  * Audit Trail Service Integration Tests
- * 
+ *
  * Comprehensive integration tests for audit trail service
  * with security event logging, compliance reporting, and real-time monitoring.
- * 
+ *
  * Security: Critical - Security event logging and compliance monitoring tests
  * Test Coverage: Audit Trail Service
  * Compliance: LGPD, ANVISA, CFM, HIPAA, GDPR
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { AuditTrailService, AuditEvent, AuditFilter, SecurityEvent, ComplianceReport } from '../services/audit-trail-service'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  AuditEvent,
+  AuditFilter,
+  AuditTrailService,
+  ComplianceReport,
+  SecurityEvent,
+} from '../services/audit-trail-service'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
 import { SecurityValidationService } from '../services/security-validation-service'
 
@@ -25,7 +31,7 @@ describe('Audit Trail Service Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset services
     auditService = AuditTrailService
     sessionService = HealthcareSessionManagementService
@@ -60,7 +66,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const eventId = await auditService.logSecurityEvent(eventData)
-      
+
       expect(eventId).toBeDefined()
       expect(typeof eventId).toBe('string')
     })
@@ -83,7 +89,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const eventId = await auditService.logSecurityEvent(eventData)
-      
+
       expect(eventId).toBeDefined()
       expect(typeof eventId).toBe('string')
     })
@@ -109,7 +115,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const eventId = await auditService.logSecurityEvent(eventData)
-      
+
       expect(eventId).toBeDefined()
       expect(typeof eventId).toBe('string')
     })
@@ -134,7 +140,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const eventId = await auditService.logSecurityEvent(eventData)
-      
+
       expect(eventId).toBeDefined()
       expect(typeof eventId).toBe('string')
     })
@@ -159,7 +165,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const eventId = await auditService.logSecurityEvent(eventData)
-      
+
       expect(eventId).toBeDefined()
       expect(typeof eventId).toBe('string')
     })
@@ -196,7 +202,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const events = await auditService.getAuditEvents(filter)
-      
+
       expect(events).toHaveLength(2)
       expect(events[0].userId).toBe('user-123')
       expect(events[1].userId).toBe('user-123')
@@ -223,7 +229,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const events = await auditService.getAuditEvents(filter)
-      
+
       expect(events.length).toBeGreaterThan(0)
     })
 
@@ -256,7 +262,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const events = await auditService.getAuditEvents(filter)
-      
+
       expect(events).toHaveLength(1)
       expect(events[0].severity).toBe('critical')
     })
@@ -290,7 +296,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const events = await auditService.getAuditEvents(filter)
-      
+
       expect(events).toHaveLength(1)
       expect(events[0].category).toBe('authentication')
     })
@@ -446,7 +452,7 @@ describe('Audit Trail Service Integration Tests', () => {
     it('should detect unusual data access patterns', async () => {
       // Log rapid data access from different IP addresses
       const ipAddresses = ['192.168.1.100', '10.0.0.1', '172.16.0.1', '203.0.113.1', '198.51.100.1']
-      
+
       for (let i = 0; i < ipAddresses.length; i++) {
         await auditService.logSecurityEvent({
           eventType: 'DATA_ACCESS',
@@ -547,7 +553,7 @@ describe('Audit Trail Service Integration Tests', () => {
           severity: 'critical',
           eventType: 'SECURITY_INCIDENT',
           actionRequired: true,
-        })
+        }),
       )
     })
 
@@ -576,7 +582,7 @@ describe('Audit Trail Service Integration Tests', () => {
           severity: 'high',
           eventType: 'COMPLIANCE_VIOLATION',
           actionRequired: true,
-        })
+        }),
       )
     })
   })
@@ -596,7 +602,7 @@ describe('Audit Trail Service Integration Tests', () => {
 
       // Attempt to tamper with audit log
       await expect(
-        auditService.modifyAuditEvent(eventId, { description: 'Modified description' })
+        auditService.modifyAuditEvent(eventId, { description: 'Modified description' }),
       ).rejects.toThrow('Audit log modification not allowed')
     })
 
@@ -613,7 +619,7 @@ describe('Audit Trail Service Integration Tests', () => {
       })
 
       const integrityCheck = await auditService.validateAuditLogIntegrity()
-      
+
       expect(integrityCheck.isValid).toBe(true)
       expect(integrityCheck.checksum).toBeDefined()
     })
@@ -621,7 +627,7 @@ describe('Audit Trail Service Integration Tests', () => {
     it('should detect audit log tampering', async () => {
       // This would test tampering detection in a real implementation
       const integrityCheck = await auditService.validateAuditLogIntegrity()
-      
+
       expect(integrityCheck.isValid).toBe(true)
       expect(integrityCheck.tamperingDetected).toBe(false)
     })
@@ -643,7 +649,7 @@ describe('Audit Trail Service Integration Tests', () => {
 
       // Clean up expired events
       const deletedCount = await auditService.cleanupExpiredEvents()
-      
+
       expect(deletedCount).toBeGreaterThanOrEqual(0)
     })
 
@@ -669,7 +675,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       const events = await auditService.getAuditEvents(filter)
-      
+
       expect(events.length).toBeGreaterThan(0)
       expect(events[0].preserveBeyondRetention).toBe(true)
     })
@@ -733,13 +739,13 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       await expect(
-        auditService.logSecurityEvent(invalidEvent)
+        auditService.logSecurityEvent(invalidEvent),
       ).rejects.toThrow('Missing required field: userId')
     })
 
     it('should handle database connection errors gracefully', async () => {
       vi.spyOn(auditService, 'logSecurityEvent').mockRejectedValueOnce(
-        new Error('Database connection failed')
+        new Error('Database connection failed'),
       )
 
       const eventData: Omit<SecurityEvent, 'id' | 'timestamp'> = {
@@ -754,7 +760,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       await expect(
-        auditService.logSecurityEvent(eventData)
+        auditService.logSecurityEvent(eventData),
       ).rejects.toThrow('Database connection failed')
     })
 
@@ -771,7 +777,7 @@ describe('Audit Trail Service Integration Tests', () => {
       }
 
       await expect(
-        auditService.logSecurityEvent(invalidEvent)
+        auditService.logSecurityEvent(invalidEvent),
       ).rejects.toThrow('Invalid event structure')
     })
   })

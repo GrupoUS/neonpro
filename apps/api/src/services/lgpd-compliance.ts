@@ -151,104 +151,123 @@ export interface LGPDComplianceMetrics {
 export class LGPDComplianceService {
   private auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
 
-  constructor({ auditService }: { auditService?: { logAction?: (action: string, data: unknown) => Promise<void> } } = {}) {
+  constructor(
+    { auditService }: {
+      auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
+    } = {},
+  ) {
     this.auditService = auditService
     console.log('LGPDComplianceService initialized with audit:', !!auditService)
   }
 
-  async registerDataSubject(subject: Omit<LGPDDataSubject, 'id' | 'createdAt' | 'updatedAt'>): Promise<LGPDDataSubject> {
+  async registerDataSubject(
+    subject: Omit<LGPDDataSubject, 'id' | 'createdAt' | 'updatedAt'>,
+  ): Promise<LGPDDataSubject> {
     const dataSubject: LGPDDataSubject = {
       id: crypto.randomUUID(),
       ...subject,
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     }
 
-    await this.auditService?.logAction?.('register_data_subject', { 
+    await this.auditService?.logAction?.('register_data_subject', {
       subjectId: dataSubject.id,
-      category: subject.category
+      category: subject.category,
     })
 
     return dataSubject
   }
 
-  async processSubjectRequest(request: Omit<LGPDDataSubjectRequest, 'id' | 'status' | 'createdAt' | 'completedAt'>): Promise<LGPDDataSubjectRequest> {
+  async processSubjectRequest(
+    request: Omit<LGPDDataSubjectRequest, 'id' | 'status' | 'createdAt' | 'completedAt'>,
+  ): Promise<LGPDDataSubjectRequest> {
     const subjectRequest: LGPDDataSubjectRequest = {
       id: crypto.randomUUID(),
       status: 'pending',
       createdAt: new Date(),
-      ...request
+      ...request,
     }
 
-    await this.auditService?.logAction?.('process_subject_request', { 
+    await this.auditService?.logAction?.('process_subject_request', {
       requestId: subjectRequest.id,
-      requestType: request.requestType
+      requestType: request.requestType,
     })
 
     return subjectRequest
   }
 
-  async recordConsent(consent: Omit<LGPDConsentRecord, 'id' | 'isActive' | 'createdAt' | 'updatedAt'>): Promise<LGPDConsentRecord> {
+  async recordConsent(
+    consent: Omit<LGPDConsentRecord, 'id' | 'isActive' | 'createdAt' | 'updatedAt'>,
+  ): Promise<LGPDConsentRecord> {
     const consentRecord: LGPDConsentRecord = {
       id: crypto.randomUUID(),
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
-      ...consent
+      ...consent,
     }
 
-    await this.auditService?.logAction?.('record_consent', { 
+    await this.auditService?.logAction?.('record_consent', {
       consentId: consentRecord.id,
-      consentType: consent.consentType
+      consentType: consent.consentType,
     })
 
     return consentRecord
   }
 
-  async handleBreachNotification(breach: Omit<LGPDBreachRecord, 'id' | 'notificationSent' | 'anvisaNotified' | 'status' | 'createdAt' | 'resolvedAt'>): Promise<LGPDBreachRecord> {
+  async handleBreachNotification(
+    breach: Omit<
+      LGPDBreachRecord,
+      'id' | 'notificationSent' | 'anvisaNotified' | 'status' | 'createdAt' | 'resolvedAt'
+    >,
+  ): Promise<LGPDBreachRecord> {
     const breachRecord: LGPDBreachRecord = {
       id: crypto.randomUUID(),
       notificationSent: false,
       anvisaNotified: false,
       status: 'active',
       createdAt: new Date(),
-      ...breach
+      ...breach,
     }
 
-    await this.auditService?.logAction?.('handle_breach_notification', { 
+    await this.auditService?.logAction?.('handle_breach_notification', {
       breachId: breachRecord.id,
       breachType: breach.breachType,
-      severity: breach.severity
+      severity: breach.severity,
     })
 
     return breachRecord
   }
 
-  async createDataMapping(mapping: Omit<LGPDDataMapping, 'id' | 'createdAt'>): Promise<LGPDDataMapping> {
+  async createDataMapping(
+    mapping: Omit<LGPDDataMapping, 'id' | 'createdAt'>,
+  ): Promise<LGPDDataMapping> {
     const dataMapping: LGPDDataMapping = {
       id: crypto.randomUUID(),
       createdAt: new Date(),
-      ...mapping
+      ...mapping,
     }
 
-    await this.auditService?.logAction?.('create_data_mapping', { 
+    await this.auditService?.logAction?.('create_data_mapping', {
       mappingId: dataMapping.id,
-      dataType: mapping.dataType
+      dataType: mapping.dataType,
     })
 
     return dataMapping
   }
 
-  async manageProcessorAgreement(agreement: Omit<LGPDProcessorAgreement, 'id' | 'isActive'>): Promise<LGPDProcessorAgreement> {
+  async manageProcessorAgreement(
+    agreement: Omit<LGPDProcessorAgreement, 'id' | 'isActive'>,
+  ): Promise<LGPDProcessorAgreement> {
     const processorAgreement: LGPDProcessorAgreement = {
       id: crypto.randomUUID(),
       isActive: true,
-      ...agreement
+      ...agreement,
     }
 
-    await this.auditService?.logAction?.('manage_processor_agreement', { 
+    await this.auditService?.logAction?.('manage_processor_agreement', {
       agreementId: processorAgreement.id,
-      processorName: agreement.processorName
+      processorName: agreement.processorName,
     })
 
     return processorAgreement
@@ -257,45 +276,49 @@ export class LGPDComplianceService {
   async trackTraining(training: Omit<LGPDTrainingRecord, 'id'>): Promise<LGPDTrainingRecord> {
     const trainingRecord: LGPDTrainingRecord = {
       id: crypto.randomUUID(),
-      ...training
+      ...training,
     }
 
-    await this.auditService?.logAction?.('track_training', { 
+    await this.auditService?.logAction?.('track_training', {
       trainingId: trainingRecord.id,
-      trainingType: training.trainingType
+      trainingType: training.trainingType,
     })
 
     return trainingRecord
   }
 
-  async respondToIncident(incident: Omit<LGPDIncidentResponse, 'id' | 'status' | 'createdAt' | 'resolvedAt'>): Promise<LGPDIncidentResponse> {
+  async respondToIncident(
+    incident: Omit<LGPDIncidentResponse, 'id' | 'status' | 'createdAt' | 'resolvedAt'>,
+  ): Promise<LGPDIncidentResponse> {
     const incidentResponse: LGPDIncidentResponse = {
       id: crypto.randomUUID(),
       status: 'investigating',
       createdAt: new Date(),
-      ...incident
+      ...incident,
     }
 
-    await this.auditService?.logAction?.('respond_to_incident', { 
+    await this.auditService?.logAction?.('respond_to_incident', {
       incidentId: incidentResponse.id,
       incidentType: incident.incidentType,
-      severity: incident.severity
+      severity: incident.severity,
     })
 
     return incidentResponse
   }
 
-  async conductPrivacyImpact(assessment: Omit<LGPDPrivacyImpact, 'id' | 'approvalStatus' | 'assessmentDate'>): Promise<LGPDPrivacyImpact> {
+  async conductPrivacyImpact(
+    assessment: Omit<LGPDPrivacyImpact, 'id' | 'approvalStatus' | 'assessmentDate'>,
+  ): Promise<LGPDPrivacyImpact> {
     const privacyImpact: LGPDPrivacyImpact = {
       id: crypto.randomUUID(),
       approvalStatus: 'pending',
       assessmentDate: new Date(),
-      ...assessment
+      ...assessment,
     }
 
-    await this.auditService?.logAction?.('conduct_privacy_impact', { 
+    await this.auditService?.logAction?.('conduct_privacy_impact', {
       assessmentId: privacyImpact.id,
-      systemName: assessment.systemName
+      systemName: assessment.systemName,
     })
 
     return privacyImpact
@@ -312,7 +335,7 @@ export class LGPDComplianceService {
       trainingCompliance: 87,
       dataMapsCompleted: 12,
       piaCompleted: 8,
-      overallScore: 92
+      overallScore: 92,
     }
 
     await this.auditService?.logAction?.('get_compliance_metrics', {})
@@ -329,10 +352,10 @@ export class LGPDComplianceService {
         personal: {},
         health: {},
         financial: {},
-        preferences: {}
+        preferences: {},
       },
       format: 'json',
-      encryption: 'AES-256'
+      encryption: 'AES-256',
     }
 
     await this.auditService?.logAction?.('export_subject_data', { subjectId })
@@ -340,14 +363,17 @@ export class LGPDComplianceService {
     return exportData
   }
 
-  async rectifySubjectData(subjectId: string, corrections: Record<string, unknown>): Promise<Record<string, unknown>> {
+  async rectifySubjectData(
+    subjectId: string,
+    corrections: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
     const rectification: Record<string, unknown> = {
       rectificationId: crypto.randomUUID(),
       subjectId,
       corrections,
       status: 'completed',
       completedAt: new Date(),
-      verified: true
+      verified: true,
     }
 
     await this.auditService?.logAction?.('rectify_subject_data', { subjectId })
@@ -355,14 +381,17 @@ export class LGPDComplianceService {
     return rectification
   }
 
-  async eraseSubjectData(subjectId: string, exceptions: string[] = []): Promise<Record<string, unknown>> {
+  async eraseSubjectData(
+    subjectId: string,
+    exceptions: string[] = [],
+  ): Promise<Record<string, unknown>> {
     const erasure: Record<string, unknown> = {
       erasureId: crypto.randomUUID(),
       subjectId,
       exceptions,
       status: 'completed',
       completedAt: new Date(),
-      dataRemoved: true
+      dataRemoved: true,
     }
 
     await this.auditService?.logAction?.('erase_subject_data', { subjectId })
@@ -370,7 +399,11 @@ export class LGPDComplianceService {
     return erasure
   }
 
-  async handleObjection(subjectId: string, processingType: string, reason: string): Promise<Record<string, unknown>> {
+  async handleObjection(
+    subjectId: string,
+    processingType: string,
+    reason: string,
+  ): Promise<Record<string, unknown>> {
     const objection: Record<string, unknown> = {
       objectionId: crypto.randomUUID(),
       subjectId,
@@ -378,7 +411,7 @@ export class LGPDComplianceService {
       reason,
       status: 'under_review',
       createdAt: new Date(),
-      resolution: 'pending'
+      resolution: 'pending',
     }
 
     await this.auditService?.logAction?.('handle_objection', { subjectId, processingType })
@@ -396,7 +429,10 @@ export class LGPDComplianceService {
     return true
   }
 
-  async assessInternationalTransfer(dataTypes: string[], destination: string): Promise<Record<string, unknown>> {
+  async assessInternationalTransfer(
+    dataTypes: string[],
+    destination: string,
+  ): Promise<Record<string, unknown>> {
     const assessment: Record<string, unknown> = {
       assessmentId: crypto.randomUUID(),
       dataTypes,
@@ -404,12 +440,12 @@ export class LGPDComplianceService {
       adequacyDecision: this.checkAdequacyDecision(destination),
       safeguards: this.identifySafeguards(destination),
       riskLevel: 'medium',
-      recommendations: []
+      recommendations: [],
     }
 
-    await this.auditService?.logAction?.('assess_international_transfer', { 
+    await this.auditService?.logAction?.('assess_international_transfer', {
       dataTypes: dataTypes.length,
-      destination
+      destination,
     })
 
     return assessment
@@ -424,9 +460,9 @@ export class LGPDComplianceService {
         totalRequests: 0,
         breaches: 0,
         trainingSessions: 0,
-        audits: 0
+        audits: 0,
       },
-      sections: []
+      sections: [],
     }
 
     await this.auditService?.logAction?.('generate_annual_report', { year })
@@ -442,7 +478,7 @@ export class LGPDComplianceService {
       startedAt: new Date(),
       scope: [],
       findings: [],
-      recommendations: []
+      recommendations: [],
     }
 
     await this.auditService?.logAction?.('conduct_compliance_audit', { auditType })
@@ -466,7 +502,11 @@ export class LGPDComplianceService {
 export class ANVISAComplianceService {
   private auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
 
-  constructor({ auditService }: { auditService?: { logAction?: (action: string, data: unknown) => Promise<void> } } = {}) {
+  constructor(
+    { auditService }: {
+      auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
+    } = {},
+  ) {
     this.auditService = auditService
     console.log('ANVISAComplianceService initialized with audit:', !!auditService)
   }
@@ -478,12 +518,12 @@ export class ANVISAComplianceService {
       anvisaRegistration: this.checkAnvisaRegistration(device),
       complianceStatus: 'compliant',
       validatedAt: new Date(),
-      nextReview: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      nextReview: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     }
 
-    await this.auditService?.logAction?.('validate_medical_device', { 
+    await this.auditService?.logAction?.('validate_medical_device', {
       deviceId: device.id,
-      complianceStatus: validation.complianceStatus
+      complianceStatus: validation.complianceStatus,
     })
 
     return validation
@@ -497,24 +537,30 @@ export class ANVISAComplianceService {
 export class CFMComplianceService {
   private auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
 
-  constructor({ auditService }: { auditService?: { logAction?: (action: string, data: unknown) => Promise<void> } } = {}) {
+  constructor(
+    { auditService }: {
+      auditService?: { logAction?: (action: string, data: unknown) => Promise<void> }
+    } = {},
+  ) {
     this.auditService = auditService
     console.log('CFMComplianceService initialized with audit:', !!auditService)
   }
 
-  async validateProfessionalLicense(professional: Record<string, unknown>): Promise<Record<string, unknown>> {
+  async validateProfessionalLicense(
+    professional: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
     const validation: Record<string, unknown> = {
       validationId: crypto.randomUUID(),
       professionalId: professional.id,
       cfmRegistration: this.checkCFMRegistration(professional),
       licenseStatus: 'active',
       validatedAt: new Date(),
-      expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     }
 
-    await this.auditService?.logAction?.('validate_professional_license', { 
+    await this.auditService?.logAction?.('validate_professional_license', {
       professionalId: professional.id,
-      licenseStatus: validation.licenseStatus
+      licenseStatus: validation.licenseStatus,
     })
 
     return validation

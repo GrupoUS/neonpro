@@ -1,6 +1,6 @@
+import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
 import { HTTPException } from 'hono/http-exception'
-import { logger } from "@/utils/healthcare-errors"
 
 /**
  * HTTP error handling middleware with enhanced error processing
@@ -9,7 +9,7 @@ export function httpErrorHandlingMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       await next()
-    } catch {
+    } catch (error) {
       // Log the error with context
       const errorContext = {
         path: c.req.path,

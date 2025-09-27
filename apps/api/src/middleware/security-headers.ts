@@ -84,8 +84,7 @@ export class SecurityHeadersMiddleware {
           c.header('Permissions-Policy', this.config.permissionsPolicy)
         }
 
-        // Remove server information
-        res.removeHeader('X-Powered-By')
+        // Remove server information - not needed in Hono (no X-Powered-By header by default)
 
         // Add security-related custom headers
         if (this.config.customHeaders) {

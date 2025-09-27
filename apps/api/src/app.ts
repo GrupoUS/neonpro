@@ -2,17 +2,17 @@ import { trpcServer } from '@hono/trpc-server'
 import { cors } from 'hono/cors'
 import { errorHandler } from './middleware/error-handler'
 import { errorSanitizationMiddleware } from './middleware/error-sanitization'
-import aiRouter from './routes/ai/index'
-import financialCopilotRouter from './routes/ai/financial-copilot'
 import copilotBridge from './routes/ai/copilot-bridge'
+import financialCopilotRouter from './routes/ai/financial-copilot'
+import aiRouter from './routes/ai/index'
+import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
+import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
 import appointmentsRouter from './routes/appointments'
 import { billing } from './routes/billing'
 import chatRouter from './routes/chat'
 import { medicalRecords } from './routes/medical-records'
 import patientsRouter from './routes/patients'
 import v1Router from './routes/v1'
-import aiSessionsCleanup from './routes/api/cleanup/ai-sessions'
-import expiredPredictionsCleanup from './routes/api/cleanup/expired-predictions'
 import { Context } from './trpc/context'
 import { appRouter } from './trpc/router'
 
@@ -29,14 +29,8 @@ import {
   globalErrorHandler,
 } from './middleware/error-tracking'
 import { rateLimitMiddleware } from './middleware/rate-limiting'
-import {
-  healthcareSecurityHeadersMiddleware,
-  httpsRedirectMiddleware,
-} from './middleware/security-headers'
-import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer'
-
-// Extract middleware functions from security package
-// const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
+import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer' // Extract middleware functions from security package
+ // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
 
 // Initialize monitoring and telemetry
 ;(async () => {
@@ -85,23 +79,23 @@ const app = createHealthcareOpenAPIApp()
 app.use(
   '*',
   cors({
-    origin: (origin) => {
+    origin: origin => {
       // Allow same-origin requests (no origin header)
       if (!origin) return '*'
 
       // Allowed origins based on environment
       const allowedOrigins = process.env.NODE_ENV === 'production'
         ? [
-            'https://neonpro.com.br',
-            'https://www.neonpro.com.br',
-            'https://neonpro.vercel.app',
-          ]
+          'https://neonpro.com.br',
+          'https://www.neonpro.com.br',
+          'https://neonpro.vercel.app',
+        ]
         : [
-            'http://localhost:3000',
-            'http://localhost:5173',
-            'http://127.0.0.1:5173',
-            'https://neonpro.vercel.app',
-          ]
+          'http://localhost:3000',
+          'http://localhost:5173',
+          'http://127.0.0.1:5173',
+          'https://neonpro.vercel.app',
+        ]
 
       // Check if origin is allowed
       return allowedOrigins.includes(origin) ? origin : null
@@ -148,9 +142,9 @@ app.use('*', rateLimitMiddleware())
 // app.use('*', healthcareCSPMiddleware())
 
 // Query timeout middleware for <2s healthcare compliance (T064)
-// import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware'
-// const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
-// app.use('*', queryTimeoutMiddleware.middleware)
+import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware'
+const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware()
+app.use('*', queryTimeoutMiddleware.middleware)
 
 // Compression and optimization middleware for HTTPS responses (T065)
 import { CompressionMiddleware } from './middleware/compression-middleware'

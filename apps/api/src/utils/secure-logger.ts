@@ -103,7 +103,10 @@ class SecureLogger {
       enableStructuredOutput: config.enableStructuredOutput ?? true,
       enableCorrelationIds: config.enableCorrelationIds ?? true,
       _service: config._service || 'neonpro-api',
-      environment: (config.environment || process.env.NODE_ENV || 'development') as 'development' | 'staging' | 'production',
+      environment: (config.environment || process.env.NODE_ENV || 'development') as
+        | 'development'
+        | 'staging'
+        | 'production',
       version: config.version || '1.0.0',
       enablePerformanceTracking: config.enablePerformanceTracking ?? true,
     }
@@ -266,7 +269,11 @@ class SecureLogger {
   /**
    * Enhanced logging with performance tracking and metrics
    */
-  logWithMetrics(level: string, message: string, _context?: LogContext & { duration?: number }): void {
+  logWithMetrics(
+    level: string,
+    message: string,
+    _context?: LogContext & { duration?: number },
+  ): void {
     if (!this.shouldLog(level)) return
 
     const enrichedContext = this.enrichContext(_context)
@@ -348,7 +355,12 @@ class SecureLogger {
   /**
    * Log database operations with performance tracking
    */
-  logDatabaseOperation(operation: string, query: string, duration: number, context?: LogContext): void {
+  logDatabaseOperation(
+    operation: string,
+    query: string,
+    duration: number,
+    context?: LogContext,
+  ): void {
     this.logWithMetrics(duration > 1000 ? 'warn' : 'info', `Database ${operation}`, {
       ...context,
       operation,

@@ -1,5 +1,5 @@
+import { logger } from '@/utils/healthcare-errors'
 import { Context, Next } from 'hono'
-import { logger } from "@/utils/healthcare-errors"
 
 /**
  * Audit log entry interface

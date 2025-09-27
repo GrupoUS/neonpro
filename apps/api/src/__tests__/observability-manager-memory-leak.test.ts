@@ -3,7 +3,7 @@
  * These tests are designed to FAIL initially, demonstrating the timeout leak
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ObservabilityManager } from '../utils/observability-manager'
 
 // Mock SecureLogger
@@ -37,23 +37,23 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Mock setTimeout to track timeout creation and clearing
     originalSetTimeout = global.setTimeout
     originalClearTimeout = global.clearTimeout
-    
+
     const timeoutCallbacks = new Map<number, () => void>()
-    
+
     mockSetTimeout = vi.fn((callback: () => void, delay: number) => {
       const id = timeoutCallbacks.size + 1
       timeoutCallbacks.set(id, callback)
       return id as unknown as NodeJS.Timeout
     })
-    
+
     mockClearTimeout = vi.fn((timeoutId: NodeJS.Timeout) => {
       timeoutCallbacks.delete(Number(timeoutId))
     })
-    
+
     global.setTimeout = mockSetTimeout
     global.clearTimeout = mockClearTimeout
   })
@@ -62,7 +62,7 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
     if (observabilityManager) {
       observabilityManager.shutdown()
     }
-    
+
     // Restore original functions
     global.setTimeout = originalSetTimeout
     global.clearTimeout = originalClearTimeout
@@ -72,10 +72,11 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
     // Create a health check that will timeout
     const slowHealthCheck = {
       name: 'slow-check',
-      check: () => new Promise<{ healthy: boolean; message: string }>((resolve) => {
-        // This promise will never resolve, causing timeout
-        setTimeout(() => resolve({ healthy: true, message: 'Too slow' }), 1000)
-      }),
+      check: () =>
+        new Promise<{ healthy: boolean; message: string }>(resolve => {
+          // This promise will never resolve, causing timeout
+          setTimeout(() => resolve({ healthy: true, message: 'Too slow' }), 1000)
+        }),
       interval: 1000,
       timeout: 100, // Very short timeout
       critical: false,
@@ -89,19 +90,19 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
 
     // Verify that the health check failed due to timeout
     expect(healthStatus.healthy).toBe(false)
-    
+
     // This demonstrates the memory leak: setTimeout was called but clearTimeout was not
     // The timeout handle was created but only cleared in success path
     expect(mockSetTimeout).toHaveBeenCalled()
-    
+
     // The timeout created in Promise.race should not be cleared when timeout occurs
     // This is the bug we're testing for
     const timeoutCount = mockSetTimeout.mock.calls.filter(
-      call => call[1] === slowHealthCheck.timeout
+      call => call[1] === slowHealthCheck.timeout,
     ).length
-    
+
     const clearTimeoutCount = mockClearTimeout.mock.calls.length
-    
+
     // This assertion will fail because the timeout is not cleared properly
     // In the current implementation, clearTimeout is only called in success path
     expect(timeoutCount).toBeGreaterThan(0)
@@ -126,7 +127,7 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
 
     // Verify that the health check succeeded
     expect(healthStatus.healthy).toBe(true)
-    
+
     // Both setTimeout and clearTimeout should be called
     expect(mockSetTimeout).toHaveBeenCalled()
     expect(mockClearTimeout).toHaveBeenCalled()
@@ -150,7 +151,7 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
 
     // Verify that the health check failed
     expect(healthStatus.healthy).toBe(false)
-    
+
     // setTimeout should be called but clearTimeout should not (this is the bug)
     expect(mockSetTimeout).toHaveBeenCalled()
     expect(mockClearTimeout.mock.calls.length).toBe(0)
@@ -187,7 +188,7 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
     // but none should be cleared, demonstrating the leak
     const expectedTimeouts = 6 // 3 calls * 2 health checks
     const expectedClears = 0 // None cleared due to bug
-    
+
     expect(mockSetTimeout.mock.calls.length).toBeGreaterThanOrEqual(expectedTimeouts)
     expect(mockClearTimeout.mock.calls.length).toBe(expectedClears)
   })
@@ -196,16 +197,16 @@ describe('ObservabilityManager Memory Leak - RED Phase', () => {
     // This test shows that timeout handles are not properly managed
     // In the current implementation, timeoutHandle is a local variable
     // that gets lost when the function scope ends
-    
+
     observabilityManager = new ObservabilityManager()
-    
+
     // Access the internal getHealthStatus method to inspect timeout handling
     const getHealthStatusMethod = observabilityManager['getHealthStatus']
-    
+
     // The method should have a way to track and clean up timeout handles
     // but currently it doesn't
     expect(getHealthStatusMethod).toBeDefined()
-    
+
     // This demonstrates the design flaw: timeout handles are not tracked
     // for cleanup in error scenarios
   })

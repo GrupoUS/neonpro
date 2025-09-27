@@ -1,15 +1,15 @@
 /**
  * Centralized data sanitization and redaction utilities for API usage
- * 
+ *
  * This module provides centralized access to data sanitization functions
  * that ensure LGPD compliance when processing sensitive healthcare information.
- * 
+ *
  * Features:
  * - PII (Personally Identifiable Information) redaction
  * - Healthcare data sanitization for AI processing
  * - Automated sensitive data detection and masking
  * - Compliance with Brazilian data protection regulations
- * 
+ *
  * @module sanitize
  */
 
@@ -42,7 +42,10 @@ export function sanitizeForAI(text: string): string {
     // Email
     { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REMOVIDO]' },
     // Full names (Brazilian pattern)
-    { pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g, replacement: '[NOME_REMOVIDO]' },
+    {
+      pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g,
+      replacement: '[NOME_REMOVIDO]',
+    },
     // RG
     { pattern: /\d{2}\.\d{3}\.\d{3}-\d{1}/g, replacement: '[RG_REMOVIDO]' },
     // Medical license numbers
@@ -63,15 +66,15 @@ export function sanitizeForAI(text: string): string {
 
 /**
  * Redacts sensitive information from data objects and text
- * 
+ *
  * Comprehensive redaction utility that removes or masks sensitive healthcare
  * data based on configurable redaction rules and data sensitivity levels.
- * 
+ *
  * @function redact
  * @param {unknown} data - Data object or text to be redacted
  * @param {Object} options - Configuration options for redaction behavior
  * @returns {unknown} Redacted data with sensitive information masked
- * 
+ *
  * @example
  * ```typescript
  * const patientData = {
@@ -80,14 +83,14 @@ export function sanitizeForAI(text: string): string {
  *   phone: '(11) 99999-8888',
  *   medicalInfo: 'Diabetes tipo 2'
  * };
- * 
+ *
  * const redacted = redact(patientData, {
  *   level: 'high',
  *   preserveMedicalData: true
  * });
  * // Returns: { name: '[REDACTED]', cpf: '[REDACTED]', phone: '[REDACTED]', medicalInfo: 'Diabetes tipo 2' }
  * ```
- * 
+ *
  * Security Features:
  * - Configurable redaction levels based on user permissions
  * - Preserves medical data while redacting PII when appropriate
@@ -98,13 +101,19 @@ export function sanitizeForAI(text: string): string {
  * Redact sensitive information from text data
  * Mock implementation to replace @neonpro/shared import
  */
-export function redact(text: string, patterns?: Array<{ pattern: RegExp; replacement: string }>): string {
+export function redact(
+  text: string,
+  patterns?: Array<{ pattern: RegExp; replacement: string }>,
+): string {
   const defaultPatterns = [
     { pattern: /\d{3}\.\d{3}\.\d{3}-\d{2}/g, replacement: '[CPF_REDACTED]' },
     { pattern: /\d{2}\.\d{3}\.\d{3}-\d{1}/g, replacement: '[RG_REDACTED]' },
     { pattern: /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, replacement: '[PHONE_REDACTED]' },
     { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REDACTED]' },
-    { pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g, replacement: '[NAME_REDACTED]' },
+    {
+      pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g,
+      replacement: '[NAME_REDACTED]',
+    },
   ]
 
   const redactionPatterns = patterns || defaultPatterns

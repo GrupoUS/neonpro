@@ -9,14 +9,18 @@
  * Compliance: OWASP, LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { Context, Next } from 'hono'
-import { EnhancedAuthenticationMiddleware, AuthenticationContext, AuthenticationOptions } from '../middleware/enhanced-authentication-middleware'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  AuthenticationContext,
+  AuthenticationOptions,
+  EnhancedAuthenticationMiddleware,
+} from '../middleware/enhanced-authentication-middleware'
 import { JWTSecurityService } from '../services/jwt-security-service'
 import {
+  AuditTrailService,
   HealthcareSessionManagementService,
   SecurityValidationService,
-  AuditTrailService
 } from './mock-services'
 
 // Mock Hono context
@@ -655,7 +659,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
             authenticationMethod: 'jwt',
             userRole: 'healthcare_professional',
           }),
-        })
+        }),
       )
     })
   })
@@ -730,7 +734,7 @@ describe('Enhanced Authentication Middleware Integration Tests', () => {
 
       // Mock JWT service failure
       vi.spyOn(jwtService.prototype, 'validateToken').mockRejectedValueOnce(
-        new Error('JWT service unavailable')
+        new Error('JWT service unavailable'),
       )
 
       const result = await authMiddleware.authenticateRequest(c, {

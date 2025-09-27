@@ -1,18 +1,22 @@
 /**
  * JWT Security Service Integration Tests
- * 
- * Comprehensive integration tests for JWT token generation, validation, 
+ *
+ * Comprehensive integration tests for JWT token generation, validation,
  * refresh, and revocation with healthcare compliance.
- * 
+ *
  * Security: Critical - JWT token management and validation tests
  * Test Coverage: JWT Security Service
  * Compliance: OWASP, LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { JWTSecurityService, TokenGenerationOptions, TokenValidationResult } from '../services/jwt-security-service'
-import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AuditTrailService } from '../services/audit-trail-service'
+import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
+import {
+  JWTSecurityService,
+  TokenGenerationOptions,
+  TokenValidationResult,
+} from '../services/jwt-security-service'
 
 // Mock crypto operations for testing
 const mockCrypto = {
@@ -34,7 +38,7 @@ describe('JWT Security Service Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset services
     jwtService = JWTSecurityService
     sessionService = HealthcareSessionManagementService
@@ -163,7 +167,7 @@ describe('JWT Security Service Integration Tests', () => {
 
     it('should reject refresh with invalid refresh token', async () => {
       await expect(
-        jwtService.refreshTokens('invalid-refresh-token', 'session-123')
+        jwtService.refreshTokens('invalid-refresh-token', 'session-123'),
       ).rejects.toThrow('Invalid refresh token')
     })
 
@@ -180,7 +184,7 @@ describe('JWT Security Service Integration Tests', () => {
 
       // Attempt refresh with expired session
       await expect(
-        jwtService.refreshTokens(refreshToken, 'expired-session-123')
+        jwtService.refreshTokens(refreshToken, 'expired-session-123'),
       ).rejects.toThrow('Session expired or invalid')
     })
   })
@@ -324,14 +328,12 @@ describe('JWT Security Service Integration Tests', () => {
       }
 
       // Generate multiple tokens rapidly
-      const promises = Array(10).fill(null).map(() => 
-        jwtService.generateAccessToken(tokenOptions)
-      )
+      const promises = Array(10).fill(null).map(() => jwtService.generateAccessToken(tokenOptions))
 
       // Should generate tokens without throwing rate limit errors
       const results = await Promise.allSettled(promises)
       const successfulTokens = results.filter(result => result.status === 'fulfilled')
-      
+
       expect(successfulTokens.length).toBeGreaterThan(0)
     })
 
@@ -355,7 +357,7 @@ describe('JWT Security Service Integration Tests', () => {
             tokenType: 'access',
             userRole: 'healthcare_professional',
           }),
-        })
+        }),
       )
     })
   })
@@ -403,7 +405,7 @@ describe('JWT Security Service Integration Tests', () => {
       }
 
       await expect(
-        jwtService.generateAccessToken(invalidOptions)
+        jwtService.generateAccessToken(invalidOptions),
       ).rejects.toThrow('User ID is required')
     })
 
@@ -416,7 +418,7 @@ describe('JWT Security Service Integration Tests', () => {
     it('should handle database connection errors gracefully', async () => {
       // Mock database connection error
       vi.spyOn(jwtService, 'isTokenRevoked').mockRejectedValueOnce(
-        new Error('Database connection failed')
+        new Error('Database connection failed'),
       )
 
       const tokenOptions: TokenGenerationOptions = {
@@ -431,7 +433,7 @@ describe('JWT Security Service Integration Tests', () => {
       // Should still validate token but with warning about revocation check
       expect(validationResult.isValid).toBe(true)
       expect(validationResult.warnings).toContain(
-        'Could not verify token revocation status'
+        'Could not verify token revocation status',
       )
     })
   })

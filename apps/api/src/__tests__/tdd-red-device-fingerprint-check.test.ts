@@ -1,19 +1,19 @@
 /**
  * TDD RED Phase - Device Fingerprint Check Issue Test
- * 
+ *
  * This test demonstrates the device fingerprint check bug where accessing session.deviceFingerprint
  * without proper undefined checking causes TypeError when field is undefined.
- * 
+ *
  * Expected Behavior:
  * - EnhancedSessionManager should handle undefined deviceFingerprint values gracefully
  * - Device fingerprint validation should work correctly with undefined values
  * - Session validation should not throw TypeError for undefined deviceFingerprint
- * 
+ *
  * Security: Critical - Session security validation for healthcare compliance
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock dependencies
 const mockConfig = {
@@ -54,7 +54,7 @@ class TestSessionManager {
       userAgent: options.userAgent || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
       deviceFingerprint: options.deviceFingerprint || 'fingerprint-123',
     }
-    
+
     this.sessions.set(sessionId, session)
     return session
   }
@@ -68,7 +68,11 @@ class TestSessionManager {
   }
 
   // BUGGY VERSION: This is what currently exists and causes TypeError
-  validateSessionSecurityBuggy(sessionId: string, attempt: any, options: { checkDeviceFingerprint?: boolean } = {}): {
+  validateSessionSecurityBuggy(
+    sessionId: string,
+    attempt: any,
+    options: { checkDeviceFingerprint?: boolean } = {},
+  ): {
     isValid: boolean
     threats: string[]
     confidence: number
@@ -89,15 +93,21 @@ class TestSessionManager {
     if (session.ipAddress !== attempt.ipAddress) {
       threats.push('ip_address_mismatch')
       confidence += 40
-      
+
       // Check if IP change is within mobile subnet tolerance
-      if (session.ipAddress && attempt.ipAddress && !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+      if (
+        session.ipAddress && attempt.ipAddress &&
+        !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)
+      ) {
         confidence += 30
       }
     }
 
     // User agent comparison with undefined checking
-    if (session.userAgent !== undefined && attempt.userAgent !== undefined && session.userAgent !== attempt.userAgent) {
+    if (
+      session.userAgent !== undefined && attempt.userAgent !== undefined &&
+      session.userAgent !== attempt.userAgent
+    ) {
       threats.push('user_agent_mismatch')
       confidence += 30
     }
@@ -120,7 +130,11 @@ class TestSessionManager {
   }
 
   // CORRECT VERSION: This is what it should be
-  validateSessionSecurityCorrect(sessionId: string, attempt: any, options: { checkDeviceFingerprint?: boolean } = {}): {
+  validateSessionSecurityCorrect(
+    sessionId: string,
+    attempt: any,
+    options: { checkDeviceFingerprint?: boolean } = {},
+  ): {
     isValid: boolean
     threats: string[]
     confidence: number
@@ -141,15 +155,21 @@ class TestSessionManager {
     if (session.ipAddress !== attempt.ipAddress) {
       threats.push('ip_address_mismatch')
       confidence += 40
-      
+
       // Check if IP change is within mobile subnet tolerance
-      if (session.ipAddress && attempt.ipAddress && !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+      if (
+        session.ipAddress && attempt.ipAddress &&
+        !this.securityUtils.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)
+      ) {
         confidence += 30
       }
     }
 
     // User agent comparison with undefined checking
-    if (session.userAgent !== undefined && attempt.userAgent !== undefined && session.userAgent !== attempt.userAgent) {
+    if (
+      session.userAgent !== undefined && attempt.userAgent !== undefined &&
+      session.userAgent !== attempt.userAgent
+    ) {
       threats.push('user_agent_mismatch')
       confidence += 30
     }
@@ -185,11 +205,13 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       // Arrange: Create a session with undefined deviceFingerprint
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { deviceFingerprint: undefined })
-      
+
       const attempt = sessionManager.createAttempt()
 
       // Act: Use buggy implementation with checkDeviceFingerprint=true
-      const result = sessionManager.validateSessionSecurityBuggy(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityBuggy(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should correctly detect missing device fingerprint
       expect(result.threats).toContain('missing_device_fingerprint')
@@ -200,11 +222,13 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       // Arrange: Create a session with undefined deviceFingerprint
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { deviceFingerprint: undefined })
-      
+
       const attempt = sessionManager.createAttempt()
 
       // Act: Use correct implementation with checkDeviceFingerprint=true
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should correctly detect missing device fingerprint
       expect(result.threats).toContain('missing_device_fingerprint')
@@ -215,11 +239,13 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       // Arrange: Create a session with undefined deviceFingerprint
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { deviceFingerprint: undefined })
-      
+
       const attempt = sessionManager.createAttempt()
 
       // Act: Use correct implementation with checkDeviceFingerprint=false
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: false })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: false,
+      })
 
       // Assert: Should not flag missing device fingerprint when check is disabled
       expect(result.threats).not.toContain('missing_device_fingerprint')
@@ -230,11 +256,13 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       // Arrange: Create a session with valid deviceFingerprint
       const sessionId = 'session-123'
       sessionManager.createSession(sessionId, { deviceFingerprint: 'valid-fingerprint' })
-      
+
       const attempt = sessionManager.createAttempt()
 
       // Act: Use correct implementation with checkDeviceFingerprint=true
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should not flag missing device fingerprint when it exists
       expect(result.threats).not.toContain('missing_device_fingerprint')
@@ -250,13 +278,15 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
           lgpdCompliant: true,
           anonymizationRequired: false,
           dataMinimizationApplied: true,
-        }
+        },
       })
 
       const attempt = sessionManager.createAttempt()
 
       // Act: Use correct implementation
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should handle undefined deviceFingerprint while maintaining compliance data
       expect(result.threats).toContain('missing_device_fingerprint')
@@ -270,15 +300,19 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       const attempt = sessionManager.createAttempt()
 
       // Test with checkDeviceFingerprint=true
-      const withCheck = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
-      
+      const withCheck = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
+
       // Test with checkDeviceFingerprint=false
-      const withoutCheck = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: false })
+      const withoutCheck = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: false,
+      })
 
       // With check should flag missing fingerprint
       expect(withCheck.threats).toContain('missing_device_fingerprint')
       expect(withCheck.securityScore).toBe(85)
-      
+
       // Without check should not flag missing fingerprint
       expect(withoutCheck.threats).not.toContain('missing_device_fingerprint')
       expect(withoutCheck.securityScore).toBe(100)
@@ -300,15 +334,17 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
             resourceType: 'patient',
             resourceId: 'patient-123',
             purpose: 'treatment',
-            legalBasis: 'consent'
-          }
-        ]
+            legalBasis: 'consent',
+          },
+        ],
       })
 
       const attempt = sessionManager.createAttempt()
 
       // Act: Validate session security with device fingerprint check
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should maintain patient data context while handling undefined deviceFingerprint
       expect(result.threats).toContain('missing_device_fingerprint')
@@ -324,7 +360,9 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       const attempt = sessionManager.createAttempt()
 
       // Act: Validate session security with device fingerprint check
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should maintain proper security state
       expect(result.threats).toContain('missing_device_fingerprint')
@@ -341,7 +379,9 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       const attempt = sessionManager.createAttempt()
 
       // Act: Validate session security with device fingerprint check
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should only have device fingerprint threat
       expect(result.threats).toContain('missing_device_fingerprint')
@@ -354,19 +394,21 @@ describe('TDD RED PHASE - Device Fingerprint Check Issue', () => {
       sessionManager.createSession(sessionId, {
         deviceFingerprint: undefined,
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-        ipAddress: '192.168.1.1'
+        ipAddress: '192.168.1.1',
       })
 
       const attempt = sessionManager.createAttempt({
         userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
-        ipAddress: '10.0.0.1'
+        ipAddress: '10.0.0.1',
       })
 
       // Mock mobile subnet change to return true
       mockSecurityUtils.isMobileSubnetChange.mockReturnValue(true)
 
       // Act: Validate session security with device fingerprint check
-      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, { checkDeviceFingerprint: true })
+      const result = sessionManager.validateSessionSecurityCorrect(sessionId, attempt, {
+        checkDeviceFingerprint: true,
+      })
 
       // Assert: Should handle all scenarios properly
       expect(result.threats).toContain('missing_device_fingerprint')

@@ -1,6 +1,6 @@
 /**
  * 🔍 Observability Manager Utility
- * 
+ *
  * A comprehensive monitoring and observability system with:
  * - Metrics collection and aggregation
  * - Health checks and system monitoring
@@ -10,8 +10,12 @@
  * - Healthcare-compliant data handling
  */
 
+import {
+  HealthcareError,
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+} from './healthcare-errors'
 import { SecureLogger } from './secure-logger'
-import { HealthcareError, HealthcareErrorSeverity, HealthcareErrorCategory } from './healthcare-errors'
 
 export interface MetricDefinition {
   /**
@@ -149,7 +153,7 @@ export class ObservabilityManager {
       healthCheckInterval: 30000, // 30 seconds
       environment: process.env.NODE_ENV || 'development',
       serviceName: 'neonpro-api',
-      ...options
+      ...options,
     }
 
     this.logger = new SecureLogger({
@@ -157,7 +161,7 @@ export class ObservabilityManager {
       maskSensitiveData: true,
       lgpdCompliant: true,
       auditTrail: true,
-      _service: 'ObservabilityManager'
+      _service: 'ObservabilityManager',
     })
 
     this.initialize()
@@ -172,7 +176,7 @@ export class ObservabilityManager {
       enableHealthChecks: this.options.enableHealthChecks,
       enableAlerts: this.options.enableAlerts,
       enableTracing: this.options.enableTracing,
-      environment: this.options.environment
+      environment: this.options.environment,
     })
 
     // Start background tasks
@@ -198,11 +202,11 @@ export class ObservabilityManager {
   registerMetric(metric: MetricDefinition): void {
     this.metrics.set(metric.name, metric)
     this.metricsBuffer.set(metric.name, { values: [], timestamp: new Date() })
-    
-    this.logger.debug('Metric registered', { 
-      name: metric.name, 
+
+    this.logger.debug('Metric registered', {
+      name: metric.name,
       type: metric.type,
-      labels: metric.labels 
+      labels: metric.labels,
     })
   }
 
@@ -222,7 +226,7 @@ export class ObservabilityManager {
       name,
       value,
       labels,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
 
     this.metricValues.push(metricValue)
@@ -275,7 +279,7 @@ export class ObservabilityManager {
         name,
         startTime: new Date(),
         tags: {},
-        status: 'ok'
+        status: 'ok',
       }
     }
 
@@ -286,7 +290,7 @@ export class ObservabilityManager {
       name,
       startTime: new Date(),
       tags: {},
-      status: 'ok'
+      status: 'ok',
     }
 
     this.traces.set(trace.spanId, trace)
@@ -310,12 +314,12 @@ export class ObservabilityManager {
     // Record as metric
     this.recordTiming(`${trace.name}_duration`, trace.duration, {
       status: trace.status,
-      traceId: trace.traceId
+      traceId: trace.traceId,
     })
 
     if (error) {
-      this.incrementCounter(`${trace.name}_errors`, { 
-        errorType: error.constructor.name 
+      this.incrementCounter(`${trace.name}_errors`, {
+        errorType: error.constructor.name,
       })
     }
 
@@ -330,11 +334,11 @@ export class ObservabilityManager {
    */
   registerHealthCheck(healthCheck: HealthCheck): void {
     this.healthChecks.set(healthCheck.name, healthCheck)
-    
-    this.logger.debug('Health check registered', { 
+
+    this.logger.debug('Health check registered', {
       name: healthCheck.name,
       interval: healthCheck.interval,
-      critical: healthCheck.critical
+      critical: healthCheck.critical,
     })
   }
 
@@ -358,7 +362,7 @@ export class ObservabilityManager {
             timeoutHandle = setTimeout(() => {
               reject(new Error('Health check timeout'))
             }, healthCheck.timeout)
-          })
+          }),
         ]).finally(() => {
           // Always clear timeout to prevent memory leaks in both success and error cases
           if (timeoutHandle) {
@@ -379,7 +383,7 @@ export class ObservabilityManager {
           healthy: isHealthy,
           message: result.message,
           details: result.details,
-          responseTime
+          responseTime,
         })
       } catch (error) {
         const weight = healthCheck.critical ? 2 : 1
@@ -389,7 +393,7 @@ export class ObservabilityManager {
           name: healthCheck.name,
           healthy: false,
           message: error instanceof Error ? error.message : 'Unknown error',
-          responseTime: 0
+          responseTime: 0,
         })
       }
     }
@@ -400,7 +404,7 @@ export class ObservabilityManager {
       healthy: healthyCount === this.healthChecks.size,
       timestamp: new Date(),
       checks,
-      overallScore
+      overallScore,
     }
   }
 
@@ -409,11 +413,11 @@ export class ObservabilityManager {
    */
   registerAlertRule(rule: AlertRule): void {
     this.alertRules.set(rule.id, rule)
-    
-    this.logger.debug('Alert rule registered', { 
+
+    this.logger.debug('Alert rule registered', {
       id: rule.id,
       name: rule.name,
-      severity: rule.severity
+      severity: rule.severity,
     })
   }
 
@@ -446,10 +450,10 @@ export class ObservabilityManager {
           name: metric.name,
           type: this.metrics.get(metric.name)?.type || 'unknown',
           count: 0,
-          values: [] as number[]
+          values: [] as number[],
         })
       }
-      
+
       const entry = summary.get(metric.name)!
       entry.count++
       entry.values.push(metric.value)
@@ -465,7 +469,7 @@ export class ObservabilityManager {
         latest: values[values.length - 1],
         average: values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : undefined,
         min: values.length > 0 ? Math.min(...values) : undefined,
-        max: values.length > 0 ? Math.max(...values) : undefined
+        max: values.length > 0 ? Math.max(...values) : undefined,
       }
     })
   }
@@ -494,16 +498,16 @@ export class ObservabilityManager {
 
     return {
       activeTraces: this.traces.size,
-      averageResponseTime: durations.length > 0 
-        ? durations.reduce((a, b) => a + b, 0) / durations.length 
+      averageResponseTime: durations.length > 0
+        ? durations.reduce((a, b) => a + b, 0) / durations.length
         : 0,
-      errorRate: recentTraces.length > 0 
-        ? (errors.length / recentTraces.length) * 100 
+      errorRate: recentTraces.length > 0
+        ? (errors.length / recentTraces.length) * 100
         : 0,
-      p95ResponseTime: durations.length > 0 
-        ? this.calculatePercentile(durations, 95) 
+      p95ResponseTime: durations.length > 0
+        ? this.calculatePercentile(durations, 95)
         : 0,
-      throughput: recentTraces.length // requests per hour
+      throughput: recentTraces.length, // requests per hour
     }
   }
 
@@ -534,19 +538,19 @@ export class ObservabilityManager {
     const interval = setInterval(async () => {
       try {
         const healthStatus = await this.getHealthStatus()
-        
+
         // Record health as a metric
         this.setGauge('system_health_score', healthStatus.overallScore)
-        
+
         if (!healthStatus.healthy) {
           this.logger.warn('System health check failed', {
             score: healthStatus.overallScore,
-            failedChecks: healthStatus.checks.filter(c => !c.healthy).map(c => c.name)
+            failedChecks: healthStatus.checks.filter(c => !c.healthy).map(c => c.name),
           })
         }
       } catch (error) {
         this.logger.error('Health check execution failed', {
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         }, HealthcareErrorSeverity.MEDIUM)
       }
     }, this.options.healthCheckInterval)
@@ -557,14 +561,14 @@ export class ObservabilityManager {
   private startMetricsCleanup(): void {
     const interval = setInterval(() => {
       const cutoff = new Date(Date.now() - (this.options.metricsRetentionHours! * 3600000))
-      
+
       this.metricValues = this.metricValues.filter(
-        metric => metric.timestamp > cutoff
+        metric => metric.timestamp > cutoff,
       )
 
       this.logger.debug('Metrics cleanup completed', {
         remainingMetrics: this.metricValues.length,
-        cutoffTime: cutoff.toISOString()
+        cutoffTime: cutoff.toISOString(),
       })
     }, 300000) // Cleanup every 5 minutes
 
@@ -585,7 +589,7 @@ export class ObservabilityManager {
 
       try {
         const shouldAlert = await this.evaluateAlertCondition(rule)
-        
+
         if (shouldAlert) {
           await this.triggerAlert(rule)
         } else {
@@ -594,7 +598,7 @@ export class ObservabilityManager {
       } catch (error) {
         this.logger.error('Alert rule evaluation failed', {
           ruleId: rule.id,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         }, HealthcareErrorSeverity.LOW)
       }
     }
@@ -627,7 +631,7 @@ export class ObservabilityManager {
 
   private async triggerAlert(rule: AlertRule): Promise<void> {
     const existingAlert = this.activeAlerts.get(rule.id)
-    
+
     // Check cooldown period
     if (existingAlert && !existingAlert.resolved) {
       const timeSinceLastAlert = Date.now() - existingAlert.timestamp.getTime()
@@ -647,8 +651,8 @@ export class ObservabilityManager {
       labels: {
         rule_id: rule.id,
         environment: this.options.environment!,
-        service: this.options.serviceName!
-      }
+        service: this.options.serviceName!,
+      },
     }
 
     this.activeAlerts.set(rule.id, alert)
@@ -657,7 +661,7 @@ export class ObservabilityManager {
       alertId: alert.id,
       ruleId: rule.id,
       severity: rule.severity,
-      message: alert.message
+      message: alert.message,
     }, this.mapSeverityToErrorLevel(rule.severity))
 
     // Send notifications
@@ -673,7 +677,7 @@ export class ObservabilityManager {
       this.logger.info('Alert resolved', {
         alertId: alert.id,
         ruleId: ruleId,
-        duration: alert.resolvedAt.getTime() - alert.timestamp.getTime()
+        duration: alert.resolvedAt.getTime() - alert.timestamp.getTime(),
       })
     }
   }
@@ -682,7 +686,7 @@ export class ObservabilityManager {
     // Mock implementation - in real scenario, send to configured channels
     this.logger.debug('Sending alert notifications', {
       alertId: alert.id,
-      channels: this.alertRules.get(alert.ruleId)?.channels
+      channels: this.alertRules.get(alert.ruleId)?.channels,
     })
   }
 
@@ -691,14 +695,14 @@ export class ObservabilityManager {
     this.registerMetric({
       name: 'system_health_score',
       type: 'gauge',
-      description: 'Overall system health score (0-100)'
+      description: 'Overall system health score (0-100)',
     })
 
     this.registerMetric({
       name: 'request_count',
       type: 'counter',
       description: 'Total number of HTTP requests',
-      labels: ['method', 'endpoint', 'status']
+      labels: ['method', 'endpoint', 'status'],
     })
 
     this.registerMetric({
@@ -706,32 +710,32 @@ export class ObservabilityManager {
       type: 'histogram',
       description: 'HTTP request duration in milliseconds',
       labels: ['method', 'endpoint'],
-      buckets: [10, 50, 100, 250, 500, 1000, 2500, 5000]
+      buckets: [10, 50, 100, 250, 500, 1000, 2500, 5000],
     })
 
     this.registerMetric({
       name: 'error_count',
       type: 'counter',
       description: 'Total number of errors',
-      labels: ['type', 'severity']
+      labels: ['type', 'severity'],
     })
 
     this.registerMetric({
       name: 'active_connections',
       type: 'gauge',
-      description: 'Number of active database connections'
+      description: 'Number of active database connections',
     })
 
     this.registerMetric({
       name: 'memory_usage',
       type: 'gauge',
-      description: 'Memory usage in bytes'
+      description: 'Memory usage in bytes',
     })
 
     this.registerMetric({
       name: 'cpu_usage',
       type: 'gauge',
-      description: 'CPU usage percentage'
+      description: 'CPU usage percentage',
     })
 
     // Register default health checks
@@ -743,7 +747,7 @@ export class ObservabilityManager {
       },
       interval: 30000,
       timeout: 5000,
-      critical: true
+      critical: true,
     })
 
     this.registerHealthCheck({
@@ -752,16 +756,16 @@ export class ObservabilityManager {
         const usage = process.memoryUsage()
         const heapUsed = usage.heapUsed / 1024 / 1024 // MB
         const healthy = heapUsed < 500 // Less than 500MB
-        
+
         return {
           healthy,
           message: healthy ? 'Memory usage normal' : 'Memory usage high',
-          details: { heapUsedMB: Math.round(heapUsed) }
+          details: { heapUsedMB: Math.round(heapUsed) },
         }
       },
       interval: 60000,
       timeout: 1000,
-      critical: false
+      critical: false,
     })
   }
 
@@ -819,7 +823,7 @@ export class ObservabilityManager {
     executionTimeMs?: number
   }> {
     const startTime = Date.now()
-    
+
     // Handle timeout scenario
     if (params.timeoutMs) {
       await new Promise(resolve => setTimeout(resolve, params.timeoutMs + 100))
@@ -833,7 +837,7 @@ export class ObservabilityManager {
         urgency: 'low',
         error: 'Memory leak detection timeout exceeded',
         timeoutOccurred: true,
-        executionTimeMs: Date.now() - startTime
+        executionTimeMs: Date.now() - startTime,
       }
     }
 
@@ -846,15 +850,16 @@ export class ObservabilityManager {
           growthRate: 0,
           estimatedLeakSize: 0,
           recommendations: ['Insufficient data for leak detection'],
-          urgency: 'low'
+          urgency: 'low',
         }
       }
 
       const thresholdPercent = params.thresholdPercent || 20
       const firstSnapshot = params.snapshots[0]
       const lastSnapshot = params.snapshots[params.snapshots.length - 1]
-      
-      const growthRate = ((lastSnapshot.heapUsed - firstSnapshot.heapUsed) / firstSnapshot.heapUsed) * 100
+
+      const growthRate =
+        ((lastSnapshot.heapUsed - firstSnapshot.heapUsed) / firstSnapshot.heapUsed) * 100
       const growthRatePerMs = growthRate / (lastSnapshot.timestamp - firstSnapshot.timestamp)
       const hasLeak = growthRate > thresholdPercent
 
@@ -864,17 +869,20 @@ export class ObservabilityManager {
       }
 
       const estimatedLeakSize = hasLeak ? lastSnapshot.heapUsed - firstSnapshot.heapUsed : 0
-      const urgency = hasLeak ? 
-        (growthRate > 50 ? 'critical' : growthRate > 30 ? 'high' : 'medium') : 'low'
+      const urgency = hasLeak
+        ? (growthRate > 50 ? 'critical' : growthRate > 30 ? 'high' : 'medium')
+        : 'low'
 
-      const recommendations = hasLeak ? [
-        'Memory leak detected - investigate recent code changes',
-        'Review object lifecycle management',
-        'Check for event listener leaks',
-        'Verify session cleanup processes'
-      ] : [
-        'Memory usage within normal parameters'
-      ]
+      const recommendations = hasLeak
+        ? [
+          'Memory leak detected - investigate recent code changes',
+          'Review object lifecycle management',
+          'Check for event listener leaks',
+          'Verify session cleanup processes',
+        ]
+        : [
+          'Memory usage within normal parameters',
+        ]
 
       this.recordMetric('memory_leak_detection_duration', Date.now() - startTime)
       this.recordMetric('memory_growth_rate_percent', growthRate)
@@ -887,7 +895,7 @@ export class ObservabilityManager {
         estimatedLeakSize,
         recommendations,
         urgency,
-        executionTimeMs: Date.now() - startTime
+        executionTimeMs: Date.now() - startTime,
       }
     } catch (error) {
       this.logger.error('Memory leak detection failed', { error })
@@ -900,7 +908,7 @@ export class ObservabilityManager {
         recommendations: ['Memory leak detection encountered an error'],
         urgency: 'low',
         error: error instanceof Error ? error.message : 'Unknown error',
-        executionTimeMs: Date.now() - startTime
+        executionTimeMs: Date.now() - startTime,
       }
     }
   }
@@ -932,13 +940,13 @@ export class ObservabilityManager {
         .map(chunk => ({
           type: chunk.type,
           percentage: Math.round((chunk.size / heapProfile.totalSize) * 100 * 100) / 100,
-          recommendation: chunk.size > heapProfile.totalSize * 0.3 ? 
-            `Consider optimizing ${chunk.type} usage (${chunk.percentage}% of total memory)` : 
-            `${chunk.type} usage acceptable`
+          recommendation: chunk.size > heapProfile.totalSize * 0.3
+            ? `Consider optimizing ${chunk.type} usage (${chunk.percentage}% of total memory)`
+            : `${chunk.type} usage acceptable`,
         }))
 
       const potentialLeaks = heapProfile.chunks
-        .filter(chunk => 
+        .filter(chunk =>
           (chunk.type === 'event_listeners' && chunk.count > 1000) ||
           (chunk.type === 'session_objects' && chunk.count > 500) ||
           (chunk.type === 'cache_objects' && chunk.size > heapProfile.totalSize * 0.5)
@@ -946,13 +954,15 @@ export class ObservabilityManager {
         .map(chunk => ({
           type: chunk.type,
           severity: chunk.size > heapProfile.totalSize * 0.4 ? 'high' : 'medium',
-          description: `High ${chunk.type} detected: ${chunk.count} objects, ${Math.round(chunk.size / 1024 / 1024)}MB`
+          description: `High ${chunk.type} detected: ${chunk.count} objects, ${
+            Math.round(chunk.size / 1024 / 1024)
+          }MB`,
         }))
 
       const optimizationSuggestions = [
         'Consider implementing object pooling for frequently allocated objects',
         'Review cache growth patterns',
-        'Implement memory usage monitoring for critical components'
+        'Implement memory usage monitoring for critical components',
       ]
 
       if (potentialLeaks.some(leak => leak.severity === 'high')) {
@@ -963,7 +973,7 @@ export class ObservabilityManager {
         totalMemory: heapProfile.totalSize,
         largestConsumers,
         potentialLeaks,
-        optimizationSuggestions
+        optimizationSuggestions,
       }
     } catch (error) {
       this.logger.error('Memory profile analysis failed', { error })
@@ -971,7 +981,7 @@ export class ObservabilityManager {
         totalMemory: heapProfile.totalSize,
         largestConsumers: [],
         potentialLeaks: [],
-        optimizationSuggestions: ['Memory profile analysis failed']
+        optimizationSuggestions: ['Memory profile analysis failed'],
       }
     }
   }
@@ -990,13 +1000,13 @@ export class ObservabilityManager {
     startTime: Date
   }> {
     const monitoringId = `memory-monitor-${Date.now()}`
-    
+
     // Store monitoring configuration
     this.memoryMonitoringConfig = {
       id: monitoringId,
       ...config,
       startTime: new Date(),
-      isActive: true
+      isActive: true,
     }
 
     // Start monitoring interval
@@ -1025,15 +1035,15 @@ export class ObservabilityManager {
               type: 'memory',
               current_usage_mb: heapUsedMb.toString(),
               threshold_mb: config.thresholdMb.toString(),
-              percentage: Math.round(thresholdPercent).toString()
-            }
+              percentage: Math.round(thresholdPercent).toString(),
+            },
           }
 
           this.activeAlerts.push(alert)
           this.logger.warn('Memory threshold exceeded', {
             heapUsedMb,
             thresholdMb: config.thresholdMb,
-            percentage: thresholdPercent
+            percentage: thresholdPercent,
           })
         }
       } catch (error) {
@@ -1045,7 +1055,7 @@ export class ObservabilityManager {
       monitoringId,
       isActive: true,
       config,
-      startTime: new Date()
+      startTime: new Date(),
     }
   }
 
@@ -1066,7 +1076,7 @@ export class ObservabilityManager {
       currentUsageMb: parseFloat(alert.labels?.current_usage_mb || '0'),
       thresholdMb: parseFloat(alert.labels?.threshold_mb || '0'),
       percentage: parseFloat(alert.labels?.percentage || '0'),
-      timestamp: alert.timestamp.toISOString()
+      timestamp: alert.timestamp.toISOString(),
     }))
   }
 
@@ -1089,16 +1099,20 @@ export class ObservabilityManager {
     }
     recommendations: string[]
   }> {
-    const hasSessionLeaks = (sessionMetrics.expiredSessionsNotCleaned || 0) > 0 || 
-                          (sessionMetrics.cleanupFailureRate || 0) > 0.3
+    const hasSessionLeaks = (sessionMetrics.expiredSessionsNotCleaned || 0) > 0 ||
+      (sessionMetrics.cleanupFailureRate || 0) > 0.3
 
-    const estimatedLeakedMemory = hasSessionLeaks ? 
-      (sessionMetrics.expiredSessionsNotCleaned || 0) * (sessionMetrics.averageSessionMemory || 0) : 0
+    const estimatedLeakedMemory = hasSessionLeaks
+      ? (sessionMetrics.expiredSessionsNotCleaned || 0) * (sessionMetrics.averageSessionMemory || 0)
+      : 0
 
     const memoryWasteMb = estimatedLeakedMemory / (1024 * 1024)
     const performanceImpact = memoryWasteMb > 50 ? 'high' : memoryWasteMb > 10 ? 'medium' : 'low'
-    const complianceRisk = (sessionMetrics.cleanupFailureRate || 0) > 0.5 ? 'high' : 
-                           (sessionMetrics.cleanupFailureRate || 0) > 0.2 ? 'medium' : 'low'
+    const complianceRisk = (sessionMetrics.cleanupFailureRate || 0) > 0.5
+      ? 'high'
+      : (sessionMetrics.cleanupFailureRate || 0) > 0.2
+      ? 'medium'
+      : 'low'
 
     const leakSources: string[] = []
     if (sessionMetrics.expiredSessionsNotCleaned && sessionMetrics.expiredSessionsNotCleaned > 0) {
@@ -1111,11 +1125,13 @@ export class ObservabilityManager {
       leakSources.push('session_object_retention')
     }
 
-    const recommendations = hasSessionLeaks ? [
-      'Implement aggressive session cleanup',
-      'Add memory usage monitoring to session lifecycle',
-      'Review session object reference patterns'
-    ] : []
+    const recommendations = hasSessionLeaks
+      ? [
+        'Implement aggressive session cleanup',
+        'Add memory usage monitoring to session lifecycle',
+        'Review session object reference patterns',
+      ]
+      : []
 
     return {
       hasSessionLeaks,
@@ -1124,9 +1140,9 @@ export class ObservabilityManager {
       impact: {
         memoryWasteMb,
         performanceImpact,
-        complianceRisk
+        complianceRisk,
       },
-      recommendations
+      recommendations,
     }
   }
 
@@ -1162,14 +1178,17 @@ export class ObservabilityManager {
     const availableMb = (memoryUsage.heapTotal - memoryUsage.heapUsed) / 1024 / 1024
 
     // Determine overall health
-    const overallHealth = heapUsedPercent > 90 ? 'critical' : 
-                         heapUsedPercent > 70 ? 'degraded' : 'healthy'
+    const overallHealth = heapUsedPercent > 90
+      ? 'critical'
+      : heapUsedPercent > 70
+      ? 'degraded'
+      : 'healthy'
 
     // Get session metrics (simplified)
     const sessionMetrics = {
       activeCount: this.sessions.size || 0,
       cleanupEfficiency: 0.95, // Would calculate from actual cleanup data
-      averageMemoryPerSession: 1024 * 1024 // 1MB average
+      averageMemoryPerSession: 1024 * 1024, // 1MB average
     }
 
     return {
@@ -1178,19 +1197,19 @@ export class ObservabilityManager {
         usagePercent: Math.round(heapUsedPercent * 100) / 100,
         availableMb: Math.round(availableMb * 100) / 100,
         trend: 'stable', // Would calculate from historical data
-        alerts: this.activeAlerts.length
+        alerts: this.activeAlerts.length,
       },
       sessions: sessionMetrics,
       performance: {
         responseTimeMs: this.calculateAverageResponseTime(),
         throughput: this.calculateThroughput(),
-        errorRate: this.calculateErrorRate()
+        errorRate: this.calculateErrorRate(),
       },
       compliance: {
         lgpdCompliant: true, // Would check actual compliance status
         auditTrailComplete: true,
-        dataRetentionApplied: true
-      }
+        dataRetentionApplied: true,
+      },
     }
   }
 
@@ -1226,7 +1245,7 @@ export class ObservabilityManager {
   } {
     const endTime = new Date()
     const startTime = new Date(endTime.getTime() - params.timeWindowHours * 60 * 60 * 1000)
-    
+
     // Generate mock data points (in real implementation, this would come from stored metrics)
     const dataPoints = []
     for (let i = 0; i < params.timeWindowHours; i++) {
@@ -1235,14 +1254,18 @@ export class ObservabilityManager {
         timestamp,
         memoryUsedMb: 100 + Math.random() * 50 + (i * 2), // Slight upward trend
         sessionCount: 20 + Math.floor(Math.random() * 10),
-        loadAverage: 0.3 + Math.random() * 0.4
+        loadAverage: 0.3 + Math.random() * 0.4,
       })
     }
 
     // Calculate trends
-    const memoryGrowthRate = (dataPoints[dataPoints.length - 1].memoryUsedMb - dataPoints[0].memoryUsedMb) / dataPoints[0].memoryUsedMb
-    const sessionGrowthRate = (dataPoints[dataPoints.length - 1].sessionCount - dataPoints[0].sessionCount) / Math.max(dataPoints[0].sessionCount, 1)
-    
+    const memoryGrowthRate =
+      (dataPoints[dataPoints.length - 1].memoryUsedMb - dataPoints[0].memoryUsedMb) /
+      dataPoints[0].memoryUsedMb
+    const sessionGrowthRate =
+      (dataPoints[dataPoints.length - 1].sessionCount - dataPoints[0].sessionCount) /
+      Math.max(dataPoints[0].sessionCount, 1)
+
     // Calculate correlation (simplified)
     const correlation = 0.65 // Would calculate actual correlation
 
@@ -1250,15 +1273,15 @@ export class ObservabilityManager {
       timeRange: {
         start: startTime,
         end: endTime,
-        granularity: params.granularity
+        granularity: params.granularity,
       },
       dataPoints,
       trends: {
         memoryGrowthRate: Math.round(memoryGrowthRate * 1000) / 1000,
         sessionGrowthRate: Math.round(sessionGrowthRate * 1000) / 1000,
-        correlation: Math.round(correlation * 100) / 100
+        correlation: Math.round(correlation * 100) / 100,
       },
-      anomalies: [] // Would detect actual anomalies
+      anomalies: [], // Would detect actual anomalies
     }
   }
 
@@ -1288,12 +1311,14 @@ export class ObservabilityManager {
     isActive: boolean
   }
   private memoryMonitorInterval?: NodeJS.Timeout
-  
+
   private sessions: Map<string, any> = new Map() // For session tracking
 }
 
 // Factory function for easy instantiation
-export function createObservabilityManager(options?: ObservabilityManagerOptions): ObservabilityManager {
+export function createObservabilityManager(
+  options?: ObservabilityManagerOptions,
+): ObservabilityManager {
   return new ObservabilityManager(options)
 }
 
@@ -1301,11 +1326,11 @@ export function createObservabilityManager(options?: ObservabilityManagerOptions
 export function withTrace<T>(
   manager: ObservabilityManager,
   name: string,
-  operation: () => Promise<T>
+  operation: () => Promise<T>,
 ): Promise<T> {
   return new Promise(async (resolve, reject) => {
     const trace = manager.startTrace(name)
-    
+
     try {
       const result = await operation()
       manager.finishTrace(trace)
@@ -1321,10 +1346,10 @@ export function withTrace<T>(
 export function timeOperation<T>(
   manager: ObservabilityManager,
   name: string,
-  operation: () => T
+  operation: () => T,
 ): T {
   const startTime = Date.now()
-  
+
   try {
     const result = operation()
     const duration = Date.now() - startTime

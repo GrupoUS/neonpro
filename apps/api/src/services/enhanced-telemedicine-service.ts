@@ -5,9 +5,9 @@
  * Following KISS/YAGNI principles and avoiding overengineering
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import { z } from 'zod'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from "@/utils/healthcare-errors"
 import { aiSecurityService } from './ai-security-service'
 
 // Mock audit logger for startup - TODO: Replace with actual auditLogger

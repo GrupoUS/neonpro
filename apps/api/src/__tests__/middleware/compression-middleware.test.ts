@@ -3,8 +3,8 @@
  * Testing Express-to-Hono migration fixes
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { Context } from 'hono'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CompressionMiddleware } from '../../middleware/compression-middleware'
 
 // Mock Hono Context
@@ -14,13 +14,13 @@ function createMockContext(overrides = {}) {
     method: 'GET',
     header: vi.fn(),
   }
-  
+
   const res = {
     headers: new Map(),
     status: vi.fn(),
     body: null,
   }
-  
+
   const c = {
     req,
     res,
@@ -28,7 +28,7 @@ function createMockContext(overrides = {}) {
     get: vi.fn(),
     header: vi.fn(),
   } as any
-  
+
   return { ...c, ...overrides }
 }
 
@@ -76,7 +76,7 @@ describe('CompressionMiddleware - Express-to-Hono Migration', () => {
 
     it('should properly handle Hono context in middleware execution', async () => {
       const next = vi.fn()
-      
+
       // This should work after fixing the migration
       await expect(middleware.middleware(mockContext, next)).resolves.not.toThrow()
     })
@@ -86,9 +86,9 @@ describe('CompressionMiddleware - Express-to-Hono Migration', () => {
     it('should properly set headers using Hono context', async () => {
       // This test will pass after fixing the migration
       const next = vi.fn()
-      
+
       await middleware.middleware(mockContext, next)
-      
+
       // Verify that context methods were called correctly
       expect(mockContext.set).toHaveBeenCalled()
       expect(mockContext.header).toHaveBeenCalled()

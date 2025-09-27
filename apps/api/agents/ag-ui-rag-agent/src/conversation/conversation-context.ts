@@ -2,10 +2,10 @@ import { SupabaseClient } from '@supabase/supabase-js'
 import { HealthcareLogger } from '../logging/healthcare-logger'
 import { SessionManager } from '../session/session-manager'
 import {
+  ErrorContext,
   getErrorMessage,
   logErrorWithContext,
   withErrorHandling,
-  ErrorContext,
 } from '../utils/error-handling'
 
 export interface ConversationMessage {
@@ -132,7 +132,7 @@ export class ConversationContextManager {
           this.logger,
           'conversation_creation_failed',
           error,
-          ErrorContext.conversation(conversationId, params.userId, params.clinicId)
+          ErrorContext.conversation(conversationId, params.userId, params.clinicId),
         )
         throw new Error(`Failed to create conversation: ${getErrorMessage(error)}`)
       }
@@ -156,7 +156,7 @@ export class ConversationContextManager {
         error,
         ErrorContext.conversation('temp', params.userId, params.clinicId, {
           params: params,
-        })
+        }),
       )
       throw error
     }
@@ -221,7 +221,7 @@ export class ConversationContextManager {
         this.logger,
         'conversation_retrieval_error',
         error,
-        ErrorContext.conversation(conversationId, userId, 'unknown')
+        ErrorContext.conversation(conversationId, userId, 'unknown'),
       )
       throw error
     }
@@ -285,7 +285,7 @@ export class ConversationContextManager {
         error,
         ErrorContext.conversation(conversationId, userId, 'unknown', {
           updates: updates,
-        })
+        }),
       )
       throw error
     }
@@ -345,7 +345,7 @@ export class ConversationContextManager {
         error,
         ErrorContext.conversation(conversationId, userId, 'unknown', {
           messageRole: message.role,
-        })
+        }),
       )
       throw error
     }
@@ -376,7 +376,7 @@ export class ConversationContextManager {
         this.logger,
         'context_update_error',
         error,
-        ErrorContext.conversation(conversationId, userId, 'unknown')
+        ErrorContext.conversation(conversationId, userId, 'unknown'),
       )
       throw error
     }
@@ -434,7 +434,7 @@ export class ConversationContextManager {
         this.logger,
         'conversation_list_error',
         error,
-        ErrorContext.dataAccess(userId, clinicId, 'ai_conversation_contexts', 'list')
+        ErrorContext.dataAccess(userId, clinicId, 'ai_conversation_contexts', 'list'),
       )
       throw error
     }
@@ -464,7 +464,7 @@ export class ConversationContextManager {
         this.logger,
         'conversation_deletion_error',
         error,
-        ErrorContext.conversation(conversationId, userId, 'unknown')
+        ErrorContext.conversation(conversationId, userId, 'unknown'),
       )
       throw error
     }
@@ -501,7 +501,7 @@ export class ConversationContextManager {
         this.logger,
         'conversation_cleanup_error',
         error,
-        ErrorContext.system('cleanup_expired_conversations')
+        ErrorContext.system('cleanup_expired_conversations'),
       )
       return 0
     }

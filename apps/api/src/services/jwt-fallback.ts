@@ -1,6 +1,6 @@
 /**
  * JWT Implementation Fallback
- * 
+ *
  * Temporary implementation while jsonwebtoken dependency issues are resolved
  * This provides basic JWT functionality for testing and development
  */
@@ -15,34 +15,36 @@ export class SimpleJWT {
     const header = { alg: this.ALGORITHM, typ: 'JWT' }
     const encodedHeader = Buffer.from(JSON.stringify(header)).toString('base64url')
     const encodedPayload = Buffer.from(JSON.stringify(payload)).toString('base64url')
-    
+
     // Simple signature (not cryptographically secure - for testing only)
     const signatureInput = `${encodedHeader}.${encodedPayload}`
     const signature = Buffer.from(this.simpleHMAC(signatureInput, secret)).toString('base64url')
-    
+
     return `${encodedHeader}.${encodedPayload}.${signature}`
   }
 
   static async verify(token: string, secret: string, options: any = {}): Promise<any> {
     try {
       const [encodedHeader, encodedPayload, signature] = token.split('.')
-      
+
       // Verify signature
       const signatureInput = `${encodedHeader}.${encodedPayload}`
-      const expectedSignature = Buffer.from(this.simpleHMAC(signatureInput, secret)).toString('base64url')
-      
+      const expectedSignature = Buffer.from(this.simpleHMAC(signatureInput, secret)).toString(
+        'base64url',
+      )
+
       if (signature !== expectedSignature) {
         throw new Error('Invalid signature')
       }
-      
+
       // Decode payload
       const payload = JSON.parse(Buffer.from(encodedPayload, 'base64url').toString())
-      
+
       // Check expiration
       if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
         throw new Error('Token expired')
       }
-      
+
       return payload
     } catch (error) {
       throw new Error(`Invalid token: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -77,5 +79,5 @@ export const decode = (token: string): any => {
 export default {
   sign,
   verify,
-  decode
+  decode,
 }

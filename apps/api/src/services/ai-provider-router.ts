@@ -31,7 +31,7 @@ export class HealthcareAIOptimizationUtils {
   static estimateRequestCost(
     use_case: HealthcareAIUseCase,
     provider: string,
-    complexity: number = 1
+    complexity: number = 1,
   ): number {
     const baseCosts: Record<HealthcareAIUseCase, number> = {
       [HealthcareAIUseCase.PATIENT_COMMUNICATION]: 0.002,
@@ -45,11 +45,11 @@ export class HealthcareAIOptimizationUtils {
     }
 
     const providerMultipliers: Record<string, number> = {
-      'openai': 1.0,
-      'anthropic': 1.2,
-      'google': 0.8,
-      'azure': 1.1,
-      'aws': 0.9,
+      openai: 1.0,
+      anthropic: 1.2,
+      google: 0.8,
+      azure: 1.1,
+      aws: 0.9,
     }
 
     const baseCost = baseCosts[use_case] || 0.003

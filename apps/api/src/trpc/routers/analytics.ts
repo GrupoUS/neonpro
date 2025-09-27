@@ -5,10 +5,10 @@
 
 import {
   AnalyticsConfigurationSchema,
+  AnalyticsService,
   CreateAnalyticsConfigurationInput,
   DeleteAnalyticsConfigurationInput,
   UpdateAnalyticsConfigurationInput,
-  AnalyticsService,
 } from '@neonpro/healthcare-core'
 import { router } from '../trpc'
 import { SuccessResponseSchema } from '../utils/response-schemas'

@@ -450,7 +450,7 @@ export class EnhancedSessionManager {
         removedSession: concurrentResult.removedSession,
         userId,
         maxSessions: this.config.maxConcurrentSessions,
-        severity: 'low'
+        severity: 'low',
       })
     }
 
@@ -772,7 +772,7 @@ export class EnhancedSessionManager {
         healthcareLogger.info('Cleaned expired sessions from session manager', {
           cleanedCount,
           totalSessions: this.sessions.size,
-          severity: 'low'
+          severity: 'low',
         })
       }
     }, this.config.cleanupInterval)
@@ -801,11 +801,11 @@ export class EnhancedSessionManager {
    * Validate session with timeout handling
    */
   async validateSessionWithTimeout(
-    sessionId: string, 
+    sessionId: string,
     options: {
       timeoutWarning?: number
       autoExtend?: boolean
-    } = {}
+    } = {},
   ): Promise<{
     isValid: boolean
     isNearTimeout?: boolean
@@ -840,7 +840,7 @@ export class EnhancedSessionManager {
       isNearTimeout,
       timeRemaining: Math.max(0, timeRemaining),
       session: timeRemaining > 0 ? session : undefined,
-      warnings
+      warnings,
     }
   }
 
@@ -852,7 +852,7 @@ export class EnhancedSessionManager {
     options: {
       extensionMinutes?: number
       requireReauthentication?: boolean
-    } = {}
+    } = {},
   ): Promise<{
     success: boolean
     session?: EnhancedSessionMetadata
@@ -860,7 +860,7 @@ export class EnhancedSessionManager {
     error?: string
   }> {
     const session = this.sessions.get(sessionId)
-    
+
     if (!session) {
       return { success: false, error: 'Session not found' }
     }
@@ -870,18 +870,18 @@ export class EnhancedSessionManager {
 
     // Require reauthentication for sensitive extensions
     if (options.requireReauthentication && session.securityLevel === 'high') {
-      return { 
-        success: false, 
-        error: 'Reauthentication required for session extension' 
+      return {
+        success: false,
+        error: 'Reauthentication required for session extension',
       }
     }
 
     session.lastActivity = new Date(session.lastActivity.getTime() + extensionMs)
-    
+
     return {
       success: true,
       session,
-      extensionApplied: true
+      extensionApplied: true,
     }
   }
 
@@ -914,20 +914,20 @@ export class EnhancedSessionManager {
       permissions: this.getDefaultPermissions(options.userRole),
       healthcareProfessional: {
         role: options.userRole,
-        provider: options.healthcareProvider
+        provider: options.healthcareProvider,
       },
       securityLevel: options.sessionType === 'telemedicine' ? 'high' : 'normal',
       riskScore: 0,
       ipChangeCount: 0,
       consecutiveFailures: 0,
-      refreshCount: 0
+      refreshCount: 0,
     }
 
     // Enforce concurrent session limits
     this.enforceConcurrentSessionLimit(options.userId, sessionId)
 
     this.sessions.set(sessionId, session)
-    
+
     const userSessions = this.userSessions.get(options.userId) || new Set()
     userSessions.add(sessionId)
     this.userSessions.set(options.userId, userSessions)
@@ -939,7 +939,7 @@ export class EnhancedSessionManager {
       healthcareProvider: options.healthcareProvider,
       sessionType: options.sessionType,
       securityLevel: session.securityLevel,
-      severity: 'low'
+      severity: 'low',
     })
 
     return session
@@ -960,14 +960,14 @@ export class EnhancedSessionManager {
     alertGenerated: boolean
   }> {
     const session = this.sessions.get(attempt.sessionId)
-    
+
     if (!session) {
       return {
         isHijackAttempt: false,
         confidence: 0,
         evidence: [],
         action: 'allow',
-        alertGenerated: false
+        alertGenerated: false,
       }
     }
 
@@ -978,15 +978,21 @@ export class EnhancedSessionManager {
     if (session.ipAddress !== attempt.ipAddress) {
       evidence.push('ip_address_mismatch')
       confidence += 40
-      
+
       // Check if IP change is within mobile subnet tolerance
-      if (session.ipAddress && attempt.ipAddress && !this.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)) {
+      if (
+        session.ipAddress && attempt.ipAddress &&
+        !this.isMobileSubnetChange(session.ipAddress, attempt.ipAddress)
+      ) {
         confidence += 30
       }
     }
 
     // User agent mismatch - only consider mismatch if both are defined and different
-    if (session.userAgent !== undefined && attempt.userAgent !== undefined && session.userAgent !== attempt.userAgent) {
+    if (
+      session.userAgent !== undefined && attempt.userAgent !== undefined &&
+      session.userAgent !== attempt.userAgent
+    ) {
       evidence.push('user_agent_mismatch')
       confidence += 30
     }
@@ -997,8 +1003,9 @@ export class EnhancedSessionManager {
     }
 
     const isHijackAttempt = confidence >= 70
-    const action = isHijackAttempt ? 
-      (confidence >= 90 ? 'terminate_session' : 'require_mfa') : 'allow'
+    const action = isHijackAttempt
+      ? (confidence >= 90 ? 'terminate_session' : 'require_mfa')
+      : 'allow'
 
     if (isHijackAttempt) {
       healthcareLogger.warn('Potential session hijacking detected', {
@@ -1007,7 +1014,7 @@ export class EnhancedSessionManager {
         evidence,
         confidence,
         action,
-        severity: 'high'
+        severity: 'high',
       })
     }
 
@@ -1016,7 +1023,7 @@ export class EnhancedSessionManager {
       confidence,
       evidence,
       action,
-      alertGenerated: isHijackAttempt
+      alertGenerated: isHijackAttempt,
     }
   }
 
@@ -1029,7 +1036,7 @@ export class EnhancedSessionManager {
       checkIPReputation?: boolean
       checkDeviceFingerprint?: boolean
       checkGeoLocation?: boolean
-    } = {}
+    } = {},
   ): Promise<{
     isValid: boolean
     securityScore: number
@@ -1037,13 +1044,13 @@ export class EnhancedSessionManager {
     recommendations: string[]
   }> {
     const session = this.sessions.get(sessionId)
-    
+
     if (!session) {
       return {
         isValid: false,
         securityScore: 0,
         threats: ['session_not_found'],
-        recommendations: ['Session does not exist or has expired']
+        recommendations: ['Session does not exist or has expired'],
       }
     }
 
@@ -1086,7 +1093,7 @@ export class EnhancedSessionManager {
       isValid: securityScore >= 70,
       securityScore: Math.max(0, securityScore),
       threats,
-      recommendations
+      recommendations,
     }
   }
 
@@ -1098,7 +1105,7 @@ export class EnhancedSessionManager {
     operation: {
       operationType: string
       sensitivityLevel: 'low' | 'medium' | 'high'
-    }
+    },
   ): Promise<{
     mfaRequired: boolean
     mfaVerified: boolean
@@ -1106,13 +1113,13 @@ export class EnhancedSessionManager {
     recommendations: string[]
   }> {
     const session = this.sessions.get(sessionId)
-    
+
     if (!session) {
       return {
         mfaRequired: false,
         mfaVerified: false,
         isValid: false,
-        recommendations: ['Session not found']
+        recommendations: ['Session not found'],
       }
     }
 
@@ -1140,7 +1147,7 @@ export class EnhancedSessionManager {
       mfaRequired,
       mfaVerified,
       isValid,
-      recommendations
+      recommendations,
     }
   }
 
@@ -1218,13 +1225,13 @@ export class EnhancedSessionManager {
       performanceMetrics: {
         averageValidationTime: 0, // Would track actual validation times
         timeoutEvents,
-        extensionRequests
+        extensionRequests,
       },
       healthcareMetrics: {
         telemedicineSessions,
         mfaVerifiedSessions,
-        consentLevelDistribution
-      }
+        consentLevelDistribution,
+      },
     }
   }
 
@@ -1233,23 +1240,23 @@ export class EnhancedSessionManager {
    */
   private getDefaultPermissions(userRole: string): string[] {
     const rolePermissions: Record<string, string[]> = {
-      'healthcare_professional': [
+      healthcare_professional: [
         'read_patient_data',
         'write_patient_data',
         'view_medical_records',
-        'create_appointments'
+        'create_appointments',
       ],
-      'admin': [
+      admin: [
         'read_patient_data',
         'write_patient_data',
         'manage_users',
-        'view_audit_logs'
+        'view_audit_logs',
       ],
-      'nurse': [
+      nurse: [
         'read_patient_data',
         'update_vitals',
-        'view_medical_records'
-      ]
+        'view_medical_records',
+      ],
     }
 
     return rolePermissions[userRole] || []
@@ -1289,7 +1296,7 @@ export class EnhancedSessionManager {
     // Simple implementation - check if first two octets match (mobile carrier subnet)
     const oldParts = oldIP.split('.')
     const newParts = newIP.split('.')
-    
+
     return oldParts[0] === newParts[0] && oldParts[1] === newParts[1]
   }
 
@@ -1300,8 +1307,8 @@ export class EnhancedSessionManager {
     // Simple implementation - check against known suspicious patterns
     const suspiciousPatterns = [
       /^192\.168\.1\.1$/, // Common router IP (potential spoofing)
-      /^10\.0\.0\./,     // Private network suspicious usage
-      /^172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)\./ // VPN ranges
+      /^10\.0\.0\./, // Private network suspicious usage
+      /^172\.(16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)\./, // VPN ranges
     ]
 
     return suspiciousPatterns.some(pattern => pattern.test(ipAddress))

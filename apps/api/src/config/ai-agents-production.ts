@@ -8,7 +8,7 @@ export interface AIAgentsProductionConfig {
   enabled: boolean
   environment: 'production' | 'staging' | 'development' | 'test'
   debug: boolean
-  
+
   // Provider Configuration
   providers: {
     primary: 'openai' | 'anthropic' | 'google'
@@ -16,7 +16,7 @@ export interface AIAgentsProductionConfig {
     autoFailover: boolean
     loadBalancing: boolean
   }
-  
+
   // Model Configuration
   models: {
     default: string
@@ -26,7 +26,7 @@ export interface AIAgentsProductionConfig {
     frequencyPenalty: number
     presencePenalty: number
   }
-  
+
   // Agent Configuration
   agents: {
     maxConcurrentQueries: number
@@ -35,7 +35,7 @@ export interface AIAgentsProductionConfig {
     restartOnFailure: boolean
     gracefulShutdownTimeout: number
   }
-  
+
   // RAG Configuration
   rag: {
     enabled: boolean
@@ -50,7 +50,7 @@ export interface AIAgentsProductionConfig {
     cacheEnabled: boolean
     cacheTtl: number
   }
-  
+
   // Session Management
   sessions: {
     timeout: number
@@ -58,7 +58,7 @@ export interface AIAgentsProductionConfig {
     cleanupInterval: number
     persistenceEnabled: boolean
   }
-  
+
   // Security & Compliance
   security: {
     lgpdCompliance: boolean
@@ -76,7 +76,7 @@ export interface AIAgentsProductionConfig {
     piiDetection: boolean
     encryptionAtRest: boolean
   }
-  
+
   // Performance & Caching
   performance: {
     modelCaching: boolean
@@ -88,7 +88,7 @@ export interface AIAgentsProductionConfig {
     circuitBreaker: boolean
     circuitBreakerThreshold: number
   }
-  
+
   // Monitoring & Analytics
   monitoring: {
     analytics: boolean
@@ -99,7 +99,7 @@ export interface AIAgentsProductionConfig {
     costTracking: boolean
     tokenUsageTracking: boolean
   }
-  
+
   // Healthcare Specific
   healthcare: {
     emergencyMode: boolean
@@ -123,14 +123,14 @@ export const productionConfig: AIAgentsProductionConfig = {
   enabled: true,
   environment: 'production',
   debug: false,
-  
+
   providers: {
     primary: 'openai',
     fallback: ['anthropic', 'google'],
     autoFailover: true,
     loadBalancing: true,
   },
-  
+
   models: {
     default: 'gpt-4o',
     maxTokens: 4000,
@@ -139,7 +139,7 @@ export const productionConfig: AIAgentsProductionConfig = {
     frequencyPenalty: 0.0,
     presencePenalty: 0.0,
   },
-  
+
   agents: {
     maxConcurrentQueries: 20, // Higher capacity for production
     queryTimeout: 45000, // 45 seconds timeout
@@ -147,7 +147,7 @@ export const productionConfig: AIAgentsProductionConfig = {
     restartOnFailure: true,
     gracefulShutdownTimeout: 30000,
   },
-  
+
   rag: {
     enabled: true,
     pythonPath: 'python3',
@@ -161,14 +161,14 @@ export const productionConfig: AIAgentsProductionConfig = {
     cacheEnabled: true,
     cacheTtl: 3600, // 1 hour cache
   },
-  
+
   sessions: {
     timeout: 1800000, // 30 minutes (shorter for production security)
     maxPerUser: 3, // Reduced for production
     cleanupInterval: 300000, // 5 minutes cleanup
     persistenceEnabled: false, // No persistence for production security
   },
-  
+
   security: {
     lgpdCompliance: true,
     consentValidation: true,
@@ -185,7 +185,7 @@ export const productionConfig: AIAgentsProductionConfig = {
     piiDetection: true,
     encryptionAtRest: true,
   },
-  
+
   performance: {
     modelCaching: true,
     modelCacheTtl: 1800, // 30 minutes
@@ -196,7 +196,7 @@ export const productionConfig: AIAgentsProductionConfig = {
     circuitBreaker: true,
     circuitBreakerThreshold: 5,
   },
-  
+
   monitoring: {
     analytics: true,
     usageTracking: true,
@@ -206,7 +206,7 @@ export const productionConfig: AIAgentsProductionConfig = {
     costTracking: true,
     tokenUsageTracking: true,
   },
-  
+
   healthcare: {
     emergencyMode: true,
     failoverProvider: true,
@@ -289,7 +289,7 @@ export const developmentConfig: AIAgentsProductionConfig = {
 // Configuration getter
 export function getAIAgentsProductionConfig(): AIAgentsProductionConfig {
   const environment = process.env.NODE_ENV || 'development'
-  
+
   switch (environment) {
     case 'production':
       return productionConfig
@@ -305,28 +305,30 @@ export function validateAIAgentsConfig(config: AIAgentsProductionConfig): boolea
   try {
     // Basic validation
     if (!config.enabled) return true // Disabled is valid
-    
+
     if (!config.providers.primary || !config.providers.fallback.length) {
       console.error('Invalid provider configuration')
       return false
     }
-    
-    if (config.models.maxTokens <= 0 || config.models.temperature < 0 || config.models.temperature > 1) {
+
+    if (
+      config.models.maxTokens <= 0 || config.models.temperature < 0 || config.models.temperature > 1
+    ) {
       console.error('Invalid model configuration')
       return false
     }
-    
+
     if (config.agents.maxConcurrentQueries <= 0 || config.agents.queryTimeout <= 0) {
       console.error('Invalid agent configuration')
       return false
     }
-    
+
     // Healthcare-specific validation
     if (config.environment === 'production' && !config.security.lgpdCompliance) {
       console.error('LGPD compliance required in production')
       return false
     }
-    
+
     return true
   } catch (error) {
     console.error('Configuration validation error:', error)
@@ -335,32 +337,34 @@ export function validateAIAgentsConfig(config: AIAgentsProductionConfig): boolea
 }
 
 // Environment-specific configuration override
-export function applyEnvironmentOverrides(config: AIAgentsProductionConfig): AIAgentsProductionConfig {
+export function applyEnvironmentOverrides(
+  config: AIAgentsProductionConfig,
+): AIAgentsProductionConfig {
   const overrides = {
     ...config,
   }
-  
+
   // Override with environment variables if they exist
   if (process.env.AI_DEFAULT_MODEL) {
     overrides.models.default = process.env.AI_DEFAULT_MODEL
   }
-  
+
   if (process.env.AI_MAX_TOKENS) {
     overrides.models.maxTokens = parseInt(process.env.AI_MAX_TOKENS)
   }
-  
+
   if (process.env.AI_TEMPERATURE) {
     overrides.models.temperature = parseFloat(process.env.AI_TEMPERATURE)
   }
-  
+
   if (process.env.AI_AGENT_MAX_CONCURRENT_QUERIES) {
     overrides.agents.maxConcurrentQueries = parseInt(process.env.AI_AGENT_MAX_CONCURRENT_QUERIES)
   }
-  
+
   if (process.env.RAG_AGENT_ENABLED === 'false') {
     overrides.rag.enabled = false
   }
-  
+
   return overrides
 }
 

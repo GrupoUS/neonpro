@@ -33,8 +33,8 @@ const cryptoPolyfill = {
       digest: () => {
         // Simple mock implementation - replace with actual hash in production
         return btoa(data).substring(0, 64) // Truncated base64 as mock hash
-      }
-    })
+      },
+    }),
   }),
 
   createHmac: (algorithm: string, key: string) => ({
@@ -42,8 +42,8 @@ const cryptoPolyfill = {
       digest: () => {
         // Simple mock implementation - replace with actual HMAC in production
         return btoa(`${key}:${data}`).substring(0, 64)
-      }
-    })
+      },
+    }),
   }),
 
   randomBytes: (size: number) => {
@@ -58,7 +58,7 @@ const cryptoPolyfill = {
       return btoa(data) // Base64 as mock encryption
     },
     final: () => '',
-    iv: Buffer.from(iv)
+    iv: Buffer.from(iv),
   }),
 
   scryptSync: (password: string, salt: string, keylen: number) => {
@@ -68,7 +68,7 @@ const cryptoPolyfill = {
       mockKey[i] = password.charCodeAt(i % password.length) ^ salt.charCodeAt(i % salt.length)
     }
     return Buffer.from(mockKey)
-  }
+  },
 }
 
 const crypto = globalThis.crypto || cryptoPolyfill

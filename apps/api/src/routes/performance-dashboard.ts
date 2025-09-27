@@ -17,7 +17,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get current performance metrics
    */
-  router.get('/metrics', async (c) => {
+  router.get('/metrics', async c => {
     try {
       const url = new URL(c.req.url)
       const timeRange = url.searchParams.get('timeRange') as string
@@ -69,7 +69,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get performance insights and recommendations
    */
-  router.get('/insights', async (c) => {
+  router.get('/insights', async c => {
     try {
       const insights = await generatePerformanceInsights(optimizer, monitor)
 
@@ -95,7 +95,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get cache performance data
    */
-  router.get('/cache', async (c) => {
+  router.get('/cache', async c => {
     try {
       const cacheStats = getCacheStatistics(optimizer)
 
@@ -121,7 +121,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Clear cache entries
    */
-  router.post('/cache/clear', async (c) => {
+  router.post('/cache/clear', async c => {
     try {
       const { pattern } = await c.req.json()
 
@@ -151,7 +151,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Warm up cache
    */
-  router.post('/cache/warmup', async (c) => {
+  router.post('/cache/warmup', async c => {
     try {
       await optimizer.warmUpCache()
 
@@ -177,7 +177,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get query performance data
    */
-  router.get('/queries', async (c) => {
+  router.get('/queries', async c => {
     try {
       const url = new URL(c.req.url)
       const timeRange = url.searchParams.get('timeRange') as string
@@ -218,7 +218,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get image optimization metrics
    */
-  router.get('/images', async (c) => {
+  router.get('/images', async c => {
     try {
       const imageMetrics = getImageOptimizationMetrics(optimizer)
 
@@ -244,12 +244,12 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Get real-time performance stream
    */
-  router.get('/stream', async (c) => {
+  router.get('/stream', async c => {
     try {
       const headers = new Headers({
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
+        Connection: 'keep-alive',
       })
 
       const sendMetrics = () => {
@@ -292,7 +292,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Performance health check
    */
-  router.get('/health', async (c) => {
+  router.get('/health', async c => {
     try {
       const health = await getPerformanceHealth(optimizer, monitor)
 
@@ -324,7 +324,7 @@ export const createPerformanceDashboardRoutes = (
   /**
    * Export performance data
    */
-  router.get('/export', async (c) => {
+  router.get('/export', async c => {
     try {
       const url = new URL(c.req.url)
       const format = url.searchParams.get('format') as string || 'json'
@@ -340,9 +340,9 @@ export const createPerformanceDashboardRoutes = (
       const apiMetrics = monitor.getMetrics(
         timeRangeObj
           ? {
-              start: new Date(timeRangeObj.start).getTime(),
-              end: new Date(timeRangeObj.end).getTime(),
-            }
+            start: new Date(timeRangeObj.start).getTime(),
+            end: new Date(timeRangeObj.end).getTime(),
+          }
           : undefined,
       )
 

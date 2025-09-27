@@ -3,9 +3,9 @@
  * Integrates WebRTC functionality with healthcare compliance and license verification
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import { WebRTCSessionService } from '@neonpro/database'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from "@/utils/healthcare-errors"
 import { HealthcareProfessionalAuthorizationService } from './healthcare-professional-authorization'
 
 export interface TelemedicineSessionInput {

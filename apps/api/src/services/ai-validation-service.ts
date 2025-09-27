@@ -1,17 +1,17 @@
 /**
  * AI Agent Input Validation and Sanitization Service
- * 
+ *
  * Provides comprehensive input validation, sanitization, and security checks
  * for AI agent queries with healthcare compliance (LGPD, ANVISA, CFM)
- * 
+ *
  * Security: Input validation and sanitization
  * Compliance: LGPD, ANVISA, CFM
  * Performance: Optimized validation with caching
  */
 
-import { z } from 'zod'
+import { logger } from '@/utils/healthcare-errors'
 import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types'
-import { logger } from "@/utils/healthcare-errors"
+import { z } from 'zod'
 
 // ============================================================================
 // VALIDATION SCHEMAS
@@ -27,10 +27,10 @@ const ClientDataQuerySchema = z.object({
   includeFinancialData: z.boolean().optional().default(false),
   dateRanges: z.array(z.object({
     start: z.date(),
-    end: z.date()
+    end: z.date(),
   })).optional().default([]),
   limit: z.number().int().min(1).max(1000).optional().default(100),
-  offset: z.number().int().min(0).optional().default(0)
+  offset: z.number().int().min(0).optional().default(0),
 })
 
 /**
@@ -39,15 +39,16 @@ const ClientDataQuerySchema = z.object({
 const AppointmentQuerySchema = z.object({
   dateRanges: z.array(z.object({
     start: z.date(),
-    end: z.date()
+    end: z.date(),
   })).optional().default([]),
-  status: z.array(z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'])).optional(),
+  status: z.array(z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']))
+    .optional(),
   type: z.array(z.string()).optional(),
   providerIds: z.array(z.string()).optional().default([]),
   clientIds: z.array(z.string()).optional().default([]),
   includeCancelled: z.boolean().optional().default(true),
   limit: z.number().int().min(1).max(1000).optional().default(100),
-  offset: z.number().int().min(0).optional().default(0)
+  offset: z.number().int().min(0).optional().default(0),
 })
 
 /**
@@ -56,7 +57,7 @@ const AppointmentQuerySchema = z.object({
 const FinancialQuerySchema = z.object({
   dateRanges: z.array(z.object({
     start: z.date(),
-    end: z.date()
+    end: z.date(),
   })).optional().default([]),
   transactionTypes: z.array(z.enum(['payment', 'refund', 'adjustment', 'credit'])).optional(),
   minAmount: z.number().positive().optional(),
@@ -64,7 +65,7 @@ const FinancialQuerySchema = z.object({
   clientIds: z.array(z.string()).optional().default([]),
   includeRefunds: z.boolean().optional().default(true),
   limit: z.number().int().min(1).max(1000).optional().default(100),
-  offset: z.number().int().min(0).optional().default(0)
+  offset: z.number().int().min(0).optional().default(0),
 })
 
 /**
@@ -75,7 +76,7 @@ const GeneralQuerySchema = z.object({
   context: z.string().optional(),
   includePII: z.boolean().optional().default(false),
   dataTypes: z.array(z.enum(['client', 'appointment', 'financial', 'medical'])).optional(),
-  limit: z.number().int().min(1).max(100).optional().default(10)
+  limit: z.number().int().min(1).max(100).optional().default(10),
 })
 
 // ============================================================================
@@ -92,16 +93,29 @@ const PII_PATTERNS = {
   EMAIL: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
   MEDICAL_RECORD: /(RM|MR)\s*\d+/gi,
   CEP: /\d{5}-?\d{3}/g,
-  CNS: /\d{3}\s*\d{4}\s*\d{4}\s*\d{4}/g // Cartão Nacional de Saúde
+  CNS: /\d{3}\s*\d{4}\s*\d{4}\s*\d{4}/g, // Cartão Nacional de Saúde
 }
 
 /**
  * Sensitive healthcare terms that require special handling
  */
 const SENSITIVE_HEALTHCARE_TERMS = [
-  'hiv', 'aids', 'câncer', 'cancer', 'std', 'doença sexualmente transmissível',
-  'gravidez', 'aborto', 'saúde mental', 'depressão', 'ansiedade',
-  'diagnóstico', 'tratamento', 'medicação', 'cirurgia', 'exame'
+  'hiv',
+  'aids',
+  'câncer',
+  'cancer',
+  'std',
+  'doença sexualmente transmissível',
+  'gravidez',
+  'aborto',
+  'saúde mental',
+  'depressão',
+  'ansiedade',
+  'diagnóstico',
+  'tratamento',
+  'medicação',
+  'cirurgia',
+  'exame',
 ]
 
 /**
@@ -117,7 +131,7 @@ export class AIValidationService {
   validateAndSanitizeQuery(
     intent: QueryIntent,
     parameters: QueryParameters,
-    permissionContext: PermissionContext
+    permissionContext: PermissionContext,
   ): QueryParameters {
     // Validate permission context first
     this.validatePermissionContext(permissionContext)
@@ -187,11 +201,11 @@ export class AIValidationService {
    */
   private validateClientDataQuery(
     parameters: QueryParameters,
-    context: PermissionContext
+    context: PermissionContext,
   ): QueryParameters {
     try {
       const validated = ClientDataQuerySchema.parse(parameters)
-      
+
       // Role-based restrictions
       if (context.role === 'receptionist') {
         if (validated.includeFinancialData) {
@@ -205,7 +219,8 @@ export class AIValidationService {
       // Date range validation
       if (validated.dateRanges) {
         validated.dateRanges = validated.dateRanges.filter(range => {
-          const daysDiff = Math.abs(range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24)
+          const daysDiff = Math.abs(range.end.getTime() - range.start.getTime()) /
+            (1000 * 60 * 60 * 24)
           return daysDiff <= 365 // Max 1 year range
         })
       }
@@ -222,7 +237,7 @@ export class AIValidationService {
    */
   private validateAppointmentQuery(
     parameters: QueryParameters,
-    context: PermissionContext
+    context: PermissionContext,
   ): QueryParameters {
     try {
       const validated = AppointmentQuerySchema.parse(parameters)
@@ -230,7 +245,8 @@ export class AIValidationService {
       // Date range validation
       if (validated.dateRanges) {
         validated.dateRanges = validated.dateRanges.filter(range => {
-          const daysDiff = Math.abs(range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24)
+          const daysDiff = Math.abs(range.end.getTime() - range.start.getTime()) /
+            (1000 * 60 * 60 * 24)
           return daysDiff <= 90 // Max 90 days for appointments
         })
       }
@@ -253,7 +269,7 @@ export class AIValidationService {
    */
   private validateFinancialQuery(
     parameters: QueryParameters,
-    context: PermissionContext
+    context: PermissionContext,
   ): QueryParameters {
     // Permission check for financial data
     if (!context.permissions.includes('read_financial')) {
@@ -271,7 +287,8 @@ export class AIValidationService {
       // Date range validation
       if (validated.dateRanges) {
         validated.dateRanges = validated.dateRanges.filter(range => {
-          const daysDiff = Math.abs(range.end.getTime() - range.start.getTime()) / (1000 * 60 * 60 * 24)
+          const daysDiff = Math.abs(range.end.getTime() - range.start.getTime()) /
+            (1000 * 60 * 60 * 24)
           return daysDiff <= 30 // Max 30 days for financial data
         })
       }
@@ -288,7 +305,7 @@ export class AIValidationService {
    */
   private validateGeneralQuery(
     parameters: QueryParameters,
-    context: PermissionContext
+    context: PermissionContext,
   ): QueryParameters {
     try {
       const validated = GeneralQuerySchema.parse(parameters)
@@ -300,12 +317,14 @@ export class AIValidationService {
           logger.warn('High security risk query detected', {
             userId: context.userId,
             query: validated.query,
-            riskFactors: securityRisk.factors
+            riskFactors: securityRisk.factors,
           })
-          
+
           // Additional validation for high-risk queries
-          if (securityRisk.factors.includes('sql_injection') || 
-              securityRisk.factors.includes('xss_attempt')) {
+          if (
+            securityRisk.factors.includes('sql_injection') ||
+            securityRisk.factors.includes('xss_attempt')
+          ) {
             throw new Error('Query contains potentially malicious content')
           }
         }
@@ -336,9 +355,9 @@ export class AIValidationService {
     Object.keys(sanitized).forEach(key => {
       const value = (sanitized as any)[key]
       if (typeof value === 'string') {
-        (sanitized as any)[key] = this.sanitizeString(value)
+        ;(sanitized as any)[key] = this.sanitizeString(value)
       } else if (Array.isArray(value)) {
-        (sanitized as any)[key] = value.map(item => 
+        ;(sanitized as any)[key] = value.map(item =>
           typeof item === 'string' ? this.sanitizeString(item) : item
         )
       }
@@ -362,7 +381,9 @@ export class AIValidationService {
   /**
    * Assess security risk of query content
    */
-  private assessSecurityRisk(query: string): { level: 'low' | 'medium' | 'high'; factors: string[] } {
+  private assessSecurityRisk(
+    query: string,
+  ): { level: 'low' | 'medium' | 'high'; factors: string[] } {
     const factors: string[] = []
     let riskScore = 0
 
@@ -376,7 +397,7 @@ export class AIValidationService {
       /;\s*drop/i,
       /'\s*or\s*'1'\s*=\s*'1'/i,
       /'\s*or\s*1\s*=\s*1/i,
-      /'\s*and\s*1\s*=\s*1/i
+      /'\s*and\s*1\s*=\s*1/i,
     ]
 
     sqlPatterns.forEach(pattern => {
@@ -393,7 +414,7 @@ export class AIValidationService {
       /on\w+\s*=/i,
       /<iframe/i,
       /<object/i,
-      /<embed/i
+      /<embed/i,
     ]
 
     xssPatterns.forEach(pattern => {
@@ -408,7 +429,7 @@ export class AIValidationService {
       /\|\s*[^|]*\s*\|/, // Command pipeline
       /;\s*[^;]*\s*;/, // Command sequence
       /&\s*[^&]*\s*&/, // Background process
-      /`[^`]*`/ // Command substitution
+      /`[^`]*`/, // Command substitution
     ]
 
     cmdPatterns.forEach(pattern => {

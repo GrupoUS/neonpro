@@ -1,19 +1,19 @@
 /**
  * TDD RED Phase - Set Method Misuse Test
- * 
+ *
  * This test demonstrates the Set method misuse bug where .indexOf() and .splice()
  * are called on a Set object, which should throw TypeError.
- * 
+ *
  * Expected Behavior:
  * - HealthcareSessionManagementService should use proper Set operations
  * - Session cleanup should not throw TypeError when using array methods on Sets
  * - User session mapping should work correctly with Set data structure
- * 
+ *
  * Security: Critical - Session management for healthcare compliance
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock the HealthcareLogger to avoid dependency issues
 const mockHealthcareLogger = {
@@ -52,15 +52,15 @@ class TestSessionManager {
       lastAccessedAt: new Date(),
       expiresAt: new Date(Date.now() + 30 * 60 * 1000),
     }
-    
+
     this.sessions.set(sessionId, session)
-    
+
     // Add to user session mapping
     if (!this.userSessionMap.has(userId)) {
       this.userSessionMap.set(userId, new Set())
     }
     this.userSessionMap.get(userId)!.add(sessionId)
-    
+
     return session
   }
 
@@ -166,7 +166,7 @@ describe('TDD RED PHASE - Set Method Misuse', () => {
       // Arrange: Create multiple users with sessions
       const user1 = 'user-1'
       const user2 = 'user-2'
-      
+
       sessionManager.createSession(user1, 'session-1-1')
       sessionManager.createSession(user1, 'session-1-2')
       sessionManager.createSession(user2, 'session-2-1')
@@ -189,7 +189,7 @@ describe('TDD RED PHASE - Set Method Misuse', () => {
 
     it('should demonstrate the difference between Set and Array operations', () => {
       const testSet = new Set(['session-1', 'session-2', 'session-3'])
-      
+
       // Set operations that work correctly
       expect(testSet.has('session-2')).toBe(true)
       testSet.delete('session-2')
@@ -200,7 +200,7 @@ describe('TDD RED PHASE - Set Method Misuse', () => {
       const testArray = Array.from(testSet)
       expect(testArray.indexOf('session-1')).toBe(0) // This works on Array but not on Set
       expect(testArray.splice(0, 1)).toStrictEqual(['session-1']) // This works on Array but not on Set
-      
+
       // But Set doesn't have these methods
       expect(testSet.indexOf).toBe(undefined) // Set doesn't have indexOf
       expect(testSet.splice).toBe(undefined) // Set doesn't have splice
@@ -213,7 +213,7 @@ describe('TDD RED PHASE - Set Method Misuse', () => {
       const userId = 'doctor-123'
       const sessionId = 'medical-session-456'
       const session = sessionManager.createSession(userId, sessionId)
-      
+
       // Add compliance metadata
       session.complianceFlags = {
         lgpdCompliant: true,

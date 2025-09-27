@@ -15,7 +15,13 @@ export interface Entity {
 
 // Intent Types
 export interface Intent {
-  category: 'help_request' | 'appointment_related' | 'patient_inquiry' | 'billing_inquiry' | 'general_inquiry' | 'medical_inquiry'
+  category:
+    | 'help_request'
+    | 'appointment_related'
+    | 'patient_inquiry'
+    | 'billing_inquiry'
+    | 'general_inquiry'
+    | 'medical_inquiry'
   confidence: number
   entities: Entity[]
   action?: string

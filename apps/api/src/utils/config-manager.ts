@@ -1,6 +1,6 @@
 /**
  * 🛠️ Configuration Management Utility
- * 
+ *
  * A centralized configuration management system with:
  * - Environment-based configuration loading
  * - Type-safe configuration validation
@@ -10,9 +10,13 @@
  * - Healthcare-compliant configuration handling
  */
 
-import { SecureLogger } from './secure-logger'
+import {
+  HealthcareError,
+  HealthcareErrorCategory,
+  HealthcareErrorSeverity,
+} from './healthcare-errors'
 import { SecretManager } from './secret-manager'
-import { HealthcareError, HealthcareErrorSeverity, HealthcareErrorCategory } from './healthcare-errors'
+import { SecureLogger } from './secure-logger'
 
 export interface ConfigSchema<T = any> {
   /**
@@ -87,7 +91,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       enableTemplates: true,
       enableMigrationSupport: true,
       enableHealthChecks: true,
-      ...options
+      ...options,
     }
 
     this.logger = new SecureLogger({
@@ -95,7 +99,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       maskSensitiveData: true,
       lgpdCompliant: true,
       auditTrail: this.options.auditLogChanges,
-      _service: 'ConfigManager'
+      _service: 'ConfigManager',
     })
 
     this.secretManager = new SecretManager()
@@ -116,7 +120,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
   defineSchema<K extends keyof T>(key: K, schema: ConfigSchema<T[K]>): void {
     this.schema[key as string] = {
       ...schema,
-      environment: schema.environment || ['development', 'staging', 'production']
+      environment: schema.environment || ['development', 'staging', 'production'],
     }
 
     // Validate default value if provided
@@ -127,16 +131,16 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           'INVALID_SCHEMA_DEFAULT',
           HealthcareErrorCategory.VALIDATION,
           HealthcareErrorSeverity.MEDIUM,
-          `Invalid default value for ${String(key)}: ${validation.error}`
+          `Invalid default value for ${String(key)}: ${validation.error}`,
         )
       }
     }
 
-    this.logger.debug('Configuration schema defined', { 
-      key: String(key), 
+    this.logger.debug('Configuration schema defined', {
+      key: String(key),
       type: schema.type,
       required: schema.required,
-      sensitive: schema.sensitive 
+      sensitive: schema.sensitive,
     })
   }
 
@@ -144,14 +148,14 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
    * Set configuration value with validation
    */
   async set<K extends keyof T>(
-    key: K, 
-    value: T[K], 
+    key: K,
+    value: T[K],
     options: {
       source?: ConfigChangeEvent['source']
       userId?: string
       skipValidation?: boolean
       persist?: boolean
-    } = {}
+    } = {},
   ): Promise<void> {
     const { source = 'api', userId, skipValidation = false, persist = true } = options
     const keyStr = key as string
@@ -163,12 +167,12 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'CONFIG_NOT_APPLICABLE',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.MEDIUM,
-        `Configuration ${keyStr} is not applicable for environment ${this.options.environment}`
+        `Configuration ${keyStr} is not applicable for environment ${this.options.environment}`,
       )
     }
 
     const oldValue = this.config[keyStr]
-    
+
     // Validate value if schema is defined
     if (!skipValidation && schema) {
       const validation = this.validateValue(keyStr, value)
@@ -177,7 +181,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           'INVALID_CONFIG_VALUE',
           HealthcareErrorCategory.VALIDATION,
           HealthcareErrorSeverity.MEDIUM,
-          `Invalid value for ${keyStr}: ${validation.error}`
+          `Invalid value for ${keyStr}: ${validation.error}`,
         )
       }
     }
@@ -189,9 +193,9 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     this.config[keyStr] = sanitizedValue
 
     // Cache validation result
-    this.validationCache.set(keyStr, { 
-      valid: true, 
-      value: sanitizedValue 
+    this.validationCache.set(keyStr, {
+      valid: true,
+      value: sanitizedValue,
     })
 
     // Emit change event
@@ -202,7 +206,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         newValue: sanitizedValue,
         timestamp: new Date(),
         source,
-        userId
+        userId,
       })
     }
 
@@ -211,10 +215,10 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       await this.persistConfiguration()
     }
 
-    this.logger.debug('Configuration set', { 
-      key: keyStr, 
+    this.logger.debug('Configuration set', {
+      key: keyStr,
       source,
-      changed: oldValue !== sanitizedValue 
+      changed: oldValue !== sanitizedValue,
     })
   }
 
@@ -238,13 +242,13 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     if (schema) {
       const validation = this.validateValue(keyStr, value)
       this.validationCache.set(keyStr, validation)
-      
+
       if (!validation.valid && this.options.strictValidation) {
         throw new HealthcareError(
           'INVALID_CONFIG_VALUE',
           HealthcareErrorCategory.VALIDATION,
           HealthcareErrorSeverity.MEDIUM,
-          `Configuration ${keyStr} has invalid value: ${validation.error}`
+          `Configuration ${keyStr} has invalid value: ${validation.error}`,
         )
       }
     }
@@ -262,7 +266,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'REQUIRED_CONFIG_MISSING',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.HIGH,
-        `Required configuration ${String(key)} is missing`
+        `Required configuration ${String(key)} is missing`,
       )
     }
     return value
@@ -273,7 +277,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
    */
   getAll(): Partial<T> {
     const result: Partial<T> = {}
-    
+
     for (const [key, schema] of Object.entries(this.schema)) {
       if (!schema.sensitive) {
         result[key as keyof T] = this.get(key as keyof T)
@@ -296,15 +300,15 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       if (envValue !== undefined) {
         try {
           const parsedValue = this.parseEnvironmentValue(envValue, schema.type)
-          await this.set(key as keyof T, parsedValue, { 
+          await this.set(key as keyof T, parsedValue, {
             source: 'environment',
-            skipValidation: false 
+            skipValidation: false,
           })
         } catch (error) {
           this.logger.error('Failed to load environment configuration', {
             key,
             envKey,
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
           }, HealthcareErrorSeverity.MEDIUM)
         }
       }
@@ -321,11 +325,11 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       // In a real implementation, this would read and parse the file
       // For now, we'll simulate file loading
       const fileConfig = await this.readFileConfig(filePath)
-      
+
       for (const [key, value] of Object.entries(fileConfig)) {
         if (key in this.schema) {
-          await this.set(key as keyof T, value as T[keyof T], { 
-            source: 'file' 
+          await this.set(key as keyof T, value as T[keyof T], {
+            source: 'file',
           })
         }
       }
@@ -334,7 +338,9 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'CONFIG_LOAD_FAILED',
         HealthcareErrorCategory.SYSTEM,
         HealthcareErrorSeverity.HIGH,
-        `Failed to load configuration from ${filePath}: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to load configuration from ${filePath}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       )
     }
   }
@@ -362,7 +368,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
 
     return {
       valid: errors.length === 0,
-      errors
+      errors,
     }
   }
 
@@ -371,7 +377,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
    */
   onChange(callback: (event: ConfigChangeEvent) => void): () => void {
     this.changeListeners.add(callback)
-    
+
     return () => {
       this.changeListeners.delete(callback)
     }
@@ -380,18 +386,24 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
   /**
    * Export configuration for backup/restore
    */
-  exportConfiguration(): { config: Partial<T>; schema: Record<string, ConfigSchema>; timestamp: Date } {
+  exportConfiguration(): {
+    config: Partial<T>
+    schema: Record<string, ConfigSchema>
+    timestamp: Date
+  } {
     return {
       config: this.getAll(),
       schema: this.schema,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   }
 
   /**
    * Import configuration from backup
    */
-  async importConfiguration(exported: { config: Partial<T>; schema?: Record<string, ConfigSchema> }): Promise<void> {
+  async importConfiguration(
+    exported: { config: Partial<T>; schema?: Record<string, ConfigSchema> },
+  ): Promise<void> {
     this.logger.info('Importing configuration from backup')
 
     // Update schema if provided
@@ -402,9 +414,9 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     // Import configuration values
     for (const [key, value] of Object.entries(exported.config)) {
       if (key in this.schema) {
-        await this.set(key as keyof T, value as T[keyof T], { 
+        await this.set(key as keyof T, value as T[keyof T], {
           source: 'file',
-          persist: false 
+          persist: false,
         })
       }
     }
@@ -422,19 +434,19 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
 
     // Type validation
     if (!this.validateType(value, schema.type)) {
-      return { 
-        valid: false, 
-        value, 
-        error: `Expected ${schema.type}, got ${typeof value}` 
+      return {
+        valid: false,
+        value,
+        error: `Expected ${schema.type}, got ${typeof value}`,
       }
     }
 
     // Custom validator
     if (schema.validator && !schema.validator(value)) {
-      return { 
-        valid: false, 
-        value, 
-        error: `Custom validation failed for ${key}` 
+      return {
+        valid: false,
+        value,
+        error: `Custom validation failed for ${key}`,
       }
     }
 
@@ -490,7 +502,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     this.logger.info('Configuration changed', {
       key: event.key,
       source: event.source,
-      timestamp: event.timestamp.toISOString()
+      timestamp: event.timestamp.toISOString(),
     })
 
     // Notify listeners
@@ -500,7 +512,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       } catch (error) {
         this.logger.error('Error in configuration change listener', {
           key: event.key,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         }, HealthcareErrorSeverity.LOW)
       }
     }
@@ -532,7 +544,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'INVALID_TEMPLATE',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.MEDIUM,
-        `Template ${name} validation failed: ${validation.errors.join(', ')}`
+        `Template ${name} validation failed: ${validation.errors.join(', ')}`,
       )
     }
 
@@ -549,7 +561,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'TEMPLATE_NOT_FOUND',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.MEDIUM,
-        `Configuration template ${name} not found`
+        `Configuration template ${name} not found`,
       )
     }
 
@@ -564,7 +576,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           'TEMPLATE_CONFLICT',
           HealthcareErrorCategory.VALIDATION,
           HealthcareErrorSeverity.MEDIUM,
-          `Template ${name} conflicts with existing configuration: ${conflicts.join(', ')}`
+          `Template ${name} conflicts with existing configuration: ${conflicts.join(', ')}`,
         )
       }
     }
@@ -585,7 +597,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     this.logger.info('Configuration template applied', {
       name,
       mergeStrategy,
-      keys: Object.keys(template)
+      keys: Object.keys(template),
     })
 
     // Clear validation cache
@@ -610,12 +622,15 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
       if (key in this.schema) {
         await this.set(key as keyof T, value as T[keyof T], {
           source: 'environment',
-          skipValidation: false
+          skipValidation: false,
         })
       }
     }
 
-    this.logger.info('Environment overrides applied', { environment, keys: Object.keys(overrideConfig) })
+    this.logger.info('Environment overrides applied', {
+      environment,
+      keys: Object.keys(overrideConfig),
+    })
   }
 
   private generateEnvironmentConfig(environment: string): Partial<T> {
@@ -628,7 +643,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           debug: true,
           logLevel: 'debug',
           enableHotReload: true,
-          cors: { origin: '*' }
+          cors: { origin: '*' },
         } as Partial<T>)
         break
       case 'staging':
@@ -636,7 +651,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           debug: false,
           logLevel: 'info',
           enableHotReload: false,
-          cors: { origin: ['https://staging.example.com'] }
+          cors: { origin: ['https://staging.example.com'] },
         } as Partial<T>)
         break
       case 'production':
@@ -644,7 +659,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           debug: false,
           logLevel: 'warn',
           enableHotReload: false,
-          cors: { origin: ['https://example.com'] }
+          cors: { origin: ['https://example.com'] },
         } as Partial<T>)
         break
     }
@@ -667,7 +682,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'INVALID_MIGRATION',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.MEDIUM,
-        'Migration must have id, description, and migrate function'
+        'Migration must have id, description, and migrate function',
       )
     }
 
@@ -677,14 +692,14 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         'DUPLICATE_MIGRATION',
         HealthcareErrorCategory.VALIDATION,
         HealthcareErrorSeverity.MEDIUM,
-        `Migration with ID ${migration.id} already exists`
+        `Migration with ID ${migration.id} already exists`,
       )
     }
 
     this.migrations.push(migration)
     this.logger.info('Configuration migration added', {
       id: migration.id,
-      description: migration.description
+      description: migration.description,
     })
   }
 
@@ -699,7 +714,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
     this.logger.info('Starting configuration migrations', {
       dryRun,
       targetVersion,
-      migrationCount: this.migrations.length
+      migrationCount: this.migrations.length,
     })
 
     for (const migration of this.migrations) {
@@ -709,7 +724,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           id: migration.id,
           success: true,
           skipped: true,
-          message: 'Already applied'
+          message: 'Already applied',
         })
         continue
       }
@@ -725,7 +740,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
             currentConfig: this.config,
             schema: this.schema,
             logger: this.logger,
-            dryRun
+            dryRun,
           }
 
           await migration.migrate(context)
@@ -736,24 +751,24 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         results.push({
           id: migration.id,
           success: true,
-          message: dryRun ? 'Would be applied' : 'Applied successfully'
+          message: dryRun ? 'Would be applied' : 'Applied successfully',
         })
 
         this.logger.info('Migration processed', {
           id: migration.id,
           dryRun,
-          success: true
+          success: true,
         })
       } catch (error) {
         results.push({
           id: migration.id,
           success: false,
-          message: error instanceof Error ? error.message : String(error)
+          message: error instanceof Error ? error.message : String(error),
         })
 
         this.logger.error('Migration failed', {
           id: migration.id,
-          error: error instanceof Error ? error.message : String(error)
+          error: error instanceof Error ? error.message : String(error),
         }, HealthcareErrorSeverity.HIGH)
 
         if (!dryRun && !migration.continueOnFailure) {
@@ -787,7 +802,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         type: 'validation_error',
         severity: 'high',
         message: 'Configuration validation failed',
-        details: validation.errors
+        details: validation.errors,
       })
     }
 
@@ -800,8 +815,8 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
           message: `Deprecated configuration ${key} is in use`,
           details: {
             key,
-            deprecationMessage: schema.deprecationMessage
-          }
+            deprecationMessage: schema.deprecationMessage,
+          },
         })
       }
     }
@@ -812,7 +827,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
         issues.push({
           type: 'missing_required',
           severity: 'high',
-          message: `Required configuration ${key} is missing`
+          message: `Required configuration ${key} is missing`,
         })
       }
     }
@@ -826,7 +841,7 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
               type: 'missing_dependency',
               severity: 'medium',
               message: `Configuration ${key} depends on missing ${dep}`,
-              details: { key, dependencies: schema.dependencies }
+              details: { key, dependencies: schema.dependencies },
             })
           }
         }
@@ -835,12 +850,12 @@ export class ConfigManager<T extends Record<string, any> = Record<string, any>> 
 
     this.healthStatus = {
       healthy: issues.length === 0,
-      issues
+      issues,
     }
 
     this.logger.info('Configuration health check completed', {
       healthy: this.healthStatus.healthy,
-      issuesCount: issues.length
+      issuesCount: issues.length,
     })
 
     return this.healthStatus
@@ -935,7 +950,7 @@ export interface ConfigHealthIssue {
 
 // Factory function for easy instantiation
 export function createConfigManager<T extends Record<string, any>>(
-  options: ConfigManagerOptions
+  options: ConfigManagerOptions,
 ): ConfigManager<T> {
   return new ConfigManager<T>(options)
 }
@@ -947,38 +962,63 @@ export const HealthcareConfigSchemas = {
     port: { type: 'number', required: true, default: 5432, description: 'Database port' },
     name: { type: 'string', required: true, description: 'Database name' },
     ssl: { type: 'boolean', default: true, description: 'Enable SSL connection' },
-    poolSize: { type: 'number', default: 10, description: 'Connection pool size' }
+    poolSize: { type: 'number', default: 10, description: 'Connection pool size' },
   } as const,
 
   security: {
-    jwtSecret: { 
-      type: 'string', 
-      required: true, 
+    jwtSecret: {
+      type: 'string',
+      required: true,
       sensitive: true,
       validator: (value: string) => value.length >= 32,
-      description: 'JWT signing secret (min 32 characters)' 
+      description: 'JWT signing secret (min 32 characters)',
     },
     bcryptRounds: { type: 'number', default: 12, description: 'BCrypt hashing rounds' },
     sessionTimeout: { type: 'number', default: 3600, description: 'Session timeout in seconds' },
-    maxLoginAttempts: { type: 'number', default: 5, description: 'Maximum login attempts before lockout' }
+    maxLoginAttempts: {
+      type: 'number',
+      default: 5,
+      description: 'Maximum login attempts before lockout',
+    },
   } as const,
 
   healthcare: {
-    lgpdRetentionDays: { type: 'number', default: 365 * 25, description: 'LGPD data retention period in days' },
-    enableAuditTrail: { type: 'boolean', default: true, description: 'Enable comprehensive audit trail' },
-    dataAnonymization: { type: 'boolean', default: true, description: 'Enable automatic data anonymization' },
-    emergencyAccess: { type: 'boolean', default: false, description: 'Enable emergency access mode' }
+    lgpdRetentionDays: {
+      type: 'number',
+      default: 365 * 25,
+      description: 'LGPD data retention period in days',
+    },
+    enableAuditTrail: {
+      type: 'boolean',
+      default: true,
+      description: 'Enable comprehensive audit trail',
+    },
+    dataAnonymization: {
+      type: 'boolean',
+      default: true,
+      description: 'Enable automatic data anonymization',
+    },
+    emergencyAccess: {
+      type: 'boolean',
+      default: false,
+      description: 'Enable emergency access mode',
+    },
   } as const,
 
   monitoring: {
     enableMetrics: { type: 'boolean', default: true, description: 'Enable metrics collection' },
-    metricsInterval: { type: 'number', default: 60, description: 'Metrics collection interval in seconds' },
+    metricsInterval: {
+      type: 'number',
+      default: 60,
+      description: 'Metrics collection interval in seconds',
+    },
     enableAlerts: { type: 'boolean', default: true, description: 'Enable alert notifications' },
-    alertEmails: { 
-      type: 'array', 
+    alertEmails: {
+      type: 'array',
       default: [],
-      validator: (emails: string[]) => emails.every(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)),
-      description: 'Alert notification email addresses'
-    }
-  } as const
+      validator: (emails: string[]) =>
+        emails.every(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)),
+      description: 'Alert notification email addresses',
+    },
+  } as const,
 }

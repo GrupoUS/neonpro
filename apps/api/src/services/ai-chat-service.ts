@@ -25,25 +25,29 @@ export enum AIInsightType {
   SYMPTOM_ANALYSIS = 'symptom_analysis',
   TREATMENT_SUGGESTION = 'treatment_suggestion',
   RISK_ASSESSMENT = 'risk_assessment',
-  EMERGENCY_DETECTION = 'emergency_detection'
+  EMERGENCY_DETECTION = 'emergency_detection',
 }
 
 export enum AIProvider {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   GOOGLE = 'google',
-  LOCAL = 'local'
+  LOCAL = 'local',
 }
 
-export const createAIInsight = (type: AIInsightType, content: string, confidence: number): AIInsight => ({
+export const createAIInsight = (
+  type: AIInsightType,
+  content: string,
+  confidence: number,
+): AIInsight => ({
   id: Math.random().toString(36).substr(2, 9),
   type,
   content,
   confidence,
-  timestamp: new Date()
+  timestamp: new Date(),
 })
-import { ComprehensiveAuditService } from './audit-service'
 import { HealthcareLogger } from '../logging/healthcare-logger'
+import { ComprehensiveAuditService } from './audit-service'
 
 // Minimal audit interface to avoid tight coupling
 export interface AuditLogger {
@@ -286,7 +290,12 @@ export class AIChatService {
       if (!validation.isValid) {
         await this.audit.logActivity({
           action: 'ai_generate_response',
-          details: { errors: validation.errors, patientId: request.patientId, provider: request.provider, model: request.model },
+          details: {
+            errors: validation.errors,
+            patientId: request.patientId,
+            provider: request.provider,
+            model: request.model,
+          },
           result: 'failure',
         })
         return {
@@ -300,7 +309,12 @@ export class AIChatService {
       if (!supportedProviders.includes(request.provider)) {
         await this.audit.logActivity({
           action: 'ai_generate_response',
-          details: { reason: 'unsupported_provider', patientId: request.patientId, provider: request.provider, model: request.model },
+          details: {
+            reason: 'unsupported_provider',
+            patientId: request.patientId,
+            provider: request.provider,
+            model: request.model,
+          },
           result: 'failure',
         })
         return {
@@ -319,7 +333,8 @@ export class AIChatService {
 
       const responseTime = Date.now() - startTime
       const response: AIResponse = {
-        response: mockResponses[request.provider as keyof typeof mockResponses] || 'Resposta padrão',
+        response: mockResponses[request.provider as keyof typeof mockResponses] ||
+          'Resposta padrão',
         provider: request.provider,
         model: request.model,
         responseTime,
@@ -330,7 +345,12 @@ export class AIChatService {
 
       await this.audit.logActivity({
         action: 'ai_generate_response',
-        details: { patientId: request.patientId, provider: request.provider, model: request.model, responseTime },
+        details: {
+          patientId: request.patientId,
+          provider: request.provider,
+          model: request.model,
+          responseTime,
+        },
         result: 'success',
       })
 
@@ -339,10 +359,21 @@ export class AIChatService {
         data: response,
       }
     } catch (error: any) {
-      this.logger.error('generateResponse failed', error, { request: { provider: request?.provider, model: request?.model, patientId: request?.patientId } })
+      this.logger.error('generateResponse failed', error, {
+        request: {
+          provider: request?.provider,
+          model: request?.model,
+          patientId: request?.patientId,
+        },
+      })
       await this.audit.logActivity({
         action: 'ai_generate_response',
-        details: { error: error?.message, patientId: request?.patientId, provider: request?.provider, model: request?.model },
+        details: {
+          error: error?.message,
+          patientId: request?.patientId,
+          provider: request?.provider,
+          model: request?.model,
+        },
         result: 'failure',
       })
       return {
@@ -362,10 +393,12 @@ export class AIChatService {
   }): Promise<ServiceResponse<HealthcareResponse>> {
     try {
       const response: HealthcareResponse = {
-        response: `Resposta médica sobre ${params._query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
+        response:
+          `Resposta médica sobre ${params._query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
         language: 'pt-BR',
         _context: params._context,
-        disclaimer: 'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
+        disclaimer:
+          'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
         sources: ['ANVISA', 'Ministério da Saúde', 'SUS'],
       }
 
@@ -403,7 +436,8 @@ export class AIChatService {
   }): Promise<ServiceResponse<PersonalizedResponse>> {
     try {
       const response: PersonalizedResponse = {
-        response: `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params._query}.`,
+        response:
+          `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params._query}.`,
         personalized: true,
         patientId: params.patientId,
         patientContext: {
@@ -447,16 +481,22 @@ export class AIChatService {
   }): Promise<ServiceResponse<MedicalInfo>> {
     try {
       const response: MedicalInfo = {
-        response: `Informações médicas sobre ${params._query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
+        response:
+          `Informações médicas sobre ${params._query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
         compliance: params.complianceLevel,
-        disclaimer: 'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
+        disclaimer:
+          'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
         sources: ['ANVISA', 'Bulário Eletrônico', 'RDC ANVISA'],
         lastUpdated: new Date(),
       }
 
       await this.audit.logActivity({
         action: 'ai_generate_medical_info',
-        details: { topic: params.topic, query: params._query, complianceLevel: params.complianceLevel },
+        details: {
+          topic: params.topic,
+          query: params._query,
+          complianceLevel: params.complianceLevel,
+        },
         result: 'success',
       })
 
@@ -1010,7 +1050,12 @@ export class AIChatService {
 
       await this.audit.logActivity({
         action: 'ai_rate_limit_check',
-        details: { patientId, remaining: rateLimit.remaining, limit: rateLimit.limit, resetTime: rateLimit.resetTime },
+        details: {
+          patientId,
+          remaining: rateLimit.remaining,
+          limit: rateLimit.limit,
+          resetTime: rateLimit.resetTime,
+        },
         result: 'success',
       })
 
@@ -1042,7 +1087,13 @@ export class AIChatService {
       if (request.timeout < 100) {
         await this.audit.logActivity({
           action: 'ai_generate_response_timeout',
-          details: { reason: 'timeout_too_low', timeout: request.timeout, patientId: request.patientId, provider: request.provider, model: request.model },
+          details: {
+            reason: 'timeout_too_low',
+            timeout: request.timeout,
+            patientId: request.patientId,
+            provider: request.provider,
+            model: request.model,
+          },
           result: 'failure',
         })
         return {
@@ -1056,16 +1107,35 @@ export class AIChatService {
       // Optionally reflect success/failure at wrapper level
       await this.audit.logActivity({
         action: 'ai_generate_response_timeout',
-        details: { timeout: request.timeout, patientId: request.patientId, provider: request.provider, model: request.model, innerResult: result.success ? 'success' : 'failure' },
+        details: {
+          timeout: request.timeout,
+          patientId: request.patientId,
+          provider: request.provider,
+          model: request.model,
+          innerResult: result.success ? 'success' : 'failure',
+        },
         result: result.success ? 'success' : 'failure',
       })
 
       return result
     } catch (error: any) {
-      this.logger.error('generateResponseWithTimeout failed', error, { request: { timeout: request?.timeout, patientId: request?.patientId, provider: request?.provider, model: request?.model } })
+      this.logger.error('generateResponseWithTimeout failed', error, {
+        request: {
+          timeout: request?.timeout,
+          patientId: request?.patientId,
+          provider: request?.provider,
+          model: request?.model,
+        },
+      })
       await this.audit.logActivity({
         action: 'ai_generate_response_timeout',
-        details: { error: error?.message, timeout: request?.timeout, patientId: request?.patientId, provider: request?.provider, model: request?.model },
+        details: {
+          error: error?.message,
+          timeout: request?.timeout,
+          patientId: request?.patientId,
+          provider: request?.provider,
+          model: request?.model,
+        },
         result: 'failure',
       })
       return {

@@ -1,6 +1,6 @@
-import { logger } from "@/utils/healthcare-errors"
 import { AguiService } from '@/services/agui-protocol/service'
 import { CopilotRequest } from '@/services/agui-protocol/types'
+import { logger } from '@/utils/healthcare-errors'
 import { Context } from 'hono'
 import { createMiddleware } from 'hono/factory'
 

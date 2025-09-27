@@ -17,9 +17,9 @@
  * - Service type associations
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import { z } from 'zod'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from "@/utils/healthcare-errors"
 
 // Brazilian Professional Council Types
 export const PROFESSIONAL_COUNCILS = {
@@ -248,7 +248,7 @@ class AestheticProfessionalsService {
         validated.councilType,
         validated.councilLicense,
       )
-        .catch(async (err) => logger.error('License validation failed', { error: err }))
+        .catch(async err => logger.error('License validation failed', { error: err }))
 
       return {
         success: true,

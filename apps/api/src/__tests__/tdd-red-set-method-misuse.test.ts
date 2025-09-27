@@ -1,22 +1,22 @@
 /**
  * TDD RED Phase - Set Method Misuse Test
- * 
+ *
  * This test demonstrates the Set method misuse issue in healthcare-session-management-service.ts
  * where .indexOf() and .splice() are called on a Set object, causing TypeError.
- * 
+ *
  * Issue Location: apps/api/src/services/healthcare-session-management-service.ts:644-646
  * Problem: userSessions is a Set but code tries to use array methods
- * 
+ *
  * Expected Behavior:
  * - Expired session cleanup should work without throwing TypeError
  * - Session removal from userSessionMap should use proper Set methods
  * - Concurrent session enforcement should continue working
- * 
+ *
  * Security: Critical - Session cleanup affects security and compliance
  * Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
 
 describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
@@ -38,7 +38,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       const userId = 'user-123'
       const sessionId1 = 'session-1'
       const sessionId2 = 'session-2'
-      
+
       // Manually create and add sessions to simulate the scenario
       const expiredSession = {
         sessionId: sessionId1,
@@ -64,14 +64,14 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
           encryptionApplied: true,
           accessControlApplied: true,
           auditTrailEnabled: true,
-          breachNotificationRequired: false
-        }
+          breachNotificationRequired: false,
+        },
       }
 
       const activeSession = {
         ...expiredSession,
         sessionId: sessionId2,
-        expiresAt: new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
+        expiresAt: new Date(Date.now() + 30 * 60 * 1000), // 30 minutes from now
       }
 
       // Manually add sessions to simulate real scenario
@@ -89,7 +89,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       expect(result).toEqual({
         isValid: false,
         session: undefined,
-        error: 'Session not found or expired'
+        error: 'Session not found or expired',
       })
 
       // Expected: Expired session should be removed from sessions
@@ -105,7 +105,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       // Arrange: Create multiple expired sessions for the same user
       const userId = 'user-123'
       const sessionIds = ['session-1', 'session-2', 'session-3']
-      
+
       // Create sessions where some are expired
       const now = new Date()
       const sessions = sessionIds.map((sessionId, index) => ({
@@ -132,8 +132,8 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
           encryptionApplied: true,
           accessControlApplied: true,
           auditTrailEnabled: true,
-          breachNotificationRequired: false
-        }
+          breachNotificationRequired: false,
+        },
       }))
 
       // Manually add sessions
@@ -150,7 +150,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
         expect(result).toEqual({
           isValid: false,
           session: undefined,
-          error: 'Session not found or expired'
+          error: 'Session not found or expired',
         })
       }
 
@@ -164,7 +164,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       const userId = 'user-123'
       const expiredSessionId = 'expired-session'
       const activeSessionId = 'active-session'
-      
+
       const now = new Date()
       const expiredSession = {
         sessionId: expiredSessionId,
@@ -190,14 +190,14 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
           encryptionApplied: true,
           accessControlApplied: true,
           auditTrailEnabled: true,
-          breachNotificationRequired: false
-        }
+          breachNotificationRequired: false,
+        },
       }
 
       const activeSession = {
         ...expiredSession,
         sessionId: activeSessionId,
-        expiresAt: new Date(now.getTime() + 30 * 60 * 1000) // Active
+        expiresAt: new Date(now.getTime() + 30 * 60 * 1000), // Active
       }
 
       // Manually add sessions
@@ -213,13 +213,13 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       expect(result).toEqual({
         isValid: false,
         session: undefined,
-        error: 'Session not found or expired'
+        error: 'Session not found or expired',
       })
 
       // Expected: Expired session removed, active session remains
       expect(HealthcareSessionManagementService['sessions'].has(expiredSessionId)).toBe(false)
       expect(HealthcareSessionManagementService['sessions'].has(activeSessionId)).toBe(true)
-      
+
       const remainingSessions = HealthcareSessionManagementService['userSessionMap'].get(userId)
       expect(remainingSessions?.has(expiredSessionId)).toBe(false)
       expect(remainingSessions?.has(activeSessionId)).toBe(true)
@@ -229,7 +229,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       // Arrange: Create expired session but no userSessionMap entry
       const sessionId = 'expired-session'
       const userId = 'user-123'
-      
+
       const expiredSession = {
         sessionId,
         userId,
@@ -254,8 +254,8 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
           encryptionApplied: true,
           accessControlApplied: true,
           auditTrailEnabled: true,
-          breachNotificationRequired: false
-        }
+          breachNotificationRequired: false,
+        },
       }
 
       // Add session but no userSessionMap entry
@@ -268,7 +268,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       expect(result).toEqual({
         isValid: false,
         session: undefined,
-        error: 'Session not found or expired'
+        error: 'Session not found or expired',
       })
 
       // Expected: Session should be removed from sessions
@@ -281,7 +281,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       const sessionId1 = 'session-1'
       const sessionId2 = 'session-2'
       const sessionId3 = 'session-3'
-      
+
       const now = new Date()
       const expiredSession = {
         sessionId: sessionId1,
@@ -307,20 +307,20 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
           encryptionApplied: true,
           accessControlApplied: true,
           auditTrailEnabled: true,
-          breachNotificationRequired: false
-        }
+          breachNotificationRequired: false,
+        },
       }
 
       const activeSession1 = {
         ...expiredSession,
         sessionId: sessionId2,
-        expiresAt: new Date(now.getTime() + 30 * 60 * 1000)
+        expiresAt: new Date(now.getTime() + 30 * 60 * 1000),
       }
 
       const activeSession2 = {
         ...expiredSession,
         sessionId: sessionId3,
-        expiresAt: new Date(now.getTime() + 30 * 60 * 1000)
+        expiresAt: new Date(now.getTime() + 30 * 60 * 1000),
       }
 
       // Add all sessions
@@ -337,7 +337,7 @@ describe('TDD RED PHASE - Set Method Misuse in Session Cleanup', () => {
       expect(result).toEqual({
         isValid: false,
         session: undefined,
-        error: 'Session not found or expired'
+        error: 'Session not found or expired',
       })
 
       // Expected: Concurrent session enforcement should still work

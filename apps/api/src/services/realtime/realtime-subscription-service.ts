@@ -503,7 +503,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       const batch = this.eventQueue.splice(0, 100) // Process up to 100 events at once
 
       Promise.all(batch.map(event => this.processEvent(event)))
-        .catch(async (error) => {
+        .catch(async error => {
           this.logError('event_batch_failed', {
             error,
             batchSize: batch.length,
@@ -545,12 +545,12 @@ export class RealtimeSubscriptionService extends EventEmitter {
     setInterval(
       () => {
         this.cleanupInactiveSubscriptions()
-          .then(async (count) => {
+          .then(async count => {
             if (count > 0) {
               this.logEvent('cleanup_completed', { removedCount: count })
             }
           })
-          .catch(async (error) => {
+          .catch(async error => {
             this.logError('cleanup_failed', { error })
           })
       },

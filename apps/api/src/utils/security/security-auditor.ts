@@ -1,6 +1,6 @@
 /**
  * 🔍 Security Auditor Utility
- * 
+ *
  * Comprehensive security auditing and monitoring for healthcare applications:
  * - Security vulnerability scanning
  * - Compliance validation (LGPD, HIPAA, ISO 27001)
@@ -8,7 +8,7 @@
  * - Incident detection and response
  * - Audit trail management
  * - Security reporting and analytics
- * 
+ *
  * Features:
  * - OWASP Top 10 vulnerability detection
  * - Automated security compliance checks
@@ -18,9 +18,9 @@
  * - Regulatory compliance reporting
  */
 
-import { SecureLogger } from '../secure-logger'
-import { SecurityValidator, SecurityConfig } from './security-validator'
 import { HealthcareError } from '../healthcare-errors'
+import { SecureLogger } from '../secure-logger'
+import { SecurityConfig, SecurityValidator } from './security-validator'
 
 export interface AuditConfig {
   /**
@@ -131,7 +131,13 @@ export interface SecurityIncident {
    * Security incident record
    */
   id: string
-  type: 'data_breach' | 'unauthorized_access' | 'malware' | 'ddos' | 'phishing' | 'social_engineering'
+  type:
+    | 'data_breach'
+    | 'unauthorized_access'
+    | 'malware'
+    | 'ddos'
+    | 'phishing'
+    | 'social_engineering'
   severity: 'low' | 'medium' | 'high' | 'critical'
   status: 'detected' | 'investigating' | 'contained' | 'resolved' | 'closed'
   detectedAt: Date
@@ -165,7 +171,7 @@ export class SecurityAuditor {
       lgpdCompliant: true,
       auditTrail: true,
       enableMetrics: true,
-      _service: 'SecurityAuditor'
+      _service: 'SecurityAuditor',
     })
 
     this.securityValidator = new SecurityValidator(securityConfig)
@@ -185,7 +191,7 @@ export class SecurityAuditor {
       severity: 'low',
       findings: [],
       recommendations: [],
-      metadata: {}
+      metadata: {},
     }
 
     this.audits.set(auditId, audit)
@@ -227,7 +233,7 @@ export class SecurityAuditor {
         score,
         severity,
         findingsCount: audit.findings.length,
-        duration: audit.endTime.getTime() - audit.startTime.getTime()
+        duration: audit.endTime.getTime() - audit.startTime.getTime(),
       })
 
       // Check for critical findings that require immediate action
@@ -239,15 +245,15 @@ export class SecurityAuditor {
     } catch (error) {
       audit.status = 'failed'
       audit.endTime = new Date()
-      
+
       this.logger.error('Security audit failed', error as Error, { auditId })
-      
+
       throw new HealthcareError(
         'AUDIT_FAILURE',
         'SECURITY',
         'HIGH',
         'Security audit failed to complete',
-        { auditId, error: error instanceof Error ? error.message : String(error) }
+        { auditId, error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -270,11 +276,11 @@ export class SecurityAuditor {
         this.checkXSSVulnerabilities(),
         this.checkInsecureDeserialization(),
         this.checkComponentsWithVulnerabilities(),
-        this.checkInsufficientLogging()
+        this.checkInsufficientLogging(),
       ]
 
       const results = await Promise.allSettled(owaspChecks)
-      
+
       for (const result of results) {
         if (result.status === 'fulfilled') {
           findings.push(...result.value)
@@ -285,7 +291,7 @@ export class SecurityAuditor {
 
       this.logger.info('Vulnerability scanning completed', {
         checksPerformed: owaspChecks.length,
-        findingsFound: findings.length
+        findingsFound: findings.length,
       })
 
       return findings
@@ -304,7 +310,7 @@ export class SecurityAuditor {
     try {
       // Simulated vulnerability detection
       // In real implementation, this would analyze code patterns, query structures, etc.
-      
+
       const hasParameterizedQueries = false // This would be determined by code analysis
       const hasInputValidation = false // This would be determined by configuration analysis
 
@@ -326,12 +332,12 @@ export class SecurityAuditor {
               'Review all database queries',
               'Implement parameterized queries',
               'Add input validation',
-              'Test with SQL injection tools'
-            ]
+              'Test with SQL injection tools',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -353,12 +359,12 @@ export class SecurityAuditor {
               'Install input validation library',
               'Configure validation rules',
               'Test all input forms',
-              'Monitor for validation bypasses'
-            ]
+              'Monitor for validation bypasses',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -399,12 +405,12 @@ export class SecurityAuditor {
               'Choose MFA provider',
               'Implement MFA flow',
               'Update authentication UI',
-              'Test MFA functionality'
-            ]
+              'Test MFA functionality',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -425,12 +431,12 @@ export class SecurityAuditor {
             steps: [
               'Configure session timeout',
               'Test timeout functionality',
-              'Update logout behavior'
-            ]
+              'Update logout behavior',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -473,12 +479,12 @@ export class SecurityAuditor {
               'Choose encryption strategy',
               'Implement data encryption',
               'Test data recovery',
-              'Update backup procedures'
-            ]
+              'Update backup procedures',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -501,12 +507,12 @@ export class SecurityAuditor {
               'Configure data masking rules',
               'Update logging configuration',
               'Update UI display logic',
-              'Test masking functionality'
-            ]
+              'Test masking functionality',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -600,7 +606,7 @@ export class SecurityAuditor {
 
       this.logger.info('Compliance validation completed', {
         frameworks: this.config.complianceFrameworks,
-        findingsFound: findings.length
+        findingsFound: findings.length,
       })
 
       return findings
@@ -642,12 +648,12 @@ export class SecurityAuditor {
               'Implement processing record system',
               'Configure automated record generation',
               'Train staff on record keeping',
-              'Establish audit procedures'
-            ]
+              'Establish audit procedures',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -670,12 +676,12 @@ export class SecurityAuditor {
               'Implement consent collection workflow',
               'Configure consent storage',
               'Implement consent withdrawal process',
-              'Create consent reporting'
-            ]
+              'Create consent reporting',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: 1
+          occurrences: 1,
         })
       }
 
@@ -711,13 +717,14 @@ export class SecurityAuditor {
     try {
       // Analyze security metrics for threat indicators
       const metrics = this.securityValidator.getSecurityMetrics()
-      
+
       // Check for unusual patterns
       if (metrics.suspiciousActivities > 10) {
         findings.push({
           id: this.generateFindingId(),
           title: 'Elevated Suspicious Activity',
-          description: `Unusual level of suspicious activity detected: ${metrics.suspiciousActivities} events`,
+          description:
+            `Unusual level of suspicious activity detected: ${metrics.suspiciousActivities} events`,
           severity: metrics.suspiciousActivities > 50 ? 'high' : 'medium',
           category: 'threat',
           affectedResources: ['Application endpoints'],
@@ -730,12 +737,12 @@ export class SecurityAuditor {
               'Review security logs',
               'Identify source of suspicious activity',
               'Implement additional monitoring',
-              'Consider IP blocking if malicious'
-            ]
+              'Consider IP blocking if malicious',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: metrics.suspiciousActivities
+          occurrences: metrics.suspiciousActivities,
         })
       }
 
@@ -757,12 +764,12 @@ export class SecurityAuditor {
               'Analyze blocked request logs',
               'Identify attack patterns',
               'Adjust security rules if needed',
-              'Monitor for continued attacks'
-            ]
+              'Monitor for continued attacks',
+            ],
           },
           firstDetected: new Date(),
           lastDetected: new Date(),
-          occurrences: metrics.blockedRequests
+          occurrences: metrics.blockedRequests,
         })
       }
 
@@ -776,7 +783,9 @@ export class SecurityAuditor {
   /**
    * Calculate audit score and severity
    */
-  private calculateAuditScore(findings: AuditFinding[]): { score: number; severity: 'low' | 'medium' | 'high' | 'critical' } {
+  private calculateAuditScore(
+    findings: AuditFinding[],
+  ): { score: number; severity: 'low' | 'medium' | 'high' | 'critical' } {
     if (findings.length === 0) {
       return { score: 100, severity: 'low' }
     }
@@ -785,14 +794,15 @@ export class SecurityAuditor {
       low: 1,
       medium: 3,
       high: 7,
-      critical: 10
+      critical: 10,
     }
 
     const maxScore = findings.length * 10
-    const totalWeight = findings.reduce((sum, finding) => 
-      sum + severityWeights[finding.severity], 0
+    const totalWeight = findings.reduce(
+      (sum, finding) => sum + severityWeights[finding.severity],
+      0,
     )
-    
+
     const score = Math.max(0, Math.round(100 - (totalWeight / maxScore) * 100))
 
     let severity: 'low' | 'medium' | 'high' | 'critical'
@@ -847,7 +857,7 @@ export class SecurityAuditor {
         auditId: audit.id,
         score: audit.score,
         severity: audit.severity,
-        criticalFindings: audit.findings.filter(f => f.severity === 'critical').length
+        criticalFindings: audit.findings.filter(f => f.severity === 'critical').length,
       })
 
       // In real implementation, this would send notifications via configured channels
@@ -882,7 +892,7 @@ export class SecurityAuditor {
         .sort((a, b) => b.endTime!.getTime() - a.endTime!.getTime())[0]
 
       const metrics = this.securityValidator.getSecurityMetrics()
-      
+
       const posture: SecurityPosture = {
         overallScore: latestAudit?.score || 0,
         threatLevel: this.calculateThreatLevel(metrics),
@@ -891,29 +901,31 @@ export class SecurityAuditor {
           hipaa: this.calculateComplianceScore('hipaa'),
           iso27001: this.calculateComplianceScore('iso27001'),
           gdpr: this.calculateComplianceScore('gdpr'),
-          soc2: this.calculateComplianceScore('soc2')
+          soc2: this.calculateComplianceScore('soc2'),
         },
         securityMetrics: {
           vulnerabilities: {
             critical: this.findings.filter(f => f.severity === 'critical' && !f.resolved).length,
             high: this.findings.filter(f => f.severity === 'high' && !f.resolved).length,
             medium: this.findings.filter(f => f.severity === 'medium' && !f.resolved).length,
-            low: this.findings.filter(f => f.severity === 'low' && !f.resolved).length
+            low: this.findings.filter(f => f.severity === 'low' && !f.resolved).length,
           },
           compliance: {
             passed: this.findings.filter(f => f.category === 'compliance' && f.resolved).length,
             failed: this.findings.filter(f => f.category === 'compliance' && !f.resolved).length,
-            partial: this.findings.filter(f => f.category === 'compliance' && f.severity === 'medium').length
+            partial: this.findings.filter(f =>
+              f.category === 'compliance' && f.severity === 'medium'
+            ).length,
           },
           threats: {
             detected: metrics.suspiciousActivities,
             blocked: metrics.blockedRequests,
-            investigated: this.incidents.filter(i => i.status !== 'detected').length
-          }
+            investigated: this.incidents.filter(i => i.status !== 'detected').length,
+          },
         },
         recommendations: latestAudit?.recommendations || [],
         lastAssessment: latestAudit?.endTime || new Date(),
-        nextAssessment: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days
+        nextAssessment: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       }
 
       return posture
@@ -924,7 +936,7 @@ export class SecurityAuditor {
         'SECURITY',
         'HIGH',
         'Failed to assess security posture',
-        { error: error instanceof Error ? error.message : String(error) }
+        { error: error instanceof Error ? error.message : String(error) },
       )
     }
   }
@@ -933,8 +945,7 @@ export class SecurityAuditor {
    * Calculate threat level based on metrics
    */
   private calculateThreatLevel(metrics: any): 'low' | 'guarded' | 'elevated' | 'high' | 'severe' {
-    const threatScore = 
-      (metrics.blockedRequests * 0.3) +
+    const threatScore = (metrics.blockedRequests * 0.3) +
       (metrics.suspiciousActivities * 0.5) +
       (metrics.failedValidations * 0.2)
 
@@ -997,11 +1008,11 @@ export class SecurityAuditor {
 
     finding.resolved = true
     finding.resolvedAt = new Date()
-    
+
     this.logger.info('Security finding resolved', {
       findingId,
       severity: finding.severity,
-      resolutionNotes
+      resolutionNotes,
     })
 
     return true
@@ -1012,19 +1023,19 @@ export class SecurityAuditor {
    */
   createSecurityIncident(incident: Omit<SecurityIncident, 'id' | 'detectedAt'>): string {
     const incidentId = `incident_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`
-    
+
     const fullIncident: SecurityIncident = {
       ...incident,
       id: incidentId,
-      detectedAt: new Date()
+      detectedAt: new Date(),
     }
 
     this.incidents.set(incidentId, fullIncident)
-    
+
     this.logger.error('Security incident created', {
       incidentId,
       type: incident.type,
-      severity: incident.severity
+      severity: incident.severity,
     })
 
     return incidentId
@@ -1035,17 +1046,17 @@ export class SecurityAuditor {
    */
   updateSecurityIncident(
     incidentId: string,
-    updates: Partial<SecurityIncident>
+    updates: Partial<SecurityIncident>,
   ): boolean {
     const incident = this.incidents.get(incidentId)
     if (!incident) return false
 
     Object.assign(incident, updates)
-    
+
     this.logger.info('Security incident updated', {
       incidentId,
       status: incident.status,
-      updates
+      updates,
     })
 
     return true
@@ -1055,7 +1066,7 @@ export class SecurityAuditor {
 // Factory function for creating security auditor instances
 export function createSecurityAuditor(
   config: AuditConfig,
-  securityConfig: SecurityConfig
+  securityConfig: SecurityConfig,
 ): SecurityAuditor {
   return new SecurityAuditor(config, securityConfig)
 }
@@ -1073,17 +1084,11 @@ export const defaultAuditConfig: AuditConfig = {
   scanFrequency: {
     vulnerabilityScan: '0 2 * * 0', // Weekly at 2 AM Sunday
     complianceCheck: '0 3 * * 1', // Weekly at 3 AM Monday
-    threatDetection: 'realtime'
+    threatDetection: 'realtime',
   },
-  notificationChannels: {}
+  notificationChannels: {},
 }
 
 // Export types and class
-export type {
-  AuditConfig,
-  SecurityAudit,
-  AuditFinding,
-  SecurityPosture,
-  SecurityIncident
-}
+export type { AuditConfig, AuditFinding, SecurityAudit, SecurityIncident, SecurityPosture }
 export { SecurityAuditor }

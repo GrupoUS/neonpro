@@ -14,5 +14,5 @@ export * from './utils'
 // is handled in the main index.ts file which is not included in browser builds
 
 // Re-export browser-compatible error tracking only
-export * from './services/error-tracking-browser'
 export * from './config/error-tracking-browser'
+export * from './services/error-tracking-browser'

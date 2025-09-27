@@ -11,12 +11,12 @@
  * - Compliance with healthcare image handling standards
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import crypto from 'crypto'
 import { createCipheriv, createDecipheriv, createHash } from 'crypto'
 import { ExifTool } from 'exiftool-vendored'
 import sharp from 'sharp'
 import { createAdminClient } from '../clients/supabase'
-import { logger } from "@/utils/healthcare-errors"
 
 // Image Security Configuration
 const IMAGE_SECURITY_CONFIG = {

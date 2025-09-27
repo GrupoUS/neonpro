@@ -3,8 +3,8 @@
  * Configures compression and optimization for HTTPS responses to improve performance
  */
 
-import { createHash, randomBytes } from 'node:crypto'
 import { Context, Next } from 'hono'
+import { createHash, randomBytes } from 'node:crypto'
 // Use global performance API available in Node.js
 declare const performance: {
   now(): number
@@ -127,7 +127,6 @@ export class CompressionMiddleware {
     c: Context,
     compressionMethod: string,
   ): void {
-    const url = new URL(c.req.url)
     // Enable ETag for conditional requests
     if (this.config.enableETag) {
       this.setupETag(c)
@@ -432,65 +431,6 @@ export class CompressionMiddleware {
     }
 
     return recommendations
-  }
-}
-
-/**
- * Check if response should be compressed
- */
-function shouldCompress(
-  buffer: Buffer,
-  method: string,
-  _config: CompressionConfig,
-): boolean {
-  if (method === 'none') return false
-
-  // Don't compress very small responses
-  if (buffer.length < _config.minSize) return false
-
-  // Don't compress already compressed content
-  const contentType = '' // Would need to be passed in
-  if (
-    contentType.includes('image/') ||
-    contentType.includes('video/') ||
-    contentType.includes('application/zip')
-  ) {
-    return false
-  }
-
-  return true
-}
-
-/**
- * Compress response data
- */
-function compressResponse(
-  buffer: Buffer,
-  method: string,
-  _config: CompressionConfig,
-): Buffer | null {
-  try {
-    // This is a placeholder implementation
-    // In production, use actual compression libraries like 'iltorb' for Brotli or 'zlib' for Gzip
-
-    if (method === 'gzip') {
-      // const gzip = require('zlib').gzipSync;
-      // return gzip(buffer);
-      return buffer // Placeholder
-    } else if (method === 'br') {
-      // const brotli = require('iltorb').compressSync;
-      // return brotli(buffer);
-      return buffer // Placeholder
-    } else if (method === 'deflate') {
-      // const deflate = require('zlib').deflateSync;
-      // return deflate(buffer);
-      return buffer // Placeholder
-    }
-
-    return null
-  } catch (error) {
-    // In a real implementation, you'd use proper logging here
-    return null
   }
 }
 

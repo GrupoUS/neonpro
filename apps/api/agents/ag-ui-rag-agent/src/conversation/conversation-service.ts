@@ -3,30 +3,30 @@ import { SupabaseConnector } from '../database/supabase-connector'
 import { HealthcareLogger } from '../logging/healthcare-logger'
 import { SessionManager } from '../session/session-manager'
 import {
+  Citation,
+  ConversationContextData,
+  Entity,
+  Intent,
+  MessageMetadata,
+  RAGAgentResponse,
+  ToolCall,
+} from '../types/common'
+import {
+  ErrorContext,
+  getErrorMessage,
+  logErrorWithContext,
+  withErrorHandling,
+} from '../utils/error-handling'
+import {
+  ConversationValidationParams,
+  ValidationResult,
+  ValidationService,
+} from '../utils/validation-helpers'
+import {
   ConversationContext,
   ConversationContextManager,
   ConversationMessage,
 } from './conversation-context'
-import {
-  getErrorMessage,
-  logErrorWithContext,
-  ErrorContext,
-  withErrorHandling,
-} from '../utils/error-handling'
-import {
-  Intent,
-  Entity,
-  Citation,
-  ToolCall,
-  RAGAgentResponse,
-  ConversationContextData,
-  MessageMetadata,
-} from '../types/common'
-import {
-  ValidationService,
-  ValidationResult,
-  ConversationValidationParams,
-} from '../utils/validation-helpers'
 
 export interface ConversationRequest {
   sessionId: string
@@ -90,83 +90,88 @@ export class ConversationService {
   async startConversation(
     request: ConversationRequest,
   ): Promise<ConversationResponse> {
-    return await withErrorHandling(async () => {
-      // Validate session and permissions
-      const validationResult = await this.validationService.validateConversationRequest(request)
-      ValidationService.throwIfInvalid(validationResult)
+    return await withErrorHandling(
+      async () => {
+        // Validate session and permissions
+        const validationResult = await this.validationService.validateConversationRequest(request)
+        ValidationService.throwIfInvalid(validationResult)
 
-      // Check for existing active conversation
-      const existingConversation = await this.findExistingConversation(request)
+        // Check for existing active conversation
+        const existingConversation = await this.findExistingConversation(request)
 
-      let conversation: ConversationContext
-      if (existingConversation) {
-        conversation = existingConversation
-      } else {
-        // Create new conversation
-        conversation = await this.contextManager.createConversation({
-          sessionId: request.sessionId,
-          userId: request.userId,
-          clinicId: request.clinicId,
-          patientId: request.patientId,
-          title: request.title || this.generateConversationTitle(request.message),
-          initialContext: request.context || {},
+        let conversation: ConversationContext
+        if (existingConversation) {
+          conversation = existingConversation
+        } else {
+          // Create new conversation
+          conversation = await this.contextManager.createConversation({
+            sessionId: request.sessionId,
+            userId: request.userId,
+            clinicId: request.clinicId,
+            patientId: request.patientId,
+            title: request.title || this.generateConversationTitle(request.message),
+            initialContext: request.context || {},
+          })
+        }
+
+        // Add user message
+        await this.contextManager.addMessage(conversation.id, request.userId, {
+          role: 'user',
+          content: request.message,
+          metadata: {
+            intent: await this.analyzeIntent(request.message),
+            entities: await this.extractEntities(request.message),
+          } as MessageMetadata,
         })
-      }
 
-      // Add user message
-      await this.contextManager.addMessage(conversation.id, request.userId, {
-        role: 'user',
-        content: request.message,
-        metadata: {
-          intent: await this.analyzeIntent(request.message),
-          entities: await this.extractEntities(request.message),
-        } as MessageMetadata,
-      })
+        // Process with RAG agent and get response
+        const agentResponse = await this.processWithRAGAgent(
+          request.message,
+          conversation,
+        )
 
-      // Process with RAG agent and get response
-      const agentResponse = await this.processWithRAGAgent(
-        request.message,
-        conversation,
-      )
+        // Add assistant response to conversation
+        await this.contextManager.addMessage(conversation.id, request.userId, {
+          role: 'assistant',
+          content: agentResponse.message,
+          metadata: {
+            confidence: agentResponse.confidence,
+            citations: agentResponse.citations,
+            tool_calls: agentResponse.tool_calls,
+          } as MessageMetadata,
+        })
 
-      // Add assistant response to conversation
-      await this.contextManager.addMessage(conversation.id, request.userId, {
-        role: 'assistant',
-        content: agentResponse.message,
-        metadata: {
-          confidence: agentResponse.confidence,
+        // Update conversation context
+        await this.contextManager.updateContext(conversation.id, request.userId, {
+          currentIntent: agentResponse.intent,
+          patientContext: agentResponse.patientContext,
+          lastTopic: agentResponse.topic,
+          followUpQuestions: agentResponse.followUpQuestions,
+        })
+
+        await this.logger.logDataAccess(request.userId, request.clinicId, {
+          action: 'start_conversation',
+          resource: 'ai_conversation_contexts',
+          conversationId: conversation.id,
+          patientId: request.patientId,
+          messageLength: request.message.length,
+          success: true,
+        })
+
+        return {
+          conversationId: conversation.id,
+          message: agentResponse.message,
+          role: 'assistant',
+          context: agentResponse.context,
           citations: agentResponse.citations,
-          tool_calls: agentResponse.tool_calls,
-        } as MessageMetadata,
-      })
-
-      // Update conversation context
-      await this.contextManager.updateContext(conversation.id, request.userId, {
-        currentIntent: agentResponse.intent,
-        patientContext: agentResponse.patientContext,
-        lastTopic: agentResponse.topic,
-        followUpQuestions: agentResponse.followUpQuestions,
-      })
-
-      await this.logger.logDataAccess(request.userId, request.clinicId, {
-        action: 'start_conversation',
-        resource: 'ai_conversation_contexts',
-        conversationId: conversation.id,
-        patientId: request.patientId,
-        messageLength: request.message.length,
-        success: true,
-      })
-
-      return {
-        conversationId: conversation.id,
-        message: agentResponse.message,
-        role: 'assistant',
-        context: agentResponse.context,
-        citations: agentResponse.citations,
-        confidence: agentResponse.confidence,
-        followUpQuestions: agentResponse.followUpQuestions,
-      }
-    }, 'conversation_start_error', this.logger, ErrorContext.conversation('temp', request.userId, request.clinicId))
+          confidence: agentResponse.confidence,
+          followUpQuestions: agentResponse.followUpQuestions,
+        }
+      },
+      'conversation_start_error',
+      this.logger,
+      ErrorContext.conversation('temp', request.userId, request.clinicId),
+    )
   }
 
   async continueConversation(
@@ -175,207 +180,232 @@ export class ConversationService {
     message: string,
     context?: ConversationContextData,
   ): Promise<ConversationResponse> {
-    return await withErrorHandling(async () => {
-      // Get conversation
-      const conversation = await this.contextManager.getConversation(
-        conversationId,
-        userId,
-      )
-      if (!conversation) {
-        throw new Error('Conversation not found')
-      }
+    return await withErrorHandling(
+      async () => {
+        // Get conversation
+        const conversation = await this.contextManager.getConversation(
+          conversationId,
+          userId,
+        )
+        if (!conversation) {
+          throw new Error('Conversation not found')
+        }
 
-      // Validate permissions
-      const validationParams: ConversationValidationParams = {
-        conversationId,
-        userId,
-        clinicId: conversation.clinicId,
-        action: 'read',
-      }
-      const validationResult = await this.validationService.validateConversation(validationParams)
-      ValidationService.throwIfInvalid(validationResult)
+        // Validate permissions
+        const validationParams: ConversationValidationParams = {
+          conversationId,
+          userId,
+          clinicId: conversation.clinicId,
+          action: 'read',
+        }
+        const validationResult = await this.validationService.validateConversation(validationParams)
+        ValidationService.throwIfInvalid(validationResult)
 
-      // Add user message
-      await this.contextManager.addMessage(conversationId, userId, {
-        role: 'user',
-        content: message,
-        metadata: {
-          intent: await this.analyzeIntent(message),
-          entities: await this.extractEntities(message),
-        } as MessageMetadata,
-      })
+        // Add user message
+        await this.contextManager.addMessage(conversationId, userId, {
+          role: 'user',
+          content: message,
+          metadata: {
+            intent: await this.analyzeIntent(message),
+            entities: await this.extractEntities(message),
+          } as MessageMetadata,
+        })
 
-      // Get conversation history for context
-      const recentMessages = conversation.messages.slice(-10) // Last 10 messages
+        // Get conversation history for context
+        const recentMessages = conversation.messages.slice(-10) // Last 10 messages
 
-      // Process with RAG agent
-      const agentResponse = await this.processWithRAGAgent(
-        message,
-        conversation,
-        recentMessages,
-        context,
-      )
+        // Process with RAG agent
+        const agentResponse = await this.processWithRAGAgent(
+          message,
+          conversation,
+          recentMessages,
+          context,
+        )
 
-      // Add assistant response
-      await this.contextManager.addMessage(conversationId, userId, {
-        role: 'assistant',
-        content: agentResponse.message,
-        metadata: {
-          confidence: agentResponse.confidence,
+        // Add assistant response
+        await this.contextManager.addMessage(conversationId, userId, {
+          role: 'assistant',
+          content: agentResponse.message,
+          metadata: {
+            confidence: agentResponse.confidence,
+            citations: agentResponse.citations,
+            tool_calls: agentResponse.tool_calls,
+          } as MessageMetadata,
+        })
+
+        // Update conversation context
+        await this.contextManager.updateContext(conversationId, userId, {
+          ...conversation.context,
+          ...context,
+          currentIntent: agentResponse.intent,
+          lastTopic: agentResponse.topic,
+          followUpQuestions: agentResponse.followUpQuestions,
+        })
+
+        await this.logger.logDataAccess(userId, conversation.clinicId, {
+          action: 'continue_conversation',
+          resource: 'ai_conversation_contexts',
+          conversationId,
+          messageLength: message.length,
+          success: true,
+        })
+
+        return {
+          conversationId,
+          message: agentResponse.message,
+          role: 'assistant',
+          context: agentResponse.context,
           citations: agentResponse.citations,
-          tool_calls: agentResponse.tool_calls,
-        } as MessageMetadata,
-      })
-
-      // Update conversation context
-      await this.contextManager.updateContext(conversationId, userId, {
-        ...conversation.context,
-        ...context,
-        currentIntent: agentResponse.intent,
-        lastTopic: agentResponse.topic,
-        followUpQuestions: agentResponse.followUpQuestions,
-      })
-
-      await this.logger.logDataAccess(userId, conversation.clinicId, {
-        action: 'continue_conversation',
-        resource: 'ai_conversation_contexts',
-        conversationId,
-        messageLength: message.length,
-        success: true,
-      })
-
-      return {
-        conversationId,
-        message: agentResponse.message,
-        role: 'assistant',
-        context: agentResponse.context,
-        citations: agentResponse.citations,
-        confidence: agentResponse.confidence,
-        followUpQuestions: agentResponse.followUpQuestions,
-      }
-    }, 'conversation_continue_error', this.logger, ErrorContext.conversation(conversationId, userId, 'unknown'))
+          confidence: agentResponse.confidence,
+          followUpQuestions: agentResponse.followUpQuestions,
+        }
+      },
+      'conversation_continue_error',
+      this.logger,
+      ErrorContext.conversation(conversationId, userId, 'unknown'),
+    )
   }
 
   async getConversationHistory(
     params: ConversationHistoryParams,
   ): Promise<{ conversations: ConversationContext[]; total: number }> {
-    return await withErrorHandling(async () => {
-      const validationParams: ConversationValidationParams = {
-        userId: params.userId,
-        clinicId: params.clinicId,
-        action: 'read'
-      }
-      const validationResult = await this.validationService.validateConversation(validationParams)
-      ValidationService.throwIfInvalid(validationResult)
+    return await withErrorHandling(
+      async () => {
+        const validationParams: ConversationValidationParams = {
+          userId: params.userId,
+          clinicId: params.clinicId,
+          action: 'read',
+        }
+        const validationResult = await this.validationService.validateConversation(validationParams)
+        ValidationService.throwIfInvalid(validationResult)
 
-      const conversations = await this.contextManager.getUserConversations(
+        const conversations = await this.contextManager.getUserConversations(
+          params.userId,
+          params.clinicId,
+        )
+
+        // Apply filters
+        let filteredConversations = conversations
+        if (params.patientId) {
+          filteredConversations = filteredConversations.filter(
+            conv => conv.patientId === params.patientId,
+          )
+        }
+        if (params.status) {
+          filteredConversations = filteredConversations.filter(
+            conv => conv.status === params.status,
+          )
+        }
+
+        // Apply pagination
+        const offset = params.offset || 0
+        const limit = params.limit || 20
+        const paginatedConversations = filteredConversations.slice(
+          offset,
+          offset + limit,
+        )
+
+        await this.logger.logDataAccess(params.userId, params.clinicId, {
+          action: 'get_conversation_history',
+          resource: 'ai_conversation_contexts',
+          filters: params,
+          returnedCount: paginatedConversations.length,
+          totalCount: filteredConversations.length,
+          success: true,
+        })
+
+        return {
+          conversations: paginatedConversations,
+          total: filteredConversations.length,
+        }
+      },
+      'conversation_history_error',
+      this.logger,
+      ErrorContext.dataAccess(
         params.userId,
         params.clinicId,
-      )
-
-      // Apply filters
-      let filteredConversations = conversations
-      if (params.patientId) {
-        filteredConversations = filteredConversations.filter(
-          conv => conv.patientId === params.patientId,
-        )
-      }
-      if (params.status) {
-        filteredConversations = filteredConversations.filter(
-          conv => conv.status === params.status,
-        )
-      }
-
-      // Apply pagination
-      const offset = params.offset || 0
-      const limit = params.limit || 20
-      const paginatedConversations = filteredConversations.slice(
-        offset,
-        offset + limit,
-      )
-
-      await this.logger.logDataAccess(params.userId, params.clinicId, {
-        action: 'get_conversation_history',
-        resource: 'ai_conversation_contexts',
-        filters: params,
-        returnedCount: paginatedConversations.length,
-        totalCount: filteredConversations.length,
-        success: true,
-      })
-
-      return {
-        conversations: paginatedConversations,
-        total: filteredConversations.length,
-      }
-    }, 'conversation_history_error', this.logger, ErrorContext.dataAccess(params.userId, params.clinicId, 'ai_conversation_contexts', 'get_history'))
+        'ai_conversation_contexts',
+        'get_history',
+      ),
+    )
   }
 
   async getConversationDetails(
     conversationId: string,
     userId: string,
   ): Promise<ConversationContext | null> {
-    return await withErrorHandling(async () => {
-      const conversation = await this.contextManager.getConversation(
-        conversationId,
-        userId,
-      )
-      if (!conversation) {
-        return null
-      }
+    return await withErrorHandling(
+      async () => {
+        const conversation = await this.contextManager.getConversation(
+          conversationId,
+          userId,
+        )
+        if (!conversation) {
+          return null
+        }
 
-      const validationParams: ConversationValidationParams = {
-        conversationId,
-        userId,
-        clinicId: conversation.clinicId,
-        action: 'read'
-      }
-      const validationResult = await this.validationService.validateConversation(validationParams)
-      ValidationService.throwIfInvalid(validationResult)
+        const validationParams: ConversationValidationParams = {
+          conversationId,
+          userId,
+          clinicId: conversation.clinicId,
+          action: 'read',
+        }
+        const validationResult = await this.validationService.validateConversation(validationParams)
+        ValidationService.throwIfInvalid(validationResult)
 
-      await this.logger.logDataAccess(userId, conversation.clinicId, {
-        action: 'get_conversation_details',
-        resource: 'ai_conversation_contexts',
-        conversationId,
-        messageCount: conversation.messages.length,
-        success: true,
-      })
+        await this.logger.logDataAccess(userId, conversation.clinicId, {
+          action: 'get_conversation_details',
+          resource: 'ai_conversation_contexts',
+          conversationId,
+          messageCount: conversation.messages.length,
+          success: true,
+        })
 
-      return conversation
-    }, 'conversation_details_error', this.logger, ErrorContext.dataAccess(userId, 'unknown', 'ai_conversation_contexts', 'get_details'))
+        return conversation
+      },
+      'conversation_details_error',
+      this.logger,
+      ErrorContext.dataAccess(userId, 'unknown', 'ai_conversation_contexts', 'get_details'),
+    )
   }
 
   async deleteConversation(
     conversationId: string,
     userId: string,
   ): Promise<void> {
-    return await withErrorHandling(async () => {
-      const conversation = await this.contextManager.getConversation(
-        conversationId,
-        userId,
-      )
-      if (!conversation) {
-        throw new Error('Conversation not found')
-      }
+    return await withErrorHandling(
+      async () => {
+        const conversation = await this.contextManager.getConversation(
+          conversationId,
+          userId,
+        )
+        if (!conversation) {
+          throw new Error('Conversation not found')
+        }
 
-      const validationParams: ConversationValidationParams = {
-        conversationId,
-        userId,
-        clinicId: conversation.clinicId,
-        action: 'delete'
-      }
-      const validationResult = await this.validationService.validateConversation(validationParams)
-      ValidationService.throwIfInvalid(validationResult)
+        const validationParams: ConversationValidationParams = {
+          conversationId,
+          userId,
+          clinicId: conversation.clinicId,
+          action: 'delete',
+        }
+        const validationResult = await this.validationService.validateConversation(validationParams)
+        ValidationService.throwIfInvalid(validationResult)
 
-      await this.contextManager.deleteConversation(conversationId, userId)
+        await this.contextManager.deleteConversation(conversationId, userId)
 
-      await this.logger.logDataAccess(userId, conversation.clinicId, {
-        action: 'delete_conversation',
-        resource: 'ai_conversation_contexts',
-        conversationId,
-        messageCount: conversation.messages.length,
-        success: true,
-      })
-    }, 'conversation_delete_error', this.logger, ErrorContext.dataAccess(userId, 'unknown', 'ai_conversation_contexts', 'delete'))
+        await this.logger.logDataAccess(userId, conversation.clinicId, {
+          action: 'delete_conversation',
+          resource: 'ai_conversation_contexts',
+          conversationId,
+          messageCount: conversation.messages.length,
+          success: true,
+        })
+      },
+      'conversation_delete_error',
+      this.logger,
+      ErrorContext.dataAccess(userId, 'unknown', 'ai_conversation_contexts', 'delete'),
+    )
   }
 
   async searchConversations(
@@ -384,55 +414,60 @@ export class ConversationService {
     query: string,
     filters?: ConversationSearchFilters,
   ): Promise<ConversationContext[]> {
-    return await withErrorHandling(async () => {
-      const validationParams: ConversationValidationParams = {
-        userId,
-        clinicId,
-        action: 'read'
-      }
-      const validationResult = await this.validationService.validateConversation(validationParams)
-      ValidationService.throwIfInvalid(validationResult)
-
-      const conversations = await this.contextManager.getUserConversations(
-        userId,
-        clinicId,
-      )
-
-      // Filter by search query and additional filters
-      const filteredConversations = conversations.filter(conv => {
-        // Search in title and messages
-        const searchText = `${conv.title} ${conv.messages.map(m => m.content).join(' ')}`
-          .toLowerCase()
-        const matchesQuery = searchText.includes(query.toLowerCase())
-
-        // Apply additional filters
-        if (filters?.patientId && conv.patientId !== filters.patientId) {
-          return false
+    return await withErrorHandling(
+      async () => {
+        const validationParams: ConversationValidationParams = {
+          userId,
+          clinicId,
+          action: 'read',
         }
-        if (filters?.dateFrom && conv.createdAt < filters.dateFrom) {
-          return false
-        }
-        if (filters?.dateTo && conv.createdAt > filters.dateTo) {
-          return false
-        }
-        if (filters?.status && conv.status !== filters.status) {
-          return false
-        }
+        const validationResult = await this.validationService.validateConversation(validationParams)
+        ValidationService.throwIfInvalid(validationResult)
 
-        return matchesQuery
-      })
+        const conversations = await this.contextManager.getUserConversations(
+          userId,
+          clinicId,
+        )
 
-      await this.logger.logDataAccess(userId, clinicId, {
-        action: 'search_conversations',
-        resource: 'ai_conversation_contexts',
-        query,
-        filters,
-        resultCount: filteredConversations.length,
-        success: true,
-      })
+        // Filter by search query and additional filters
+        const filteredConversations = conversations.filter(conv => {
+          // Search in title and messages
+          const searchText = `${conv.title} ${conv.messages.map(m => m.content).join(' ')}`
+            .toLowerCase()
+          const matchesQuery = searchText.includes(query.toLowerCase())
 
-      return filteredConversations
-    }, 'conversation_search_error', this.logger, ErrorContext.dataAccess(userId, clinicId, 'ai_conversation_contexts', 'search'))
+          // Apply additional filters
+          if (filters?.patientId && conv.patientId !== filters.patientId) {
+            return false
+          }
+          if (filters?.dateFrom && conv.createdAt < filters.dateFrom) {
+            return false
+          }
+          if (filters?.dateTo && conv.createdAt > filters.dateTo) {
+            return false
+          }
+          if (filters?.status && conv.status !== filters.status) {
+            return false
+          }
+
+          return matchesQuery
+        })
+
+        await this.logger.logDataAccess(userId, clinicId, {
+          action: 'search_conversations',
+          resource: 'ai_conversation_contexts',
+          query,
+          filters,
+          resultCount: filteredConversations.length,
+          success: true,
+        })
+
+        return filteredConversations
+      },
+      'conversation_search_error',
+      this.logger,
+      ErrorContext.dataAccess(userId, clinicId, 'ai_conversation_contexts', 'search'),
+    )
   }
 
   // Removed redundant validation methods - now using centralized ValidationService

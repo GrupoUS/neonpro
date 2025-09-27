@@ -9,9 +9,9 @@
  * @version 1.0.0
  */
 
+import crypto from 'crypto'
 import { promises as fs } from 'fs'
 import path from 'path'
-import crypto from 'crypto'
 
 /**
  * Audit event types
@@ -28,7 +28,7 @@ export enum AuditEventType {
   AUTH_PASSWORD_CHANGE = 'auth_password_change',
   AUTH_ACCOUNT_LOCKED = 'auth_account_locked',
   AUTH_ACCOUNT_UNLOCKED = 'auth_account_unlocked',
-  
+
   // Data access events
   DATA_ACCESS = 'data_access',
   DATA_CREATE = 'data_create',
@@ -39,7 +39,7 @@ export enum AuditEventType {
   DATA_SEARCH = 'data_search',
   DATA_PRINT = 'data_print',
   DATA_SHARE = 'data_share',
-  
+
   // Security events
   SECURITY_VIOLATION = 'security_violation',
   SECURITY_ALERT = 'security_alert',
@@ -49,7 +49,7 @@ export enum AuditEventType {
   BLOCKED_ACCESS = 'blocked_access',
   MALWARE_DETECTED = 'malware_detected',
   INTRUSION_ATTEMPT = 'intrusion_attempt',
-  
+
   // Compliance events
   COMPLIANCE_CHECK = 'compliance_check',
   COMPLIANCE_VIOLATION = 'compliance_violation',
@@ -58,7 +58,7 @@ export enum AuditEventType {
   CONSENT_UPDATED = 'consent_updated',
   DATA_BREACH = 'data_breach',
   PRIVACY_VIOLATION = 'privacy_violation',
-  
+
   // System events
   SYSTEM_STARTUP = 'system_startup',
   SYSTEM_SHUTDOWN = 'system_shutdown',
@@ -66,7 +66,7 @@ export enum AuditEventType {
   SYSTEM_CONFIG_CHANGE = 'system_config_change',
   BACKUP_CREATED = 'backup_created',
   BACKUP_RESTORED = 'backup_restored',
-  
+
   // Healthcare specific events
   PATIENT_REGISTRATION = 'patient_registration',
   PATIENT_DISCHARGE = 'patient_discharge',
@@ -75,7 +75,7 @@ export enum AuditEventType {
   MEDICAL_RECORD_ACCESS = 'medical_record_access',
   TELEMEDICINE_SESSION = 'telemedicine_session',
   EMERGENCY_ACCESS = 'emergency_access',
-  CONSENT_MANAGEMENT = 'consent_management'
+  CONSENT_MANAGEMENT = 'consent_management',
 }
 
 /**
@@ -85,7 +85,7 @@ export enum AuditSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -222,8 +222,8 @@ export class AuditTrailService {
     alertThresholds: {
       eventsPerMinute: 1000,
       failureRate: 0.1,
-      riskScore: 70
-    }
+      riskScore: 70,
+    },
   }
 
   private static eventBuffer: AuditEvent[] = []
@@ -237,20 +237,20 @@ export class AuditTrailService {
    */
   static async initialize(config: Partial<AuditConfiguration> = {}): Promise<void> {
     this.config = { ...this.DEFAULT_CONFIG, ...config }
-    
+
     // Ensure log directory exists
     if (this.config.logToFile) {
       await this.ensureLogDirectory()
     }
-    
+
     // Start flush timer
     this.startFlushTimer()
-    
+
     // Start backup timer
     if (this.config.backupEnabled) {
       this.startBackupTimer()
     }
-    
+
     // Log service initialization
     await this.logEvent({
       eventType: AuditEventType.SYSTEM_STARTUP,
@@ -260,7 +260,7 @@ export class AuditTrailService {
       description: 'Audit trail service initialized',
       outcome: 'success',
       ipAddress: 'localhost',
-      metadata: { config: this.config }
+      metadata: { config: this.config },
     })
   }
 
@@ -271,7 +271,7 @@ export class AuditTrailService {
     const event: AuditEvent = {
       ...eventData,
       id: this.generateEventId(),
-      timestamp: new Date()
+      timestamp: new Date(),
     }
 
     // Calculate risk score
@@ -279,7 +279,7 @@ export class AuditTrailService {
 
     // Add to buffer
     this.eventBuffer.push(event)
-    
+
     // Update statistics
     this.updateStatistics(event)
 
@@ -308,7 +308,7 @@ export class AuditTrailService {
       deviceFingerprint?: string
       location?: { country: string; region: string; city: string }
     },
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<string> {
     return this.logEvent({
       eventType,
@@ -323,7 +323,7 @@ export class AuditTrailService {
       userAgent: requestContext.userAgent,
       deviceFingerprint: requestContext.deviceFingerprint,
       location: requestContext.location,
-      metadata
+      metadata,
     })
   }
 
@@ -343,7 +343,7 @@ export class AuditTrailService {
       sessionId?: string
     },
     complianceData?: AuditEvent['complianceData'],
-    outcome: 'success' | 'failure' | 'error' = 'success'
+    outcome: 'success' | 'failure' | 'error' = 'success',
   ): Promise<string> {
     return this.logEvent({
       eventType: AuditEventType.DATA_ACCESS,
@@ -360,7 +360,7 @@ export class AuditTrailService {
       ipAddress: requestContext.ipAddress,
       userAgent: requestContext.userAgent,
       sessionId: requestContext.sessionId,
-      complianceData
+      complianceData,
     })
   }
 
@@ -377,7 +377,7 @@ export class AuditTrailService {
       userId?: string
       sessionId?: string
     },
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<string> {
     return this.logEvent({
       eventType,
@@ -390,7 +390,7 @@ export class AuditTrailService {
       outcome: 'success',
       ipAddress: requestContext.ipAddress,
       userAgent: requestContext.userAgent,
-      metadata
+      metadata,
     })
   }
 
@@ -408,7 +408,7 @@ export class AuditTrailService {
       ipAddress: string
       userAgent?: string
       sessionId?: string
-    }
+    },
   ): Promise<string> {
     return this.logEvent({
       eventType,
@@ -423,7 +423,7 @@ export class AuditTrailService {
       ipAddress: requestContext?.ipAddress || 'system',
       userAgent: requestContext?.userAgent,
       sessionId: requestContext?.sessionId,
-      complianceData
+      complianceData,
     })
   }
 
@@ -434,14 +434,14 @@ export class AuditTrailService {
     // This is a simplified implementation
     // In production, you'd query a database or log files
     const events = this.eventBuffer.filter(event => this.matchesFilter(event, filter))
-    
+
     const total = events.length
     const startIndex = filter.offset || 0
     const endIndex = startIndex + (filter.limit || 100)
-    
+
     return {
       events: events.slice(startIndex, endIndex),
-      total
+      total,
     }
   }
 
@@ -459,21 +459,30 @@ export class AuditTrailService {
    */
   static async generateReport(
     filter: AuditFilter,
-    format: 'json' | 'csv' | 'pdf' = 'json'
+    format: 'json' | 'csv' | 'pdf' = 'json',
   ): Promise<{ content: string; filename: string }> {
     const { events, total } = await this.queryEvents(filter)
-    
+
     switch (format) {
       case 'json':
         return {
           content: JSON.stringify({ events, total, generatedAt: new Date() }, null, 2),
-          filename: `audit-report-${Date.now()}.json`
+          filename: `audit-report-${Date.now()}.json`,
         }
-      
+
       case 'csv':
         const csvHeaders = [
-          'id', 'timestamp', 'eventType', 'severity', 'category', 'userId',
-          'action', 'resource', 'outcome', 'ipAddress', 'description'
+          'id',
+          'timestamp',
+          'eventType',
+          'severity',
+          'category',
+          'userId',
+          'action',
+          'resource',
+          'outcome',
+          'ipAddress',
+          'description',
         ]
         const csvRows = events.map(event => [
           event.id,
@@ -486,26 +495,26 @@ export class AuditTrailService {
           event.resource || '',
           event.outcome,
           event.ipAddress,
-          event.description
+          event.description,
         ])
-        
+
         const csvContent = [
           csvHeaders.join(','),
-          ...csvRows.map(row => row.map(cell => `"${cell}"`).join(','))
+          ...csvRows.map(row => row.map(cell => `"${cell}"`).join(',')),
         ].join('\n')
-        
+
         return {
           content: csvContent,
-          filename: `audit-report-${Date.now()}.csv`
+          filename: `audit-report-${Date.now()}.csv`,
         }
-      
+
       case 'pdf':
         // PDF generation would require a PDF library
         return {
           content: JSON.stringify({ events, total, generatedAt: new Date() }, null, 2),
-          filename: `audit-report-${Date.now()}.json`
+          filename: `audit-report-${Date.now()}.json`,
         }
-      
+
       default:
         throw new Error(`Unsupported format: ${format}`)
     }
@@ -528,60 +537,56 @@ export class AuditTrailService {
   }> {
     const cutoffTime = new Date(Date.now() - timeWindowMinutes * 60 * 1000)
     const recentEvents = this.eventBuffer.filter(event => event.timestamp > cutoffTime)
-    
+
     const ipCounts = new Map<string, number>()
     const userCounts = new Map<string, number>()
     const patterns: Array<{ type: string; description: string; count: number }> = []
-    
+
     recentEvents.forEach(event => {
       // Count by IP
       ipCounts.set(event.ipAddress, (ipCounts.get(event.ipAddress) || 0) + 1)
-      
+
       // Count by user
       if (event.userId) {
         userCounts.set(event.userId, (userCounts.get(event.userId) || 0) + 1)
       }
     })
-    
+
     // Detect suspicious IPs
     const suspiciousIPs = Array.from(ipCounts.entries())
       .filter(([_, count]) => count > 100) // More than 100 events in time window
       .map(([ip]) => ip)
-    
+
     // Detect suspicious users
     const suspiciousUsers = Array.from(userCounts.entries())
       .filter(([_, count]) => count > 50) // More than 50 events in time window
       .map(([user]) => user)
-    
+
     // Detect patterns
-    const failedAuths = recentEvents.filter(e => 
-      e.eventType === AuditEventType.AUTH_FAILURE
-    )
-    
+    const failedAuths = recentEvents.filter(e => e.eventType === AuditEventType.AUTH_FAILURE)
+
     if (failedAuths.length > 20) {
       patterns.push({
         type: 'brute_force',
         description: 'High number of authentication failures',
-        count: failedAuths.length
+        count: failedAuths.length,
       })
     }
-    
-    const dataExports = recentEvents.filter(e => 
-      e.eventType === AuditEventType.DATA_EXPORT
-    )
-    
+
+    const dataExports = recentEvents.filter(e => e.eventType === AuditEventType.DATA_EXPORT)
+
     if (dataExports.length > 10) {
       patterns.push({
         type: 'data_exfiltration',
         description: 'High number of data export events',
-        count: dataExports.length
+        count: dataExports.length,
       })
     }
-    
+
     return {
       suspiciousIPs,
       suspiciousUsers,
-      patterns
+      patterns,
     }
   }
 
@@ -601,12 +606,12 @@ export class AuditTrailService {
       if (this.config.logToFile) {
         await this.writeToFile(events)
       }
-      
+
       // Write to database (simplified)
       if (this.config.logToDatabase) {
         await this.writeToDatabase(events)
       }
-      
+
       // Log to console
       if (this.config.logToConsole) {
         events.forEach(event => {
@@ -626,15 +631,15 @@ export class AuditTrailService {
   private static async writeToFile(events: AuditEvent[]): Promise<void> {
     const dateStr = new Date().toISOString().split('T')[0]
     const filePath = path.join('logs', `audit-${dateStr}.json`)
-    
+
     const logData = events.map(event => ({
       ...event,
       // Mask sensitive data if enabled
-      ...(this.config.sensitiveDataMasking && this.maskSensitiveData(event))
+      ...(this.config.sensitiveDataMasking && this.maskSensitiveData(event)),
     }))
-    
+
     const content = JSON.stringify(logData, null, 2) + '\n'
-    
+
     await fs.appendFile(filePath, content)
   }
 
@@ -652,7 +657,7 @@ export class AuditTrailService {
    */
   private static calculateRiskScore(event: AuditEvent): number {
     let score = 0
-    
+
     // Base score by severity
     switch (event.severity) {
       case AuditSeverity.CRITICAL:
@@ -668,16 +673,16 @@ export class AuditTrailService {
         score += 20
         break
     }
-    
+
     // Adjust by outcome
     if (event.outcome === 'failure') score += 10
     if (event.outcome === 'error') score += 15
     if (event.outcome === 'blocked') score += 20
-    
+
     // Adjust by category
     if (event.category === 'security') score += 10
     if (event.category === 'compliance') score += 15
-    
+
     // Adjust by event type
     switch (event.eventType) {
       case AuditEventType.SECURITY_VIOLATION:
@@ -693,7 +698,7 @@ export class AuditTrailService {
         score += 35
         break
     }
-    
+
     return Math.min(100, score)
   }
 
@@ -703,33 +708,33 @@ export class AuditTrailService {
   private static updateStatistics(event: AuditEvent): void {
     // Update total events
     this.statistics.totalEvents++
-    
+
     // Update by type
-    this.statistics.eventsByType[event.eventType] = 
+    this.statistics.eventsByType[event.eventType] =
       (this.statistics.eventsByType[event.eventType] || 0) + 1
-    
+
     // Update by severity
-    this.statistics.eventsBySeverity[event.severity] = 
+    this.statistics.eventsBySeverity[event.severity] =
       (this.statistics.eventsBySeverity[event.severity] || 0) + 1
-    
+
     // Update by category
-    this.statistics.eventsByCategory[event.category] = 
+    this.statistics.eventsByCategory[event.category] =
       (this.statistics.eventsByCategory[event.category] || 0) + 1
-    
+
     // Update by user
     if (event.userId) {
-      this.statistics.eventsByUser[event.userId] = 
+      this.statistics.eventsByUser[event.userId] =
         (this.statistics.eventsByUser[event.userId] || 0) + 1
     }
-    
+
     // Update by IP
-    this.statistics.eventsByIP[event.ipAddress] = 
+    this.statistics.eventsByIP[event.ipAddress] =
       (this.statistics.eventsByIP[event.ipAddress] || 0) + 1
-    
+
     // Update time distribution
     const hour = event.timestamp.getHours()
     this.statistics.timeDistribution.hour[hour]++
-    
+
     // Update risk distribution
     if (event.riskScore !== undefined) {
       if (event.riskScore <= 25) {
@@ -742,22 +747,24 @@ export class AuditTrailService {
         this.statistics.riskDistribution.critical++
       }
     }
-    
+
     // Update compliance metrics
-    if (event.eventType === AuditEventType.CONSENT_GRANTED ||
-        event.eventType === AuditEventType.CONSENT_REVOKED ||
-        event.eventType === AuditEventType.CONSENT_UPDATED) {
+    if (
+      event.eventType === AuditEventType.CONSENT_GRANTED ||
+      event.eventType === AuditEventType.CONSENT_REVOKED ||
+      event.eventType === AuditEventType.CONSENT_UPDATED
+    ) {
       this.statistics.complianceMetrics.consentEvents++
     }
-    
+
     if (event.category === 'data_access') {
       this.statistics.complianceMetrics.dataAccessEvents++
     }
-    
+
     if (event.category === 'security') {
       this.statistics.complianceMetrics.securityViolations++
     }
-    
+
     if (event.category === 'compliance' && event.outcome === 'failure') {
       this.statistics.complianceMetrics.privacyViolations++
     }
@@ -771,7 +778,7 @@ export class AuditTrailService {
     if (event.riskScore && event.riskScore >= this.config.alertThresholds.riskScore) {
       await this.triggerAlert(event)
     }
-    
+
     // Check event type specific alerts
     const hook = this.alertHooks.get(event.eventType)
     if (hook) {
@@ -789,11 +796,11 @@ export class AuditTrailService {
       severity: event.severity,
       riskScore: event.riskScore,
       message: `High-risk event detected: ${event.description}`,
-      event
+      event,
     }
-    
+
     console.warn('[ALERT]', JSON.stringify(alert))
-    
+
     // In production, this would send alerts to monitoring systems
     // email, SMS, Slack, etc.
   }
@@ -825,7 +832,7 @@ export class AuditTrailService {
     if (this.flushTimer) {
       return
     }
-    
+
     this.flushTimer = setInterval(() => {
       this.flushBuffer()
     }, this.config.flushIntervalMs)
@@ -856,43 +863,52 @@ export class AuditTrailService {
       const eventTypes = Array.isArray(filter.eventType) ? filter.eventType : [filter.eventType]
       if (!eventTypes.includes(event.eventType)) return false
     }
-    
+
     if (filter.severity) {
       const severities = Array.isArray(filter.severity) ? filter.severity : [filter.severity]
       if (!severities.includes(event.severity)) return false
     }
-    
+
     if (filter.category) {
       const categories = Array.isArray(filter.category) ? filter.category : [filter.category]
       if (!categories.includes(event.category)) return false
     }
-    
+
     if (filter.userId && event.userId !== filter.userId) return false
     if (filter.sessionId && event.sessionId !== filter.sessionId) return false
     if (filter.patientId && event.patientId !== filter.patientId) return false
-    if (filter.healthcareProvider && event.healthcareProvider !== filter.healthcareProvider) return false
-    
+    if (filter.healthcareProvider && event.healthcareProvider !== filter.healthcareProvider) {
+      return false
+    }
+
     if (filter.startDate && event.timestamp < filter.startDate) return false
     if (filter.endDate && event.timestamp > filter.endDate) return false
-    
+
     if (filter.outcome) {
       const outcomes = Array.isArray(filter.outcome) ? filter.outcome : [filter.outcome]
       if (!outcomes.includes(event.outcome)) return false
     }
-    
+
     if (filter.ipAddress && event.ipAddress !== filter.ipAddress) return false
     if (filter.resource && event.resource !== filter.resource) return false
-    
-    if (filter.minRiskScore && (!event.riskScore || event.riskScore < filter.minRiskScore)) return false
-    if (filter.maxRiskScore && (!event.riskScore || event.riskScore > filter.maxRiskScore)) return false
-    
+
+    if (filter.minRiskScore && (!event.riskScore || event.riskScore < filter.minRiskScore)) {
+      return false
+    }
+    if (filter.maxRiskScore && (!event.riskScore || event.riskScore > filter.maxRiskScore)) {
+      return false
+    }
+
     return true
   }
 
   /**
    * Get severity for event type
    */
-  private static getSeverityForEventType(eventType: AuditEventType, outcome: string): AuditSeverity {
+  private static getSeverityForEventType(
+    eventType: AuditEventType,
+    outcome: string,
+  ): AuditSeverity {
     const severityMap: Record<AuditEventType, AuditSeverity> = {
       [AuditEventType.AUTH_SUCCESS]: AuditSeverity.LOW,
       [AuditEventType.AUTH_FAILURE]: AuditSeverity.MEDIUM,
@@ -941,9 +957,9 @@ export class AuditTrailService {
       [AuditEventType.MEDICAL_RECORD_ACCESS]: AuditSeverity.HIGH,
       [AuditEventType.TELEMEDICINE_SESSION]: AuditSeverity.HIGH,
       [AuditEventType.EMERGENCY_ACCESS]: AuditSeverity.CRITICAL,
-      [AuditEventType.CONSENT_MANAGEMENT]: AuditSeverity.MEDIUM
+      [AuditEventType.CONSENT_MANAGEMENT]: AuditSeverity.MEDIUM,
     }
-    
+
     return severityMap[eventType] || AuditSeverity.LOW
   }
 
@@ -967,17 +983,17 @@ export class AuditTrailService {
    */
   private static maskSensitiveData(event: AuditEvent): Partial<AuditEvent> {
     const masked: Partial<AuditEvent> = {}
-    
+
     // Mask user agent for privacy
     if (event.userAgent) {
       masked.userAgent = this.maskUserAgent(event.userAgent)
     }
-    
+
     // Mask IP address if needed
     if (event.ipAddress && event.category === 'healthcare') {
       masked.ipAddress = this.maskIPAddress(event.ipAddress)
     }
-    
+
     return masked
   }
 
@@ -1016,20 +1032,20 @@ export class AuditTrailService {
       timeDistribution: {
         hour: new Array(24).fill(0),
         day: new Array(7).fill(0),
-        week: new Array(52).fill(0)
+        week: new Array(52).fill(0),
       },
       riskDistribution: {
         low: 0,
         medium: 0,
         high: 0,
-        critical: 0
+        critical: 0,
       },
       complianceMetrics: {
         consentEvents: 0,
         dataAccessEvents: 0,
         securityViolations: 0,
-        privacyViolations: 0
-      }
+        privacyViolations: 0,
+      },
     }
   }
 }

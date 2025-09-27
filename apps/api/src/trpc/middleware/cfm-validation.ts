@@ -1,6 +1,6 @@
+import { logger } from '@/utils/healthcare-errors'
 import { TRPCError } from '@trpc/server'
 import { initTRPC } from '@trpc/server'
-import { logger } from "@/utils/healthcare-errors"
 
 const t = initTRPC.create()
 const { middleware } = t

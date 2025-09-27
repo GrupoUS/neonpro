@@ -11,12 +11,12 @@
 
 // Core circuit breaker service
 export {
-  CircuitBreakerService as CircuitBreaker,
   CircuitBreakerConfig,
   CircuitBreakerEvent,
   CircuitBreakerMetrics,
   CircuitBreakerRegistry,
   CircuitBreakerService,
+  CircuitBreakerService as CircuitBreaker,
   CircuitState,
   createCircuitBreaker,
   HEALTHCARE_CIRCUIT_CONFIG,
@@ -49,8 +49,6 @@ export {
   setupHealthMonitoring,
   withCircuitBreakerProtection,
 } from './integration-example'
-
-
 
 // Package version and info
 export const CIRCUIT_BREAKER_VERSION = '1.0.0'

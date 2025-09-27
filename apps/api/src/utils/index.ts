@@ -2,118 +2,142 @@
 // Centralized exports for all API utility modules
 
 // Healthcare validation and helpers
-export { BrazilianHealthcareSchemas } from './brazilian-healthcare-validation';
-export { HealthcareAppointmentHelper } from './healthcare-helpers';
-export { LGPDComplianceValidator } from './lgpd-compliance-validator';
-export { PatientDataHelper } from './healthcare-helpers';
+export { BrazilianHealthcareSchemas } from './brazilian-healthcare-validation'
+export { HealthcareAppointmentHelper } from './healthcare-helpers'
+export { PatientDataHelper } from './healthcare-helpers'
+export { LGPDComplianceValidator } from './lgpd-compliance-validator'
 
 // LGPD compliance exports
 export {
-  LGPDLegalBasis,
-  LGPDDataCategory,
-  LGPDDataSubjectRights,
-  LGPDProcessingPurpose,
   type DataProcessingRecord,
   type LGPDAuditEvent,
   type LGPDComplianceStatus,
-} from './lgpd-compliance-validator';
+  LGPDDataCategory,
+  LGPDDataSubjectRights,
+  LGPDLegalBasis,
+  LGPDProcessingPurpose,
+} from './lgpd-compliance-validator'
 
 // Security and privacy utilities
-export { CryptographicAuditLogger as CryptoAudit, cryptographicAuditLogger } from './crypto-audit';
-export { PrivacyAlgorithms } from './privacy-algorithms';
-export { SecureLogger } from './secure-logger';
-export { HealthcareLogger as HealthcareErrorLogger } from '../logging/healthcare-logger';
+export { HealthcareLogger as HealthcareErrorLogger } from '../logging/healthcare-logger'
+export { CryptographicAuditLogger as CryptoAudit, cryptographicAuditLogger } from './crypto-audit'
+export { PrivacyAlgorithms } from './privacy-algorithms'
+export { SecureLogger } from './secure-logger'
 
 // Error handling and responses
-export { badRequest, unauthorized, forbidden, notFound, serverError, success, ok, created } from './responses';
 export {
-  HealthcareError,
+  createErrorHandler,
+  type ErrorContext,
+  ErrorHandler,
+  type ErrorHandlerConfig,
+  type ErrorRecoveryStrategy,
+  type ErrorResponse,
+  HandleErrors,
+  withErrorHandling,
+} from './error-handler'
+export {
+  AppointmentSchedulingError,
+  BrazilianRegulatoryError,
+  ExternalHealthcareServiceError,
   HealthcareAuthenticationError,
   HealthcareAuthorizationError,
-  LGPDComplianceError,
-  BrazilianRegulatoryError,
-  PatientDataValidationError,
-  AppointmentSchedulingError,
   HealthcareDataIntegrityError,
-  ExternalHealthcareServiceError
-} from './healthcare-errors';
-export { 
-  ErrorHandler, 
-  createErrorHandler, 
-  withErrorHandling, 
-  HandleErrors,
-  type ErrorContext,
-  type ErrorResponse,
-  type ErrorHandlerConfig,
-  type ErrorRecoveryStrategy
-} from './error-handler';
-export type { ApiResponseFormat } from './responses';
+  HealthcareError,
+  LGPDComplianceError,
+  PatientDataValidationError,
+} from './healthcare-errors'
+export {
+  badRequest,
+  created,
+  forbidden,
+  notFound,
+  ok,
+  serverError,
+  success,
+  unauthorized,
+} from './responses'
+export type { ApiResponseFormat } from './responses'
 
 // Helper functions for response creation
-export const createSuccessResponse = (data: any, status: number = 200) => ({ data, status });
-export const createErrorResponse = (code: string, message: string, details?: any) => ({ error: { code, message, details } });
-export { QueryPerformanceMonitor as QueryOptimizer, queryMonitor, poolOptimizer, healthcareOptimizer } from './query-optimizer';
-export { HealthcareBundleAnalyzer as BundleOptimizer, healthcareBundleAnalyzer, healthcarePerformanceMonitor } from './bundle-optimizer';
-export { HealthcareQueryOptimizer as HealthcarePerformance, ConnectionPoolMonitor, InMemoryQueryCache } from './healthcare-performance';
+export const createSuccessResponse = (data: any, status: number = 200) => ({ data, status })
+export const createErrorResponse = (code: string, message: string, details?: any) => ({
+  error: { code, message, details },
+})
+export {
+  HealthcareBundleAnalyzer as BundleOptimizer,
+  healthcareBundleAnalyzer,
+  healthcarePerformanceMonitor,
+} from './bundle-optimizer'
+export {
+  ConnectionPoolMonitor,
+  HealthcareQueryOptimizer as HealthcarePerformance,
+  InMemoryQueryCache,
+} from './healthcare-performance'
+export {
+  healthcareOptimizer,
+  poolOptimizer,
+  queryMonitor,
+  QueryPerformanceMonitor as QueryOptimizer,
+} from './query-optimizer'
 
 // Data handling and sanitization
-export { sanitizeForAI } from './sanitize';
-export { redact } from './sanitize';
-export { SecretManager } from './secret-manager';
+export { sanitizeForAI } from './sanitize'
+export { redact } from './sanitize'
+export { SecretManager } from './secret-manager'
 
 // Backup and disaster recovery
-export { 
-  BackupManager, 
-  createBackupManager,
+export {
   type BackupConfig,
   type BackupJob,
+  BackupManager,
+  createBackupManager,
   type RecoveryPlan,
-  type RecoveryStep
-} from './backup-manager';
+  type RecoveryStep,
+} from './backup-manager'
 
 // Configuration management
-export { 
-  ConfigManager, 
+export {
+  type ConfigChangeEvent,
+  ConfigManager,
+  type ConfigManagerOptions,
+  type ConfigSchema,
   createConfigManager,
   HealthcareConfigSchemas,
-  type ConfigSchema,
-  type ConfigChangeEvent,
-  type ConfigManagerOptions
-} from './config-manager';
+} from './config-manager'
 
 // Observability and monitoring
-export { 
-  ObservabilityManager, 
+export {
+  type Alert,
+  type AlertRule,
   createObservabilityManager,
-  withTrace,
-  timeOperation,
-  type MetricDefinition,
-  type MetricValue,
   type HealthCheck,
   type HealthStatus,
-  type AlertRule,
-  type Alert,
+  type MetricDefinition,
+  type MetricValue,
+  ObservabilityManager,
+  type ObservabilityManagerOptions,
   type PerformanceTrace,
-  type ObservabilityManagerOptions
-} from './observability-manager';
+  timeOperation,
+  withTrace,
+} from './observability-manager'
 
 // Monitoring integration
-export { 
-  MonitoringIntegration, 
+export {
   createMonitoringIntegration,
   DEFAULT_MONITORING_CONFIGS,
   type MonitoringConfig,
-  type MonitoringContext
-} from './monitoring-integration';
+  type MonitoringContext,
+  MonitoringIntegration,
+} from './monitoring-integration'
 
 // Appointment management
-export { hasConflict } from './appointments';
+export { hasConflict } from './appointments'
 
 // Type definitions for utilities
-export type { HealthcareValidationResult } from './brazilian-healthcare-validation';
-export type { HealthcareError as HealthcareErrorType } from './healthcare-errors';
-export type { ApiResponseFormat } from './responses';
-export type { HealthcareErrorDetails } from './healthcare-errors';
+export type { HealthcareValidationResult } from './brazilian-healthcare-validation'
+export type { HealthcareError as HealthcareErrorType } from './healthcare-errors'
+export type { HealthcareErrorDetails } from './healthcare-errors'
+export type { ApiResponseFormat } from './responses'
 
 // Utility collections for easy import
 export const HealthcareUtils = {
@@ -123,7 +147,7 @@ export const HealthcareUtils = {
   errors: HealthcareError,
   performance: HealthcarePerformance,
   logger: HealthcareErrorLogger,
-};
+}
 
 export const SecurityUtils = {
   audit: CryptoAudit,
@@ -131,18 +155,18 @@ export const SecurityUtils = {
   logger: SecureLogger,
   secrets: SecretManager,
   errorHandling: { ErrorHandler, createErrorHandler },
-};
+}
 
 export const ApiUtils = {
   responses: { badRequest, unauthorized, forbidden, notFound, serverError, success, ok, created },
   sanitizer: { sanitizeForAI, redact },
   optimizer: QueryOptimizer,
   appointments: { hasConflict },
-};
+}
 
 export const InfrastructureUtils = {
   backup: { BackupManager, createBackupManager },
   config: { ConfigManager, createConfigManager, HealthcareConfigSchemas },
   observability: { ObservabilityManager, createObservabilityManager, withTrace, timeOperation },
   monitoring: { MonitoringIntegration, createMonitoringIntegration, DEFAULT_MONITORING_CONFIGS },
-};
+}

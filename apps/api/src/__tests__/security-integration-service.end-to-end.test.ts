@@ -1,22 +1,25 @@
 /**
  * Security Integration Service End-to-End Tests
- * 
+ *
  * Comprehensive end-to-end tests for the complete security integration service
  * validating all security components working together seamlessly.
- * 
+ *
  * Security: Critical - Complete security integration validation tests
  * Test Coverage: Security Integration Service
  * Compliance: OWASP Top 10, LGPD, ANVISA, CFM, HIPAA
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { Context, Next } from 'hono'
-import { SecurityIntegrationService, SecurityIntegrationConfig } from '../services/security-integration-service'
-import { JWTSecurityService } from '../services/jwt-security-service'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { EnhancedAuthenticationMiddleware } from '../middleware/enhanced-authentication-middleware'
-import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
-import { SecurityValidationService } from '../services/security-validation-service'
 import { AuditTrailService } from '../services/audit-trail-service'
+import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
+import { JWTSecurityService } from '../services/jwt-security-service'
+import {
+  SecurityIntegrationConfig,
+  SecurityIntegrationService,
+} from '../services/security-integration-service'
+import { SecurityValidationService } from '../services/security-validation-service'
 
 // Mock Hono context
 const createMockContext = (overrides = {}): Context => {
@@ -58,7 +61,7 @@ describe('Security Integration Service End-to-End Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset services
     securityIntegration = SecurityIntegrationService
     jwtService = JWTSecurityService
@@ -232,7 +235,7 @@ describe('Security Integration Service End-to-End Tests', () => {
         expect.objectContaining({
           enableMFA: true,
           mfaRequired: true,
-        })
+        }),
       )
       expect(next).toHaveBeenCalled()
     })
@@ -305,9 +308,9 @@ describe('Security Integration Service End-to-End Tests', () => {
         expect.objectContaining({
           eventType: 'THREAT_DETECTED',
           severity: 'high',
-        })
+        }),
       )
-      
+
       // Verify request was blocked (next not called)
       expect(next).not.toHaveBeenCalled()
     })
@@ -388,7 +391,7 @@ describe('Security Integration Service End-to-End Tests', () => {
             complianceFramework: 'lgpd',
             complianceScore: 95,
           }),
-        })
+        }),
       )
       expect(next).toHaveBeenCalled()
     })
@@ -546,7 +549,7 @@ describe('Security Integration Service End-to-End Tests', () => {
 
       // Mock JWT service failure
       vi.spyOn(jwtService, 'validateToken').mockRejectedValueOnce(
-        new Error('JWT service unavailable')
+        new Error('JWT service unavailable'),
       )
 
       // Mock fallback to session authentication
@@ -580,7 +583,7 @@ describe('Security Integration Service End-to-End Tests', () => {
         expect.objectContaining({
           eventType: 'SERVICE_FAILURE',
           severity: 'warning',
-        })
+        }),
       )
       expect(next).toHaveBeenCalled()
     })
@@ -610,7 +613,7 @@ describe('Security Integration Service End-to-End Tests', () => {
 
       // Mock session database failure
       vi.spyOn(sessionService, 'validateSession').mockRejectedValueOnce(
-        new Error('Database connection failed')
+        new Error('Database connection failed'),
       )
 
       // Mock audit logging for database failure
@@ -632,7 +635,7 @@ describe('Security Integration Service End-to-End Tests', () => {
         expect.objectContaining({
           eventType: 'DATABASE_FAILURE',
           severity: 'warning',
-        })
+        }),
       )
       expect(next).toHaveBeenCalled()
     })
@@ -686,9 +689,9 @@ describe('Security Integration Service End-to-End Tests', () => {
         expect.objectContaining({
           eventType: 'AUTHENTICATION_FAILURE',
           severity: 'high',
-        })
+        }),
       )
-      
+
       // Verify request was blocked
       expect(next).not.toHaveBeenCalled()
     })
@@ -752,10 +755,10 @@ describe('Security Integration Service End-to-End Tests', () => {
       const endTime = performance.now()
 
       const duration = endTime - startTime
-      
+
       // Verify performance within acceptable range
       expect(duration).toBeLessThan(500) // 500ms threshold
-      
+
       // Verify performance monitoring
       expect(next).toHaveBeenCalled()
     })
@@ -869,7 +872,9 @@ describe('Security Integration Service End-to-End Tests', () => {
         requiredPermissions: ['read_patient_data'],
       }
 
-      const comprehensiveMiddleware = securityIntegration.createSecurityMiddleware(comprehensiveConfig)
+      const comprehensiveMiddleware = securityIntegration.createSecurityMiddleware(
+        comprehensiveConfig,
+      )
       await comprehensiveMiddleware(c, next)
 
       expect(next).toHaveBeenCalled()
@@ -944,7 +949,7 @@ describe('Security Integration Service End-to-End Tests', () => {
         expect.objectContaining({
           eventType: 'EXTERNAL_THREAT_DETECTED',
           severity: 'critical',
-        })
+        }),
       )
       expect(next).not.toHaveBeenCalled()
     })
@@ -1002,7 +1007,7 @@ describe('Security Integration Service End-to-End Tests', () => {
           metadata: expect.objectContaining({
             externalValidation: true,
           }),
-        })
+        }),
       )
       expect(next).toHaveBeenCalled()
     })

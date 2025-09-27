@@ -3,13 +3,13 @@
  * Healthcare-compliant API with LGPD audit logging
  */
 
+import { badRequest, created, notFound, ok, serverError } from '@/utils/responses'
 import { zValidator } from '@hono/zod-validator'
 import { BaseService, prisma } from '@neonpro/database'
 import { Hono } from 'hono'
 import type { Context } from 'hono'
 import { cache } from 'hono/cache'
 import { etag } from 'hono/etag'
-import { badRequest, created, notFound, ok, serverError } from '@/utils/responses'
 
 // Consent duration configuration (defaults to 1 year)
 const DEFAULT_CONSENT_DURATION_MS = 365 * 24 * 60 * 60 * 1000

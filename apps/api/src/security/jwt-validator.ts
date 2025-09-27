@@ -21,8 +21,8 @@
 
 import { Context } from 'hono'
 import jwt, { Algorithm, JwtPayload, VerifyOptions } from 'jsonwebtoken'
-import { secrets } from '../utils/secret-manager'
 import { healthcareLogger } from '../logging/healthcare-logger'
+import { secrets } from '../utils/secret-manager'
 
 // Security configuration interfaces
 interface JWTSecurityConfig {
@@ -106,11 +106,14 @@ export class JWTSecurityValidator {
       this.keyStore.set('jwt-secret', jwtSecret)
     } else {
       // Fallback for development only - log warning with optimized logger
-      healthcareLogger.warn('JWT_SECRET not found in environment, using fallback (development only)', {
-        category: 'security',
-        severity: 'medium',
-        recommendation: 'Configure proper JWT_SECRET in production'
-      })
+      healthcareLogger.warn(
+        'JWT_SECRET not found in environment, using fallback (development only)',
+        {
+          category: 'security',
+          severity: 'medium',
+          recommendation: 'Configure proper JWT_SECRET in production',
+        },
+      )
       this.keyStore.set('default', 'development-fallback-secret')
       this.keyStore.set('jwt-secret', 'development-fallback-secret')
     }

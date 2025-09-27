@@ -1,20 +1,25 @@
 /**
  * Security Validation Service Integration Tests
- * 
+ *
  * Comprehensive integration tests for security validation service
  * with input validation, threat detection, and healthcare data protection.
- * 
+ *
  * Security: Critical - Security validation and threat detection tests
  * Test Coverage: Security Validation Service
  * Compliance: OWASP Top 10, LGPD, HIPAA, GDPR
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { Context } from 'hono'
-import { SecurityValidationService, SecurityValidationResult, InputValidationResult, ThreatDetectionResult } from '../services/security-validation-service'
-import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
-import { AuditTrailService } from '../services/audit-trail-service'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { z } from 'zod'
+import { AuditTrailService } from '../services/audit-trail-service'
+import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
+import {
+  InputValidationResult,
+  SecurityValidationResult,
+  SecurityValidationService,
+  ThreatDetectionResult,
+} from '../services/security-validation-service'
 
 // Mock Hono context
 const createMockContext = (overrides = {}): Context => {
@@ -46,7 +51,7 @@ describe('Security Validation Service Integration Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset services
     validationService = SecurityValidationService
     sessionService = HealthcareSessionManagementService
@@ -77,7 +82,7 @@ describe('Security Validation Service Integration Tests', () => {
       })
 
       const result = await validationService.validateRequestSecurity(c)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.securityScore).toBeGreaterThan(80)
       expect(result.threats).toHaveLength(0)
@@ -97,7 +102,7 @@ describe('Security Validation Service Integration Tests', () => {
       })
 
       const result = await validationService.validateRequestSecurity(c)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.threats).toContain('suspicious_user_agent')
       expect(result.securityScore).toBeLessThan(50)
@@ -117,7 +122,7 @@ describe('Security Validation Service Integration Tests', () => {
       })
 
       const result = await validationService.validateRequestSecurity(c)
-      
+
       expect(result.warnings).toContain('Missing security headers')
       expect(result.securityScore).toBeLessThan(90)
     })
@@ -136,7 +141,7 @@ describe('Security Validation Service Integration Tests', () => {
       })
 
       const result = await validationService.validateRequestSecurity(c)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.threats).toContain('request_size_exceeded')
     })
@@ -156,7 +161,7 @@ describe('Security Validation Service Integration Tests', () => {
       })
 
       const result = await validationService.validateRequestSecurity(c)
-      
+
       expect(result.warnings).toContain('potential_csrf')
     })
   })
@@ -180,7 +185,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const result = validationService.validateWithSchema(validData, patientSchema)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.data).toEqual(validData)
       expect(result.errors).toHaveLength(0)
@@ -204,7 +209,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const result = validationService.validateWithSchema(invalidData, patientSchema)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.errors).toHaveLength(4)
       expect(result.errors[0].path).toContain('patientId')
@@ -230,7 +235,7 @@ describe('Security Validation Service Integration Tests', () => {
         sanitizeSensitiveData: true,
         sensitiveFields: ['ssn', 'creditCard'],
       })
-      
+
       expect(result.isValid).toBe(true)
       expect(result.data.patientId).toBe('patient-123')
       expect(result.data.ssn).toBe('***-**-****') // Sanitized
@@ -242,10 +247,10 @@ describe('Security Validation Service Integration Tests', () => {
     it('should detect SQL injection attempts', () => {
       const maliciousInputs = [
         "SELECT * FROM users WHERE password = 'password'",
-        "1; DROP TABLE users; --",
+        '1; DROP TABLE users; --',
         "1' OR '1'='1",
         "admin'--",
-        "1 UNION SELECT username, password FROM users",
+        '1 UNION SELECT username, password FROM users',
         "'; EXEC xp_cmdshell('dir'); --",
       ]
 
@@ -276,7 +281,7 @@ describe('Security Validation Service Integration Tests', () => {
     it('should detect advanced SQL injection patterns', () => {
       const advancedPatterns = [
         "1 WAITFOR DELAY '0:0:5'--",
-        "1 AND SLEEP(5)--",
+        '1 AND SLEEP(5)--',
         "1' AND (SELECT COUNT(*) FROM information_schema.tables)>0--",
         "1' OR 1=CHAR(74,65,76)--", // ASCII encoded
         "1' UNION ALL SELECT NULL, CONCAT(username,0x3a,password) FROM users--",
@@ -353,7 +358,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const result = validationService.validateHealthcareDataAccess(legitimateAccess)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.complianceScore).toBeGreaterThan(90)
     })
@@ -368,7 +373,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const result = validationService.validateHealthcareDataAccess(suspiciousAccess)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.threats).toContain('suspicious_access_pattern')
     })
@@ -384,7 +389,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const result = validationService.validateLGPDCompliance(compliantProcessing)
-      
+
       expect(result.isValid).toBe(true)
       expect(result.complianceAreas).toContain('consent')
       expect(result.complianceAreas).toContain('retention')
@@ -401,7 +406,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const result = validationService.validateLGPDCompliance(nonCompliantProcessing)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.violations).toContain('insensitive_data_purpose_mismatch')
       expect(result.violations).toContain('inadequate_legal_basis')
@@ -411,17 +416,25 @@ describe('Security Validation Service Integration Tests', () => {
   describe('Behavioral Analysis', () => {
     it('should detect unusual access patterns', async () => {
       const sessionId = 'session-123'
-      
+
       // Simulate rapid access from different locations
       const accessPatterns = [
         { ipAddress: '192.168.1.100', userAgent: 'Chrome/90.0', timestamp: new Date() },
         { ipAddress: '10.0.0.1', userAgent: 'Chrome/90.0', timestamp: new Date(Date.now() + 1000) },
-        { ipAddress: '172.16.0.1', userAgent: 'Chrome/90.0', timestamp: new Date(Date.now() + 2000) },
-        { ipAddress: '203.0.113.1', userAgent: 'Chrome/90.0', timestamp: new Date(Date.now() + 3000) },
+        {
+          ipAddress: '172.16.0.1',
+          userAgent: 'Chrome/90.0',
+          timestamp: new Date(Date.now() + 2000),
+        },
+        {
+          ipAddress: '203.0.113.1',
+          userAgent: 'Chrome/90.0',
+          timestamp: new Date(Date.now() + 3000),
+        },
       ]
 
       const result = await validationService.analyzeAccessPattern(sessionId, accessPatterns)
-      
+
       expect(result.isSuspicious).toBe(true)
       expect(result.threats).toContain('rapid_ip_change')
       expect(result.riskScore).toBeGreaterThan(70)
@@ -429,7 +442,7 @@ describe('Security Validation Service Integration Tests', () => {
 
     it('should detect brute force attempts', async () => {
       const sessionId = 'session-123'
-      
+
       // Simulate rapid failed authentication attempts
       const authAttempts = [
         { success: false, timestamp: new Date() },
@@ -440,7 +453,7 @@ describe('Security Validation Service Integration Tests', () => {
       ]
 
       const result = await validationService.detectBruteForce(sessionId, authAttempts)
-      
+
       expect(result.isDetected).toBe(true)
       expect(result.threatType).toBe('brute_force')
       expect(result.severity).toBe('high')
@@ -448,7 +461,7 @@ describe('Security Validation Service Integration Tests', () => {
 
     it('should detect data exfiltration patterns', async () => {
       const sessionId = 'session-123'
-      
+
       // Simulate large data access patterns
       const dataAccess = [
         { patientId: 'patient-1', dataSize: 1024, timestamp: new Date() },
@@ -459,7 +472,7 @@ describe('Security Validation Service Integration Tests', () => {
       ]
 
       const result = await validationService.detectDataExfiltration(sessionId, dataAccess)
-      
+
       expect(result.isDetected).toBe(true)
       expect(result.threatType).toBe('data_exfiltration')
       expect(result.totalDataAccessed).toBe(31744)
@@ -519,7 +532,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const score = await validationService.calculateSecurityScore(securityContext)
-      
+
       expect(score).toBeGreaterThan(80) // Good score despite minor threats
       expect(score).toBeLessThan(95) // Not perfect due to suspicious user agent
     })
@@ -534,7 +547,7 @@ describe('Security Validation Service Integration Tests', () => {
       }
 
       const recommendations = await validationService.getSecurityRecommendations(securityContext)
-      
+
       expect(recommendations).toHaveLength(4)
       expect(recommendations[0].priority).toBe('high')
       expect(recommendations[0].category).toBe('request_security')
@@ -589,21 +602,21 @@ describe('Security Validation Service Integration Tests', () => {
     it('should handle malformed input gracefully', () => {
       const result = validationService.validateWithSchema(
         null, // Invalid input
-        z.object({ name: z.string() })
+        z.object({ name: z.string() }),
       )
-      
+
       expect(result.isValid).toBe(false)
       expect(result.errors[0].message).toContain('invalid input')
     })
 
     it('should handle schema validation errors gracefully', () => {
       const invalidSchema = null as any // Invalid schema
-      
+
       const result = validationService.validateWithSchema(
         { name: 'test' },
-        invalidSchema
+        invalidSchema,
       )
-      
+
       expect(result.isValid).toBe(false)
       expect(result.errors[0].message).toContain('invalid schema')
     })
@@ -622,7 +635,7 @@ describe('Security Validation Service Integration Tests', () => {
       })
 
       const result = validationService.validateWithSchema(data, schema)
-      
+
       expect(result.isValid).toBe(false)
       expect(result.errors).toHaveLength(3)
       expect(result.errors[0]).toHaveProperty('path')

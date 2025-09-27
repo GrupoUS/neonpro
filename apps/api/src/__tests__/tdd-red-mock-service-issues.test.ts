@@ -1,20 +1,20 @@
 /**
  * TDD RED Phase - Mock Service Data Return Issues Test
- * 
+ *
  * This test demonstrates the Mock Service data return and method implementation issues
  * that are causing test failures.
- * 
+ *
  * Expected Behavior:
  * - Mock services should return expected data structures
  * - Methods should be implemented with proper signatures
  * - Should handle error cases gracefully
  * - Should integrate with healthcare compliance frameworks
- * 
+ *
  * Security: Critical - Mock service implementation for testing
  * Compliance: LGPD, ANVISA, CFM, OWASP Testing Standards
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 // Mock services that should exist but may have implementation issues
 const MockHealthcareDataService = {
@@ -22,7 +22,7 @@ const MockHealthcareDataService = {
   getMedicalRecords: vi.fn(),
   getPrescriptions: vi.fn(),
   getAppointmentData: vi.fn(),
-  getLabResults: vi.fn()
+  getLabResults: vi.fn(),
 }
 
 const MockSecurityService = {
@@ -30,7 +30,7 @@ const MockSecurityService = {
   checkPermissions: vi.fn(),
   logSecurityEvent: vi.fn(),
   getUserRoles: vi.fn(),
-  getComplianceStatus: vi.fn()
+  getComplianceStatus: vi.fn(),
 }
 
 const MockAuditService = {
@@ -38,7 +38,7 @@ const MockAuditService = {
   getAuditTrail: vi.fn(),
   generateReport: vi.fn(),
   checkCompliance: vi.fn(),
-  exportData: vi.fn()
+  exportData: vi.fn(),
 }
 
 // Expected mock data structures
@@ -49,12 +49,12 @@ const expectedPatientData = {
   gender: 'male',
   contact: {
     phone: '+55 11 9999-8888',
-    email: 'joao.silva@email.com'
+    email: 'joao.silva@email.com',
   },
   medicalRecordNumber: 'MRN-2024-001',
   healthcareProvider: 'Hospital São Lucas',
   consentLevel: 'full',
-  lastUpdated: new Date().toISOString()
+  lastUpdated: new Date().toISOString(),
 }
 
 const expectedMedicalRecord = {
@@ -68,18 +68,18 @@ const expectedMedicalRecord = {
       name: 'Losartan',
       dosage: '50mg',
       frequency: 'daily',
-      prescribedBy: 'Dr. Maria Santos'
-    }
+      prescribedBy: 'Dr. Maria Santos',
+    },
   ],
   notes: 'Patient presents with elevated blood pressure. Continue monitoring.',
   physician: 'Dr. Maria Santos',
-  cfmLicense: 'CRM-12345-SP'
+  cfmLicense: 'CRM-12345-SP',
 }
 
 describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    
+
     // Reset all mock functions
     Object.values(MockHealthcareDataService).forEach(mock => mock.mockReset())
     Object.values(MockSecurityService).forEach(mock => mock.mockReset())
@@ -127,8 +127,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           patientId: 'patient-123',
           physician: expect.any(String),
           cfmLicense: expect.any(String),
-          lastUpdated: expect.any(String)
-        })
+          lastUpdated: expect.any(String),
+        }),
       )
     })
 
@@ -146,8 +146,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           cfmLicense: 'CRM-12345-SP',
           datePrescribed: '2024-01-15',
           refills: 3,
-          instructions: 'Take with food'
-        }
+          instructions: 'Take with food',
+        },
       ]
 
       MockHealthcareDataService.getPrescriptions.mockResolvedValue(expectedPrescriptions)
@@ -161,8 +161,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           dosage: expect.stringMatching(/\d+mg/),
           frequency: expect.any(String),
           prescribedBy: expect.any(String),
-          cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/)
-        })
+          cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/),
+        }),
       )
     })
 
@@ -181,8 +181,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           status: 'scheduled',
           location: 'Cardiology Department, Room 101',
           telemedicine: false,
-          consentRecorded: true
-        }
+          consentRecorded: true,
+        },
       ]
 
       MockHealthcareDataService.getAppointmentData.mockResolvedValue(expectedAppointments)
@@ -197,8 +197,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           physician: expect.any(String),
           cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/),
           telemedicine: expect.any(Boolean),
-          consentRecorded: expect.any(Boolean)
-        })
+          consentRecorded: expect.any(Boolean),
+        }),
       )
     })
 
@@ -213,12 +213,12 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           results: {
             hemoglobin: { value: 14.5, unit: 'g/dL', reference: '13.5-17.5', normal: true },
             whiteBloodCells: { value: 7.2, unit: 'K/μL', reference: '4.0-11.0', normal: true },
-            platelets: { value: 250, unit: 'K/μL', reference: '150-450', normal: true }
+            platelets: { value: 250, unit: 'K/μL', reference: '150-450', normal: true },
           },
           orderedBy: 'Dr. Maria Santos',
           cfmLicense: 'CRM-12345-SP',
-          laboratory: 'Clinical Lab São Lucas'
-        }
+          laboratory: 'Clinical Lab São Lucas',
+        },
       ]
 
       MockHealthcareDataService.getLabResults.mockResolvedValue(expectedLabResults)
@@ -232,8 +232,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           value: expect.any(Number),
           unit: expect.any(String),
           reference: expect.any(String),
-          normal: expect.any(Boolean)
-        })
+          normal: expect.any(Boolean),
+        }),
       )
     })
   })
@@ -251,8 +251,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           patientId: 'patient-456',
           cfmLicense: 'CRM-12345-SP',
           iat: expect.any(Number),
-          exp: expect.any(Number)
-        }
+          exp: expect.any(Number),
+        },
       }
 
       MockSecurityService.validateToken.mockResolvedValue(expectedTokenValidation)
@@ -267,8 +267,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           role: expect.any(String),
           permissions: expect.arrayContaining([]),
           healthcareProvider: expect.any(String),
-          cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/)
-        })
+          cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/),
+        }),
       )
     })
 
@@ -281,7 +281,7 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         requestedPermission: 'read_patient_data',
         grantedPermissions: ['read_patient_data', 'write_patient_data'],
         resource: '/api/patients/patient-123',
-        action: 'read'
+        action: 'read',
       }
 
       MockSecurityService.checkPermissions.mockResolvedValue(expectedPermissionCheck)
@@ -290,7 +290,7 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
       const result = await MockSecurityService.checkPermissions({
         userId: 'user-123',
         permission: 'read_patient_data',
-        resource: '/api/patients/patient-123'
+        resource: '/api/patients/patient-123',
       })
 
       expect(result).toEqual(expectedPermissionCheck)
@@ -299,8 +299,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           hasPermission: expect.any(Boolean),
           userId: 'user-123',
           role: expect.any(String),
-          grantedPermissions: expect.arrayContaining([])
-        })
+          grantedPermissions: expect.arrayContaining([]),
+        }),
       )
     })
 
@@ -321,8 +321,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         metadata: {
           cfmLicense: 'CRM-12345-SP',
           patientId: 'patient-456',
-          consentLevel: 'full'
-        }
+          consentLevel: 'full',
+        },
       }
 
       MockSecurityService.logSecurityEvent.mockResolvedValue(expectedLogResult)
@@ -337,8 +337,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         metadata: {
           cfmLicense: 'CRM-12345-SP',
           patientId: 'patient-456',
-          consentLevel: 'full'
-        }
+          consentLevel: 'full',
+        },
       })
 
       expect(result).toEqual(expectedLogResult)
@@ -351,9 +351,9 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           metadata: expect.objectContaining({
             cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/),
             patientId: expect.any(String),
-            consentLevel: expect.any(String)
-          })
-        })
+            consentLevel: expect.any(String),
+          }),
+        }),
       )
     })
 
@@ -367,7 +367,7 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         cfmLicense: 'CRM-12345-SP',
         specialty: 'cardiology',
         isActive: true,
-        lastLogin: new Date().toISOString()
+        lastLogin: new Date().toISOString(),
       }
 
       MockSecurityService.getUserRoles.mockResolvedValue(expectedUserRoles)
@@ -384,8 +384,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           healthcareProvider: expect.any(String),
           cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/),
           specialty: expect.any(String),
-          isActive: expect.any(Boolean)
-        })
+          isActive: expect.any(Boolean),
+        }),
       )
     })
 
@@ -399,10 +399,10 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         areas: {
           lgpd: { compliant: true, score: 98, violations: [] },
           anvisa: { compliant: true, score: 92, violations: [] },
-          cfm: { compliant: true, score: 100, violations: [] }
+          cfm: { compliant: true, score: 100, violations: [] },
         },
         lastAudit: new Date().toISOString(),
-        nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString()
+        nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
       }
 
       MockSecurityService.getComplianceStatus.mockResolvedValue(expectedComplianceStatus)
@@ -420,9 +420,9 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           areas: expect.objectContaining({
             lgpd: expect.objectContaining({ compliant: expect.any(Boolean) }),
             anvisa: expect.objectContaining({ compliant: expect.any(Boolean) }),
-            cfm: expect.objectContaining({ compliant: expect.any(Boolean) })
-          })
-        })
+            cfm: expect.objectContaining({ compliant: expect.any(Boolean) }),
+          }),
+        }),
       )
     })
   })
@@ -449,8 +449,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           cfmLicense: 'CRM-12345-SP',
           consentLevel: 'full',
           dataAccessPurpose: 'clinical_consultation',
-          legalBasis: 'consent'
-        }
+          legalBasis: 'consent',
+        },
       }
 
       MockAuditService.logEvent.mockResolvedValue(expectedAuditEvent)
@@ -472,8 +472,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           cfmLicense: 'CRM-12345-SP',
           consentLevel: 'full',
           dataAccessPurpose: 'clinical_consultation',
-          legalBasis: 'consent'
-        }
+          legalBasis: 'consent',
+        },
       })
 
       expect(result).toEqual(expectedAuditEvent)
@@ -489,9 +489,9 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
             cfmLicense: expect.stringMatching(/CRM-\d+-[A-Z]{2}/),
             consentLevel: expect.any(String),
             dataAccessPurpose: expect.any(String),
-            legalBasis: expect.any(String)
-          })
-        })
+            legalBasis: expect.any(String),
+          }),
+        }),
       )
     })
 
@@ -506,23 +506,23 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
             userId: 'user-123',
             patientId: 'patient-456',
             action: 'read',
-            resource: '/api/patients/patient-123'
-          }
+            resource: '/api/patients/patient-123',
+          },
         ],
         pagination: {
           page: 1,
           pageSize: 50,
           totalEvents: 1,
-          totalPages: 1
+          totalPages: 1,
         },
         filters: {
           userId: 'user-123',
           patientId: 'patient-456',
           dateRange: {
             start: '2024-01-01T00:00:00Z',
-            end: '2024-01-31T23:59:59Z'
-          }
-        }
+            end: '2024-01-31T23:59:59Z',
+          },
+        },
       }
 
       MockAuditService.getAuditTrail.mockResolvedValue(expectedAuditTrail)
@@ -533,12 +533,12 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         patientId: 'patient-456',
         dateRange: {
           start: '2024-01-01T00:00:00Z',
-          end: '2024-01-31T23:59:59Z'
+          end: '2024-01-31T23:59:59Z',
         },
         pagination: {
           page: 1,
-          pageSize: 50
-        }
+          pageSize: 50,
+        },
       })
 
       expect(result).toEqual(expectedAuditTrail)
@@ -549,13 +549,13 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
             page: expect.any(Number),
             pageSize: expect.any(Number),
             totalEvents: expect.any(Number),
-            totalPages: expect.any(Number)
+            totalPages: expect.any(Number),
           }),
           filters: expect.objectContaining({
             userId: 'user-123',
-            patientId: 'patient-456'
-          })
-        })
+            patientId: 'patient-456',
+          }),
+        }),
       )
     })
 
@@ -566,7 +566,7 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
         generatedAt: expect.any(String),
         timeframe: {
           start: '2024-01-01T00:00:00Z',
-          end: '2024-01-31T23:59:59Z'
+          end: '2024-01-31T23:59:59Z',
         },
         frameworks: ['lgpd', 'anvisa', 'cfm'],
         metrics: {
@@ -574,25 +574,25 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           complianceScore: 94,
           violations: 3,
           warnings: 12,
-          auditCompleteness: 98.5
+          auditCompleteness: 98.5,
         },
         details: {
           dataAccess: {
             total: 500,
             compliant: 495,
-            violations: 5
+            violations: 5,
           },
           consentManagement: {
             total: 300,
             compliant: 295,
-            violations: 5
+            violations: 5,
           },
           retentionPolicy: {
             total: 200,
             compliant: 200,
-            violations: 0
-          }
-        }
+            violations: 0,
+          },
+        },
       }
 
       MockAuditService.generateReport.mockResolvedValue(expectedComplianceReport)
@@ -601,9 +601,9 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
       const result = await MockAuditService.generateReport({
         timeframe: {
           start: '2024-01-01T00:00:00Z',
-          end: '2024-01-31T23:59:59Z'
+          end: '2024-01-31T23:59:59Z',
         },
-        frameworks: ['lgpd', 'anvisa', 'cfm']
+        frameworks: ['lgpd', 'anvisa', 'cfm'],
       })
 
       expect(result).toEqual(expectedComplianceReport)
@@ -615,16 +615,16 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           metrics: expect.objectContaining({
             totalEvents: expect.any(Number),
             complianceScore: expect.any(Number),
-            violations: expect.any(Number)
+            violations: expect.any(Number),
           }),
           details: expect.objectContaining({
             dataAccess: expect.objectContaining({
               total: expect.any(Number),
               compliant: expect.any(Number),
-              violations: expect.any(Number)
-            })
-          })
-        })
+              violations: expect.any(Number),
+            }),
+          }),
+        }),
       )
     })
   })
@@ -657,7 +657,7 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
 
       // Act & Assert: This should fail because concurrent handling may be broken
       const results = await Promise.all(mockPromises)
-      
+
       expect(results).toHaveLength(5)
       expect(MockHealthcareDataService.getPatientData).toHaveBeenCalledTimes(5)
     })
@@ -670,8 +670,8 @@ describe('TDD RED PHASE - Mock Service Data Return Issues', () => {
           code: 'SERVICE_UNAVAILABLE',
           message: 'Service temporarily unavailable',
           timestamp: expect.any(String),
-          requestId: expect.any(String)
-        }
+          requestId: expect.any(String),
+        },
       }
 
       MockHealthcareDataService.getPatientData.mockRejectedValue(expectedError)

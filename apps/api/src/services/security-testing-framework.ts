@@ -16,7 +16,7 @@
  * Platform: NeonPro Healthcare Platform
  */
 
-import { logger } from "@/utils/healthcare-errors"
+import { logger } from '@/utils/healthcare-errors'
 
 // Security Test Types
 export interface SecurityTest {

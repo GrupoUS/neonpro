@@ -5,11 +5,11 @@
  * Provides a unified interface for RAG-based healthcare data queries.
  */
 
+import { logger } from '@/utils/healthcare-errors'
 import { ChildProcess, spawn } from 'child_process'
 import { EventEmitter } from 'events'
 import * as fs from 'fs'
 import * as path from 'path'
-import { logger } from "@/utils/healthcare-errors"
 
 export interface OttomatorQuery {
   _query: string
@@ -142,7 +142,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.activeQueries.set(queryId, { resolve, reject, timeout })
 
       // Send query to Python agent
-      this.sendQueryToAgent(queryId, _query).catch(async (error) => {
+      this.sendQueryToAgent(queryId, _query).catch(async error => {
         clearTimeout(timeout)
         this.activeQueries.delete(queryId)
         reject(error)

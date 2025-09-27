@@ -4,11 +4,11 @@
  * T061: Consolidate validation logic where applicable
  */
 
-import { HealthcareLogger } from '../logging/healthcare-logger'
-import { SupabaseConnector } from '../database/supabase-connector'
-import { SessionManager } from '../session/session-manager'
 import { ConversationRequest } from '../conversation/conversation-service'
-import { logErrorWithContext, ErrorContext } from './error-handling'
+import { SupabaseConnector } from '../database/supabase-connector'
+import { HealthcareLogger } from '../logging/healthcare-logger'
+import { SessionManager } from '../session/session-manager'
+import { ErrorContext, logErrorWithContext } from './error-handling'
 
 /**
  * Common validation results
@@ -229,10 +229,15 @@ export class ValidationService {
         this.logger,
         'conversation_validation_error',
         error,
-        ErrorContext.conversation(params.conversationId || 'unknown', params.userId, params.clinicId, {
-          action: params.action,
-          patientId: params.patientId,
-        }),
+        ErrorContext.conversation(
+          params.conversationId || 'unknown',
+          params.userId,
+          params.clinicId,
+          {
+            action: params.action,
+            patientId: params.patientId,
+          },
+        ),
       )
 
       return {
@@ -410,7 +415,7 @@ export const ValidationUtils = {
   isValidDate(dateString: string): boolean {
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/
     if (!dateRegex.test(dateString)) return false
-    
+
     const date = new Date(dateString)
     return !isNaN(date.getTime())
   },
@@ -428,7 +433,7 @@ export const ValidationUtils = {
    */
   hasRequiredFields(obj: any, requiredFields: string[]): boolean {
     if (!obj || typeof obj !== 'object') return false
-    
+
     return requiredFields.every(field => {
       const value = obj[field]
       return value !== undefined && value !== null && value !== ''

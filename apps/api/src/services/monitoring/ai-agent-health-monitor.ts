@@ -66,23 +66,23 @@ export interface HealthAlert {
 // Health check thresholds
 export const HEALTH_THRESHOLDS = {
   responseTime: {
-    warning: 5000,  // 5 seconds
+    warning: 5000, // 5 seconds
     critical: 10000, // 10 seconds
   },
   errorRate: {
-    warning: 0.05,  // 5%
+    warning: 0.05, // 5%
     critical: 0.10, // 10%
   },
   uptime: {
-    warning: 0.95,  // 95%
+    warning: 0.95, // 95%
     critical: 0.90, // 90%
   },
   tokenUsage: {
-    warning: 1000000,  // 1M tokens
+    warning: 1000000, // 1M tokens
     critical: 2000000, // 2M tokens
   },
   cacheHitRate: {
-    warning: 0.50,  // 50%
+    warning: 0.50, // 50%
     critical: 0.30, // 30%
   },
 } as const
@@ -148,14 +148,14 @@ export class AIAgentHealthMonitor {
   private checks: Map<string, (config: any) => Promise<HealthCheck>> = new Map()
   private alerts: HealthAlert[] = []
   private metrics: AIAgentHealthMetrics | null = null
-  
+
   constructor() {
     this.initializeHealthChecks()
   }
-  
+
   private initializeHealthChecks() {
     // Agent responsiveness check
-    this.checks.set('agent_responsiveness', async (config) => {
+    this.checks.set('agent_responsiveness', async config => {
       const start = Date.now()
       try {
         // Test agent responsiveness
@@ -163,7 +163,7 @@ export class AIAgentHealthMonitor {
           method: 'GET',
           timeout: 5000,
         })
-        
+
         if (response.ok) {
           const data = await response.json()
           return {
@@ -193,18 +193,18 @@ export class AIAgentHealthMonitor {
         }
       }
     })
-    
+
     // Provider connectivity check
-    this.checks.set('provider_connectivity', async (config) => {
+    this.checks.set('provider_connectivity', async config => {
       const start = Date.now()
       const providers = ['openai', 'anthropic', 'google']
       const results = await Promise.allSettled(
-        providers.map(provider => this.testProviderConnectivity(provider))
+        providers.map(provider => this.testProviderConnectivity(provider)),
       )
-      
+
       const passed = results.filter(r => r.status === 'fulfilled').length
       const total = results.length
-      
+
       return {
         name: 'provider_connectivity',
         status: passed === total ? 'pass' : passed > 0 ? 'warn' : 'fail',
@@ -214,9 +214,9 @@ export class AIAgentHealthMonitor {
         critical: true,
       }
     })
-    
+
     // RAG functionality check
-    this.checks.set('rag_functionality', async (config) => {
+    this.checks.set('rag_functionality', async config => {
       const start = Date.now()
       try {
         // Test RAG functionality if enabled
@@ -229,7 +229,7 @@ export class AIAgentHealthMonitor {
             critical: false,
           }
         }
-        
+
         // Perform a simple RAG test
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v2/ai/rag/test`, {
           method: 'POST',
@@ -237,7 +237,7 @@ export class AIAgentHealthMonitor {
           body: JSON.stringify({ query: 'test query' }),
           timeout: 10000,
         })
-        
+
         if (response.ok) {
           return {
             name: 'rag_functionality',
@@ -265,17 +265,20 @@ export class AIAgentHealthMonitor {
         }
       }
     })
-    
+
     // Database connectivity check
-    this.checks.set('database_connectivity', async (config) => {
+    this.checks.set('database_connectivity', async config => {
       const start = Date.now()
       try {
         // Test database connectivity
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v2/ai/database/health`, {
-          method: 'GET',
-          timeout: 3000,
-        })
-        
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/v2/ai/database/health`,
+          {
+            method: 'GET',
+            timeout: 3000,
+          },
+        )
+
         if (response.ok) {
           return {
             name: 'database_connectivity',
@@ -303,9 +306,9 @@ export class AIAgentHealthMonitor {
         }
       }
     })
-    
+
     // Memory usage check
-    this.checks.set('memory_usage', async (config) => {
+    this.checks.set('memory_usage', async config => {
       const start = Date.now()
       try {
         // Check memory usage (if available)
@@ -313,16 +316,18 @@ export class AIAgentHealthMonitor {
         const heapUsedMB = Math.round(memoryUsage.heapUsed / 1024 / 1024)
         const heapTotalMB = Math.round(memoryUsage.heapTotal / 1024 / 1024)
         const usagePercentage = (heapUsedMB / heapTotalMB) * 100
-        
+
         let status: 'pass' | 'warn' | 'fail' = 'pass'
         if (usagePercentage > 90) status = 'fail'
         else if (usagePercentage > 75) status = 'warn'
-        
+
         return {
           name: 'memory_usage',
           status,
           duration: Date.now() - start,
-          message: `Memory usage: ${heapUsedMB}MB/${heapTotalMB}MB (${usagePercentage.toFixed(1)}%)`,
+          message: `Memory usage: ${heapUsedMB}MB/${heapTotalMB}MB (${
+            usagePercentage.toFixed(1)
+          }%)`,
           details: { heapUsedMB, heapTotalMB, usagePercentage },
           critical: false,
         }
@@ -336,9 +341,9 @@ export class AIAgentHealthMonitor {
         }
       }
     })
-    
+
     // Compliance validation check
-    this.checks.set('compliance_validation', async (config) => {
+    this.checks.set('compliance_validation', async config => {
       const start = Date.now()
       try {
         // Check compliance settings
@@ -348,9 +353,9 @@ export class AIAgentHealthMonitor {
           'AI_AUDIT_LOGGING',
           'AI_DATA_ANONYMIZATION',
         ]
-        
+
         const missing = requiredCompliance.filter(key => process.env[key] !== 'true')
-        
+
         if (missing.length === 0) {
           return {
             name: 'compliance_validation',
@@ -379,21 +384,21 @@ export class AIAgentHealthMonitor {
       }
     })
   }
-  
+
   private async testProviderConnectivity(provider: string): Promise<boolean> {
     // Simulate provider connectivity test
     // In a real implementation, this would test actual API connectivity
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         resolve(Math.random() > 0.1) // 90% success rate
       }, 100)
     })
   }
-  
+
   async performHealthCheck(): Promise<HealthStatus> {
     const checks: HealthCheck[] = []
     const startTime = Date.now()
-    
+
     for (const [name, checkFunction] of this.checks) {
       try {
         const result = await checkFunction(HEALTH_CHECK_CONFIG)
@@ -408,12 +413,12 @@ export class AIAgentHealthMonitor {
         })
       }
     }
-    
+
     // Calculate overall status
     const criticalFailures = checks.filter(c => c.critical && c.status === 'fail').length
     const allPassed = checks.every(c => c.status === 'pass')
     const warnings = checks.filter(c => c.status === 'warn').length
-    
+
     let status: 'healthy' | 'degraded' | 'unhealthy'
     if (allPassed) {
       status = 'healthy'
@@ -422,12 +427,12 @@ export class AIAgentHealthMonitor {
     } else {
       status = 'unhealthy'
     }
-    
+
     // Calculate overall score (0-100)
     const passedScore = checks.filter(c => c.status === 'pass').length * 100 / checks.length
     const warningScore = checks.filter(c => c.status === 'warn').length * 50 / checks.length
     const overallScore = Math.round(passedScore + warningScore)
-    
+
     // Generate recommendations
     const recommendations: string[] = []
     if (criticalFailures > 0) {
@@ -439,7 +444,7 @@ export class AIAgentHealthMonitor {
     if (overallScore < 80) {
       recommendations.push('Overall system health needs attention')
     }
-    
+
     const healthStatus: HealthStatus = {
       status,
       timestamp: new Date().toISOString(),
@@ -447,17 +452,17 @@ export class AIAgentHealthMonitor {
       overallScore,
       recommendations,
     }
-    
+
     // Generate alerts if needed
     await this.generateAlerts(healthStatus)
-    
+
     return healthStatus
   }
-  
+
   private async generateAlerts(healthStatus: HealthStatus): Promise<void> {
     const criticalChecks = healthStatus.checks.filter(c => c.critical && c.status === 'fail')
     const warningChecks = healthStatus.checks.filter(c => c.status === 'warn')
-    
+
     // Generate critical alerts
     for (const check of criticalChecks) {
       const alert: HealthAlert = {
@@ -469,11 +474,11 @@ export class AIAgentHealthMonitor {
         resolved: false,
         actionRequired: true,
       }
-      
+
       this.alerts.push(alert)
       await this.sendAlert(alert)
     }
-    
+
     // Generate warning alerts
     for (const check of warningChecks) {
       const alert: HealthAlert = {
@@ -485,34 +490,34 @@ export class AIAgentHealthMonitor {
         resolved: false,
         actionRequired: false,
       }
-      
+
       this.alerts.push(alert)
       await this.sendAlert(alert)
     }
   }
-  
+
   private async sendAlert(alert: HealthAlert): Promise<void> {
     // In a real implementation, this would send alerts via email, SMS, Slack, etc.
     console.log(`ALERT [${alert.type.toUpperCase()}]: ${alert.message}`)
-    
+
     // For healthcare compliance, log all alerts
     if (process.env.AI_AUDIT_LOGGING === 'true') {
       // Log to audit system
       console.log(`AUDIT: Health alert generated - ${alert.id}`)
     }
   }
-  
+
   getActiveAlerts(): HealthAlert[] {
     return this.alerts.filter(alert => !alert.resolved)
   }
-  
+
   resolveAlert(alertId: string): void {
     const alert = this.alerts.find(a => a.id === alertId)
     if (alert) {
       alert.resolved = true
     }
   }
-  
+
   async getMetrics(): Promise<AIAgentHealthMetrics> {
     // In a real implementation, this would collect actual metrics
     return {

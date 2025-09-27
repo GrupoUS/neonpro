@@ -115,7 +115,6 @@ import {
 } from '../schemas'
 import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
-
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE HELPERS
 // =====================================

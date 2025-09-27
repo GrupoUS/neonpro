@@ -26,8 +26,9 @@ async function runCertificateCheck() {
     console.warn(`  Certificates Checked: ${healthStatus.certificates.length}`)
 
     healthStatus.certificates.forEach(cert => {
-      const daysText =
-        cert.daysRemaining !== undefined ? ` (${cert.daysRemaining} days remaining)` : ''
+      const daysText = cert.daysRemaining !== undefined
+        ? ` (${cert.daysRemaining} days remaining)`
+        : ''
       console.warn(`    ${cert.domain}: ${cert.status}${daysText}`)
     })
 

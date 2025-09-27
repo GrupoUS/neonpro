@@ -4,7 +4,7 @@
  * Security: Critical - Aesthetic MFA service integration tests
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { AestheticMFAService } from '../security/aesthetic-mfa-service'
 import { HealthcareSessionManagementService } from '../services/healthcare-session-management-service'
 import { SecurityValidationService } from '../services/security-validation-service'
@@ -40,7 +40,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
   beforeEach(() => {
     // Clear all mocks
     vi.clearAllMocks()
-    
+
     // Initialize services
     mfaService = AestheticMFAService
     sessionService = HealthcareSessionManagementService
@@ -86,7 +86,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
 
       const enrollmentResult = await mfaService.enrollMFA(
         enrollmentRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(enrollmentResult.success).toBe(true)
@@ -126,7 +126,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
 
       const verificationResult = await mfaService.verifyMFASetup(
         verificationRequest,
-        'session-123'
+        'session-123',
       )
 
       expect(verificationResult.success).toBe(true)
@@ -508,7 +508,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
             userId: 'user-123',
             mfaToken: 'wrong-token',
             method: 'totp',
-          })
+          }),
         )
       }
 
@@ -516,7 +516,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
       const failedAttempts = results.filter(r => r.status === 'fulfilled' && !r.value.success)
 
       expect(failedAttempts.length).toBeGreaterThan(0)
-      
+
       // Last attempt should be rate limited
       const lastResult = results[results.length - 1]
       if (lastResult.status === 'fulfilled') {
@@ -609,14 +609,14 @@ describe('Aesthetic MFA Service Integration Tests', () => {
             userId: 'user-123',
             mfaToken: '123456',
             method: 'totp',
-          })
+          }),
         )
       }
 
       const results = await Promise.allSettled(requests)
       const successfulResults = results.filter(
         (result): result is PromiseFulfilledResult<any> =>
-          result.status === 'fulfilled' && result.value.success
+          result.status === 'fulfilled' && result.value.success,
       )
 
       expect(successfulResults.length).toBe(concurrentRequests)
@@ -668,7 +668,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
         expect.objectContaining({
           mfaVerified: true,
           securityLevel: 'enhanced',
-        })
+        }),
       )
     })
 
@@ -701,7 +701,7 @@ describe('Aesthetic MFA Service Integration Tests', () => {
           method: 'totp',
           success: true,
           complianceContext: 'CFM',
-        })
+        }),
       )
     })
   })
