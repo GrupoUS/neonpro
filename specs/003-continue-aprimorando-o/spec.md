@@ -1,9 +1,9 @@
-# Feature Specification: NEONPRO Theme Installation & Configuration
+# Feature Specification: NEONPRO Theme + 7 UI Components Installation & Configuration
 
-**Feature Branch**: `[003-continue-aprimorando-o]`  
-**Created**: 2025-09-29  
-**Status**: Draft  
-**Input**: User description: "continue aprimorando o @specs/002-install-and-configure/ para executar o prompt: # 🚀 MASTER PROMPT..."
+**Feature Branch**: `[003-continue-aprimorando-o]`
+**Created**: 2025-09-29
+**Status**: Ready for Implementation
+**Input**: User request to install NEONPRO theme + 7 specific UI components without conflicts: "sim, quero que instale os componentes citados bem como o neonpro theme, em conjunto sem erros e conflitos"
 
 ## Execution Flow (main)
 ```
@@ -74,38 +74,77 @@ When creating this spec from a user prompt:
 ## User Scenarios & Testing *(mandatory)*
 
 ### Primary User Story
-As a developer working on the NeonPro aesthetic clinic platform, I need to permanently install and configure the NEONPRO theme system, ensuring it is fully integrated into the Next.js monorepo with all styling, fonts, and functionality working across all applications and pages.
+As a developer working on the NeonPro aesthetic clinic platform, I need to install and configure the NEONPRO theme system along with 7 specific UI components (Shine Border, Kokonut Gradient Button, Aceternity Hover Border Gradient Button, Magic Card, Animated Theme Toggler, Tilted Card, and Aceternity UI Sidebar), ensuring all components work seamlessly together with consistent visual styling across the monorepo applications while maintaining professional appearance and meeting aesthetic clinic industry standards.
 
 ### Acceptance Scenarios
-1. **Given** a Next.js monorepo with shadcn UI setup, **When** following the installation guide, **Then** the NEONPRO theme is successfully integrated with all styling applied
-2. **Given** the theme is installed, **When** viewing any application in the monorepo, **Then** theme styles (colors, fonts, shadows) are consistently applied
-3. **Given** the theme is configured, **When** testing light/dark mode toggle, **Then** both modes display correctly with proper color schemes
-4. **Given** the installation process, **When** running verification steps, **Then** all CSS variables are properly loaded and accessible
+1. **Given** the NEONPRO theme is installed and configured, **When** installing the 7 UI components, **Then** all components must inherit NEONPRO brand colors and design tokens
+2. **Given** the monorepo structure with shared packages, **When** theme and components are installed, **Then** they must be accessible from all apps via packages/ui
+3. **Given** multiple UI libraries are being integrated, **When** installation is complete, **Then** there must be no dependency conflicts or version mismatches
+4. **Given** the existing theme system, **When** using the new components, **Then** light/dark mode switching must work consistently across all components
+5. **Given** the healthcare aesthetic clinic context, **When** all components are integrated, **Then** they must maintain WCAG 2.1 AA+ accessibility compliance
+6. **Given** the theme installation process, **When** following the installation guide, **Then** all CSS variables, fonts, and color schemes are properly integrated and available across all apps
+7. **Given** the theme and components are configured, **When** users toggle between light and dark modes, **Then** all applications in the monorepo reflect the theme change consistently with aesthetic clinic-appropriate contrast ratios
 
 ### Edge Cases
+- What happens when theme installation conflicts with existing CSS variables?
+- How does the system handle font loading failures or network connectivity issues?
+- What occurs when the theme registry is temporarily unavailable?
+- How does the system maintain theme consistency when new apps are added to the monorepo?
 - What happens when dependency conflicts occur during theme installation?
 - How does system handle font loading failures for Inter, Lora, or Libre Baskerville?
 - What occurs when existing Tailwind configurations conflict with theme settings?
 - How does installation proceed when network issues prevent accessing the theme registry?
+- What happens when a component requires conflicting versions of Framer Motion?
+- How does the system handle icon library conflicts between Lucide and Tabler icons?
+- What occurs when CSS variable naming conflicts arise between components?
 
 ## Requirements *(mandatory)*
 
-### Functional Requirements
-- **FR-001**: System MUST install NEONPRO theme via CLI + manual adjustments using `pnpm dlx shadcn@latest add [URL]`
-- **FR-002**: System MUST install theme in packages directory for shared consumption across all monorepo apps
-- **FR-003**: System MUST configure local font installation for Inter, Lora, and Libre Baskerville fonts downloaded in the project
-- **FR-004**: System MUST implement theme provider using Context API + localStorage for light/dark mode persistence
-- **FR-005**: System MUST ensure theme styling is applied consistently across all applications in the monorepo
-- **FR-006**: System MUST support pnpm package management with proper workspace configuration
-- **FR-007**: System MUST configure theme in packages/ui with symlinks to all apps for shared configuration
-- **FR-008**: System MUST maintain compatibility with existing shadcn components while applying new theme styling
-- **FR-009**: System MUST ensure theme meets WCAG 2.1 AA accessibility standards for aesthetic clinic compliance
-- **FR-010**: System MUST provide working light/dark mode toggle functionality across all apps
+### NEONPRO Theme Requirements
+- **FR-001**: System MUST install NEONPRO theme from tweakcn registry using shadcn CLI without breaking existing functionality
+- **FR-002**: System MUST integrate all theme CSS variables (colors in oklch format, shadows, spacing, border radius) across the monorepo
+- **FR-003**: System MUST configure proper font integration for Inter, Lora, and Libre Baskerville fonts with optimal loading
+- **FR-004**: System MUST provide light and dark mode support with professional aesthetic clinic color schemes
+- **FR-005**: System MUST ensure theme variables are accessible from all apps within the monorepo structure
+- **FR-006**: System MUST maintain compatibility with existing shadcn components while applying new theme styling
+- **FR-007**: System MUST provide theme provider setup that works across all Next.js applications in the monorepo
+- **FR-008**: System MUST include verification mechanisms to test theme installation and functionality
+- **FR-009**: System MUST handle pnpm workspace configuration for proper dependency management
+- **FR-010**: System MUST ensure theme meets WCAG 2.1 AA accessibility standards for aesthetic clinic compliance
 
-### Key Entities *(include if feature involves data)*
-- **Theme Configuration**: Represents the styling settings, CSS variables, and font configurations installed in shared packages
-- **Component Registry**: Manages reusable theme components and their styling across applications in packages/ui
-- **Monorepo Structure**: Theme installed in packages directory for consumption by all apps (web, api, etc.)
+### UI Components Integration Requirements
+- **FR-011**: System MUST install Magic Card component from Magic UI using shadcn CLI without breaking existing theme
+- **FR-012**: System MUST install Animated Theme Toggler from Magic UI with compatibility to existing theme provider
+- **FR-013**: System MUST install Gradient Button from Kokonut UI using CLI installation method
+- **FR-014**: System MUST install Tilted Card from ReactBits using manual implementation (no CLI available)
+- **FR-015**: System MUST install Sidebar from Aceternity UI using registry JSON method
+- **FR-016**: System MUST configure multiple registry support in components.json for Magic UI, Aceternity UI, and Kokonut UI
+- **FR-017**: System MUST install @tabler/icons-react dependency for Aceternity UI Sidebar compatibility
+- **FR-018**: System MUST ensure all components inherit NEONPRO brand colors (neonpro-primary, neonpro-deep-blue, neonpro-accent, neonpro-neutral, neonpro-background)
+- **FR-019**: System MUST maintain existing Framer Motion v11.0.0 compatibility across all components
+- **FR-020**: System MUST provide unified component exports from packages/ui for easy import across apps
+- **FR-021**: System MUST verify all components work with existing light/dark theme switching
+- **FR-022**: System MUST ensure WCAG 2.1 AA+ accessibility compliance for all integrated components
+
+### Key Entities _(theme and component configuration entities)_
+
+#### Theme Configuration Entities
+- **Theme Configuration**: Represents the styling settings, CSS variables, and font configurations that apply across all applications
+- **Font Assets**: Collection of Google Fonts (Inter, Lora, Libre Baskerville) with proper loading optimization and fallback handling
+- **Color System**: oklch-based color palette supporting light and dark modes with aesthetic clinic-appropriate professional appearance
+- **Component Styling**: Enhanced styling definitions for shadcn components that integrate with NEONPRO theme variables
+- **Theme Provider**: React context provider that manages theme state and ensures consistent application across the monorepo
+
+#### UI Components Integration Entities
+- **Component Registry**: Manages multiple UI library registries (Magic UI, Aceternity UI, Kokonut UI) in components.json
+- **Dependency Manager**: Handles version compatibility and conflict resolution for shared dependencies like Framer Motion
+- **Theme Adapter**: Ensures all external components inherit NEONPRO design tokens and color schemes
+- **Component Export System**: Unified export structure for all components from packages/ui
+- **Icon Library Manager**: Coordinates between Lucide React (existing) and @tabler/icons-react (new) icon libraries
+
+#### Monorepo Structure Entities
+- **Monorepo Integration**: Ensures components are accessible from all apps via shared packages structure
+- **Package Configuration**: Defines the shared configuration and styling distribution across multiple apps
 
 ---
 

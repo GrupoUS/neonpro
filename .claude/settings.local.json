@@ -80,7 +80,11 @@
       "mcp__chrome-devtools__fill",
       "mcp__chrome-devtools__list_network_requests",
       "mcp__chrome-devtools__close_page",
-      "SlashCommand(/tasks)"
+      "SlashCommand(/tasks)",
+      "mcp__chrome-devtools__select_page",
+      "mcp__chrome-devtools__wait_for",
+      "mcp__chrome-devtools__performance_start_trace",
+      "mcp__chrome-devtools__performance_analyze_insight"
     ],
     "deny": [
       "Edit",

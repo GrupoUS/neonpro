@@ -17,11 +17,11 @@ export { DashboardLayout, DashboardCard } from "./components/ui/dashboard-layout
 
 // Export working shadcn/ui components
 export { Label } from "./components/ui/label";
-export { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
   SelectValue,
   SelectGroup,
   SelectLabel,
@@ -40,17 +40,20 @@ export {
   FormField,
   useFormField
 } from "./components/ui/form";
-
-// Temporary placeholders for components not yet installed
-export const Textarea = () => null;
-export const Separator = () => null;
 export { Switch } from "./components/ui/switch";
-export const RadioGroup = () => null;
-export const Calendar = () => null;
-export const Command = () => null;
-export const Dialog = () => null;
-export const DropdownMenu = () => null;
-export const Popover = () => null;
-export const ScrollArea = () => null;
-export const Table = () => null;
-export const Pagination = () => null;
+
+// Real component exports
+export { Calendar } from './components/ui/calendar'
+export { Command } from './components/ui/command'
+export { Dialog } from './components/ui/dialog'
+export { DropdownMenu } from './components/ui/dropdown-menu'
+export { Popover } from './components/ui/popover'
+export { RadioGroup } from './components/ui/radio-group'
+export { ScrollArea } from './components/ui/scroll-area'
+export { Separator } from './components/ui/separator'
+export { Table } from './components/ui/table'
+export { Textarea } from './components/ui/textarea'
+export { Pagination } from './components/ui/pagination'
+
+export { MobileHealthcareButton } from './components/ui/mobile-healthcare-button'
+export { AccessibilityInput } from './components/ui/accessibility-input'

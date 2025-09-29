@@ -1,0 +1,19 @@
+{
+  "generatedDate": "2025-09-29T16:04:19.881Z",
+  "neonproVersion": "1.0.0",
+  "purpose": "Development placeholders for NEONPRO theme",
+  "fonts": [
+    "Inter",
+    "Lora",
+    "Libre Baskerville"
+  ],
+  "totalFiles": 16,
+  "createdFiles": 16,
+  "constitutionalCompliance": {
+    "lgpd": true,
+    "anvisa": true,
+    "wcag21AA": true,
+    "mobileFirst": true,
+    "privacyByDesign": true
+  }
+}

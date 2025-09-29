@@ -9,8 +9,8 @@
     "lib": ["ES2022"],
     "types": ["node"],
     "jsx": "preserve",
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": false,
     "paths": {

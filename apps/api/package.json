@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "NeonPro API - Edge-optimized healthcare platform for Brazilian clinics",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
     "dev": "NODE_ENV=development tsx watch --env-file=.env src/index.ts",

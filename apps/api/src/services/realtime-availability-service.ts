@@ -14,7 +14,7 @@
 
 import { prisma } from '../lib/prisma.js'
 import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol.js'
-import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service.js'
+import { AIAppointmentSchedulingService } from '@neonpro/healthcare-core'
 
 export interface RealTimeAvailability {
   professionalId: string

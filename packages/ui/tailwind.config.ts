@@ -38,12 +38,14 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        // NeonPro Brand Colors from @apex-ui-ux-designer.md
-        'neonpro-primary': '#AC9469', // Golden Primary - Aesthetic Luxury
-        'neonpro-deep-blue': '#112031', // Healthcare Professional - Trust & Reliability
-        'neonpro-accent': '#d2aa60ff', // Gold Accent - Premium Services
-        'neonpro-neutral': '#B4AC9C', // Calming Light Beige
-        'neonpro-background': '#D2D0C8', // Soft Gray Background
+        // NEONPRO Brand Colors in oklch format for better accessibility
+        neonpro: {
+          primary: 'oklch(0.437 0.368 66.8)', // #AC9469 - Golden Primary
+          'deep-blue': 'oklch(0.243 0.489 12.2)', // #112031 - Professional Trust
+          accent: 'oklch(0.564 0.286 90.8)', // #E8D5B7 - Premium Services  
+          neutral: 'oklch(0.961 0 0)', // #F5F5F5 - Calming Neutral
+          background: 'oklch(1 0 0)', // #FFFFFF - Clean Background
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
