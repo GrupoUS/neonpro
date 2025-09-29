@@ -95,8 +95,8 @@ echo -e "${GREEN}✅ Accessibility check passed${NC}"
 
 # 7. Critical Healthcare Functions Test Coverage
 echo -e "${YELLOW}🧪 Checking critical healthcare function test coverage...${NC}"
-CRITICAL_DIRS=("lgpd" "patient" "medical" "telemedicine" "compliance")
-for dir in "${CRITICAL_DIRS[@]}"; do
+CRITICAL_DIRS="lgpd patient medical telemedicine compliance"
+for dir in $CRITICAL_DIRS; do
     if find . -name "*.ts" -path "*/${dir}/*" -not -path "*/node_modules/*" -not -path "*/dist/*" -not -path "*/.husky/*" | while read -r file; do
         test_file="${file%.ts}.test.ts"
         spec_file="${file%.ts}.spec.ts"
