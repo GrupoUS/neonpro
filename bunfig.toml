@@ -38,8 +38,7 @@ timeout = 60000
 coverage = true
 # Preload healthcare testing libraries
 preload = [
-  "./node_modules/vitest/dist/index.js",
-  "./node_modules/@testing-library/jest-dom/index.js"
+  "./src/test/setup/bun-test-preload.ts"
 ]
 # Healthcare compliance test patterns
 testNamePattern = ".*healthcare.*|.*compliance.*|.*lgpd.*"
@@ -51,8 +50,22 @@ sourcemap = true
 target = "node20"
 # Healthcare external dependencies
 external = ["react", "react-dom", "@supabase/supabase-js"]
-# Source maps for healthcare debugging
-sourcemap = true
+# Optimized for healthcare workloads
+splitting = true
+treeshake = true
+# Healthcare compliance metadata
+metafile = true
+
+# Cache optimization for healthcare builds
+[cache.build]
+enabled = true
+dir = ".bun/build-cache"
+# Content-based invalidation for compliance
+strategy = "content"
+# Healthcare audit trail
+audit = true
+# Cache healthcare builds longer
+max_age = 86400 # 24 hours
 
 [cache]
 # Healthcare-compliant caching strategy

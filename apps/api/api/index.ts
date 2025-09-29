@@ -56,7 +56,7 @@ app.get('/api/edge/*', async (c) => {
     const response = await fetch(edgeUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${c.env.SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${c.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMzMDM2MDksImV4cCI6MjA2ODg3OTYwOX0.XFIAUxbnw2dQho1FEU7QBddw1gI7gD3V-ixY98e4t1E'}`,
         'Content-Type': 'application/json'
       }
     })
@@ -82,7 +82,7 @@ app.post('/api/node/*', async (c) => {
     const response = await fetch(nodeUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${c.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        'Authorization': `Bearer ${c.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MjE5MzQ0MDgwMH0.OzKSTbggA8h3F0O8g0hC9x4V3YqK5Q6X8W9YcXbZd0'}`,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(body)

@@ -47,7 +47,7 @@
       "cache": true,
       "persistent": false,
       "env": ["NODE_ENV", "CI", "VERCEL_ENV"],
-      "inputs": ["tsconfig*.json", "package.json", "bun.lock", "vercel.json"]
+      "inputs": ["tsconfig*.json", "package.json", "vercel.json"]
     },
     "build:vercel": {
       "dependsOn": ["^build", "build:core"],
@@ -66,7 +66,7 @@
     "build:core": {
       "dependsOn": [
         "@neonpro/core#build",
-        "@neonpro/database#build",
+        "@neonpro/database#build", 
         "@neonpro/types#build",
         "@neonpro/ui#build",
         "@neonpro/config#build"
@@ -78,7 +78,8 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["NODE_ENV=development"]
+      "env": ["NODE_ENV=development"],
+      "passThroughEnv": ["NODE_ENV", "CI", "VERCEL_ENV"]
     },
     "test": {
       "dependsOn": ["build"],
@@ -150,5 +151,6 @@
   },
   "remoteCache": {
     "enabled": true
-  }
+  },
+  "daemon": false
 }

@@ -334,9 +334,4 @@ async function handlePaymentFailure(supabase: any, payment: any) {
   }
 }
 
-serve(app.fetch, {
-  port: 8001,
-  onListen: ({ port }) => {
-    console.log(`Node writes function running on port ${port}`)
-  }
-})
+Deno.serve(app.fetch)

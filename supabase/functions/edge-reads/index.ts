@@ -228,9 +228,4 @@ app.get('/services', async (c) => {
   }
 })
 
-serve(app.fetch, {
-  port: 8000,
-  onListen: ({ port }) => {
-    console.log(`Edge reads function running on port ${port}`)
-  }
-})
+Deno.serve(app.fetch)

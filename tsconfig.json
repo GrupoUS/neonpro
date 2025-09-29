@@ -14,35 +14,6 @@
     "exactOptionalPropertyTypes": false,
     "noPropertyAccessFromIndexSignature": false,
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["./packages/shared/src/*"],
-      // Core 12-package architecture paths
-      "@neonpro/types": ["./packages/types/src"],
-      "@neonpro/types/*": ["./packages/types/src/*"],
-      "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"],
-      "@neonpro/config": ["./packages/config/src"],
-      "@neonpro/config/*": ["./packages/config/src/*"],
-      "@neonpro/database": ["./packages/database/src"],
-      "@neonpro/database/*": ["./packages/database/src/*"],
-
-      "@neonpro/integrations": ["./packages/integrations/src"],
-      "@neonpro/integrations/*": ["./packages/integrations/src/*"],
-      "@neonpro/workflows": ["./packages/workflows/src"],
-      "@neonpro/workflows/*": ["./packages/workflows/src/*"],
-      "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"],
-      "@neonpro/observability": ["./packages/observability/src"],
-      "@neonpro/observability/*": ["./packages/observability/src/*"],
-      "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src/*"],
-      // Legacy package paths (for backward compatibility)
-      "@neonpro/*": ["./packages/*/src"],
-      "@apps/*": ["./apps/*/src"],
-      "@tests/*": ["./tools/tests/*"]
-    },
     "useDefineForClassFields": true
   },
   "include": ["src/**/*", "tools/tests/**/*", "*.ts", "*.tsx", "types/**/*"],

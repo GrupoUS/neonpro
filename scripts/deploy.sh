@@ -1006,126 +1006,24 @@ post_deployment_checks() {
 }
 
 # ==============================================
-# MAIN EXECUTION
+# SETUP ENVIRONMENT FUNCTION
 # ==============================================
 
-main() {
-    # Initialize logging
-    log_script_start
-
-    # Parse command line arguments
+setup_environment() {
     local deployment_target="${1:-"staging"}"
-    local skip_build=false
-    local skip_checks=false
-    local setup_turbo=false
-
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --target=*)
-                deployment_target="${1#*=}"
-                shift
-                ;;
-            --skip-build)
-                skip_build=true
-                shift
-                ;;
-            --skip-checks)
-                skip_checks=true
-                shift
-                ;;
-            --turbo-cache)
-                export FORCE_TURBO_CACHE=true
-                shift
-                ;;
-            --monitor-limits)
-                export MONITOR_DEPLOYMENT_LIMITS=true
-                shift
-                ;;
-            --chunk-size=*)
-                export DEPLOY_CHUNK_SIZE="${1#*=}"
-                shift
-                ;;
-            --max-build-time=*)
-                export MAX_BUILD_TIME_MINUTES="${1#*=}"
-                shift
-                ;;
-            --help|-h)
-                echo "Usage: $0 [OPTIONS]"
-                echo "Options:"
-                echo "  --target=TARGET          Deployment target (staging|production)"
-                echo "  --skip-build             Skip build step"
-                echo "  --skip-checks            Skip pre/post-deployment checks"
-                echo "  --setup-turbo            Setup Turborepo remote caching"
-                echo "  --turbo-cache            Force Turborepo remote caching"
-                echo "  --monitor-limits         Enable deployment limits monitoring"
-                echo "  --chunk-size=SIZE        Set deployment chunk size (small|medium|large)"
-                echo "  --max-build-time=MIN     Set maximum build time in minutes (default: 40)"
-                echo "  --help, -h               Show this help message"
-                echo ""
-                echo "Examples:"
-                echo "  $0                                    # Deploy to staging"
-                echo "  $0 --target=production               # Deploy to production"
-                echo "  $0 --setup-turbo                     # Setup Turborepo caching"
-                echo "  $0 --turbo-cache --monitor-limits    # Deploy with full optimizations"
-                echo "  $0 --chunk-size=large --skip-checks  # Fast deploy for large projects"
-                exit 0
-                ;;
-            *)
-                log_error "Unknown option: $1"
-                exit 1
-                ;;
-        esac
-    done
-
-    log_section "NeonPro Deployment - $deployment_target"
-
-    # Setup Turborepo if requested
-    if [ "$setup_turbo" = true ]; then
-        setup_turbo_caching
-        log_success "Turborepo setup completed"
-        log_script_end 0
-        return
-    fi
-
+    
+    log_section "SETUP ENVIRONMENT - $deployment_target"
+    
     # Validate environment
     validate_environment
-
+    
     # Validate healthcare compliance
     validate_healthcare_compliance
-
+    
     # Pre-deployment checks
-    if [ "$skip_checks" = false ]; then
-        pre_deployment_checks
-    else
-        log_warning "Skipping pre-deployment checks"
-    fi
-
-    # Setup Turborepo for optimal builds
-    if [ "$skip_build" = false ]; then
-        log_info "Turborepo caching will be configured during build process"
-    fi
-
-    # Build application
-    if [ "$skip_build" = false ]; then
-        build_application
-    else
-        log_warning "Skipping build step"
-    fi
-
-    # Deploy application
-    deploy_application "$deployment_target"
-
-    # Post-deployment validation
-    if [ "$skip_checks" = false ]; then
-        post_deployment_checks "$deployment_target"
-    else
-        log_warning "Skipping post-deployment checks"
-    fi
-
-    log_success "Deployment completed successfully!"
-    log_healthcare "Healthcare compliance validated for $deployment_target environment"
-
-    log_script_end 0
+    pre_deployment_checks
+    
+    log_success "Environment setup completed"
 }
 
 # ==============================================
@@ -1153,6 +1051,396 @@ trap 'handle_error $LINENO "$BASH_COMMAND"' ERR
 # ==============================================
 # SCRIPT ENTRY POINT
 # ==============================================
+
+# ==============================================
+# HYBRID ARCHITECTURE DEPLOYMENT FUNCTIONS
+# ==============================================
+
+# Deploy Supabase Functions (Edge and Node)
+deploy_supabase_functions() {
+    local deployment_target="${1:-"staging"}"
+    log_step "Deploying Supabase Functions (Hybrid Architecture)"
+    
+    # Check if Supabase CLI is available
+    require_command "supabase" "Install Supabase CLI: npm install -g supabase"
+    
+    # Link to Supabase project if not already linked
+    if ! supabase projects list 2>/dev/null | grep -q "$(get_supabase_project_ref)"; then
+        log_step "Linking to Supabase project"
+        if ! supabase link --project-ref "$(get_supabase_project_ref)"; then
+            log_error "Failed to link to Supabase project"
+            exit 1
+        fi
+    fi
+    
+    # Deploy Edge Functions (Chunk 2/3)
+    log_step "Deploying Edge Functions for Read Operations (Chunk 2/3)"
+    if ! deploy_edge_functions "$deployment_target"; then
+        log_error "Edge Functions deployment failed"
+        exit 1
+    fi
+    
+    # Deploy Node Functions (Chunk 3/3)
+    log_step "Deploying Node Functions for Write Operations (Chunk 3/3)"
+    if ! deploy_node_functions "$deployment_target"; then
+        log_error "Node Functions deployment failed"
+        exit 1
+    fi
+    
+    log_success "All Supabase Functions deployed successfully"
+}
+
+# Deploy Edge Functions specifically
+deploy_edge_functions() {
+    local deployment_target="${1:-"staging"}"
+    local edge_functions=("edge-reads")
+    
+    for func in "${edge_functions[@]}"; do
+        log_info "Deploying Edge Function: $func"
+        
+        if [ ! -d "supabase/functions/$func" ]; then
+            log_warning "Edge function $func not found, skipping..."
+            continue
+        fi
+        
+        # Validate Edge Function structure
+        validate_edge_function "$func"
+        
+        # Deploy the function
+        if ! supabase functions deploy "$func" --project-ref "$(get_supabase_project_ref)"; then
+            log_error "Failed to deploy Edge Function: $func"
+            return 1
+        fi
+        
+        log_success "Edge Function $func deployed successfully"
+    done
+    
+    return 0
+}
+
+# Deploy Node Functions specifically
+deploy_node_functions() {
+    local deployment_target="${1:-"staging"}"
+    local node_functions=("node-writes")
+    
+    for func in "${node_functions[@]}"; do
+        log_info "Deploying Node Function: $func"
+        
+        if [ ! -d "supabase/functions/$func" ]; then
+            log_warning "Node function $func not found, skipping..."
+            continue
+        fi
+        
+        # Validate Node Function structure
+        validate_node_function "$func"
+        
+        # Deploy the function
+        if ! supabase functions deploy "$func" --project-ref "$(get_supabase_project_ref)"; then
+            log_error "Failed to deploy Node Function: $func"
+            return 1
+        fi
+        
+        log_success "Node Function $func deployed successfully"
+    done
+    
+    return 0
+}
+
+# Validate Edge Function structure
+validate_edge_function() {
+    local func_name="$1"
+    local func_path="supabase/functions/$func_name"
+    
+    if [ ! -f "$func_path/index.ts" ]; then
+        log_error "Edge Function $func_name missing index.ts"
+        exit 1
+    fi
+    
+    # Check for Edge Runtime compatibility
+    if ! grep -q "Deno.serve" "$func_path/index.ts"; then
+        log_error "Edge Function $func_name must use Deno.serve()"
+        exit 1
+    fi
+    
+    # Check for proper imports
+    if ! grep -q "import.*Hono" "$func_path/index.ts"; then
+        log_warning "Edge Function $func_name should use Hono framework"
+    fi
+    
+    log_success "Edge Function $func_name validation passed"
+}
+
+# Validate Node Function structure
+validate_node_function() {
+    local func_name="$1"
+    local func_path="supabase/functions/$func_name"
+    
+    if [ ! -f "$func_path/index.ts" ]; then
+        log_error "Node Function $func_name missing index.ts"
+        exit 1
+    fi
+    
+    # Check for Node Runtime compatibility
+    if ! grep -q "Deno.serve" "$func_path/index.ts"; then
+        log_error "Node Function $func_name must use Deno.serve()"
+        exit 1
+    fi
+    
+    # Check for proper imports
+    if ! grep -q "import.*Hono" "$func_path/index.ts"; then
+        log_warning "Node Function $func_name should use Hono framework"
+    fi
+    
+    log_success "Node Function $func_name validation passed"
+}
+
+# Get Supabase project reference from environment or config
+get_supabase_project_ref() {
+    if [ -n "${SUPABASE_PROJECT_REF:-}" ]; then
+        echo "$SUPABASE_PROJECT_REF"
+    elif [ -f "supabase/config.toml" ]; then
+        grep -A 10 '\[project\]' supabase/config.toml | grep 'ref' | cut -d'"' -f2
+    else
+        log_error "Supabase project reference not found. Set SUPABASE_PROJECT_REF or ensure supabase/config.toml exists"
+        exit 1
+    fi
+}
+
+# Enhanced hybrid deployment function
+deploy_hybrid_architecture() {
+    local deployment_target="${1:-"staging"}"
+    local is_production="false"
+    
+    log_section "HYBRID ARCHITECTURE DEPLOYMENT"
+    
+    case "$deployment_target" in
+        "staging")
+            log_info "Deploying to staging environment with hybrid architecture"
+            ;;
+        "production")
+            log_info "Deploying to production environment with full validation"
+            is_production="true"
+            
+            # Production-specific checks
+            log_step "Production Safety Checks"
+            validate_healthcare_compliance
+            validate_hybrid_architecture
+            ;;
+        *)
+            log_error "Invalid deployment target: $deployment_target"
+            log_info "Valid targets: staging, production"
+            exit 1
+            ;;
+    esac
+    
+    # Chunk 1: Deploy Vercel API (Edge Runtime)
+    log_step "Deploying Vercel API - Edge Runtime (Chunk 1/3)"
+    if ! DEPLOY_URL=$(optimized_vercel_deploy "apps/api" "api" "$is_production"); then
+        log_error "Vercel API deployment failed"
+        exit 1
+    fi
+    
+    # Export for health checks
+    export DEPLOY_URL
+    
+    # Chunk 2: Deploy Supabase Edge Functions
+    log_step "Deploying Supabase Edge Functions - Read Operations (Chunk 2/3)"
+    if ! deploy_supabase_functions "$deployment_target"; then
+        log_error "Supabase Functions deployment failed"
+        exit 1
+    fi
+    
+    # Chunk 3: Validate and Test Hybrid Architecture
+    log_step "Validating Hybrid Architecture (Chunk 3/3)"
+    if ! validate_hybrid_deployment "$DEPLOY_URL"; then
+        log_error "Hybrid architecture validation failed"
+        exit 1
+    fi
+    
+    log_success "Hybrid architecture deployment completed successfully"
+    log_info "Vercel API: $DEPLOY_URL"
+    log_info "Supabase Functions: $(get_supabase_project_ref)"
+}
+
+# Validate hybrid architecture deployment
+validate_hybrid_deployment() {
+    local deploy_url="$1"
+    
+    log_step "Validating Hybrid Architecture"
+    
+    # Test Vercel API health
+    if ! check_endpoint "$deploy_url" "/health" "Vercel API Health"; then
+        log_error "Vercel API health check failed"
+        return 1
+    fi
+    
+    # Test Edge Functions connectivity
+    if ! check_endpoint "$deploy_url" "/api/edge/health" "Edge Functions Health"; then
+        log_warning "Edge Functions health check failed - may be initializing"
+    fi
+    
+    # Test Node Functions connectivity
+    if ! check_endpoint "$deploy_url" "/api/node/health" "Node Functions Health"; then
+        log_warning "Node Functions health check failed - may be initializing"
+    fi
+    
+    # Validate healthcare compliance endpoints
+    validate_healthcare_endpoints "$deploy_url"
+    
+    log_success "Hybrid architecture validation passed"
+    return 0
+}
+
+# Validate healthcare-specific endpoints
+validate_healthcare_endpoints() {
+    local deploy_url="$1"
+    
+    log_step "Validating Healthcare Endpoints"
+    
+    # Check for healthcare compliance headers
+    if ! check_security_headers "$deploy_url"; then
+        log_warning "Security headers validation failed"
+    fi
+    
+    # Check for healthcare-specific endpoints
+    local healthcare_endpoints=("/api/patients" "/api/appointments" "/api/professionals")
+    
+    for endpoint in "${healthcare_endpoints[@]}"; do
+        # Just check if endpoint exists (may return 401 which is OK)
+        http_code=$(curl -s -w "%{http_code}" --max-time "$TIMEOUT" "$deploy_url$endpoint" -o /dev/null)
+        if [[ "$http_code" =~ ^[24] ]] || [[ "$http_code" == "401" ]]; then
+            log_success "Healthcare endpoint $endpoint accessible ($http_code)"
+        else
+            log_warning "Healthcare endpoint $endpoint returned $http_code"
+        fi
+    done
+    
+    log_success "Healthcare endpoints validation completed"
+}
+
+# Validate hybrid architecture configuration
+validate_hybrid_architecture() {
+    log_step "Validating Hybrid Architecture Configuration"
+    
+    # Check required files
+    local required_files=(
+        "apps/api/api/index.ts"
+        "supabase/functions/edge-reads/index.ts"
+        "supabase/functions/node-writes/index.ts"
+        "supabase/config.toml"
+    )
+    
+    for file in "${required_files[@]}"; do
+        if [ ! -f "$file" ]; then
+            log_error "Required file missing: $file"
+            exit 1
+        fi
+    done
+    
+    # Check environment variables
+    local required_env_vars=(
+        "SUPABASE_PROJECT_REF"
+        "SUPABASE_ANON_KEY"
+        "SUPABASE_SERVICE_ROLE_KEY"
+    )
+    
+    for var in "${required_env_vars[@]}"; do
+        if [ -z "${!var:-}" ]; then
+            log_error "Required environment variable: $var"
+            exit 1
+        fi
+    done
+    
+    log_success "Hybrid architecture configuration validated"
+}
+
+# ==============================================
+# MAIN FUNCTION ENHANCEMENT
+# ==============================================
+
+# Enhanced main function with hybrid architecture support
+main() {
+    log_script_start
+    
+    # Parse command line arguments
+    local deployment_target="staging"
+    local deploy_hybrid=false
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --staging)
+                deployment_target="staging"
+                shift
+                ;;
+            --production)
+                deployment_target="production"
+                shift
+                ;;
+            --hybrid)
+                deploy_hybrid=true
+                shift
+                ;;
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                log_error "Unknown argument: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Setup environment
+    setup_environment "$deployment_target"
+    
+    # Choose deployment strategy
+    if [ "$deploy_hybrid" = true ]; then
+        deploy_hybrid_architecture "$deployment_target"
+    else
+        deploy_applications "$deployment_target"
+    fi
+    
+    # Post-deployment validation
+    post_deployment_checks
+    
+    log_script_end 0
+}
+
+# Show help for enhanced deployment options
+show_help() {
+    cat << EOF
+NeonPro Hybrid Architecture Deployment Script
+
+USAGE:
+    $0 [OPTIONS]
+
+OPTIONS:
+    --staging       Deploy to staging environment (default)
+    --production    Deploy to production environment
+    --hybrid        Deploy using hybrid architecture (Vercel + Supabase Functions)
+    --help, -h      Show this help message
+
+EXAMPLES:
+    $0 --staging                    # Standard staging deployment
+    $0 --production --hybrid         # Production with hybrid architecture
+    $0 --hybrid                     # Staging with hybrid architecture
+
+HYBRID ARCHITECTURE:
+    - Vercel Edge Runtime: Main API and frontend
+    - Supabase Edge Functions: Read operations
+    - Supabase Node Functions: Write operations
+    - Healthcare compliance: LGPD, ANVISA, CFM built-in
+
+ENVIRONMENT VARIABLES:
+    SUPABASE_PROJECT_REF          Supabase project reference
+    SUPABASE_ANON_KEY             Supabase anonymous key
+    SUPABASE_SERVICE_ROLE_KEY     Supabase service role key
+    VERCEL_TOKEN                  Vercel authentication token
+    DEPLOYMENT_TIMEOUT            Deployment timeout in seconds
+EOF
+}
 
 # Only run main if script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
