@@ -16,8 +16,9 @@ export function useSchedulingSubmission(
 
   const handleSubmit = useCallback(async (data: any) => {
     try {
-      // Simulate API call - replace with actual implementation
-      console.log('Submitting scheduling data:', { patientId, ...data })
+      // LGPD Compliant: Removed console.log with personal data (patientId)
+      // Use secure audit logging from @neonpro/security for production monitoring
+      // TODO: Implement actual API call with secure logging
 
       // Simulate delay
       await new Promise(resolve => setTimeout(resolve, 1000))

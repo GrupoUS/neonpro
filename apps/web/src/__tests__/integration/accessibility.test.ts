@@ -7,6 +7,7 @@
  * Tests comprehensive accessibility compliance for aesthetic clinic use
  */
 
+import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'vitest-axe';

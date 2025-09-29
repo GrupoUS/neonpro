@@ -61,7 +61,8 @@ fi
 
 # 5. Healthcare Data Protection Check
 echo -e "${YELLOW}🏥 Checking LGPD and healthcare compliance...${NC}"
-if grep -r -i -E "(cpf|rg|email|phone|patient.*data)" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.husky . | grep -v -E "(test|spec|mock)" | grep -E "(console\.log|localStorage|sessionStorage)" > /dev/null; then
+# Check for personal data in unsafe contexts, excluding comments
+if grep -r -i -E "(cpf|rg|email|phone|patient.*data)" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.husky --exclude-dir=.bun --exclude-dir=coverage . | grep -v -E "(test|spec|mock|//|/\*|\*)" | grep -E "(console\.log|localStorage|sessionStorage)" > /dev/null; then
     echo -e "${RED}❌ LGPD Violation: Personal data detected in unsafe contexts${NC}"
     echo -e "${BLUE}💡 Use secure storage utilities from @neonpro/security${NC}"
     echo -e "${BLUE}📚 See .husky/README.md for LGPD compliance examples${NC}"
