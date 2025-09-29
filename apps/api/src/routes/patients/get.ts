@@ -16,7 +16,7 @@ const app = new Hono()
 
 // Path parameters validation schema
 const GetPatientParamsSchema = z.object({
-  id: z.union([
+  id: z.union(
     z.string().uuid('ID do paciente deve ser um UUID válido'),
     z.string().regex(/^patient-\d+$/, 'ID do paciente deve ser um UUID válido'),
   ]),

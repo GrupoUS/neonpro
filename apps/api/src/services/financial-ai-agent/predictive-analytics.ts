@@ -102,13 +102,13 @@ export interface CashFlowAnalysis {
 const analyticsConfigSchema = z.object({
   models: z.object({
     revenuePrediction: z.object({
-      algorithm: z.enum(['linear_regression', 'arima', 'prophet', 'lstm']),
+      algorithm: z.enum('linear_regression', 'arima', 'prophet', 'lstm']),
       confidenceThreshold: z.number().min(0).max(1).default(0.8),
       lookbackPeriod: z.number().default(90), // days
     }),
     anomalyDetection: z.object({
-      algorithm: z.enum(['isolation_forest', 'z_score', 'iqr']),
-      sensitivity: z.enum(['low', 'medium', 'high']).default('medium'),
+      algorithm: z.enum('isolation_forest', 'z_score', 'iqr']),
+      sensitivity: z.enum('low', 'medium', 'high']).default('medium'),
       windowSize: z.number().default(30), // days
     }),
     trendAnalysis: z.object({
@@ -117,7 +117,7 @@ const analyticsConfigSchema = z.object({
       confidenceInterval: z.number().default(0.95),
     }),
   }),
-  dataSources: z.array(z.enum([
+  dataSources: z.array(z.enum(
     'billing_transactions',
     'payment_history',
     'appointment_data',

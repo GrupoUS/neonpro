@@ -4,7 +4,7 @@
  * Integration with AIChatService, AuditService, LGPDService, and PatientService
  */
 
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Context, Hono, Next } from 'hono'
 import { AIChatService } from '../../services/ai-chat-service'
 import { LGPDService } from '../../services/lgpd-service.js'
@@ -114,7 +114,7 @@ app.post(
   '/',
   mockAuthMiddleware,
   mockLGPDMiddleware,
-  zValidator('json', chatRequestSchema),
+  validator('json', chatRequestSchema),
   async c => {
     const startTime = Date.now()
     const _user = c.get('user')
@@ -441,7 +441,7 @@ app.post(
   '/sessions',
   mockAuthMiddleware,
   mockLGPDMiddleware,
-  zValidator('json', sessionRequestSchema),
+  validator('json', sessionRequestSchema),
   async c => {
     const _user = c.get('user')
     const requestData = c.req.valid('json')
@@ -546,7 +546,7 @@ app.post(
   '/sessions/:sessionId/messages',
   mockAuthMiddleware,
   mockLGPDMiddleware,
-  zValidator('json', messageRequestSchema),
+  validator('json', messageRequestSchema),
   async c => {
     const _user = c.get('user')
     const sessionId = c.req.param('sessionId')

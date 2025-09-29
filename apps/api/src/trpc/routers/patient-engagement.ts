@@ -258,7 +258,7 @@ export const patientEngagementRouter = createTRPCRouter({
   getTemplatesByCategory: {
     input: z.object({
       clinicId: z.string().uuid(),
-      category: z.enum([
+      category: z.enum(
         'appointment_reminder',
         'follow_up_care',
         'educational',
@@ -737,7 +737,7 @@ export const patientEngagementRouter = createTRPCRouter({
   getReengagementTriggers: {
     input: z.object({
       clinicId: z.string().uuid(),
-      status: z.enum(['pending', 'in_progress', 'completed', 'skipped']).default('pending'),
+      status: z.enum('pending', 'in_progress', 'completed', 'skipped']).default('pending'),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
     resolve: async ({ input, ctx: _ctx }) => {
@@ -773,7 +773,7 @@ export const patientEngagementRouter = createTRPCRouter({
   updateReengagementTrigger: {
     input: z.object({
       triggerId: z.string().uuid(),
-      status: z.enum(['pending', 'in_progress', 'completed', 'skipped']),
+      status: z.enum('pending', 'in_progress', 'completed', 'skipped']),
       actionTaken: z.string(),
       outcome: z.any(),
     }),

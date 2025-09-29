@@ -1,7 +1,7 @@
 // API Route: AI Chat for NeonPro Aesthetic Clinic
 // Handles AI chat requests with LGPD compliance and audit logging
 
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { type AIMessage, AIProviderFactory } from '@neonpro/integrations'
 import { ComplianceLevel, type HealthcareAIContext } from '@neonpro/shared'
 
@@ -12,7 +12,7 @@ import { cors } from 'hono/cors'
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
-  _role: z.enum(['user', 'assistant', 'system']),
+  _role: z.enum('user', 'assistant', 'system']),
   content: z.string().min(1),
 })
 
@@ -104,7 +104,7 @@ const redactPII = (text: string): string => {
 }
 
 // Streaming AI response endpoint with Phase 2 provider integration
-app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
+app.post('/stream', validator('json', ChatRequestSchema), async c => {
   const t0 = startTimer()
   try {
     const { messages, text, locale, clientId, sessionId, model } = c.req.valid('json')
@@ -361,7 +361,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 // Search suggestions endpoint with AI provider integration
 app.post(
   '/suggestions',
-  zValidator(
+  validator(
     'json',
     z.object({
       _query: z.string().min(1),

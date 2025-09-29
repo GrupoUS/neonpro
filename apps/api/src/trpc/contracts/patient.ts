@@ -18,7 +18,7 @@ export const CreatePatientRequestSchema = z.object({
   email: z.string().email().optional().or(z.literal('')),
   phone: z.string().min(10),
   dateOfBirth: z.string(), // ISO string
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.enum('male', 'female', 'other']),
   taxId: z.string().min(11).optional(), // CPF
   rg: z.string().optional(),
   address: z.object({
@@ -42,7 +42,7 @@ export const CreatePatientRequestSchema = z.object({
     conditions: z.array(z.string()).default([]),
     surgeries: z.array(z.string()).default([]),
     familyHistory: z.string().optional(),
-    bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
+    bloodType: z.enum('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).optional(),
   }).optional(),
   lgpdConsent: z.object({
     dataProcessing: z.boolean(),
@@ -67,8 +67,8 @@ export const GetPatientRequestSchema = z.object({
 export const ListPatientsRequestSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(20),
-  sortBy: z.enum(['name', 'createdAt', 'lastVisit']).default('name'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  sortBy: z.enum('name', 'createdAt', 'lastVisit']).default('name'),
+  sortOrder: z.enum('asc', 'desc']).default('asc'),
   search: z.string().optional(),
   filters: z.object({
     clinicId: z.string().optional(),
@@ -76,7 +76,7 @@ export const ListPatientsRequestSchema = z.object({
     hasUpcomingAppointment: z.boolean().optional(),
     dateOfBirthFrom: z.string().optional(),
     dateOfBirthTo: z.string().optional(),
-    gender: z.enum(['male', 'female', 'other']).optional(),
+    gender: z.enum('male', 'female', 'other']).optional(),
   }).optional(),
 })
 
@@ -87,7 +87,7 @@ export const PatientResponseSchema = z.object({
   phone: z.string(),
   dateOfBirth: z.string(),
   age: z.number(),
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.enum('male', 'female', 'other']),
   taxId: z.string().nullable(),
   rg: z.string().nullable(),
   address: z.object({
@@ -111,7 +111,7 @@ export const PatientResponseSchema = z.object({
     conditions: z.array(z.string()),
     surgeries: z.array(z.string()),
     familyHistory: z.string().nullable(),
-    bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).nullable(),
+    bloodType: z.enum('A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']).nullable(),
   }),
   lgpdConsent: z.object({
     dataProcessing: z.boolean(),
@@ -138,7 +138,7 @@ export const PatientResponseSchema = z.object({
   nextAppointment: z.object({
     id: z.string(),
     scheduledDate: z.string(),
-    type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
+    type: z.enum('consultation', 'procedure', 'follow_up', 'emergency']),
     professional: z.object({
       id: z.string(),
       name: z.string(),

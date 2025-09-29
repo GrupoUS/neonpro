@@ -72,7 +72,7 @@ const billingItemSchema = z.object({
   unitValue: z.number().positive(),
   totalValue: z.number().positive(),
   discount: z.number().min(0).default(0),
-  discountType: z.enum(['percentage', 'fixed']).default('percentage'),
+  discountType: z.enum('percentage', 'fixed']).default('percentage'),
   professionalId: z.string().uuid(),
   date: z.string().datetime(),
 })
@@ -83,7 +83,7 @@ const healthPlanSchema = z.object({
   ansNumber: z.string().regex(/^\d{6}$/), // ANS registration number
   cardNumber: z.string(),
   validUntil: z.string().datetime(),
-  coverageType: z.enum(['partial', 'full']),
+  coverageType: z.enum('partial', 'full']),
   coveragePercentage: z.number().min(0).max(100),
   preAuthRequired: z.boolean().default(false),
   preAuthNumber: z.string().optional(),

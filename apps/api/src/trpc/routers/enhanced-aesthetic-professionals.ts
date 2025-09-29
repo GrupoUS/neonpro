@@ -14,7 +14,7 @@ const CreateProfessionalInput = z.object({
   name: z.string().min(3),
   email: z.string().email(),
   phone: z.string().regex(/^\(\d{2}\)\s*\d{4,5}-\d{4}$/),
-  councilType: z.enum(['CFM', 'COREN', 'CFF', 'CNEP']),
+  councilType: z.enum('CFM', 'COREN', 'CFF', 'CNEP']),
   councilNumber: z.string().min(4),
   councilState: z.string().length(2),
   specialties: z.array(z.string()),
@@ -28,7 +28,7 @@ const UpdateProfessionalInput = CreateProfessionalInput.partial().extend({
 })
 
 const CouncilValidationInput = z.object({
-  councilType: z.enum(['CFM', 'COREN', 'CFF', 'CNEP']),
+  councilType: z.enum('CFM', 'COREN', 'CFF', 'CNEP']),
   councilNumber: z.string(),
   councilState: z.string().length(2),
   professionalName: z.string(),
@@ -43,7 +43,7 @@ const AnvisaCertificationInput = z.object({
 
 const ProfessionalQueryInput = z.object({
   search: z.string().optional(),
-  councilType: z.enum(['CFM', 'COREN', 'CFF', 'CNEP']).optional(),
+  councilType: z.enum('CFM', 'COREN', 'CFF', 'CNEP']).optional(),
   specialty: z.string().optional(),
   active: z.boolean().default(true),
   limit: z.number().min(1).max(100).default(20),
@@ -100,7 +100,7 @@ export const enhancedAestheticProfessionalsRouter = router({
   // Get professional by council number
   getByCouncilNumber: publicProcedure
     .input(z.object({
-      councilType: z.enum(['CFM', 'COREN', 'CFF', 'CNEP']),
+      councilType: z.enum('CFM', 'COREN', 'CFF', 'CNEP']),
       councilNumber: z.string(),
       councilState: z.string().length(2),
     }))

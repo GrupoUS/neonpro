@@ -26,7 +26,7 @@ const cfmService = new CFMComplianceService()
 const createSessionSchema = z.object({
   patientId: z.string().uuid(),
   physicianId: z.string().uuid(),
-  sessionType: z.enum([
+  sessionType: z.enum(
     'consultation',
     'follow_up',
     'emergency',
@@ -40,7 +40,7 @@ const createSessionSchema = z.object({
 
 const joinSessionSchema = z.object({
   sessionId: z.string().uuid(),
-  participantType: z.enum(['physician', 'patient', 'observer']),
+  participantType: z.enum('physician', 'patient', 'observer']),
   deviceInfo: z.object({
     browser: z.string(),
     os: z.string(),
@@ -53,7 +53,7 @@ const _patientVerificationSchema = z.object({
   patientId: z.string().uuid(),
   documents: z.array(
     z.object({
-      type: z.enum(['cpf', 'rg', 'cns', 'passport', 'driver_license']),
+      type: z.enum('cpf', 'rg', 'cns', 'passport', 'driver_license']),
       number: z.string(),
       issuingAuthority: z.string().optional(),
       issueDate: z.date().optional(),
@@ -72,7 +72,7 @@ const _licenseVerificationSchema = z.object({
 const consentSchema = z.object({
   patientId: z.string().uuid(),
   sessionId: z.string().uuid(),
-  consentType: z.enum([
+  consentType: z.enum(
     'telemedicine',
     'data_processing',
     'recording',
@@ -91,7 +91,7 @@ const complianceReportSchema = z.object({
       end: z.date(),
     })
     .optional(),
-  reportType: z.enum([
+  reportType: z.enum(
     'session_audit',
     'compliance_violations',
     'license_status',
@@ -230,7 +230,7 @@ export const telemedicineRouter = router({
     .input(
       z.object({
         sessionId: z.string().uuid(),
-        endReason: z.enum([
+        endReason: z.enum(
           'completed',
           'cancelled',
           'technical_issue',
@@ -341,7 +341,7 @@ export const telemedicineRouter = router({
   //         street: z.string(),
   //         number: z.string().optional(),
   //         complement: z.string().optional(),
-  //         verificationMethod: z.enum([
+  //         verificationMethod: z.enum(
   //           'postal_service',
   //           'utility_bill',
   //           'bank_statement',
@@ -567,7 +567,7 @@ export const telemedicineRouter = router({
       z.object({
         sessionId: z.string().uuid(),
         signal: z.object({
-          type: z.enum(['offer', 'answer', 'ice-candidate']),
+          type: z.enum('offer', 'answer', 'ice-candidate']),
           data: z.any(),
         }),
         targetParticipant: z.string().uuid(),
@@ -630,7 +630,7 @@ export const telemedicineRouter = router({
     .input(
       z.object({
         sessionId: z.string().uuid(),
-        recordingType: z.enum(['video', 'audio', 'screen']),
+        recordingType: z.enum('video', 'audio', 'screen']),
       }),
     )
     .mutation(async ({ input, _ctx }) => {

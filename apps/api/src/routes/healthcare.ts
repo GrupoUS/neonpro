@@ -3,7 +3,7 @@
  * Features: LGPD compliance, audit logging, performance optimization, type safety
  */
 
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 import { cache } from 'hono/cache'
 import { cors } from 'hono/cors'
@@ -206,7 +206,7 @@ const appointmentSchema = z.object({
   scheduled_at: z.string().datetime('Data/hora inválida'),
   procedure_type: z.string().min(1, 'Tipo de procedimento obrigatório'),
   notes: z.string().optional(),
-  priority: z.enum(['low', 'medium', 'high']).default('medium'),
+  priority: z.enum('low', 'medium', 'high']).default('medium'),
 })
 
 // Patient routes with caching and optimization
@@ -322,7 +322,7 @@ healthcare.get('/patients/:id', async c => {
   }
 })
 
-healthcare.post('/patients', zValidator('json', patientSchema), async c => {
+healthcare.post('/patients', validator('json', patientSchema), async c => {
   const user = c.get('user')
   const metrics = c.get('performanceMetrics')
   const patientData = c.req.valid('json')
@@ -369,7 +369,7 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
 
 healthcare.put(
   '/patients/:id',
-  zValidator('json', patientSchema.partial()),
+  validator('json', patientSchema.partial()),
   async c => {
     const patientId = c.req.param('id')
     const user = c.get('user')
@@ -470,7 +470,7 @@ healthcare.get('/patients/:id/appointments', async c => {
 
 healthcare.post(
   '/appointments',
-  zValidator('json', appointmentSchema),
+  validator('json', appointmentSchema),
   async c => {
     const user = c.get('user')
     const metrics = c.get('performanceMetrics')

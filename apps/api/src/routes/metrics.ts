@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 const metricsApi = new Hono()
 
@@ -14,7 +14,7 @@ const webVitalSchema = z.object({
   name: z.string(),
   value: z.number(),
   delta: z.number(),
-  rating: z.enum(['good', 'needs-improvement', 'poor']),
+  rating: z.enum('good', 'needs-improvement', 'poor']),
   timestamp: z.number(),
   url: z.string(),
   sessionId: z.string(),
@@ -24,7 +24,7 @@ const webVitalSchema = z.object({
 
 // Server metrics schema
 const serverMetricSchema = z.object({
-  type: z.enum(['cold-start', 'execution-time', 'memory-usage', 'bundle-size']),
+  type: z.enum('cold-start', 'execution-time', 'memory-usage', 'bundle-size']),
   value: z.number(),
   timestamp: z.number(),
   metadata: z.record(z.any()).optional(),
@@ -33,7 +33,7 @@ const serverMetricSchema = z.object({
 // Collect Web Vitals
 metricsApi.post(
   '/web-vitals',
-  zValidator('json', webVitalSchema),
+  validator('json', webVitalSchema),
   async c => {
     const metric = c.req.valid('json')
 
@@ -55,7 +55,7 @@ metricsApi.post(
 // Collect server metrics
 metricsApi.post(
   '/server',
-  zValidator('json', serverMetricSchema),
+  validator('json', serverMetricSchema),
   async c => {
     const metric = c.req.valid('json')
 

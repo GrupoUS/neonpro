@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
 const app = new Hono()
@@ -31,7 +31,7 @@ type BalanceResponse = {
   consent: { required: boolean; missing?: string[] }
 }
 
-app.post('/treatments/new', zValidator('json', NewTreatmentsRequest), c => {
+app.post('/treatments/new', validator('json', NewTreatmentsRequest), c => {
   const data: TreatmentsResponse = {
     items: [
       {
@@ -53,7 +53,7 @@ app.post('/treatments/new', zValidator('json', NewTreatmentsRequest), c => {
   return c.json(data)
 })
 
-app.post('/patient/balance', zValidator('json', PatientBalanceRequest), c => {
+app.post('/patient/balance', validator('json', PatientBalanceRequest), c => {
   const { patientId } = c.req.valid('json')
   const resp: BalanceResponse = {
     patientId,

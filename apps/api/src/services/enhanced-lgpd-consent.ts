@@ -116,8 +116,8 @@ export const EnhancedConsentRecordSchema = z.object({
   consentDate: z.date(),
   expiryDate: z.date().optional(),
   lastModifiedDate: z.date(),
-  method: z.enum(['electronic', 'written', 'verbal', 'digital_signature']),
-  channel: z.enum(['web', 'mobile', 'in_person', 'phone', 'email']),
+  method: z.enum('electronic', 'written', 'verbal', 'digital_signature']),
+  channel: z.enum('web', 'mobile', 'in_person', 'phone', 'email']),
 
   // Version tracking
   previousVersionId: z.string().optional(),

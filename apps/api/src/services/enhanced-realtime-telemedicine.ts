@@ -20,13 +20,13 @@ const TelemedicineMessageSchema = z.object({
   id: z.string().uuid(),
   sessionId: z.string().uuid(),
   senderId: z.string().uuid(),
-  senderRole: z.enum(['patient', 'doctor', 'nurse', 'technician']),
-  messageType: z.enum(['text', 'file', 'image', 'system', 'emergency']),
+  senderRole: z.enum('patient', 'doctor', 'nurse', 'technician']),
+  messageType: z.enum('text', 'file', 'image', 'system', 'emergency']),
   content: z.string(),
   encryptedContent: z.string().optional(),
   timestamp: z.string().datetime(),
   metadata: z.record(z.any()).optional(),
-  priority: z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
+  priority: z.enum('low', 'normal', 'high', 'critical']).default('normal'),
   requiresAcknowledgment: z.boolean().default(false),
   acknowledgments: z.array(z.string().uuid()).default([]),
   lgpdCompliant: z.boolean().default(true),
@@ -35,18 +35,18 @@ const TelemedicineMessageSchema = z.object({
 const PresenceStateSchema = z.object({
   _userId: z.string().uuid(),
   sessionId: z.string().uuid(),
-  userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
-  status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
+  userRole: z.enum('patient', 'doctor', 'nurse', 'technician', 'admin']),
+  status: z.enum('online', 'away', 'busy', 'offline', 'in_consultation']),
   lastSeen: z.string().datetime(),
   connectionQuality: z.object({
     latency: z.number().min(0).max(5000), // ms
     bandwidth: z.number().min(0), // kbps
     packetLoss: z.number().min(0).max(100), // percentage
     jitter: z.number().min(0).max(1000), // ms
-    quality: z.enum(['excellent', 'good', 'fair', 'poor']),
+    quality: z.enum('excellent', 'good', 'fair', 'poor']),
   }),
   deviceInfo: z.object({
-    type: z.enum(['desktop', 'mobile', 'tablet']),
+    type: z.enum('desktop', 'mobile', 'tablet']),
     browser: z.string().optional(),
     os: z.string().optional(),
     capabilities: z.object({
@@ -65,7 +65,7 @@ const PresenceStateSchema = z.object({
 
 const SessionUpdateSchema = z.object({
   sessionId: z.string().uuid(),
-  type: z.enum([
+  type: z.enum(
     'status_change',
     'participant_join',
     'participant_leave',

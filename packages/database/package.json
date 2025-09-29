@@ -27,11 +27,31 @@
     "lint": "echo 'lint placeholder'",
     "prepare": "echo 'prepare script disabled for workspace install'",
     "db:types": "supabase gen types typescript --project-id ownkoxryswokcdanrdgj > src/types/supabase-generated.ts",
-    "db:push": "supabase db push",
+    "db:push": "prisma db push",
     "db:diff": "supabase db diff",
     "db:reset": "supabase db reset",
-    "db:studio": "supabase studio",
-    "sync": "npm run db:types && npm run build"
+    "db:studio": "prisma studio",
+    "sync": "npm run db:types && npm run build",
+    "dev:bun": "vite dev --force",
+    "build:bun": "prisma generate && tsc --noEmit",
+    "build:analyze": "vite build --mode analyze",
+    "test:bun": "vitest run --reporter=dot",
+    "test:watch:bun": "vitest watch --reporter=dot",
+    "type-check:bun": "tsc --noEmit",
+    "clean:bun": "rm -rf dist node_modules/.cache",
+    "format:bun": "biome format . --write",
+    "lint:bun": "oxlint . --fix",
+    "perf:test": "vitest run --reporter=verbose --isolate",
+    "setup:test": "bun install && bun run build",
+    "build:edge": "prisma generate && tsc --noEmit --outDir dist-edge",
+    "test:integration:bun": "vitest run --config vitest.integration.config.ts",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "generate:client": "prisma generate",
+    "db:seed": "bun run src/seed.ts",
+    "validate:schema": "prisma validate",
+    "format:prisma": "prisma format",
+    "perf:query": "bun run src/benchmark-queries.ts"
   },
   "dependencies": {
     "@neonpro/types": "workspace:*",
@@ -44,5 +64,8 @@
   },
   "publishConfig": {
     "access": "restricted"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
   }
 }

@@ -1,917 +1,473 @@
-# NeonPro Architecture Documentation
+---
+title: "NeonPro System Architecture"
+last_updated: 2025-09-29
+form: explanation
+tags: [architecture, system-design, healthcare, aesthetic-clinics, brazil]
+related:
+  - ./frontend-architecture.md
+  - ./tech-stack.md
+  - ./source-tree.md
+  - ../AGENTS.md
+---
+
+# NeonPro System Architecture
 
 ## Overview
 
-NeonPro is a comprehensive SaaS platform designed specifically for Brazilian aesthetic clinics, enabling multi-professional collaboration between CFM, COREN, CFF, and CNEP professionals. The system provides advanced treatment planning, inventory management, compliance automation, financial management, and AI-powered clinical decision support.
+NeonPro is a mobile-first SaaS platform for Brazilian aesthetic clinics, enabling multi-professional collaboration (CFM, COREN, CFF, CNEP) with AI-powered automation, compliance management, and comprehensive financial operations.
 
-## Current Version: 8.0.0
+**Current Version**: 8.0.0
+**Architecture Grade**: A- (9.2/10)
+**Status**: Production-ready with validated performance
 
-### New in Version 8.0.0
+## Core Principles
 
-- **Financial Management System**: Complete financial operations for aesthetic clinics
-- **Billing and Invoicing**: Comprehensive billing with Brazilian tax compliance
-- **Payment Processing**: PIX, boleto, credit card, and other Brazilian payment methods
-- **Professional Commission Management**: Automated commission tracking and payments
-- **Treatment Packages**: Flexible package pricing and bundle management
-- **Financial Analytics**: Comprehensive financial reporting and insights
-- **Tax Configuration**: Brazilian tax compliance (ISS, PIS, COFINS, CSLL, IRPJ)
-- **NFSe Generation**: Electronic service invoice generation
-- **Financial Goals**: Target setting and progress tracking
-- **Multi-Currency Support**: BRL, USD, EUR with automatic conversion
+1. **Mobile-First**: 95% mobile usage with touch-optimized interfaces
+2. **AI-Powered**: Universal AI chat as primary interaction method
+3. **Compliance-First**: LGPD, ANVISA, and professional council compliance built-in
+4. **Edge-Optimized**: <2s page loads on 3G, 99.9% uptime requirement
+5. **Type-Safe**: End-to-end TypeScript with Zod validation
+6. **Real-time by Design**: Supabase subscriptions with TanStack Query cache patching
 
-### Version 7.0.0 Features
+## Design Patterns
 
-- **Advanced Patient Engagement System**: Comprehensive communication and engagement platform
-- **Multi-Channel Communication**: Email, SMS, WhatsApp, push notifications, and phone calls
-- **Communication Preferences Management**: Patient-specific communication settings
-- **Automated Communication Workflows**: Appointment reminders, follow-ups, and birthday greetings
-- **Patient Journey Tracking**: Complete patient lifecycle management with engagement scoring
-- **Loyalty Programs Management**: Points-based reward systems with tier benefits
-- **Survey and Feedback System**: Patient satisfaction measurement and improvement
-- **Campaign Management**: Targeted engagement campaigns and reengagement workflows
-- **Template Management**: Customizable communication templates with variable substitution
-- **Real-time Analytics**: Communication effectiveness and engagement metrics
-
-### Version 6.0.0 Features
-
-- **Multi-Professional Coordination System**: Complete cross-disciplinary collaboration platform
-- **Professional Team Management**: Dynamic team composition with role-based permissions
-- **Cross-Professional Referrals**: Intelligent referral workflows with scope validation
-- **Collaborative Session Management**: Joint treatment planning and execution
-- **Inter-Professional Communication**: Secure messaging and documentation sharing
-- **Professional Supervision**: Structured mentorship and clinical supervision
-- **Scope Validation**: Automated professional scope authorization and compliance
-- **Coordination Protocols**: Standardized workflows and automation
-
-## Architecture Philosophy
-
-### Core Principles
-
-1. **Multi-Professional Focus**: Designed to support all aesthetic healthcare professionals
-2. **Compliance-First**: Built-in LGPD, ANVISA, and professional council compliance
-3. **AI-Powered**: Intelligent automation and clinical decision support
-4. **Modular Design**: Scalable microservices architecture
-5. **Security by Design**: End-to-end encryption and strict access controls
-6. **Financial Excellence**: Comprehensive financial management with Brazilian tax compliance
-
-### Design Patterns
-
-- **Clean Architecture**: Separation of concerns and dependency inversion
-- **Domain-Driven Design**: Business logic organized around domains
-- **Event-Driven Architecture**: Asynchronous processing and real-time updates
-- **CQRS Pattern**: Separate read and write models for performance
-- **Repository Pattern**: Data access abstraction and testability
-- **Financial Patterns**: Double-entry accounting and audit trail
+- **Clean Architecture**: Separation of concerns with dependency inversion
+- **Domain-Driven Design**: Business logic organized by healthcare domains
+- **Event-Driven**: Asynchronous processing via Supabase real-time
+- **CQRS**: Edge reads, Node writes with service_role for sensitive operations
+- **Repository Pattern**: Data access abstraction through Supabase clients
 
 ## System Architecture
 
-### High-Level Architecture
+### High-Level Overview
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │    Backend      │    │   Database      │
-│   (React 19)    │◄──►│   (Node.js)     │◄──►│   (Supabase)    │
+│   (React 19)    │◄──►│   (Hono+tRPC)   │◄──►│   (Supabase)    │
 │                 │    │                 │    │                 │
-│ - TanStack      │    │ - tRPC v11      │    │ - PostgreSQL    │
-│ - Router        │    │ - Fastify       │    │ - Row Security  │
-│ - Zustand       │    │ - BullMQ        │    │ - RLS Policies  │
-│ - shadcn/ui     │    │ - Redis Cache   │    │ - Functions     │
+│ - TanStack      │    │ - Edge Runtime  │    │ - PostgreSQL    │
+│ - Router/Query  │    │ - Node Runtime  │    │ - RLS Policies  │
+│ - CopilotKit    │    │ - AG-UI Proto   │    │ - Real-time     │
+│ - shadcn/ui     │    │ - Zod Validate  │    │ - Functions     │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
          │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   External      │    │   AI/ML         │    │   Integration   │
-│   Services      │    │   Services      │    │   Layer         │
-│                 │    │                 │    │                 │
-│ - Payment       │    │ - CopilotKit    │    │ - Webhooks      │
-│ - Calendar      │    │ - OpenAI        │    │ - REST APIs     │
-│ - Messaging     │    │ - Custom Models │    │ - GraphQL       │
-│ - Storage       │    │ - Analytics     │    │ - SDKs          │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+         └───────────────────────┴───────────────────────┘
+                    Turborepo Monorepo
 ```
 
-### Component Breakdown
+**For detailed technology choices and rationale**, see [tech-stack.md](./tech-stack.md).
+**For codebase organization**, see [source-tree.md](./source-tree.md).
+**For frontend patterns**, see [frontend-architecture.md](./frontend-architecture.md).
 
-#### 1. Frontend Layer (React 19)
+## Domain Modules
 
-**Core Technologies:**
+NeonPro organizes business logic into domain-focused packages within the Turborepo monorepo:
 
-- **React 19**: Latest React features with concurrent rendering
-- **TanStack Router**: Type-safe routing with code splitting
-- **Zustand**: Lightweight state management
-- **shadcn/ui v4**: Accessible UI components with WCAG 2.1 AA+ compliance
-- **Tailwind CSS**: Utility-first CSS framework
-- **TypeScript**: Type safety throughout the application
+### Healthcare Operations
 
-**Key Features:**
+- **Appointments & Scheduling**: Advanced optimization with AI-powered no-show prediction
+- **Treatment Planning**: Comprehensive plans with AI assessments and progress tracking
+- **Inventory Management**: ANVISA-compliant product tracking with automated reordering
 
-- Real-time updates with Server-Sent Events (SSE)
-- Offline-first capabilities with service workers
-- Responsive design for all device sizes
-- Accessibility compliance (WCAG 2.1 AA+)
-- Progressive Web App (PWA) support
+### Professional Coordination
 
-#### 2. Backend Layer (Node.js)
+- **Multi-Professional Teams**: Cross-disciplinary collaboration (CFM, COREN, CFF, CNEP)
+- **Referral Workflows**: Scope-validated referrals with urgency management
+- **Supervision & Mentorship**: Structured clinical supervision with autonomy tracking
 
-**Core Technologies:**
+### Patient Engagement
 
-- **tRPC v11**: Type-safe API with automatic validation
-- **Fastify**: High-performance web framework
-- **BullMQ**: Reliable job queue and scheduling
-- **Redis**: In-memory caching and session storage
-- **Zod**: Schema validation and type inference
-- **Prisma**: Type-safe database access
+- **Multi-Channel Communication**: Email, SMS, WhatsApp, push notifications
+- **Journey Tracking**: Lifecycle management with engagement scoring
+- **Loyalty Programs**: Points-based rewards with tier benefits
 
-**Key Features:**
+### Financial Management
 
-- Type-safe APIs with end-to-end TypeScript
-- Real-time bidirectional communication
-- Job scheduling and background processing
-- Caching strategies for performance
-- Comprehensive error handling and logging
+- **Billing & Invoicing**: Brazilian tax compliance (ISS, PIS, COFINS, CSLL, IRPJ)
+- **Payment Processing**: PIX, boleto, credit card with installment support
+- **Commission Management**: Automated professional commission calculation
 
-#### 3. Database Layer (Supabase)
+### Compliance & Security
 
-**Core Technologies:**
+- **LGPD Automation**: Data subject rights management with audit trails
+- **Professional Council Validation**: CFM, COREN, CFF, CNEP scope verification
+- **ANVISA Integration**: Medical device and product tracking
 
-- **PostgreSQL**: Robust relational database
-- **Supabase**: Backend-as-a-service platform
-- **Row Level Security (RLS)**: Fine-grained access control
-- **PostgreSQL Functions**: Database-level business logic
-- **Triggers**: Automated data consistency enforcement
+**For detailed package structure**, see [source-tree.md](./source-tree.md).
 
-**Key Features:**
+## Version 8.0.0: Financial Management
 
-- Real-time subscriptions for live updates
-- Comprehensive RLS policies for security
-- Automated backups and point-in-time recovery
-- Scalable architecture with connection pooling
-- Geographic distribution for high availability
+### Overview
 
-### Microservices Architecture
+Complete financial operations for Brazilian aesthetic clinics with tax compliance, payment processing, and commission management.
 
-#### Service Breakdown
+### Core Capabilities
 
-1. **Core Services** (`packages/core-services/`)
-   - Authentication and authorization
-   - User management and profiles
-   - Clinic and practice management
-   - Basic appointment scheduling
-   - Financial management services
+**Billing & Invoicing**
 
-2. **AI Clinical Support** (`packages/ai-clinical-support/`)
-   - Anti-No-Show prediction engine
-   - Treatment recommendations
-   - Risk assessment and scoring
-   - Clinical decision support
+- Automatic invoice generation with Brazilian tax calculation (ISS, PIS, COFINS, CSLL, IRPJ)
+- Multi-item invoices with discount management
+- NFSe (electronic service invoice) generation
 
-3. **Enhanced Scheduling** (`packages/enhanced-scheduling/`)
-   - Advanced appointment optimization
-   - Resource allocation algorithms
-   - Conflict resolution
-   - Automated reminders and follow-ups
+**Payment Processing**
 
-4. **Inventory Management** (`packages/inventory-management/`)
-   - Product tracking and batch management
-   - Automated reordering and alerts
-   - ANVISA compliance tracking
-   - Expiry date monitoring
+- Brazilian payment methods: PIX, boleto, credit card, debit card
+- Payment gateway integration: Stripe, MercadoPago, PagSeguro
+- Installment plans with automated reconciliation
 
-5. **Treatment Planning** (`packages/treatment-planning/`)
-   - Comprehensive treatment plans
-   - AI-powered assessments
-   - Documentation templates
-   - Progress tracking
+**Commission Management**
 
-6. **Compliance Management** (`packages/compliance-management/`)
-   - LGPD compliance automation
-   - Professional council monitoring
-   - Audit trail management
-   - Regulatory reporting
+- Automated calculation based on services, products, packages
+- Tiered commission structures with performance tracking
+- Payment scheduling and detailed reporting
 
-7. **Multi-Professional Coordination** (`packages/multi-professional-coordination/`)
-   - Cross-disciplinary team management
-   - Professional referral workflows
-   - Collaborative session management
-   - Inter-professional communication
-   - Professional supervision
-   - Scope validation
+**Financial Analytics**
 
-8. **Patient Engagement** (`packages/patient-engagement/`)
-   - Multi-channel communication management
-   - Patient journey tracking and scoring
-   - Loyalty programs and rewards
-   - Survey and feedback systems
-   - Campaign management and automation
-   - Template management and processing
-
-#### Service Communication
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Core          │    │   AI Clinical   │    │   Enhanced      │
-│   Services      │◄──►│   Support       │◄──►│   Scheduling    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Inventory     │    │   Treatment     │    │   Compliance    │
-│   Management    │◄──►│   Planning      │◄──►│   Management    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Multi-Prof    │    │   Patient       │    │   Integration   │
-│   Coordination  │◄──►│   Engagement    │◄──►│   Layer         │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                       │                       │
-         │                       │                       │
-         ▼                       ▼                       ▼
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Financial     │    │   Analytics     │    │   External      │
-│   Management    │◄──►│   & Reporting   │◄──►│   Integrations  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-```
-
-## Financial Management System
-
-### System Overview
-
-The Financial Management System provides comprehensive financial operations for Brazilian aesthetic clinics, including billing, payment processing, commission tracking, and financial analytics with full Brazilian tax compliance support. It enables clinics to manage their finances efficiently while complying with complex Brazilian tax regulations.
-
-### Key Components
-
-#### 1. Financial Account Management
-
-- **Multi-Currency Support**: BRL, USD, EUR with automatic conversion
-- **Bank Integration**: Multiple bank accounts and financial institutions
-- **Account Types**: Checking, savings, investment, credit, and loan accounts
-- **Default Account Configuration**: Primary account selection and management
-- **Transaction History**: Complete financial transaction tracking
-- **Account Reconciliation**: Automated reconciliation with bank statements
-
-#### 2. Service Pricing and Packages
-
-- **Dynamic Pricing**: Flexible pricing based on professional council type
-- **Commission Structure**: Configurable commission rates for professionals
-- **Cost Tracking**: Material costs and profitability analysis
-- **Treatment Packages**: Bundle pricing and package management
-- **Seasonal Pricing**: Time-based pricing adjustments
-- **Competitive Analysis**: Market-based pricing insights
-
-#### 3. Billing and Invoicing
-
-- **Invoice Generation**: Automatic invoice numbering and generation
-- **Tax Calculation**: Brazilian tax compliance (ISS, PIS, COFINS, CSLL, IRPJ)
-- **Multi-Item Invoices**: Complex invoices with multiple line items
-- **Discount Management**: Flexible discount and promotion handling
-- **Payment Terms**: Configurable payment terms and conditions
-- **Invoice Templates**: Customizable invoice templates with clinic branding
-
-#### 4. Payment Processing
-
-- **Brazilian Payment Methods**: PIX, boleto, credit card, debit card, bank transfer
-- **Payment Gateway Integration**: Multiple payment providers (Stripe, MercadoPago, PagSeguro)
-- **Installment Processing**: Flexible installment plans and payment schedules
-- **Payment Tracking**: Complete payment history and status tracking
-- **Fee Management**: Payment processing fee tracking and optimization
-- **Reconciliation**: Automated payment reconciliation with invoices
-
-#### 5. Professional Commission Management
-
-- **Commission Calculation**: Automated commission calculation based on services
-- **Commission Types**: Service, product, package, bonus, and adjustment commissions
-- **Payment Scheduling**: Commission payment scheduling and processing
-- **Performance Tracking**: Professional performance and commission analytics
-- **Tiered Commissions**: Progressive commission structures
-- **Commission Reports**: Detailed commission reporting and insights
-
-#### 6. Tax Configuration and Compliance
-
-- **Brazilian Taxes**: Complete support for ISS, PIS, COFINS, CSLL, IRPJ, ICMS, IPI
-- **Tax Rates**: Configurable tax rates by jurisdiction and service type
-- **Tax Reporting**: Automated tax reporting and filing preparation
-- **NFSe Generation**: Electronic service invoice generation
-- **Fiscal Documents**: Complete fiscal document management
-- **Compliance Monitoring**: Ongoing compliance monitoring and alerts
-
-#### 7. Financial Goals and Analytics
-
-- **Goal Setting**: Revenue, profit, patient acquisition, and retention goals
-- **Progress Tracking**: Real-time goal progress monitoring
-- **Financial Analytics**: Comprehensive financial performance analysis
-- **Dashboard Metrics**: Key financial indicators and KPIs
-- **Trend Analysis**: Financial trend identification and forecasting
-- **Comparative Analysis**: Period-over-period performance comparison
-
-#### 8. Financial Reporting
-
-- **Monthly Reports**: Automated monthly financial reports
-- **Profit & Loss**: Detailed P&L statements with categorization
-- **Balance Sheet**: Comprehensive balance sheet generation
-- **Cash Flow**: Cash flow analysis and projection
-- **Tax Reports**: Tax-specific reporting and documentation
-- **Custom Reports**: Flexible custom report generation
+- Goal setting and progress tracking (revenue, profit, acquisition)
+- P&L statements, balance sheets, cash flow analysis
+- Brazilian GAAP compliance with tax reporting
 
 ### Database Schema
 
-The financial management system includes 10 new tables:
+11 tables supporting financial operations: `financial_accounts`, `service_prices`, `treatment_packages`, `package_services`, `invoices`, `invoice_items`, `payment_transactions`, `professional_commissions`, `tax_configurations`, `financial_goals`, `financial_reports`.
 
-1. **financial_accounts**: Bank account and financial account management
-2. **service_prices**: Service pricing with commission structures
-3. **treatment_packages**: Package pricing and bundle management
-4. **package_services**: Package service composition and configuration
-5. **invoices**: Complete invoice management with tax calculation
-6. **invoice_items**: Detailed invoice line items and calculations
-7. **payment_transactions**: Payment processing and transaction tracking
-8. **professional_commissions**: Professional commission management
-9. **tax_configurations**: Brazilian tax configuration and rates
-10. **financial_goals**: Financial target setting and progress tracking
-11. **financial_reports**: Automated financial report generation
+**For detailed schema**, see `docs/database-schema/financial-management.md`.
 
-### API Endpoints
+## Version 7.0.0: Patient Engagement
 
-The financial management system provides 25 comprehensive endpoints:
+### Overview
 
-- **Financial Accounts**: Account management and reconciliation
-- **Service Pricing**: Dynamic pricing and commission structures
-- **Treatment Packages**: Package creation and management
-- **Invoicing**: Complete billing and invoice management
-- **Payment Processing**: Multi-payment method processing
-- **Commission Management**: Professional commission tracking
-- **Financial Goals**: Target setting and progress monitoring
-- **Financial Analytics**: Comprehensive reporting and insights
-- **Tax Management**: Brazilian tax compliance and reporting
-- **Brazilian Operations**: NFSe, PIX, and boleto processing
+Comprehensive communication and engagement platform for managing patient relationships through multi-channel communication, loyalty programs, and journey tracking.
 
-### Integration Points
+### Core Capabilities
 
-#### Payment Gateway Integration
+**Multi-Channel Communication**
 
-- **Stripe**: International credit card processing
-- **MercadoPago**: Latin American payment processing
-- **PagSeguro**: Brazilian payment solutions
-- **PIX Integration**: Instant Brazilian payment system
-- **Boleto Generation**: Brazilian bank slip processing
+- Email, SMS, WhatsApp, push notifications with LGPD-compliant consent management
+- Automated workflows: appointment reminders, follow-ups, birthday greetings
+- Template management with variable substitution and personalization
 
-#### Tax Integration
+**Patient Journey Tracking**
 
-- **SEFAZ Integration**: State tax authority integration
-- **Municipal Integration**: Municipal tax system integration
-- **NFSe Generation**: Electronic service invoice system
-- **Fiscal Document Management**: Complete fiscal document lifecycle
-- **Compliance Reporting**: Automated compliance reporting
+- Lifecycle management from lead to loyal advocate
+- Engagement scoring based on interactions and behaviors
+- Risk assessment for at-risk patient intervention
 
-#### Banking Integration
+**Loyalty Programs**
 
-- **Bank Account Integration**: Direct bank account connections
-- **Transaction Synchronization**: Automated transaction import
-- **Reconciliation**: Bank statement reconciliation
-- **Cash Flow Management**: Real-time cash flow tracking
-- **Financial Analytics**: Enhanced financial insights
+- Points-based rewards with tier benefits
+- Referral tracking and rewards
+- Real-time points balance management
 
-### Brazilian Financial Features
+**Campaign Management**
 
-#### Tax Compliance
-
-- **Automatic Tax Calculation**: Real-time tax calculation for all services
-- **Multi-Jurisdiction Support**: State and municipal tax compliance
-- **Tax Rate Updates**: Automatic tax rate updates and compliance
-- **Fiscal Document Generation**: Complete fiscal document lifecycle
-- **Audit Trail**: Comprehensive audit trail for tax purposes
-
-#### Payment Methods
-
-- **PIX Processing**: Instant payment processing with QR codes
-- **Boleto Generation**: Bank slip generation with barcode and digitable line
-- **Credit Card Processing**: Installment and recurring payment support
-- **Bank Transfer**: Automated bank transfer processing
-- **Cash Management**: Cash payment tracking and reconciliation
-
-#### Financial Reporting
-
-- **Brazilian GAAP**: Compliance with Brazilian accounting standards
-- **Tax Reporting**: Complete tax reporting and filing preparation
-- **Financial Statements**: Balance sheet, P&L, and cash flow statements
-- **Management Reports**: Custom management reporting and analytics
-- **Investor Reporting**: Professional investor-grade reporting
-
-## Patient Engagement and Communication System
-
-### System Overview
-
-The Patient Engagement and Communication System provides comprehensive tools for managing patient relationships, communication preferences, loyalty programs, and engagement analytics. It enables aesthetic clinics to maintain strong patient relationships through personalized, multi-channel communication while respecting patient preferences and privacy.
-
-### Key Components
-
-#### 1. Communication Preferences Management
-
-- **Multi-Channel Support**: Email, SMS, WhatsApp, push notifications, and phone calls
-- **Patient-Specific Settings**: Individual communication preferences and timing
-- **Consent Management**: GDPR/LGPD compliant consent tracking
-- **Do-Not-Contact**: Respecting patient communication preferences
-- **Language Preferences**: Multi-language support (pt-BR, en-US, es-ES)
-
-#### 2. Automated Communication Workflows
-
-- **Appointment Reminders**: Multi-channel reminder system with customizable timing
-- **Follow-Up Communications**: Post-treatment care and check-in messages
-- **Birthday Greetings**: Personalized birthday messages with special offers
-- **Educational Content**: Automated delivery of skincare and treatment tips
-- **Reengagement Campaigns**: Automated win-back campaigns for inactive patients
-
-#### 3. Patient Journey Tracking
-
-- **Journey Stages**: Complete patient lifecycle from lead to loyal advocate
-- **Engagement Scoring**: Algorithmic scoring based on interactions and behaviors
-- **Risk Assessment**: Identification of at-risk patients for intervention
-- **Satisfaction Tracking**: Ongoing satisfaction measurement and feedback
-- **Loyalty Tier Management**: Automated loyalty tier progression
-
-#### 4. Loyalty Programs Management
-
-- **Points-Based Rewards**: Flexible points earning and redemption system
-- **Tier Benefits**: Progressive benefits based on engagement and spending
-- **Referral Programs**: Patient referral tracking and rewards
-- **Special Offers**: Targeted promotions and exclusive member benefits
-- **Points Balance Management**: Real-time points tracking and expiration
-
-#### 5. Survey and Feedback System
-
-- **Custom Surveys**: Flexible survey creation with various question types
-- **Trigger-Based Surveys**: Automatic survey delivery based on events
-- **Satisfaction Scoring**: NPS and satisfaction metrics collection
-- **Feedback Analysis**: Automated sentiment analysis and insights
-- **Follow-Up Management**: Automated follow-up for negative feedback
-
-#### 6. Campaign Management
-
-- **Targeted Campaigns**: Audience segmentation and targeting
-- **Multi-Sequence Campaigns**: Complex multi-message campaign flows
-- **A/B Testing**: Campaign optimization through testing
-- **Performance Tracking**: Real-time campaign metrics and analytics
-- **Automation Rules**: Trigger-based campaign automation
-
-#### 7. Template Management
-
-- **Dynamic Templates**: Variable substitution and personalization
-- **Template Library**: Pre-built templates for common communications
-- **Version Control**: Template versioning and history tracking
-- **Performance Analytics**: Template effectiveness metrics
-- **Multi-Channel Support**: Templates optimized for different channels
+- Audience segmentation with A/B testing
+- Multi-sequence campaign flows
+- Real-time performance tracking and analytics
 
 ### Database Schema
 
-The patient engagement system includes 12 new tables:
+12 tables supporting patient engagement: `patient_communication_preferences`, `patient_communication_history`, `communication_templates`, `patient_journey_stages`, `patient_engagement_actions`, `loyalty_programs`, `patient_points_balance`, `patient_surveys`, `patient_survey_responses`, `engagement_campaigns`, `reengagement_triggers`, `campaign_analytics`.
 
-1. **patient_communication_preferences**: Patient communication settings and preferences
-2. **patient_communication_history**: Complete communication history and tracking
-3. **communication_templates**: Reusable communication templates with variables
-4. **patient_journey_stages**: Patient lifecycle tracking and engagement scoring
-5. **patient_engagement_actions**: Patient interaction tracking and points earning
-6. **loyalty_programs**: Loyalty program configuration and rules
-7. **patient_points_balance**: Individual patient points tracking and management
-8. **patient_surveys**: Survey creation and configuration
-9. **patient_survey_responses**: Survey response collection and analysis
-10. **engagement_campaigns**: Campaign management and execution
-11. **reengagement_triggers**: Automated reengagement workflow triggers
-12. **campaign_analytics**: Campaign performance and effectiveness metrics
+**For detailed schema**, see `docs/database-schema/patient-engagement.md`.
 
-### API Endpoints
+## Version 6.0.0: Multi-Professional Coordination
 
-The patient engagement system provides 25 comprehensive endpoints:
+### Overview
 
-- **Communication Preferences**: Manage patient communication settings
-- **Communication History**: Track and manage all communications
-- **Template Management**: Create and manage communication templates
-- **Patient Journey**: Track patient lifecycle and engagement
-- **Engagement Actions**: Record patient interactions and points
-- **Loyalty Programs**: Manage loyalty programs and points
-- **Survey Management**: Create surveys and collect responses
-- **Campaign Management**: Execute and monitor engagement campaigns
-- **Reengagement Workflows**: Automated patient reengagement
-- **Analytics and Reporting**: Communication effectiveness insights
+Seamless collaboration platform for aesthetic healthcare professionals (CFM, COREN, CFF, CNEP) with scope validation and compliance management.
 
-### Integration Points
+### Core Capabilities
 
-#### Email Integration
+**Professional Teams**
 
-- **Transactional Email**: Sendgrid/Postmark for appointment reminders
-- **Marketing Email**: Mailchimp for promotional campaigns
-- **Template Engine**: Custom template processing with personalization
-- **Delivery Tracking**: Real-time delivery status and engagement tracking
+- Dynamic team formation with role-based access and granular permissions
+- Scope limitations enforcing professional boundaries
+- Performance metrics and collaboration analytics
 
-#### SMS Integration
+**Referral Workflows**
 
-- **Twilio Integration**: Global SMS delivery with local numbers
-- **Message Templates**: Pre-approved SMS templates for compliance
-- **Delivery Confirmation**: Real-time delivery status updates
-- **Opt-Out Management**: SMS unsubscribe and preference management
+- Cross-council referrals with automatic scope validation
+- Urgency-based routing with complete lifecycle tracking
+- Response tracking and acknowledgment management
 
-#### WhatsApp Integration
+**Collaborative Sessions**
 
-- **WhatsApp Business API**: Official WhatsApp integration
-- **Rich Media**: Support for images, documents, and videos
-- **Template Messages**: Pre-approved WhatsApp message templates
-- **Chatbot Integration**: Automated responses and FAQ handling
+- Multi-professional treatment planning and execution
+- Video conferencing with secure document sharing
+- Comprehensive session documentation
 
-#### Push Notifications
+**Supervision & Mentorship**
 
-- **Web Push**: Browser-based push notifications
-- **Mobile Push**: React Native push notification integration
-- **Segmentation**: Targeted notification delivery
-- **Analytics**: Push notification engagement tracking
-
-## Multi-Professional Coordination System
-
-### System Overview
-
-The Multi-Professional Coordination System enables seamless collaboration between different aesthetic healthcare professionals while maintaining proper compliance and professional boundaries.
-
-### Key Components
-
-#### 1. Professional Teams Management
-
-- **Team Creation**: Dynamic team formation based on patient needs
-- **Role-Based Access**: Granular permissions and responsibilities
-- **Scope Limitations**: Professional boundaries and authorization levels
-- **Team Analytics**: Performance metrics and collaboration insights
-
-#### 2. Professional Referrals
-
-- **Cross-Council Referrals**: CFM ↔ COREN ↔ CFF ↔ CNEP referrals
-- **Scope Validation**: Automatic validation of professional scope
-- **Urgency Management**: Priority-based referral routing
-- **Response Tracking**: Complete referral lifecycle management
-
-#### 3. Collaborative Sessions
-
-- **Multi-Professional Sessions**: Joint treatment planning and execution
-- **Virtual Integration**: Video conferencing and document sharing
-- **Role-Based Participation**: Defined roles and responsibilities
-- **Session Documentation**: Comprehensive session records
-
-#### 4. Inter-Professional Communication
-
-- **Secure Messaging**: Encrypted communication channels
-- **Clinical Context**: Patient-specific discussion threads
-- **Acknowledgment Tracking**: Mandatory message acknowledgment
-- **Document Sharing**: Secure file sharing with version control
-
-#### 5. Professional Supervision
-
-- **Structured Supervision**: Clinical and administrative supervision
-- **Autonomy Levels**: Progressive autonomy development
-- **Performance Tracking**: Supervision session evaluations
-- **Mentorship Programs**: Professional development support
-
-#### 6. Scope Validation
-
-- **Procedure Authorization**: Professional scope validation
-- **Medication Authorization**: Prescription and administration rights
-- **Supervision Requirements**: Automatic supervision detection
-- **Compliance Monitoring**: Ongoing scope compliance
+- Structured clinical and administrative supervision
+- Progressive autonomy development tracking
+- Performance evaluations and professional development support
 
 ### Database Schema
 
-The coordination system includes 12 new tables:
+12 tables supporting coordination: `professional_teams`, `team_members`, `professional_referrals`, `collaborative_sessions`, `session_participants`, `coordination_threads`, `coordination_messages`, `professional_supervision`, `supervision_sessions`, `professional_scope_validation`, `coordination_protocols`, `protocol_executions`.
 
-1. **professional_teams**: Cross-disciplinary team management
-2. **team_members**: Team composition with roles and permissions
-3. **professional_referrals**: Cross-professional referrals and consultations
-4. **collaborative_sessions**: Joint treatment and planning sessions
-5. **session_participants**: Session attendance and roles
-6. **coordination_threads**: Communication threads for coordination
-7. **coordination_messages**: Secure messaging between professionals
-8. **professional_supervision**: Supervision and mentorship relationships
-9. **supervision_sessions**: Supervision session records
-10. **professional_scope_validation**: Professional scope authorization
-11. **coordination_protocols**: Standardized coordination workflows
-12. **protocol_executions**: Protocol execution tracking
+**For detailed schema**, see `docs/database-schema/multi-professional-coordination.md`.
 
-### API Endpoints
-
-The coordination system provides 20 comprehensive endpoints:
-
-- **Team Management**: Create, manage, and organize professional teams
-- **Referral Management**: Cross-professional referral lifecycle
-- **Session Management**: Collaborative session planning and execution
-- **Communication**: Secure messaging and documentation sharing
-- **Supervision**: Professional supervision and mentorship
-- **Scope Validation**: Professional authorization and compliance
-- **Protocol Management**: Standardized workflows and automation
-- **Analytics**: Collaboration metrics and insights
-
-## Security Architecture
+## Security & Compliance
 
 ### Authentication & Authorization
 
-#### Multi-Layer Security
+**Multi-Layer Security**
 
-1. **Authentication Layer**
-   - JWT-based authentication with refresh tokens
-   - Supabase Auth integration
-   - Multi-factor authentication support
-   - Session management and timeout
-
-2. **Authorization Layer**
-   - Role-based access control (RBAC)
-   - Resource-based permissions
-   - Professional council validation
-   - Clinic-based data isolation
-
-3. **Data Security Layer**
-   - End-to-end encryption for sensitive data
-   - Row Level Security (RLS) policies
-   - Audit logging for all data access
-   - Data masking and anonymization
-
-#### Compliance Features
-
-- **LGPD Compliance**: Complete data subject rights management
-- **ANVISA Integration**: Medical device and product tracking
-- **Professional Council Support**: CFM, COREN, CFF, CNEP validation
-- **Tax Compliance**: Brazilian tax regulation compliance
-- **Audit Trail**: Complete modification history for compliance reporting
+- JWT-based authentication with Supabase Auth integration
+- Multi-factor authentication with session timeout management
+- Role-based access control (RBAC) with resource-based permissions
+- Professional council validation (CFM, COREN, CFF, CNEP)
+- Clinic-based data isolation via Row Level Security (RLS)
 
 ### Data Protection
 
-#### Encryption Strategy
+**Encryption**
 
-- **Data at Rest**: AES-256 encryption for all sensitive data
-- **Data in Transit**: TLS 1.3 for all communications
-- **Key Management**: Secure key rotation and management
-- **Backup Encryption**: Encrypted backups with secure storage
+- AES-256 for data at rest, TLS 1.3 for data in transit
+- Secure key rotation and encrypted backups
+- End-to-end encryption for sensitive healthcare data
 
-#### Privacy Controls
+**Privacy Controls**
 
-- **Data Minimization**: Collect only necessary data
-- **Purpose Limitation**: Use data only for specified purposes
-- **Consent Management**: Granular consent controls
-- **Data Retention**: Automated data lifecycle management
-- **Financial Privacy**: Secure financial data handling and processing
+- LGPD compliance with data subject rights management
+- Granular consent management with audit logging
+- Data minimization and purpose limitation
+- Automated data lifecycle and retention management
 
-## Performance Architecture
+### Compliance
 
-### Scalability Strategy
+**Brazilian Healthcare Regulations**
 
-#### Horizontal Scaling
+- LGPD: Complete data protection compliance
+- ANVISA: Medical device and product tracking
+- Professional Councils: CFM, COREN, CFF, CNEP scope validation
+- Tax Compliance: ISS, PIS, COFINS, CSLL, IRPJ
 
-- **Microservices**: Independent service scaling
-- **Database Sharding**: Distributed data storage
-- **Load Balancing**: Traffic distribution across instances
-- **Auto-scaling**: Dynamic resource allocation
+**Audit & Monitoring**
 
-#### Performance Optimization
+- Complete audit trail for all data access and modifications
+- Real-time compliance monitoring with automated alerts
+- Comprehensive logging for regulatory reporting
 
-- **Caching Strategy**: Multi-level caching (Redis, CDN, browser)
-- **Database Optimization**: Indexing, query optimization, connection pooling
-- **Frontend Optimization**: Code splitting, lazy loading, asset optimization
-- **API Optimization**: Response compression, pagination, streaming
-- **Financial Processing**: Optimized financial calculations and reporting
+## Performance & Monitoring
+
+### Performance Targets
+
+**Validated Metrics (Production)**
+
+- Build time: 8.93s
+- Bundle size: 603.49 kB
+- Edge read TTFB: <150ms (P95)
+- Real-time UI patch: <1.5s (P95)
+- Page loads: <2s on 3G connections
+- Uptime: 99.9% for critical operations
+
+### Optimization Strategy
+
+**Multi-Layer Caching**
+
+- CDN for static assets
+- Browser service workers for offline capability
+- TanStack Query for API response caching
+- Supabase connection pooling
+
+**Code Optimization**
+
+- Route-based code splitting with TanStack Router
+- Lazy loading for heavy components with Suspense
+- Tree-shaking enabling optimal bundle size
+- WebP images with responsive loading
+
+**Database Optimization**
+
+- Indexing on frequently queried fields
+- Connection pooling (20 max, 5 min connections)
+- Query optimization with Supabase helpers
+- Real-time subscriptions for live updates
 
 ### Monitoring & Observability
 
-#### Application Monitoring
+**Application Metrics**
 
-- **Performance Metrics**: Response times, throughput, error rates
-- **Business Metrics**: User engagement, feature usage, conversion rates, financial metrics
-- **System Health**: Resource utilization, service availability, error tracking
-- **User Experience**: Core Web Vitals, interaction metrics
+- Performance: Response times, throughput, error rates
+- Business: User engagement, feature usage, conversion rates
+- User Experience: Core Web Vitals (LCP ≤2.5s, INP ≤200ms, CLS ≤0.1)
 
-#### Infrastructure Monitoring
+**Infrastructure Metrics**
 
-- **Database Monitoring**: Query performance, connection usage, storage capacity
-- **Network Monitoring**: Latency, bandwidth, packet loss
-- **Security Monitoring**: Intrusion detection, threat monitoring, compliance checks
-- **Cost Monitoring**: Resource usage, cost optimization, budget tracking
-- **Financial Monitoring**: Transaction processing, payment gateway health
+- Database: Query performance, connection usage, storage capacity
+- Network: Latency, bandwidth, edge function performance
+- Security: Intrusion detection, compliance checks, audit logs
+- Cost: Resource usage, optimization opportunities
 
-## Deployment Architecture
+**For detailed performance patterns**, see [frontend-architecture.md](./frontend-architecture.md).
+
+## Deployment
 
 ### Environment Strategy
 
-#### Development Environment
+**Development**
 
-- **Local Development**: Docker Compose with local Supabase
-- **Development Branch**: Feature branches with automated testing
-- **Code Quality**: ESLint, Prettier, TypeScript strict mode
-- **Testing**: Unit tests, integration tests, end-to-end tests
-- **Financial Testing**: Comprehensive financial calculation testing
+- Local Supabase with Docker Compose
+- Feature branches with automated testing (Vitest, Playwright)
+- Code quality: OXLint, dprint, TypeScript strict mode
 
-#### Staging Environment
+**Staging**
 
-- **Production Mirror**: Exact replica of production environment
-- **Load Testing**: Performance and scalability testing
-- **Security Testing**: Vulnerability scanning and penetration testing
-- **Compliance Testing**: Regulatory compliance validation
-- **Financial Testing**: Payment processing and tax calculation testing
+- Production mirror for load and security testing
+- Compliance validation (LGPD, ANVISA, professional councils)
+- Payment processing and tax calculation testing
 
-#### Production Environment
+**Production**
 
-- **High Availability**: Multi-region deployment with failover
-- **Disaster Recovery**: Automated backup and recovery procedures
-- **Monitoring**: Comprehensive monitoring and alerting
-- **Security**: Enterprise-grade security measures
-- **Financial Security**: PCI DSS compliance and financial data protection
+- Vercel deployment with Edge Functions (reads) and Node Functions (writes)
+- Region: gru1 (São Paulo) preferred for Brazilian market
+- High availability with automated backup and disaster recovery
+- Comprehensive monitoring and alerting
 
 ### Infrastructure
 
-#### Cloud Infrastructure
+**Hosting: Vercel**
 
-- **Primary Provider**: AWS with multi-region deployment
-- **Database**: Amazon RDS for PostgreSQL with read replicas
-- **Compute**: ECS Fargate for container orchestration
-- **Storage**: S3 for file storage with lifecycle policies
-- **CDN**: CloudFront for static asset delivery
-- **Cache**: ElastiCache for Redis caching
-- **Financial Infrastructure**: Secure payment processing infrastructure
+- Edge runtime for read-heavy, side-effect-free endpoints
+- Node runtime for sensitive operations (service_role, webhooks, cron)
+- Global CDN for static asset delivery
+- Automatic HTTPS and DDoS protection
 
-#### Networking
+**Database: Supabase**
 
-- **VPC**: Isolated virtual private cloud
-- **Load Balancing**: Application Load Balancers with Auto Scaling
-- **CDN**: Global content delivery network
-- **DNS**: Route 53 with health checks
-- **Security**: WAF, Security Groups, Network ACLs
-- **Financial Networking**: Isolated financial processing network
+- PostgreSQL with Row Level Security (RLS)
+- Real-time subscriptions via Postgres Changes
+- Automated backups with point-in-time recovery
+- Connection pooling (20 max, 5 min connections)
 
-## Integration Architecture
+**For deployment procedures**, see `docs/deployment/vercel-deployment.md`.
 
-### External Integrations
+## External Integrations
 
-#### Payment Processing
+### Payment Processing
 
-- **Multiple Providers**: Stripe, PayPal, local Brazilian payment methods
-- **Subscription Management**: Recurring billing and plan management
-- **Refund Processing**: Automated refund handling
-- **Financial Reporting**: Comprehensive financial analytics
-- **Brazilian Payments**: PIX, boleto, and local payment method support
+- Stripe, MercadoPago, PagSeguro for credit card processing
+- PIX integration for instant Brazilian payments
+- Boleto generation for bank slip payments
+- Automated refund handling and reconciliation
 
-#### Calendar Integration
+### Communication Channels
 
-- **Google Calendar**: Two-way synchronization
-- **Outlook Calendar**: Enterprise calendar integration
-- **Apple Calendar**: iOS device integration
-- **Calendar Sharing**: Professional availability management
+- Email: Transactional (Sendgrid/Postmark) and marketing (Mailchimp)
+- SMS: Twilio for appointment reminders and notifications
+- WhatsApp: Business API for rich media messaging
+- Push Notifications: Web and mobile push for real-time alerts
 
-#### Messaging Integration
+### Calendar Systems
 
-- **Email**: Transactional and marketing emails
-- **SMS**: Appointment reminders and notifications
-- **WhatsApp**: Business messaging integration
-- **Push Notifications**: Real-time mobile notifications
+- Google Calendar, Outlook Calendar, Apple Calendar
+- Two-way synchronization for professional availability
+- Automated appointment scheduling and conflict resolution
 
-#### Third-Party APIs
+### Healthcare Systems
 
-- **Medical Records**: FHIR-based integration
-- **Laboratory Systems**: Lab result integration
-- **Pharmacy Systems**: Prescription management
-- **Insurance Systems**: Claims processing and verification
-- **Financial Systems**: Accounting and tax system integration
+- FHIR-based medical records integration
+- Laboratory systems for result integration
+- Pharmacy systems for prescription management
+- Insurance systems for claims processing
+
+### Tax & Compliance
+
+- SEFAZ integration for state tax authority
+- Municipal tax system integration
+- NFSe generation for electronic service invoices
+- Automated compliance reporting
+
+**For API documentation**, see `docs/apis/`.
 
 ## Development Workflow
 
-### Code Organization
+### Monorepo Organization
 
-#### Monorepo Structure
+NeonPro uses Turborepo with pnpm workspaces:
 
-```
-neonpro/
-├── apps/
-│   ├── web/                 # React frontend
-│   ├── api/                 # Node.js backend
-│   └── admin/               # Admin panel
-├── packages/
-│   ├── core-services/       # Core business logic
-│   ├── ai-clinical-support/ # AI/ML services
-│   ├── enhanced-scheduling/# Advanced scheduling
-│   ├── inventory-management/# Inventory management
-│   ├── treatment-planning/ # Treatment planning
-│   ├── compliance-management/# Compliance management
-│   ├── multi-professional-coordination/# Coordination system
-│   ├── patient-engagement/ # Patient engagement system
-│   ├── financial-management/# Financial management system
-│   ├── ui/                 # Shared UI components
-│   ├── utils/              # Shared utilities
-│   ├── types/              # TypeScript types
-│   └── validators/         # Validation schemas
-├── docs/
-│   ├── architecture/        # Architecture documentation
-│   ├── apis/               # API documentation
-│   ├── database-schema/    # Database documentation
-│   └── deployment/         # Deployment guides
-└── supabase/
-    └── migrations/         # Database migrations
-```
+- **apps/**: web (React), api (Hono+tRPC)
+- **packages/**: ui, types, agents, config, database, domain modules
 
-#### Development Tools
+**For complete structure**, see [source-tree.md](./source-tree.md).
 
-- **Package Manager**: pnpm for efficient dependency management
-- **Build System**: Turborepo for monorepo builds
-- **Testing**: Vitest for unit tests, Playwright for E2E tests
-- **Linting**: ESLint with TypeScript support
-- **Formatting**: Prettier with consistent formatting
-- **Type Checking**: TypeScript strict mode
-- **Financial Testing**: Comprehensive financial calculation and compliance testing
+### Development Tools
+
+**Build & Package Management**
+
+- Turborepo for task orchestration and caching
+- Bun (primary) + PNPM (fallback) for fast installs
+- TypeScript strict mode for type safety
+
+**Testing**
+
+- Vitest for unit and integration tests
+- Playwright for end-to-end tests
+- Test coverage target: ≥90% for critical components
+
+**Code Quality**
+
+- OXLint for fast linting
+- dprint for consistent formatting
+- TypeScript strict mode for type checking
 
 ### Quality Assurance
 
-#### Testing Strategy
+**Testing Pyramid**
 
-- **Unit Tests**: Individual component and function testing
-- **Integration Tests**: Service integration and API testing
-- **End-to-End Tests**: Complete user flow testing
-- **Performance Tests**: Load and stress testing
-- **Security Tests**: Vulnerability scanning and penetration testing
-- **Financial Tests**: Financial calculation accuracy and compliance testing
-- **Tax Calculation Tests**: Brazilian tax compliance testing
+- 70% unit tests (component and function testing)
+- 20% integration tests (API and service integration)
+- 10% E2E tests (complete user flows)
 
-#### Code Quality
+**Code Quality Gates**
 
-- **Code Reviews**: Mandatory peer review process
-- **Static Analysis**: Automated code quality checks
-- **Security Scanning**: Automated vulnerability detection
-- **Performance Profiling**: Automated performance analysis
-- **Compliance Checking**: Regulatory compliance validation
-- **Financial Review**: Financial logic and calculation validation
+- Mandatory peer review process
+- Automated linting and formatting checks
+- Security scanning with vulnerability detection
+- Performance profiling and optimization
+- Compliance validation (LGPD, ANVISA, professional councils)
 
 ### CI/CD Pipeline
 
-#### Continuous Integration
+**Continuous Integration**
 
-- **Automated Testing**: Run all test suites on every commit
-- **Code Quality**: Automated linting and formatting checks
-- **Security Scanning**: Automated vulnerability scanning
-- **Build Verification**: Ensure builds are reproducible
-- **Financial Validation**: Financial calculation validation
-- **Artifact Generation**: Build and publish artifacts
+- Automated testing on every commit
+- Code quality checks (OXLint, dprint)
+- Security scanning and vulnerability detection
+- Build verification with reproducible builds
 
-#### Continuous Deployment
+**Continuous Deployment**
 
-- **Staging Deployment**: Automated deployment to staging environment
-- **Production Deployment**: Manual approval for production deployments
-- **Rollback Capability**: Automated rollback on deployment failure
-- **Health Checks**: Post-deployment health verification
-- **Monitoring**: Deployment monitoring and alerting
-- **Financial Deployment**: Secure financial system deployment with validation
+- Automated staging deployment
+- Manual approval for production
+- Automated rollback on failure
+- Post-deployment health checks and monitoring
 
-## Future Roadmap
+**For coding standards**, see `docs/rules/coding-standards.md`.
 
-### Phase 4: Advanced AI Integration (Q1 2025)
+## Summary
 
-- **Advanced ML Models**: Custom-trained models for aesthetic procedures
-- **Computer Vision**: AI-powered treatment assessment and progress tracking
-- **Natural Language Processing**: Intelligent documentation and clinical notes
-- **Predictive Analytics**: Advanced risk assessment and outcome prediction
-- **Personalized Recommendations**: AI-powered treatment personalization
-- **Financial AI**: AI-powered financial forecasting and optimization
+NeonPro is a production-ready, mobile-first platform for Brazilian aesthetic clinics with:
 
-### Phase 5: Mobile Applications (Q2 2025)
+**Core Strengths**
 
-- **React Native Apps**: Cross-platform mobile applications
-- **Offline Capabilities**: Offline-first mobile experience
-- **Push Notifications**: Real-time mobile notifications
-- **Camera Integration**: Photo capture and analysis
-- **Biometric Authentication**: Secure mobile authentication
-- **Mobile Payments**: Mobile-first payment processing
+- Multi-professional collaboration (CFM, COREN, CFF, CNEP)
+- AI-powered automation and clinical decision support
+- Comprehensive Brazilian compliance (LGPD, ANVISA, tax regulations)
+- Complete financial management with tax compliance
+- Edge-optimized performance (<2s page loads, 99.9% uptime)
 
-### Phase 6: Enterprise Features (Q3 2025)
+**Architecture Grade**: A- (9.2/10)
+**Technology Stack**: React 19, TanStack Router/Query, Hono, tRPC v11, Supabase, TypeScript
+**Deployment**: Vercel (Edge + Node), Supabase (PostgreSQL + Real-time)
 
-- **Multi-Clinic Management**: Enterprise-scale clinic management
-- **Advanced Analytics**: Business intelligence and reporting
-- **API Ecosystem**: Comprehensive third-party integration
-- **White-Label Solutions**: Custom branding for enterprise clients
-- **Advanced Security**: Enterprise-grade security features
-- **Enterprise Financial**: Multi-entity financial management
+**For detailed information**, see:
 
-### Phase 7: International Expansion (Q4 2025)
-
-- **Localization**: Multi-language support
-- **Regulatory Compliance**: International regulatory compliance
-- **Currency Support**: Multi-currency payment processing
-- **Cultural Adaptation**: Localized user experience
-- **Global Infrastructure**: Worldwide deployment and support
-- **International Tax**: Multi-country tax compliance
-
-## Conclusion
-
-The NeonPro architecture represents a comprehensive, scalable, and secure platform for Brazilian aesthetic clinics. The system is designed to support multi-professional collaboration while maintaining strict compliance with Brazilian healthcare and financial regulations.
-
-The microservices architecture, combined with modern frontend technologies and robust security measures, provides a solid foundation for continued growth and innovation. The modular design allows for easy extension and adaptation to changing market needs and regulatory requirements.
-
-Key architectural strengths include:
-
-- **Multi-professional focus** with comprehensive coordination capabilities
-- **AI-powered features** for enhanced clinical decision support
-- **Compliance-first approach** with built-in regulatory compliance
-- **Financial excellence** with comprehensive Brazilian financial management
-- **Scalable architecture** supporting clinic growth and expansion
-- **Modern technology stack** ensuring long-term maintainability and performance
-
-The system is well-positioned to become the leading platform for aesthetic clinic management in Brazil, with potential for international expansion and continued innovation in healthcare technology.
-
-The comprehensive financial management system completes the core platform capabilities, providing clinics with a complete solution for managing all aspects of their aesthetic practice operations, from patient engagement and clinical care to financial management and regulatory compliance.
+- [Frontend Architecture](./frontend-architecture.md) - UI patterns and implementation
+- [Technology Stack](./tech-stack.md) - Technology decisions and rationale
+- [Source Tree](./source-tree.md) - Codebase organization
+- [Coding Standards](../rules/coding-standards.md) - Development guidelines

@@ -527,7 +527,7 @@ export const aiRouter = router({
                 .array(
                   z.object({
                     id: z.string(),
-                    _role: z.enum(['user', 'assistant', 'system']),
+                    _role: z.enum('user', 'assistant', 'system']),
                     content: z.string(),
                     usage: z
                       .object({
@@ -724,7 +724,7 @@ export const aiRouter = router({
       z.object({
         patientId: z.string().uuid(),
         clinicId: z.string().uuid(),
-        analysisType: z.enum([
+        analysisType: z.enum(
           'risk_assessment',
           'treatment_recommendation',
           'diagnostic_support',
@@ -753,14 +753,14 @@ export const aiRouter = router({
               title: z.string(),
               description: z.string(),
               confidence: z.number().min(0).max(1),
-              severity: z.enum(['low', 'medium', 'high', 'critical']),
+              severity: z.enum('low', 'medium', 'high', 'critical']),
               recommendations: z.array(z.string()),
             }),
           ),
           riskFactors: z.array(
             z.object({
               factor: z.string(),
-              impact: z.enum(['low', 'medium', 'high']),
+              impact: z.enum('low', 'medium', 'high']),
               description: z.string(),
             }),
           ),
@@ -768,7 +768,7 @@ export const aiRouter = router({
             z.object({
               category: z.string(),
               recommendation: z.string(),
-              priority: z.enum(['low', 'medium', 'high', 'urgent']),
+              priority: z.enum('low', 'medium', 'high', 'urgent']),
               reasoning: z.string(),
             }),
           ),
@@ -1031,7 +1031,7 @@ export const aiRouter = router({
             to: z.string().datetime(),
           })
           .optional(),
-        urgency: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+        urgency: z.enum('low', 'medium', 'high', 'urgent']).default('medium'),
         previousAppointments: z.boolean().default(true),
       }),
     )
@@ -1044,7 +1044,7 @@ export const aiRouter = router({
               appointmentType: z.string(),
               recommendedDate: z.string().datetime(),
               duration: z.number(),
-              priority: z.enum(['low', 'medium', 'high', 'urgent']),
+              priority: z.enum('low', 'medium', 'high', 'urgent']),
               reasoning: z.string(),
               professionalId: z.string().optional(),
               serviceId: z.string().optional(),
@@ -1064,7 +1064,7 @@ export const aiRouter = router({
             preferences: z.object({
               preferredTimes: z.array(z.string()),
               preferredDays: z.array(z.string()),
-              noShowRisk: z.enum(['low', 'medium', 'high']),
+              noShowRisk: z.enum('low', 'medium', 'high']),
             }),
           }),
         }),

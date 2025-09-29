@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { supabase } from '@neonpro/database'
 import { Hono } from 'hono'
 import { z } from 'zod'
@@ -138,7 +138,7 @@ app.post(
   '/query',
   chatRateLimit(),
   auditLogMiddleware(),
-  zValidator('json', ChatQuerySchema),
+  validator('json', ChatQuerySchema),
   async c => {
     const t0 = Date.now()
     const { question, sessionId } = c.req.valid('json')

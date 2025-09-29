@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
 
@@ -10,12 +10,12 @@ const ExplanationRequest = z
     messages: z
       .array(
         z.object({
-          _role: z.enum(['user', 'assistant', 'system']),
+          _role: z.enum('user', 'assistant', 'system']),
           content: z.string(),
         }),
       )
       .optional(),
-    audience: z.enum(['patient', 'admin', 'professional']).default('patient'),
+    audience: z.enum('patient', 'admin', 'professional']).default('patient'),
     locale: z.string().default('pt-BR'),
   })
   .refine(v => Boolean(v.text) || (v.messages && v.messages.length > 0), {
@@ -29,7 +29,7 @@ type ExplanationResponse = {
   citations?: Array<{ title: string; url: string }>
 }
 
-app.post('/summary', zValidator('json', ExplanationRequest), async c => {
+app.post('/summary', validator('json', ExplanationRequest), async c => {
   const body: ExplanationRequest = c.req.valid('json')
 
   // Minimal GREEN: echo-style summary with safe trimming and trace id

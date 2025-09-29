@@ -15,7 +15,7 @@ import {
 /**
  * Financial-Specific Agent Types
  */
-export const FinancialAgentTypeSchema = z.enum([
+export const FinancialAgentTypeSchema = z.enum(
   'billing', // Billing and invoicing operations
   'payment', // Payment processing and reconciliation
   'analytics', // Financial analytics and reporting
@@ -27,7 +27,7 @@ export type FinancialAgentType = z.infer<typeof FinancialAgentTypeSchema>
 /**
  * Financial Message Types - Extended AG-UI Protocol
  */
-export const FinancialMessageTypeSchema = z.enum([
+export const FinancialMessageTypeSchema = z.enum(
   // Core Operations
   'billing_request', // Request billing operations
   'payment_process', // Process payment transactions
@@ -64,9 +64,9 @@ export const FinancialContextSchema = z.object({
   patient_id: z.string().uuid().optional(),
   appointment_id: z.string().uuid().optional(),
   professional_id: z.string().uuid().optional(),
-  currency: z.enum(['BRL', 'USD', 'EUR']).default('BRL'),
-  tax_region: z.enum(['BR', 'US', 'EU']).default('BR'),
-  compliance_level: z.enum(['standard', 'enhanced', 'strict']).default('strict'),
+  currency: z.enum('BRL', 'USD', 'EUR']).default('BRL'),
+  tax_region: z.enum('BR', 'US', 'EU']).default('BR'),
+  compliance_level: z.enum('standard', 'enhanced', 'strict']).default('strict'),
 })
 export type FinancialContext = z.infer<typeof FinancialContextSchema>
 
@@ -87,11 +87,11 @@ export const CreateFinancialMessageSchema = z.object({
         type: z.string(),
         size: z.number(),
         url: z.string().url().optional(),
-        document_type: z.enum(['invoice', 'receipt', 'statement', 'contract', 'other']).optional(),
+        document_type: z.enum('invoice', 'receipt', 'statement', 'contract', 'other']).optional(),
       }),
     )
     .optional(),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  priority: z.enum('low', 'normal', 'high', 'urgent']).default('normal'),
   requires_approval: z.boolean().default(false),
 })
 
@@ -109,7 +109,7 @@ export const FinancialMessageResponseSchema = z.object({
       type: z.string(),
       size: z.number(),
       url: z.string().url().optional(),
-      document_type: z.enum(['invoice', 'receipt', 'statement', 'contract', 'other']).optional(),
+      document_type: z.enum('invoice', 'receipt', 'statement', 'contract', 'other']).optional(),
     }),
   ),
   processing_time: z.number(),
@@ -122,7 +122,7 @@ export const FinancialMessageResponseSchema = z.object({
  * Billing Operation Schemas
  */
 export const BillingOperationSchema = z.object({
-  operation_type: z.enum(['create', 'update', 'cancel', 'refund', 'dispute']),
+  operation_type: z.enum('create', 'update', 'cancel', 'refund', 'dispute']),
   patient_id: z.string().uuid(),
   appointment_id: z.string().uuid().optional(),
   professional_id: z.string().uuid(),
@@ -137,7 +137,7 @@ export const BillingOperationSchema = z.object({
   ),
   payment_methods: z.array(
     z.object({
-      method: z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment']),
+      method: z.enum('pix', 'credit_card', 'debit_card', 'cash', 'installment']),
       amount: z.number().min(0),
       installments: z.number().int().min(1).max(12).optional(),
       card_last_four: z.string().optional(),
@@ -146,7 +146,7 @@ export const BillingOperationSchema = z.object({
   discounts: z
     .array(
       z.object({
-        type: z.enum(['percentage', 'fixed', 'loyalty']),
+        type: z.enum('percentage', 'fixed', 'loyalty']),
         value: z.number(),
         reason: z.string(),
       }),
@@ -156,7 +156,7 @@ export const BillingOperationSchema = z.object({
     .array(
       z.object({
         name: z.string(),
-        type: z.enum(['percentage', 'fixed']),
+        type: z.enum('percentage', 'fixed']),
         rate: z.number(),
         amount: z.number(),
       }),
@@ -170,8 +170,8 @@ export const BillingResponseSchema = z.object({
   billing_id: z.string().uuid(),
   invoice_number: z.string(),
   total_amount: z.number().min(0),
-  status: z.enum(['draft', 'pending', 'paid', 'overdue', 'cancelled', 'refunded']),
-  payment_status: z.enum(['pending', 'partial', 'paid', 'failed', 'refunded']),
+  status: z.enum('draft', 'pending', 'paid', 'overdue', 'cancelled', 'refunded']),
+  payment_status: z.enum('pending', 'partial', 'paid', 'failed', 'refunded']),
   created_at: z.date(),
   due_date: z.date().nullable(),
   paid_at: z.date().nullable(),
@@ -186,9 +186,9 @@ export const BillingResponseSchema = z.object({
   ),
   payments: z.array(
     z.object({
-      method: z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment']),
+      method: z.enum('pix', 'credit_card', 'debit_card', 'cash', 'installment']),
       amount: z.number(),
-      status: z.enum(['pending', 'completed', 'failed']),
+      status: z.enum('pending', 'completed', 'failed']),
       transaction_id: z.string().optional(),
       paid_at: z.date().optional(),
     }),
@@ -202,9 +202,9 @@ export const BillingResponseSchema = z.object({
  */
 export const PaymentRequestSchema = z.object({
   billing_id: z.string().uuid(),
-  payment_method: z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment']),
+  payment_method: z.enum('pix', 'credit_card', 'debit_card', 'cash', 'installment']),
   amount: z.number().min(0),
-  currency: z.enum(['BRL', 'USD', 'EUR']).default('BRL'),
+  currency: z.enum('BRL', 'USD', 'EUR']).default('BRL'),
   card_token: z.string().optional(),
   installments: z.number().int().min(1).max(12).optional(),
   customer_ip: z.string().ip().optional(),
@@ -215,10 +215,10 @@ export const PaymentRequestSchema = z.object({
 export const PaymentResponseSchema = z.object({
   payment_id: z.string().uuid(),
   transaction_id: z.string(),
-  status: z.enum(['pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded']),
+  status: z.enum('pending', 'processing', 'completed', 'failed', 'cancelled', 'refunded']),
   amount: z.number(),
-  currency: z.enum(['BRL', 'USD', 'EUR']),
-  payment_method: z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment']),
+  currency: z.enum('BRL', 'USD', 'EUR']),
+  payment_method: z.enum('pix', 'credit_card', 'debit_card', 'cash', 'installment']),
   processing_time: z.number(),
   fraud_score: z.number().min(0).max(1).optional(),
   qr_code: z.string().optional(), // For PIX payments
@@ -244,7 +244,7 @@ export const AnalyticsQuerySchema = z.object({
     end: z.date(),
   }),
   metrics: z.array(
-    z.enum([
+    z.enum(
       'revenue',
       'profit',
       'expenses',
@@ -258,12 +258,12 @@ export const AnalyticsQuerySchema = z.object({
       'collection_rate',
     ]),
   ),
-  group_by: z.enum(['day', 'week', 'month', 'quarter', 'year']).default('month'),
+  group_by: z.enum('day', 'week', 'month', 'quarter', 'year']).default('month'),
   filters: z
     .object({
       professionals: z.array(z.string().uuid()).optional(),
       procedures: z.array(z.string()).optional(),
-      payment_methods: z.array(z.enum(['pix', 'credit_card', 'debit_card', 'cash', 'installment']))
+      payment_methods: z.array(z.enum('pix', 'credit_card', 'debit_card', 'cash', 'installment']))
         .optional(),
       patients: z.array(z.string().uuid()).optional(),
     })
@@ -288,7 +288,7 @@ export const AnalyticsResponseSchema = z.object({
  */
 export const FraudAlertSchema = z.object({
   alert_id: z.string().uuid(),
-  alert_type: z.enum([
+  alert_type: z.enum(
     'suspicious_pattern',
     'velocity_exceeded',
     'unusual_location',
@@ -296,23 +296,23 @@ export const FraudAlertSchema = z.object({
     'billing_irregularity',
     'duplicate_transaction',
   ]),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
+  severity: z.enum('low', 'medium', 'high', 'critical']),
   description: z.string(),
   affected_entities: z.array(
     z.object({
-      type: z.enum(['patient', 'professional', 'appointment', 'billing']),
+      type: z.enum('patient', 'professional', 'appointment', 'billing']),
       id: z.string().uuid(),
     }),
   ),
   risk_score: z.number().min(0).max(1),
-  recommended_action: z.enum(['review', 'block', 'investigate', 'monitor']),
+  recommended_action: z.enum('review', 'block', 'investigate', 'monitor']),
   created_at: z.date(),
-  status: z.enum(['open', 'investigating', 'resolved', 'false_positive']),
+  status: z.enum('open', 'investigating', 'resolved', 'false_positive']),
 })
 
 export const AuditTrailSchema = z.object({
   event_id: z.string().uuid(),
-  event_type: z.enum(['billing_created', 'payment_processed', 'fraud_alert', 'compliance_check']),
+  event_type: z.enum('billing_created', 'payment_processed', 'fraud_alert', 'compliance_check']),
   user_id: z.string().uuid(),
   action: z.string(),
   details: z.record(z.unknown()),
@@ -326,10 +326,10 @@ export const AuditTrailSchema = z.object({
  * LGPD Compliance Schemas
  */
 export const LGPDComplianceRequestSchema = z.object({
-  operation: z.enum(['access', 'delete', 'rectify', 'port', 'consent']),
+  operation: z.enum('access', 'delete', 'rectify', 'port', 'consent']),
   data_subject_id: z.string().uuid(),
   data_types: z.array(
-    z.enum([
+    z.enum(
       'personal',
       'financial',
       'medical',
@@ -338,14 +338,14 @@ export const LGPDComplianceRequestSchema = z.object({
       'billing',
     ]),
   ),
-  legal_basis: z.enum(['consent', 'contract', 'legal_obligation', 'vital_interests']),
+  legal_basis: z.enum('consent', 'contract', 'legal_obligation', 'vital_interests']),
   retention_period: z.number().optional(),
   purpose: z.string(),
 })
 
 export const LGPDComplianceResponseSchema = z.object({
   request_id: z.string().uuid(),
-  status: z.enum(['pending', 'processing', 'completed', 'rejected']),
+  status: z.enum('pending', 'processing', 'completed', 'rejected']),
   processed_data: z.record(z.unknown()).optional(),
   deleted_records: z.number().optional(),
   retention_scheduled: z.boolean().optional(),
@@ -360,7 +360,7 @@ export const CreateFinancialAgentSessionSchema = z.object({
   agent_type: z.literal('financial'),
   specialization: FinancialAgentTypeSchema,
   clinic_context: FinancialContextSchema,
-  capabilities: z.array(z.enum(['billing', 'analytics', 'fraud_detection', 'compliance'])),
+  capabilities: z.array(z.enum('billing', 'analytics', 'fraud_detection', 'compliance'])),
   initial_context: z.record(z.unknown()).optional(),
   metadata: z.record(z.unknown()).optional(),
 })
@@ -368,7 +368,7 @@ export const CreateFinancialAgentSessionSchema = z.object({
 export const FinancialAgentSessionResponseSchema = AgentSessionResponseSchema.extend({
   agent_type: z.literal('financial'),
   specialization: FinancialAgentTypeSchema,
-  capabilities: z.array(z.enum(['billing', 'analytics', 'fraud_detection', 'compliance'])),
+  capabilities: z.array(z.enum('billing', 'analytics', 'fraud_detection', 'compliance'])),
   clinic_context: FinancialContextSchema,
   performance_metrics: z.object({
     response_time: z.number(),
@@ -382,7 +382,7 @@ export const FinancialAgentSessionResponseSchema = AgentSessionResponseSchema.ex
  * Financial Action Schemas - AG-UI Protocol Actions
  */
 export const FinancialActionSchema = z.object({
-  type: z.enum([
+  type: z.enum(
     'process_payment',
     'generate_invoice',
     'run_analytics',
@@ -396,7 +396,7 @@ export const FinancialActionSchema = z.object({
   ]),
   payload: z.record(z.unknown()),
   context: FinancialContextSchema,
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).default('normal'),
+  priority: z.enum('low', 'normal', 'high', 'urgent']).default('normal'),
   requires_approval: z.boolean().default(false),
   approval_workflow: z
     .object({
@@ -439,7 +439,7 @@ export const FinancialOperationResponseSchema = z.object({
   data: z.object({
     operation_id: z.string().uuid(),
     operation_type: z.string(),
-    status: z.enum(['pending', 'processing', 'completed', 'failed']),
+    status: z.enum('pending', 'processing', 'completed', 'failed']),
     result: z.record(z.unknown()).optional(),
     processing_time: z.number(),
     compliance_verified: z.boolean(),
@@ -457,16 +457,16 @@ export const FinancialAnalyticsResponseSchema = z.object({
         z.object({
           metric: z.string(),
           predicted_value: z.number(),
-          confidence_interval: z.tuple([z.number(), z.number()]),
+          confidence_interval: z.tuple(z.number(), z.number()]),
           time_period: z.string(),
         }),
       )
       .optional(),
     insights: z.array(
       z.object({
-        type: z.enum(['trend', 'anomaly', 'opportunity', 'risk']),
+        type: z.enum('trend', 'anomaly', 'opportunity', 'risk']),
         description: z.string(),
-        impact: z.enum(['low', 'medium', 'high']),
+        impact: z.enum('low', 'medium', 'high']),
         actionable: z.boolean(),
       }),
     ),

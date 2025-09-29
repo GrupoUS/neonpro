@@ -20,7 +20,7 @@ import { protectedProcedure, router, telemedicineProcedure } from '../trpc'
 const CreateSessionSchema = z.object({
   sessionId: z.string().uuid(),
   participants: z.array(z.string().uuid()).min(1).max(10),
-  sessionType: z.enum([
+  sessionType: z.enum(
     'consultation',
     'emergency',
     'follow_up',
@@ -30,7 +30,7 @@ const CreateSessionSchema = z.object({
     .object({
       appointmentId: z.string().uuid().optional(),
       specialtyCode: z.string().optional(),
-      emergencyLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+      emergencyLevel: z.enum('low', 'medium', 'high', 'critical']).optional(),
       recordingConsent: z.boolean().default(false),
       lgpdConsentVerified: z.boolean().default(true),
     })
@@ -40,10 +40,10 @@ const CreateSessionSchema = z.object({
 const SendMessageSchema = z.object({
   sessionId: z.string().uuid(),
   senderId: z.string().uuid(),
-  senderRole: z.enum(['patient', 'doctor', 'nurse', 'technician']),
-  messageType: z.enum(['text', 'file', 'image', 'system', 'emergency']),
+  senderRole: z.enum('patient', 'doctor', 'nurse', 'technician']),
+  messageType: z.enum('text', 'file', 'image', 'system', 'emergency']),
   content: z.string().min(1).max(5000),
-  priority: z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
+  priority: z.enum('low', 'normal', 'high', 'critical']).default('normal'),
   requiresAcknowledgment: z.boolean().default(false),
   metadata: z.record(z.any()).optional(),
 })
@@ -51,8 +51,8 @@ const SendMessageSchema = z.object({
 const UpdatePresenceSchema = z.object({
   sessionId: z.string().uuid(),
   _userId: z.string().uuid(),
-  userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
-  status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
+  userRole: z.enum('patient', 'doctor', 'nurse', 'technician', 'admin']),
+  status: z.enum('online', 'away', 'busy', 'offline', 'in_consultation']),
   connectionQuality: z
     .object({
       latency: z.number().min(0).max(5000),
@@ -63,7 +63,7 @@ const UpdatePresenceSchema = z.object({
     .optional(),
   deviceInfo: z
     .object({
-      type: z.enum(['desktop', 'mobile', 'tablet']),
+      type: z.enum('desktop', 'mobile', 'tablet']),
       browser: z.string().optional(),
       os: z.string().optional(),
       capabilities: z.object({
@@ -528,13 +528,13 @@ export const realtimeTelemedicineRouter = router({
     .input(
       z.object({
         sessionId: z.string().uuid(),
-        alertType: z.enum([
+        alertType: z.enum(
           'medical_emergency',
           'technical_failure',
           'security_breach',
           'connectivity_loss',
         ]),
-        severity: z.enum(['low', 'medium', 'high', 'critical']),
+        severity: z.enum('low', 'medium', 'high', 'critical']),
         description: z.string().max(500),
         requiredActions: z.array(z.string()).optional(),
       }),

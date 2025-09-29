@@ -14,7 +14,7 @@ const ProductInput = z.object({
   sku: z.string().optional(),
   barcode: z.string().optional(),
   categoryId: z.string().uuid('Invalid category ID'),
-  unitOfMeasure: z.enum(['un', 'ml', 'g', 'mg', 'kit', 'cx', 'frasco']),
+  unitOfMeasure: z.enum('un', 'ml', 'g', 'mg', 'kit', 'cx', 'frasco']),
   requiresRefrigeration: z.boolean().default(false),
   isControlledSubstance: z.boolean().default(false),
   minStockLevel: z.number().min(0, 'Minimum stock level must be non-negative'),
@@ -334,7 +334,7 @@ export const inventoryManagementRouter = router({
     input: z.object({
       productId: z.string().uuid('Invalid product ID'),
       quantityChange: z.number().nonzero('Quantity change cannot be zero'),
-      transactionType: z.enum(['purchase', 'sale', 'adjustment', 'waste']),
+      transactionType: z.enum('purchase', 'sale', 'adjustment', 'waste']),
       referenceId: z.string().uuid().optional(),
     }),
     output: z.object({

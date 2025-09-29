@@ -63,7 +63,7 @@ const UpdatePatientSchema = z.object({
   email: z.string().email('Email inválido').optional(),
   phone: z.string().refine(validatePhone, 'Telefone inválido').optional(),
   birthDate: z.string().datetime().optional(),
-  gender: z.enum(['male', 'female', 'other']).optional(),
+  gender: z.enum('male', 'female', 'other']).optional(),
   address: AddressUpdateSchema,
   healthcareInfo: HealthcareInfoUpdateSchema,
   lgpdConsent: LGPDConsentUpdateSchema,

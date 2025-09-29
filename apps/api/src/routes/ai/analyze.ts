@@ -4,7 +4,7 @@
  * Integration with AIChatService for multi-modal analysis
  */
 
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Context, Hono, Next } from 'hono'
 import { AIChatService } from '../../services/ai-chat-service.js'
 import { ComprehensiveAuditService } from '../../services/audit-service.js'
@@ -41,7 +41,7 @@ const app = new Hono()
 
 // Request validation schema
 const analyzeRequestSchema = z.object({
-  analysisType: z.enum([
+  analysisType: z.enum(
     'structured_data',
     'medical_image',
     'patient_feedback',
@@ -99,7 +99,7 @@ app.post(
   '/',
   mockAuthMiddleware,
   mockLGPDMiddleware,
-  zValidator('json', analyzeRequestSchema),
+  validator('json', analyzeRequestSchema),
   async c => {
     const startTime = Date.now()
     const user = c.get('user')

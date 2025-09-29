@@ -8,7 +8,7 @@ import { AIChatService } from '@/services/ai-chat-service'
 import { ComprehensiveAuditService } from '@/services/audit-service'
 import { LGPDService } from '@/services/lgpd-service'
 import { PatientService } from '@/services/patient-service'
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Context, Hono, Next } from 'hono'
 
 // Type definitions
@@ -355,7 +355,7 @@ app.post(
   '/',
   mockAuthMiddleware,
   mockLGPDMiddleware,
-  zValidator('json', v1AnalyzeRequestSchema),
+  validator('json', v1AnalyzeRequestSchema),
   async c => {
     const startTime = Date.now()
     const user = c.get('user')

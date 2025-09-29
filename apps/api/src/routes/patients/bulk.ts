@@ -144,13 +144,13 @@ const LGPDService = {
 
 // Validation schemas
 const bulkActionSchema = z.object({
-  action: z.enum(['update', 'delete', 'export']),
+  action: z.enum('update', 'delete', 'export']),
   patientIds: z
     .array(z.string().uuid())
     .min(1, 'Pelo menos um paciente deve ser especificado'),
   updateData: z
     .object({
-      status: z.enum(['active', 'inactive', 'archived']).optional(),
+      status: z.enum('active', 'inactive', 'archived']).optional(),
       notes: z.string().optional(),
       healthcareInfo: z
         .object({
@@ -168,7 +168,7 @@ const bulkActionSchema = z.object({
         .optional()
         .default('soft_delete'),
       reason: z.string().optional(),
-      format: z.enum(['csv', 'pdf', 'json']).optional().default('csv'),
+      format: z.enum('csv', 'pdf', 'json']).optional().default('csv'),
       fields: z.array(z.string()).optional(),
       includeHeaders: z.boolean().optional().default(true),
       lgpdCompliant: z.boolean().optional().default(true),

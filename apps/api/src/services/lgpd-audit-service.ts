@@ -3,7 +3,7 @@ import { type LGPDOperationResult } from '../types/lgpd.js'
 import { createHealthcareError } from './createHealthcareError.js'
 
 // LGPD Audit Trail Types
-export const AuditAction = z.enum([
+export const AuditAction = z.enum(
   'DATA_ACCESS',
   'DATA_CREATION',
   'DATA_UPDATE',
@@ -22,9 +22,9 @@ export const AuditAction = z.enum([
   'SENSITIVE_DATA_PROCESSING',
 ])
 
-export const AuditSeverity = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'])
+export const AuditSeverity = z.enum('LOW', 'MEDIUM', 'HIGH', 'CRITICAL'])
 
-export const DataCategory = z.enum([
+export const DataCategory = z.enum(
   'PERSONAL',
   'SENSITIVE',
   'HEALTH',

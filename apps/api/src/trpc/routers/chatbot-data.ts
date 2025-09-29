@@ -18,8 +18,8 @@ import { protectedProcedure, router } from '../trpc'
 const NotificationQuerySchema = z.object({
   limit: z.number().optional().default(50),
   offset: z.number().optional().default(0),
-  status: z.enum(['scheduled', 'sent', 'failed', 'cancelled']).optional(),
-  type: z.enum([
+  status: z.enum('scheduled', 'sent', 'failed', 'cancelled']).optional(),
+  type: z.enum(
     'reminder_24h',
     'reminder_1h',
     'confirmation',
@@ -31,7 +31,7 @@ const NotificationQuerySchema = z.object({
 })
 
 const ScheduleNotificationSchema = z.object({
-  notificationType: z.enum([
+  notificationType: z.enum(
     'reminder_24h',
     'reminder_1h',
     'confirmation',
@@ -65,7 +65,7 @@ const CreateServiceCategorySchema = z.object({
 // Appointment Template Schemas
 const AppointmentTemplateQuerySchema = z.object({
   clinicId: z.string().optional(),
-  category: z.enum([
+  category: z.enum(
     'consultation',
     'facial',
     'body',
@@ -82,7 +82,7 @@ const AppointmentTemplateQuerySchema = z.object({
 const CreateAppointmentTemplateSchema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().optional(),
-  category: z.enum([
+  category: z.enum(
     'consultation',
     'facial',
     'body',
@@ -112,12 +112,12 @@ const ServiceTemplateQuerySchema = z.object({
 const CreateServiceTemplateSchema = z.object({
   name: z.string().min(1).max(255),
   description: z.string().optional(),
-  templateType: z.enum(['package', 'procedure', 'consultation', 'followup']).default('package'),
+  templateType: z.enum('package', 'procedure', 'consultation', 'followup']).default('package'),
   categoryId: z.string().optional(),
   clinicId: z.string(),
   defaultDurationMinutes: z.number().int().min(15).max(480).default(60),
   defaultPrice: z.number().min(0).default(0),
-  priceType: z.enum(['fixed', 'calculated', 'custom']).default('fixed'),
+  priceType: z.enum('fixed', 'calculated', 'custom']).default('fixed'),
   isFeatured: z.boolean().optional().default(false),
   items: z.array(z.object({
     serviceId: z.string(),
@@ -136,14 +136,14 @@ const ProfessionalServiceQuerySchema = z.object({
   clinicId: z.string().optional(),
   isActive: z.boolean().optional().default(true),
   isPrimary: z.boolean().optional(),
-  proficiencyLevel: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+  proficiencyLevel: z.enum('beginner', 'intermediate', 'advanced', 'expert']).optional(),
 })
 
 const CreateProfessionalServiceSchema = z.object({
   professionalId: z.string(),
   serviceId: z.string(),
   isPrimary: z.boolean().optional().default(false),
-  proficiencyLevel: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).default(
+  proficiencyLevel: z.enum('beginner', 'intermediate', 'advanced', 'expert']).default(
     'intermediate',
   ),
   hourlyRate: z.number().min(0).optional(),
@@ -155,7 +155,7 @@ const ChatbotContextSchema = z.object({
   sessionId: z.string(),
   patientId: z.string().optional(),
   clinicId: z.string(),
-  intent: z.enum(['scheduling', 'information', 'billing', 'support']),
+  intent: z.enum('scheduling', 'information', 'billing', 'support']),
   language: z.string().default('pt-BR'),
 })
 
@@ -630,7 +630,7 @@ export const chatbotDataRouter = router({
     .input(z.object({
       query: z.string().min(1),
       clinicId: z.string(),
-      types: z.array(z.enum(['services', 'professionals', 'templates', 'categories'])).optional(),
+      types: z.array(z.enum('services', 'professionals', 'templates', 'categories'])).optional(),
       limit: z.number().min(1).max(50).default(20),
     }))
     .query(async ({ ctx, input }) => {

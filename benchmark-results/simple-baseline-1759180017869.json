@@ -1,0 +1,42 @@
+{
+  "timestamp": "2025-09-29T21:06:48.869Z",
+  "system": {
+    "platform": "linux",
+    "arch": "x64",
+    "nodeVersion": "v22.19.0",
+    "cpus": 16,
+    "totalMemory": "53GB"
+  },
+  "measurements": {
+    "install": {
+      "error": "All runs failed"
+    },
+    "databaseBuild": {
+      "average": 3.0247935,
+      "min": 2.787601,
+      "max": 3.261986,
+      "runs": 2
+    },
+    "typesBuild": {
+      "average": 2.8834655,
+      "min": 2.672937,
+      "max": 3.093994,
+      "runs": 2
+    },
+    "apiTypeCheck": {
+      "average": 2.7531280000000002,
+      "min": 2.694148,
+      "max": 2.812108,
+      "runs": 2
+    },
+    "webTypeCheck": {
+      "average": 2.8437725,
+      "min": 2.669325,
+      "max": 3.01822,
+      "runs": 2
+    },
+    "diskUsage": {
+      "nodeModules": "1.6G"
+    }
+  }
+}

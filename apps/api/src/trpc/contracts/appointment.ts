@@ -18,8 +18,8 @@ export const CreateAppointmentRequestSchema = z.object({
   clinicId: z.string(),
   scheduledDate: z.string(), // ISO string
   duration: z.number().min(15).max(240), // minutes
-  type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
-  priority: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
+  type: z.enum('consultation', 'procedure', 'follow_up', 'emergency']),
+  priority: z.enum('low', 'medium', 'high', 'emergency']).default('medium'),
   notes: z.string().optional(),
   reason: z.string().optional(),
   roomId: z.string().optional(),
@@ -34,9 +34,9 @@ export const UpdateAppointmentRequestSchema = z.object({
   professionalId: z.string().optional(),
   scheduledDate: z.string().optional(),
   duration: z.number().min(15).max(240).optional(),
-  type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']).optional(),
-  priority: z.enum(['low', 'medium', 'high', 'emergency']).optional(),
-  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
+  type: z.enum('consultation', 'procedure', 'follow_up', 'emergency']).optional(),
+  priority: z.enum('low', 'medium', 'high', 'emergency']).optional(),
+  status: z.enum('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
     .optional(),
   notes: z.string().optional(),
   roomId: z.string().optional(),
@@ -48,15 +48,15 @@ export const UpdateAppointmentRequestSchema = z.object({
 export const PaginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(20),
-  sortBy: z.enum(['scheduledDate', 'createdAt', 'priority', 'status']).default('scheduledDate'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  sortBy: z.enum('scheduledDate', 'createdAt', 'priority', 'status']).default('scheduledDate'),
+  sortOrder: z.enum('asc', 'desc']).default('asc'),
   search: z.string().optional(),
   filters: z.object({
     status: z.array(
-      z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
+      z.enum('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
     ).optional(),
-    type: z.array(z.enum(['consultation', 'procedure', 'follow_up', 'emergency'])).optional(),
-    priority: z.array(z.enum(['low', 'medium', 'high', 'emergency'])).optional(),
+    type: z.array(z.enum('consultation', 'procedure', 'follow_up', 'emergency'])).optional(),
+    priority: z.array(z.enum('low', 'medium', 'high', 'emergency'])).optional(),
     patientId: z.string().optional(),
     professionalId: z.string().optional(),
     clinicId: z.string().optional(),
@@ -73,9 +73,9 @@ export const AppointmentResponseSchema = z.object({
   startTime: z.string(),
   endTime: z.string(),
   duration: z.number(),
-  type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
-  priority: z.enum(['low', 'medium', 'high', 'emergency']),
-  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
+  type: z.enum('consultation', 'procedure', 'follow_up', 'emergency']),
+  priority: z.enum('low', 'medium', 'high', 'emergency']),
+  status: z.enum('scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
   notes: z.string().nullable(),
   roomId: z.string().nullable(),
   cancellationReason: z.string().nullable(),
@@ -391,7 +391,7 @@ export const appointmentRouter = router({
             'no_show',
           ])
           .optional(),
-        priority: z.enum(['routine', 'urgent', 'emergency']).optional(),
+        priority: z.enum('routine', 'urgent', 'emergency']).optional(),
         dateFrom: z.string().datetime().optional(),
         dateTo: z.string().datetime().optional(),
         treatmentType: z.string().optional(),
@@ -399,7 +399,7 @@ export const appointmentRouter = router({
         sortBy: z
           .enum(['scheduledDate', 'createdAt', 'noShowRisk', 'priority'])
           .default('scheduledDate'),
-        sortOrder: z.enum(['asc', 'desc']).default('asc'),
+        sortOrder: z.enum('asc', 'desc']).default('asc'),
       }),
     )
     .output(AppointmentsListResponseSchema)

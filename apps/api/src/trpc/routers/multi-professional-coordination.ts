@@ -10,7 +10,7 @@ const ProfessionalTeamInputSchema = z.object({
     'Nome não pode exceder 100 caracteres',
   ),
   description: z.string().optional(),
-  teamType: z.enum(['multidisciplinary', 'specialized', 'consultation', 'emergency'], {
+  teamType: z.enum('multidisciplinary', 'specialized', 'consultation', 'emergency'], {
     errorMap: () => ({ message: 'Tipo de equipe inválido' }),
   }),
 })
@@ -18,7 +18,7 @@ const ProfessionalTeamInputSchema = z.object({
 const TeamMemberInputSchema = z.object({
   teamId: z.string().uuid('ID da equipe inválido'),
   professionalId: z.string().uuid('ID do profissional inválido'),
-  role: z.enum(['leader', 'coordinator', 'member', 'consultant', 'supervisor'], {
+  role: z.enum('leader', 'coordinator', 'member', 'consultant', 'supervisor'], {
     errorMap: () => ({ message: 'Função inválida' }),
   }),
   permissions: z.record(z.any()).optional(),
@@ -37,7 +37,7 @@ const ProfessionalReferralInputSchema = z.object({
   ),
   reason: z.string().min(1, 'Motivo do encaminhamento é obrigatório'),
   clinicalNotes: z.string().optional(),
-  urgencyLevel: z.enum(['low', 'medium', 'high', 'emergency'], {
+  urgencyLevel: z.enum('low', 'medium', 'high', 'emergency'], {
     errorMap: () => ({ message: 'Nível de urgência inválido' }),
   }),
   responseDeadline: z.date().optional(),
@@ -46,7 +46,7 @@ const ProfessionalReferralInputSchema = z.object({
 const CollaborativeSessionInputSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
   teamId: z.string().uuid('ID da equipe inválido'),
-  sessionType: z.enum(['planning', 'treatment', 'assessment', 'follow_up', 'emergency'], {
+  sessionType: z.enum('planning', 'treatment', 'assessment', 'follow_up', 'emergency'], {
     errorMap: () => ({ message: 'Tipo de sessão inválido' }),
   }),
   title: z.string().min(1, 'Título da sessão é obrigatório').max(
@@ -64,7 +64,7 @@ const CollaborativeSessionInputSchema = z.object({
 const SessionParticipantInputSchema = z.object({
   sessionId: z.string().uuid('ID da sessão inválido'),
   professionalId: z.string().uuid('ID do profissional inválido'),
-  role: z.enum(['primary', 'secondary', 'observer', 'consultant', 'supervisor'], {
+  role: z.enum('primary', 'secondary', 'observer', 'consultant', 'supervisor'], {
     errorMap: () => ({ message: 'Função do participante inválida' }),
   }),
   responsibilities: z.array(z.string()).optional(),
@@ -79,7 +79,7 @@ const CoordinationThreadInputSchema = z.object({
     200,
     'Assunto não pode exceder 200 caracteres',
   ),
-  contextType: z.enum([
+  contextType: z.enum(
     'patient_care',
     'treatment_planning',
     'consultation',
@@ -88,12 +88,12 @@ const CoordinationThreadInputSchema = z.object({
   ], {
     errorMap: () => ({ message: 'Tipo de contexto inválido' }),
   }),
-  priority: z.enum(['low', 'normal', 'high', 'urgent']).optional(),
+  priority: z.enum('low', 'normal', 'high', 'urgent']).optional(),
 })
 
 const CoordinationMessageInputSchema = z.object({
   threadId: z.string().uuid('ID do tópico inválido'),
-  messageType: z.enum([
+  messageType: z.enum(
     'text',
     'clinical_note',
     'image',
@@ -112,12 +112,12 @@ const CoordinationMessageInputSchema = z.object({
 const ProfessionalSupervisionInputSchema = z.object({
   supervisorId: z.string().uuid('ID do supervisor inválido'),
   superviseeId: z.string().uuid('ID do supervisionado inválido'),
-  supervisionType: z.enum(['clinical', 'administrative', 'mentorship', 'training'], {
+  supervisionType: z.enum('clinical', 'administrative', 'mentorship', 'training'], {
     errorMap: () => ({ message: 'Tipo de supervisão inválido' }),
   }),
   scope: z.string().min(1, 'Escopo da supervisão é obrigatório'),
   requirements: z.array(z.string()).optional(),
-  frequency: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'as_needed'], {
+  frequency: z.enum('daily', 'weekly', 'monthly', 'quarterly', 'as_needed'], {
     errorMap: () => ({ message: 'Frequência inválida' }),
   }),
   maxAutonomyLevel: z.number().int().min(1).max(5).optional(),
@@ -130,7 +130,7 @@ const ScopeValidationInputSchema = z.object({
   procedureId: z.string().uuid().optional(),
   medicationId: z.string().uuid().optional(),
   isAuthorized: z.boolean(),
-  authorizationLevel: z.enum(['independent', 'supervised', 'prohibited']).optional(),
+  authorizationLevel: z.enum('independent', 'supervised', 'prohibited']).optional(),
   conditions: z.array(z.string()).optional(),
   supervisionRequirements: z.string().optional(),
   validFrom: z.date('Data de validade inicial inválida'),
@@ -145,7 +145,7 @@ const CoordinationProtocolInputSchema = z.object({
     'Nome não pode exceder 100 caracteres',
   ),
   description: z.string().optional(),
-  protocolType: z.enum([
+  protocolType: z.enum(
     'emergency',
     'consultation',
     'referral',
@@ -163,7 +163,7 @@ const CoordinationProtocolInputSchema = z.object({
 
 const ReferralResponseSchema = z.object({
   referralId: z.string().uuid(),
-  response: z.enum(['accept', 'decline']),
+  response: z.enum('accept', 'decline']),
   responseNotes: z.string().optional(),
 })
 
@@ -463,7 +463,7 @@ export const multiProfessionalCoordinationRouter = router({
   getReferrals: protectedProcedure
     .input(z.object({
       professionalId: z.string().uuid('ID do profissional inválido'),
-      type: z.enum(['sent', 'received', 'all']).default('all'),
+      type: z.enum('sent', 'received', 'all']).default('all'),
     }))
     .query(async ({ input }) => {
       try {
@@ -725,7 +725,7 @@ export const multiProfessionalCoordinationRouter = router({
   getSupervisionRelationships: protectedProcedure
     .input(z.object({
       professionalId: z.string().uuid('ID do profissional inválido'),
-      type: z.enum(['supervisor', 'supervisee', 'all']).default('all'),
+      type: z.enum('supervisor', 'supervisee', 'all']).default('all'),
     }))
     .query(async ({ input }) => {
       try {
@@ -945,7 +945,7 @@ export const multiProfessionalCoordinationRouter = router({
     .input(z.object({
       patientId: z.string().uuid('ID do paciente inválido'),
       treatmentPlanId: z.string().uuid('ID do plano de tratamento inválido'),
-      sessionType: z.enum(['planning', 'treatment', 'assessment', 'follow_up', 'emergency'])
+      sessionType: z.enum('planning', 'treatment', 'assessment', 'follow_up', 'emergency'])
         .default('planning'),
     }))
     .query(async ({ input }) => {

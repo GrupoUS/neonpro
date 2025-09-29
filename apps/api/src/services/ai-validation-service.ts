@@ -41,7 +41,7 @@ const AppointmentQuerySchema = z.object({
     start: z.date(),
     end: z.date(),
   })).optional().default([]),
-  status: z.array(z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']))
+  status: z.array(z.enum('scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']))
     .optional(),
   type: z.array(z.string()).optional(),
   providerIds: z.array(z.string()).optional().default([]),
@@ -59,7 +59,7 @@ const FinancialQuerySchema = z.object({
     start: z.date(),
     end: z.date(),
   })).optional().default([]),
-  transactionTypes: z.array(z.enum(['payment', 'refund', 'adjustment', 'credit'])).optional(),
+  transactionTypes: z.array(z.enum('payment', 'refund', 'adjustment', 'credit'])).optional(),
   minAmount: z.number().positive().optional(),
   maxAmount: z.number().positive().optional(),
   clientIds: z.array(z.string()).optional().default([]),
@@ -75,7 +75,7 @@ const GeneralQuerySchema = z.object({
   query: z.string().min(1).max(5000),
   context: z.string().optional(),
   includePII: z.boolean().optional().default(false),
-  dataTypes: z.array(z.enum(['client', 'appointment', 'financial', 'medical'])).optional(),
+  dataTypes: z.array(z.enum('client', 'appointment', 'financial', 'medical'])).optional(),
   limit: z.number().int().min(1).max(100).optional().default(10),
 })
 

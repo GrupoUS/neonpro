@@ -149,11 +149,11 @@ const detectionConfigSchema = z.object({
   enableStatisticalAnalysis: z.boolean().default(true),
   enableMLDetection: z.boolean().default(true),
   enableRuleBasedDetection: z.boolean().default(true),
-  sensitivity: z.enum(['low', 'medium', 'high']).default('medium'),
+  sensitivity: z.enum('low', 'medium', 'high']).default('medium'),
   autoResolutionThreshold: z.number().min(0).max(1).default(0.95),
   escalationRules: z.array(z.object({
     condition: z.string(),
-    action: z.enum(['alert', 'block', 'review']),
+    action: z.enum('alert', 'block', 'review']),
     recipients: z.array(z.string()),
   })).default([]),
   notificationSettings: z.object({
@@ -185,7 +185,7 @@ const statisticalConfigSchema = z.object({
  * ML Detection Configuration
  */
 const mlConfigSchema = z.object({
-  modelType: z.enum(['isolation_forest', 'one_class_svm', 'autoencoder', 'lstm_autoencoder']),
+  modelType: z.enum('isolation_forest', 'one_class_svm', 'autoencoder', 'lstm_autoencoder']),
   contaminationRate: z.number().min(0).max(1).default(0.1),
   featureSelection: z.array(z.string()).default([
     'amount',
@@ -220,8 +220,8 @@ const ruleConfigSchema = z.object({
     id: z.string(),
     name: z.string(),
     condition: z.string(),
-    severity: z.enum(['low', 'medium', 'high', 'critical']),
-    action: z.enum(['alert', 'block', 'review']),
+    severity: z.enum('low', 'medium', 'high', 'critical']),
+    action: z.enum('alert', 'block', 'review']),
   })).default([]),
 })
 

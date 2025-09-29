@@ -14,7 +14,7 @@ export const SecurityPolicySchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  type: z.enum([
+  type: z.enum(
     'authentication',
     'authorization',
     'data_protection',
@@ -26,7 +26,7 @@ export const SecurityPolicySchema = z.object({
     z.object({
       id: z.string(),
       condition: z.string(),
-      action: z.enum(['allow', 'deny', 'require_mfa', 'audit', 'encrypt']),
+      action: z.enum('allow', 'deny', 'require_mfa', 'audit', 'encrypt']),
       parameters: z.record(z.unknown()).optional(),
     }),
   ),

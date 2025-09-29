@@ -5,7 +5,7 @@
  * tax compliance, SUS integration, and health plan support.
  */
 
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 import { auditLog } from '../../middleware/audit-log'
 import { requireAuth } from '../../middleware/authn.js'
@@ -72,15 +72,15 @@ const searchInvoicesSchema = z.object({
   page: z.string().transform(Number).default('1'),
   limit: z.string().transform(Number).default('20'),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).default('desc'),
+  sortOrder: z.enum('asc', 'desc']).default('desc'),
 })
 
 const financialReportSchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   clinicId: z.string().uuid(),
-  reportType: z.enum(['revenue', 'receivables', 'taxes', 'insurance']),
-  groupBy: z.enum(['day', 'week', 'month']).default('month'),
+  reportType: z.enum('revenue', 'receivables', 'taxes', 'insurance']),
+  groupBy: z.enum('day', 'week', 'month']).default('month'),
 })
 
 /**
@@ -89,7 +89,7 @@ const financialReportSchema = z.object({
  */
 billing.post(
   '/invoices',
-  zValidator('json', createInvoiceSchema),
+  validator('json', createInvoiceSchema),
   async c => {
     try {
       const invoiceData = c.req.valid('json')
@@ -151,7 +151,7 @@ billing.get('/invoices/:id', async c => {
  */
 billing.get(
   '/invoices',
-  zValidator('query', searchInvoicesSchema),
+  validator('query', searchInvoicesSchema),
   async c => {
     try {
       const searchParams = c.req.valid('query')
@@ -186,7 +186,7 @@ billing.get(
  */
 billing.put(
   '/invoices/:id',
-  zValidator('json', updateInvoiceSchema),
+  validator('json', updateInvoiceSchema),
   async c => {
     try {
       const invoiceId = c.req.param('id')
@@ -263,7 +263,7 @@ billing.delete('/invoices/:id', async c => {
  */
 billing.post(
   '/invoices/:id/payments',
-  zValidator('json', processPaymentSchema),
+  validator('json', processPaymentSchema),
   async c => {
     try {
       const invoiceId = c.req.param('id')
@@ -337,7 +337,7 @@ billing.get('/invoices/:id/payments', async c => {
  */
 billing.get(
   '/reports/financial',
-  zValidator('query', financialReportSchema),
+  validator('query', financialReportSchema),
   async c => {
     try {
       const reportParams = c.req.valid('query')

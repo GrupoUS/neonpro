@@ -4,7 +4,7 @@
  */
 
 import { badRequest, created, notFound, ok, serverError } from '@/utils/responses'
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { BaseService, prisma } from '@neonpro/database'
 import { Hono } from 'hono'
 import type { Context } from 'hono'
@@ -54,7 +54,7 @@ const PatientQuerySchema = z.object({
     .optional()
     .transform(val => (val ? Math.min(parseInt(val) || 20, 100) : 20)),
   search: z.string().optional(),
-  status: z.enum(['active', 'inactive', 'all']).optional().default('active'),
+  status: z.enum('active', 'inactive', 'all']).optional().default('active'),
 })
 
 class PatientService extends BaseService {
@@ -335,7 +335,7 @@ app.get(
     cacheControl: 'private, max-age=300', // 5 minutes cache
   }),
   etag(),
-  zValidator('query', PatientQuerySchema),
+  validator('query', PatientQuerySchema),
   validateClinicAccess,
   async c => {
     const query = c.req.valid('query')
@@ -407,7 +407,7 @@ app.get(
 app.post(
   '/patients',
   requireAuth,
-  zValidator('json', PatientCreateSchema),
+  validator('json', PatientCreateSchema),
   validateClinicAccess,
   async c => {
     const _data = c.req.valid('json')

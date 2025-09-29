@@ -190,7 +190,7 @@ export const ConsentWithdrawalRecordSchema = z.object({
   id: z.string(),
   patientId: z.string(),
   withdrawalDate: z.date(),
-  withdrawalMethod: z.enum(['online', 'written', 'verbal', 'email', 'phone']),
+  withdrawalMethod: z.enum('online', 'written', 'verbal', 'email', 'phone']),
   withdrawalReason: z.string().optional(),
   affectedDataCategories: z.array(z.nativeEnum(DATA_CATEGORIES)),
   retentionExceptions: z.array(

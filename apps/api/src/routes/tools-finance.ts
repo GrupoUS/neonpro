@@ -1,4 +1,4 @@
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 import { z } from 'zod'
 const app = new Hono()
@@ -25,7 +25,7 @@ type OverdueResponse = {
   }
 }
 
-app.post('/overdue', zValidator('json', OverdueRequest), c => {
+app.post('/overdue', validator('json', OverdueRequest), c => {
   const { clinicId: _clinicId } = c.req.valid('json')
   // Minimal GREEN with static demo payload (clinicId echoed for future filtering)
   const items: OverdueInvoice[] = [

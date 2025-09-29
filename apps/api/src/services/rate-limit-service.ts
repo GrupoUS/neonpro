@@ -10,7 +10,7 @@ export const RateLimitRuleSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255),
   endpoint: z.string().regex(/^\/.*$/), // Must start with /
-  method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD']),
+  method: z.enum('GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS', 'HEAD']),
   windowMs: z.number().int().min(1000).max(3600000), // 1 second to 1 hour
   maxRequests: z.number().int().min(1).max(10000),
   skipSuccessfulRequests: z.boolean().default(false),

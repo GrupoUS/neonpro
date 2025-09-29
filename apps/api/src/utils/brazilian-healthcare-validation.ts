@@ -2,6 +2,7 @@
  * Brazilian Healthcare Validation Utilities
  * Validates healthcare-specific data according to Brazilian regulations
  */
+import * as z from 'zod'
 
 // CPF validation
 export const validateCPF = (cpf: string): boolean => {
@@ -206,8 +207,8 @@ export const BrazilianHealthcareSchemas = {
       .min(0, 'Valor não pode ser negativo')
       .max(100000, 'Valor máximo permitido: R$ 100.000'),
     currency: z.literal('BRL'),
-    status: z.enum(['pending', 'paid', 'overdue', 'cancelled', 'refunded']),
-    payment_method: z.enum([
+    status: z.enum('pending', 'paid', 'overdue', 'cancelled', 'refunded']),
+    payment_method: z.enum(
       'cash',
       'credit_card',
       'debit_card',

@@ -49,7 +49,7 @@ const PermissionContextSchema = z.object({
   _userId: z.string().min(1, 'User ID is required').max(255),
   sessionId: z.string().max(255).optional(),
   patientId: z.string().max(255).optional(),
-  action: z.enum(['read', 'write', 'delete', 'admin'], {
+  action: z.enum('read', 'write', 'delete', 'admin'], {
     errorMap: () => ({ message: 'Invalid action type' }),
   }),
   resource: z.enum(

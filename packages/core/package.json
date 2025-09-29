@@ -7,7 +7,25 @@
   "scripts": {
     "build": "tsc",
     "test": "vitest",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "dev:bun": "vite dev --force",
+    "build:bun": "tsc --build && vite build",
+    "build:analyze": "vite build --mode analyze",
+    "test:bun": "vitest run --reporter=dot",
+    "test:watch:bun": "vitest watch --reporter=dot",
+    "type-check:bun": "tsc --noEmit",
+    "clean:bun": "rm -rf dist node_modules/.cache",
+    "format:bun": "biome format . --write",
+    "lint:bun": "oxlint . --fix",
+    "perf:test": "vitest run --reporter=verbose --isolate",
+    "setup:test": "bun install && bun run build",
+    "test:unit:bun": "vitest run --reporter=verbose",
+    "test:integration:bun": "vitest run --config vitest.integration.config.ts",
+    "test:e2e:bun": "playwright test --reporter=list",
+    "bench:performance": "bun run src/benchmarks/",
+    "validate:types": "tsc --noEmit --strict",
+    "generate:schemas": "bun run src/generate-schemas.ts",
+    "docs:generate": "typedoc src/index.ts"
   },
   "dependencies": {
     "@neonpro/types": "workspace:*",
@@ -20,5 +38,8 @@
     "typescript": "^5.0.0",
     "vitest": "^3.2.4",
     "@vitest/ui": "^3.2.4"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
   }
 }

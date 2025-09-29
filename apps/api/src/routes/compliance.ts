@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { jwt } from 'hono/jwt';
-import { zValidator } from '@hono/zod-validator';
+import { validator } from 'hono/validator';
 import { z } from 'zod';
 import { ComplianceService } from '@neonpro/security/compliance-service';
 import { authMiddleware } from '../middleware/auth';
@@ -17,20 +17,20 @@ const clinicIdSchema = z.object({
 });
 
 const reportSchema = z.object({
-  format: z.enum(['pdf', 'json', 'csv']).default('pdf'),
-  period: z.enum(['daily', 'weekly', 'monthly', 'quarterly', 'yearly']).default('monthly'),
+  format: z.enum('pdf', 'json', 'csv']).default('pdf'),
+  period: z.enum('daily', 'weekly', 'monthly', 'quarterly', 'yearly']).default('monthly'),
   includeAudit: z.boolean().default(true),
   includeMetrics: z.boolean().default(true)
 });
 
 const rightsRequestSchema = z.object({
   patientId: z.string().uuid(),
-  requestType: z.enum(['access', 'correction', 'deletion', 'portability', 'objection', 'automated_decision']),
+  requestType: z.enum('access', 'correction', 'deletion', 'portability', 'objection', 'automated_decision']),
   details: z.string().min(10)
 });
 
 // Get compliance metrics for a clinic
-compliance.get('/metrics/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/metrics/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     
@@ -53,7 +53,7 @@ compliance.get('/metrics/:clinicId', zValidator('param', clinicIdSchema), async 
 });
 
 // Get consent statistics for a clinic
-compliance.get('/stats/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/stats/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     
@@ -75,7 +75,7 @@ compliance.get('/stats/:clinicId', zValidator('param', clinicIdSchema), async (c
 });
 
 // Generate compliance report
-compliance.post('/report/:clinicId', zValidator('param', clinicIdSchema), zValidator('json', reportSchema), async (c) => {
+compliance.post('/report/:clinicId', validator('param', clinicIdSchema), validator('json', reportSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     const options = c.req.valid('json');
@@ -98,7 +98,7 @@ compliance.post('/report/:clinicId', zValidator('param', clinicIdSchema), zValid
 });
 
 // Process data subject rights request
-compliance.post('/rights-request', zValidator('json', rightsRequestSchema), async (c) => {
+compliance.post('/rights-request', validator('json', rightsRequestSchema), async (c) => {
   try {
     const requestData = c.req.valid('json');
     
@@ -130,7 +130,7 @@ compliance.post('/rights-request', zValidator('json', rightsRequestSchema), asyn
 });
 
 // Get data subject rights requests for a clinic
-compliance.get('/rights-requests/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/rights-requests/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     const status = c.req.query('status') as string;
@@ -153,7 +153,7 @@ compliance.get('/rights-requests/:clinicId', zValidator('param', clinicIdSchema)
 });
 
 // Get compliance alerts for a clinic
-compliance.get('/alerts/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/alerts/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     const severity = c.req.query('severity') as string;
@@ -198,7 +198,7 @@ compliance.post('/alerts/:alertId/acknowledge', async (c) => {
 });
 
 // Get compliance settings for a clinic
-compliance.get('/settings/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/settings/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     
@@ -220,7 +220,7 @@ compliance.get('/settings/:clinicId', zValidator('param', clinicIdSchema), async
 });
 
 // Update compliance settings for a clinic
-compliance.put('/settings/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.put('/settings/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     const settings = await c.req.json();
@@ -243,7 +243,7 @@ compliance.put('/settings/:clinicId', zValidator('param', clinicIdSchema), async
 });
 
 // Export compliance data
-compliance.get('/export/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/export/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     const format = c.req.query('format') as 'json' | 'csv' || 'json';
@@ -281,7 +281,7 @@ compliance.get('/export/:clinicId', zValidator('param', clinicIdSchema), async (
 });
 
 // Get compliance dashboard data (combined endpoint)
-compliance.get('/dashboard/:clinicId', zValidator('param', clinicIdSchema), async (c) => {
+compliance.get('/dashboard/:clinicId', validator('param', clinicIdSchema), async (c) => {
   try {
     const { clinicId } = c.req.param();
     

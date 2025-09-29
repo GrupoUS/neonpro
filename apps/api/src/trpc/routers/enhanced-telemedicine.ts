@@ -15,9 +15,9 @@ const CreateSessionInput = z.object({
   professionalId: z.string().uuid(),
   scheduledDate: z.date(),
   duration: z.number().min(15).max(120),
-  sessionType: z.enum(['CONSULTATION', 'FOLLOW_UP', 'PROCEDURE_REVIEW', 'TREATMENT_PLANNING']),
+  sessionType: z.enum('CONSULTATION', 'FOLLOW_UP', 'PROCEDURE_REVIEW', 'TREATMENT_PLANNING']),
   reason: z.string().min(10),
-  priority: z.enum(['ROUTINE', 'URGENT', 'EMERGENCY']).default('ROUTINE'),
+  priority: z.enum('ROUTINE', 'URGENT', 'EMERGENCY']).default('ROUTINE'),
   notes: z.string().optional(),
 })
 
@@ -28,7 +28,7 @@ const UpdateSessionInput = CreateSessionInput.partial().extend({
 const SessionQueryInput = z.object({
   patientId: z.string().uuid().optional(),
   professionalId: z.string().uuid().optional(),
-  status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']).optional(),
+  status: z.enum('SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']).optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   limit: z.number().min(1).max(100).default(20),
@@ -38,7 +38,7 @@ const SessionQueryInput = z.object({
 const SendMessageInput = z.object({
   sessionId: z.string().uuid(),
   message: z.string().min(1).max(5000),
-  messageType: z.enum(['TEXT', 'IMAGE', 'DOCUMENT', 'PRESCRIPTION']).default('TEXT'),
+  messageType: z.enum('TEXT', 'IMAGE', 'DOCUMENT', 'PRESCRIPTION']).default('TEXT'),
   attachmentUrl: z.string().url().optional(),
   attachmentName: z.string().optional(),
 })
@@ -73,7 +73,7 @@ const SessionFeedbackInput = z.object({
 
 const UpdateSessionStatusInput = z.object({
   sessionId: z.string().uuid(),
-  status: z.enum(['SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']),
+  status: z.enum('SCHEDULED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED', 'NO_SHOW']),
   cancellationReason: z.string().optional(),
   notes: z.string().optional(),
 })
@@ -193,7 +193,7 @@ export const enhancedTelemedicineRouter = router({
     .input(z.object({
       patientId: z.string().uuid(),
       professionalId: z.string().uuid(),
-      sessionType: z.enum(['CONSULTATION', 'FOLLOW_UP', 'PROCEDURE_REVIEW', 'TREATMENT_PLANNING']),
+      sessionType: z.enum('CONSULTATION', 'FOLLOW_UP', 'PROCEDURE_REVIEW', 'TREATMENT_PLANNING']),
     }))
     .query(async ({ input }) => {
       return await telemedicineService.checkSessionEligibility(input)

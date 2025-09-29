@@ -1,157 +1,16 @@
 {
-  "name": "@neonpro/api",
+  "name": "neonpro-vercel-api",
   "version": "1.0.0",
-  "description": "NeonPro API - Edge-optimized healthcare platform for Brazilian clinics",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "description": "NeonPro API for Vercel deployment",
   "type": "module",
   "scripts": {
-    "dev": "NODE_ENV=development tsx watch --env-file=.env src/index.ts",
-    "dev:api": "NODE_ENV=development PORT=3004 tsx --env-file=.env src/index.ts",
-    "build": "vite build",
-    "build:analyze": "vite build --mode analyze",
-    "build:edge": "NODE_ENV=production EDGE_RUNTIME=true vite build",
-    "start": "node dist/index.js",
-    "prepare": "echo 'prepare script temporarily disabled for workspace install'",
-    "postinstall": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
-    "type-check": "tsc -p tsconfig.json --noEmit",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "test:contract": "vitest --run tests/contract",
-    "coverage": "vitest --run --coverage",
-    "test:coverage": "vitest --run --coverage",
-    "lint": "echo 'lint placeholder'",
-    "lint:fix": "echo 'lint fix placeholder'",
-    "format": "dprint fmt",
-    "prisma:generate": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
-    "prisma:migrate:deploy": "prisma migrate deploy --schema ../../packages/database/prisma/schema.prisma",
-    "bundle:analyze": "node ../../scripts/analyze-healthcare-bundle.js",
-    "bundle:optimize": "npm run build:edge && npm run bundle:analyze",
-    "edge:test": "NODE_ENV=test EDGE_RUNTIME=true vitest --run",
-    "healthcare:compliance": "node -e \"require('./src/utils/bundle-optimizer.js').healthcarePerformanceMonitor.monitorEdgePerformance()\"",
-    "performance:monitor": "node scripts/performance-monitor.js",
-    "deploy:edge": "vercel --prod --regions sao1,gru1",
-    "deploy:preview": "vercel --regions sao1,gru1"
+    "dev": "bun run api/index.ts"
   },
   "dependencies": {
-    "@ag-ui/client": "^0.0.28",
-    "@ag-ui/core": "^0.0.34",
-    "@ai-sdk/anthropic": "^2.0.15",
-    "@ai-sdk/google": "^2.0.13",
-    "@ai-sdk/openai": "^2.0.13",
-    "@hono/node-server": "^1.19.2",
-    "@hono/swagger-ui": "^0.4.1",
-    "@hono/trpc-server": "0.4.0",
-    "@hono/zod-openapi": "^0.18.4",
-    "@hono/zod-validator": "^0.2.2",
-    "@neonpro/database": "workspace:*",
-    // Removed: @neonpro/healthcare-core - package no longer exists
-  // Removed: @neonpro/security - package no longer exists
-  // Removed: @neonpro/utils - package no longer exists
-    "@opentelemetry/api": "^1.9.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.64.1",
-    "@opentelemetry/exporter-prometheus": "^0.205.0",
-    "@opentelemetry/resources": "2.1.0",
-    "@opentelemetry/sdk-node": "^0.205.0",
-    "@opentelemetry/semantic-conventions": "^1.37.0",
-    "@prisma/client": "^5.22.0",
-    "@sentry/browser": "10.12.0",
-    "@sentry/node": "^8.55.0",
-    "@sentry/profiling-node": "^10.12.0",
-    "@supabase/ssr": "^0.7.0",
-    "@supabase/supabase-js": "2.58.0",
-    "@trpc/client": "^11.5.1",
-    "@trpc/server": "^11.5.1",
-    "ai": "^5.0.54",
-    "bcryptjs": "^3.0.2",
-    "buffer": "^6.0.3",
-    "crypto-browserify": "^3.12.0",
-    "date-fns": "^3.6.0",
-    "dotenv": "^17.2.2",
-    "hono": "^4.9.7",
-    "jose": "^5.10.0",
-    "msw-trpc": "^2.0.1",
-    "nanoid": "^5.1.5",
-    "qrcode": "1.5.4",
-    "react": "^19.0.1",
-    "react-dom": "^19.0.1",
-    "speakeasy": "2.0.0",
-    "stream-browserify": "^3.0.0",
-    "superjson": "^2.2.2",
-    "uuid": "^9.0.1",
-    "zod": "^4.1.11"
+    "hono": "^4.9.7"
   },
-  "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/supertest": "^6.0.0",
-    "msw": "^2.11.2",
-    "next": "^14.2.33",
-    "prisma": "^5.22.0",
-    "rollbar": "^2.26.4",
-    "rollup-plugin-visualizer": "^6.0.3",
-    "supertest": "^6.3.0",
-    "tsup": "^8.5.0",
-    "tsx": "^4.20.5",
-    "typescript": "^5.9.2",
-    "vite": "^5.4.20",
-    "vite-plugin-node-polyfills": "^0.22.0",
-    "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "3.2.4",
-    "webpack-bundle-analyzer": "^4.10.2"
-  },
-  "prisma": {
-    "schema": "../../packages/database/prisma/schema.prisma"
-  },
-  "bundleAnalyzer": {
-    "enabled": true,
-    "openAnalyzer": false,
-    "analyzerMode": "json",
-    "reportFilename": "../../healthcare-bundle-report.json"
-  },
-  "edgeRuntime": {
-    "regions": [
-      "sao1",
-      "gru1"
-    ],
-    "maxDuration": 15,
-    "memory": 256,
-    "healthcareCompliance": true,
-    "lgpdEnforcement": "strict",
-    "cfmCertified": true,
-    "anvisaApproved": true
-  },
-  "keywords": [
-    "neonpro",
-    "aesthetic-clinics",
-    "healthcare",
-    "edge-runtime",
-    "next.js",
-    "typescript",
-    "supabase",
-    "prisma",
-    "lgpd",
-    "cfm",
-    "anvisa",
-    "brazilian-healthcare",
-    "telemedicine",
-    "medical-grade"
-  ],
-  "author": "NeonPro Team",
-  "license": "PROPRIETARY",
+  "devDependencies": {},
   "engines": {
-    "node": ">=18.0.0",
-    "bun": ">=1.0.0"
-  },
-  "browserslist": {
-    "production": [
-      ">0.3%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "node": ">=18.0.0"
   }
 }

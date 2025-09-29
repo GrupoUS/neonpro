@@ -1,7 +1,7 @@
 // Enhanced AI Chat Route with Semantic Caching for NeonPro Aesthetic Clinic
 // Integrates semantic caching with existing AI chat infrastructure for optimized performance
 import { endTimerMs, logMetric, startTimer } from '@/services/metrics'
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { AIProviderFactory } from '@neonpro/ai-services'
 import { type AIMessage } from '@neonpro/healthcare-core'
 import { Hono } from 'hono'
@@ -31,7 +31,7 @@ import { SpanStatusCode, trace } from '@opentelemetry/api'
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
-  _role: z.enum(['user', 'assistant', 'system']),
+  _role: z.enum('user', 'assistant', 'system']),
   content: z.string().min(1),
 })
 
@@ -51,7 +51,7 @@ const EnhancedChatRequestSchema = z.object({
       patientId: z.string().optional(),
       professionalId: z.string().optional(),
       treatmentType: z.string().optional(),
-      urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
+      urgency: z.enum('low', 'medium', 'high', 'emergency']).default('medium'),
       dataClassification: z
         .enum(['public', 'restricted', 'confidential', 'highly_confidential'])
         .default('restricted'),
@@ -171,7 +171,7 @@ const cacheKeyGenerator = new HealthcareCacheKeyGenerator()
 // Enhanced streaming AI response endpoint with semantic caching
 app.post(
   '/stream',
-  zValidator('json', EnhancedChatRequestSchema),
+  validator('json', EnhancedChatRequestSchema),
   async c => {
     const tracer = trace.getTracer('neonpro-ai-chat')
     const span = tracer.startSpan('/ai-chat/stream')

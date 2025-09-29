@@ -30,11 +30,11 @@ const FinancialAccountSchema = z.object({
   id: z.string().uuid(),
   clinic_id: z.string().uuid(),
   name: z.string(),
-  account_type: z.enum(['checking', 'savings', 'investment', 'credit', 'loan']),
+  account_type: z.enum('checking', 'savings', 'investment', 'credit', 'loan']),
   account_number: z.string().optional(),
   bank_name: z.string().optional(),
   bank_branch: z.string().optional(),
-  currency: z.enum(['BRL', 'USD', 'EUR']),
+  currency: z.enum('BRL', 'USD', 'EUR']),
   opening_balance: z.number(),
   current_balance: z.number(),
   is_active: z.boolean(),
@@ -48,7 +48,7 @@ const ServicePriceSchema = z.object({
   id: z.string().uuid(),
   clinic_id: z.string().uuid(),
   service_id: z.string().uuid(),
-  professional_council_type: z.enum(['CFM', 'COREN', 'CFF', 'CNEP']),
+  professional_council_type: z.enum('CFM', 'COREN', 'CFF', 'CNEP']),
   base_price: z.number(),
   duration_minutes: z.number(),
   cost_of_materials: z.number(),
@@ -67,7 +67,7 @@ const TreatmentPackageSchema = z.object({
   clinic_id: z.string().uuid(),
   name: z.string(),
   description: z.string().optional(),
-  package_type: z.enum(['session_bundle', 'treatment_combo', 'membership', 'loyalty_reward']),
+  package_type: z.enum('session_bundle', 'treatment_combo', 'membership', 'loyalty_reward']),
   total_sessions: z.number(),
   validity_days: z.number(),
   original_price: z.number(),
@@ -85,7 +85,7 @@ const TreatmentPackageSchema = z.object({
 const InvoiceItemSchema = z.object({
   id: z.string().uuid(),
   invoice_id: z.string().uuid(),
-  item_type: z.enum(['service', 'product', 'package', 'adjustment', 'tax', 'discount']),
+  item_type: z.enum('service', 'product', 'package', 'adjustment', 'tax', 'discount']),
   description: z.string(),
   quantity: z.number(),
   unit_price: z.number(),
@@ -105,8 +105,8 @@ const InvoiceSchema = z.object({
   clinic_id: z.string().uuid(),
   patient_id: z.string().uuid(),
   invoice_number: z.string(),
-  invoice_type: z.enum(['service', 'package', 'product', 'adjustment', 'refund']),
-  status: z.enum(['draft', 'pending', 'paid', 'partial', 'overdue', 'cancelled', 'refunded']),
+  invoice_type: z.enum('service', 'package', 'product', 'adjustment', 'refund']),
+  status: z.enum('draft', 'pending', 'paid', 'partial', 'overdue', 'cancelled', 'refunded']),
   issue_date: z.string(),
   due_date: z.string(),
   payment_date: z.string().optional(),
@@ -130,7 +130,7 @@ const PaymentTransactionSchema = z.object({
   invoice_id: z.string().uuid().optional(),
   patient_id: z.string().uuid(),
   transaction_id: z.string(),
-  payment_method: z.enum([
+  payment_method: z.enum(
     'credit_card',
     'debit_card',
     'bank_transfer',
@@ -140,8 +140,8 @@ const PaymentTransactionSchema = z.object({
     'check',
     'installment',
   ]),
-  payment_provider: z.enum(['stripe', 'mercadopago', 'pagseguro', 'manual']),
-  status: z.enum([
+  payment_provider: z.enum('stripe', 'mercadopago', 'pagseguro', 'manual']),
+  status: z.enum(
     'pending',
     'processing',
     'succeeded',
@@ -151,7 +151,7 @@ const PaymentTransactionSchema = z.object({
     'chargeback',
   ]),
   amount: z.number(),
-  currency: z.enum(['BRL', 'USD', 'EUR']),
+  currency: z.enum('BRL', 'USD', 'EUR']),
   installments: z.number(),
   installment_number: z.number(),
   total_installments: z.number(),
@@ -171,11 +171,11 @@ const ProfessionalCommissionSchema = z.object({
   professional_id: z.string().uuid(),
   invoice_id: z.string().uuid().optional(),
   appointment_id: z.string().uuid().optional(),
-  commission_type: z.enum(['service', 'product', 'package', 'bonus', 'adjustment']),
+  commission_type: z.enum('service', 'product', 'package', 'bonus', 'adjustment']),
   base_amount: z.number(),
   commission_rate: z.number(),
   commission_amount: z.number(),
-  status: z.enum(['pending', 'approved', 'paid', 'cancelled']),
+  status: z.enum('pending', 'approved', 'paid', 'cancelled']),
   payment_date: z.string().optional(),
   notes: z.string().optional(),
   metadata: z.record(z.any()),
@@ -187,13 +187,13 @@ const FinancialGoalSchema = z.object({
   id: z.string().uuid(),
   clinic_id: z.string().uuid(),
   name: z.string(),
-  goal_type: z.enum(['revenue', 'profit', 'new_patients', 'retention_rate', 'average_ticket']),
+  goal_type: z.enum('revenue', 'profit', 'new_patients', 'retention_rate', 'average_ticket']),
   target_value: z.number(),
   current_value: z.number(),
-  period: z.enum(['monthly', 'quarterly', 'yearly']),
+  period: z.enum('monthly', 'quarterly', 'yearly']),
   start_date: z.string(),
   end_date: z.string(),
-  status: z.enum(['active', 'completed', 'missed', 'cancelled']),
+  status: z.enum('active', 'completed', 'missed', 'cancelled']),
   progress_percentage: z.number(),
   notes: z.string().optional(),
   created_at: z.string(),
@@ -233,7 +233,7 @@ const FinancialReportSchema = z.object({
 
 const TaxConfigurationSchema = z.object({
   id: z.string().uuid(),
-  tax_type: z.enum(['iss', 'pis', 'cofins', 'csll', 'irpj', 'icms', 'ipi']),
+  tax_type: z.enum('iss', 'pis', 'cofins', 'csll', 'irpj', 'icms', 'ipi']),
   tax_rate: z.number(),
   is_active: z.boolean(),
   effective_date: z.string(),
@@ -596,7 +596,7 @@ export const financialManagementRouter = createTRPCRouter({
   getInvoices: {
     input: z.object({
       clinicId: z.string().uuid(),
-      status: z.enum(['draft', 'pending', 'paid', 'partial', 'overdue', 'cancelled', 'refunded'])
+      status: z.enum('draft', 'pending', 'paid', 'partial', 'overdue', 'cancelled', 'refunded'])
         .optional(),
       patientId: z.string().uuid().optional(),
       startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
@@ -665,7 +665,7 @@ export const financialManagementRouter = createTRPCRouter({
   getPaymentTransactions: {
     input: z.object({
       clinicId: z.string().uuid(),
-      status: z.enum([
+      status: z.enum(
         'pending',
         'processing',
         'succeeded',

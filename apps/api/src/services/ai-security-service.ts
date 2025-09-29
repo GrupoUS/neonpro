@@ -28,7 +28,7 @@ const _SensitiveDataSchema = z.object({
 
 const _MedicalTermSchema = z.object({
   term: z.string(),
-  category: z.enum(['symptom', 'diagnosis', 'treatment', 'medication']),
+  category: z.enum('symptom', 'diagnosis', 'treatment', 'medication']),
   isValid: z.boolean(),
 })
 

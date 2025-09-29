@@ -136,7 +136,7 @@ export const CFMProfessionalValidationSchema = z.object({
   crmState: z.string().length(2, 'Estado deve ter 2 letras'),
   fullName: z.string().min(3),
   specialties: z.array(z.string()),
-  licenseStatus: z.enum(['active', 'suspended', 'revoked', 'expired']),
+  licenseStatus: z.enum('active', 'suspended', 'revoked', 'expired']),
   licenseExpiryDate: z.date(),
   telemedicineAuthorization: z.boolean(),
   digitalCertificate: z.object({
@@ -180,7 +180,7 @@ export const TelemedicineSessionSchema = z.object({
   digitalSignatures: z.array(
     z.object({
       signerId: z.string(),
-      signerRole: z.enum(['patient', 'professional', 'witness']),
+      signerRole: z.enum('patient', 'professional', 'witness']),
       signature: z.string(),
       timestamp: z.date(),
       certificateFingerprint: z.string(),
@@ -251,7 +251,7 @@ export const TelemedicineSessionSchema = z.object({
   // Emergency Escalation
   emergencyEscalation: z.object({
     isActive: z.boolean(),
-    escalationLevel: z.enum(['none', 'urgent', 'critical', 'emergency']),
+    escalationLevel: z.enum('none', 'urgent', 'critical', 'emergency']),
     emergencyContacts: z.array(
       z.object({
         name: z.string(),
@@ -283,7 +283,7 @@ export const NGS2AuthContextSchema = z.object({
   _userId: z.string(),
   securityLevel: z.nativeEnum(NGS2_SECURITY_LEVELS),
   authenticationMethods: z.array(
-    z.enum([
+    z.enum(
       'password',
       'two_factor',
       'digital_certificate',
@@ -303,7 +303,7 @@ export const NGS2AuthContextSchema = z.object({
     .optional(),
   biometricValidation: z
     .object({
-      type: z.enum(['fingerprint', 'facial_recognition', 'voice_recognition']),
+      type: z.enum('fingerprint', 'facial_recognition', 'voice_recognition']),
       score: z.number().min(0).max(100),
       isValid: z.boolean(),
     })

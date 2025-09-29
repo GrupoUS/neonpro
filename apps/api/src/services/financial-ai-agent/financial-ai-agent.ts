@@ -98,7 +98,7 @@ const financialAIAgentSchema = z.object({
   name: z.string().default('Financial AI Agent'),
   version: z.string().default('1.0.0'),
   clinicId: z.string().uuid(),
-  features: z.array(z.enum([
+  features: z.array(z.enum(
     'predictive_analytics',
     'anomaly_detection',
     'fraud_prevention',
@@ -113,7 +113,7 @@ const financialAIAgentSchema = z.object({
     'billing_optimization',
   ]),
   aiModel: z.object({
-    provider: z.enum(['openai', 'anthropic', 'local']),
+    provider: z.enum('openai', 'anthropic', 'local']),
     model: z.string(),
     temperature: z.number().min(0).max(1).default(0.3),
     maxTokens: z.number().default(2000),

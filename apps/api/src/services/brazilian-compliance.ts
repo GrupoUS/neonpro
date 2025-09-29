@@ -56,7 +56,7 @@ export type HealthcareSecurityLevel =
 // Brazilian Healthcare Compliance Configuration
 export const BrazilianComplianceConfigSchema = z.object({
   organizationName: z.string(),
-  organizationType: z.enum([
+  organizationType: z.enum(
     'clinic',
     'hospital',
     'telemedicine',
@@ -64,10 +64,10 @@ export const BrazilianComplianceConfigSchema = z.object({
   ]),
   anvisaDeviceClass: z.nativeEnum(ANVISA_DEVICE_CLASSES),
   anvisaSoftwareCategory: z.nativeEnum(ANVISA_SOFTWARE_CATEGORIES),
-  patientDataVolume: z.enum(['low', 'medium', 'high', 'very_high']),
+  patientDataVolume: z.enum('low', 'medium', 'high', 'very_high']),
   telemedicineEnabled: z.boolean(),
   internationalOperations: z.boolean(),
-  auditFrequency: z.enum(['monthly', 'quarterly', 'semi_annual', 'annual']),
+  auditFrequency: z.enum('monthly', 'quarterly', 'semi_annual', 'annual']),
   complianceOfficer: z.string(),
   ethicsCommittee: z.boolean(),
 })

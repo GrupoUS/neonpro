@@ -21,10 +21,10 @@ const ListPatientsQuerySchema = z.object({
   page: z.coerce.number().min(1).default(1),
   limit: z.coerce.number().min(1).max(100).default(20),
   search: z.string().optional(),
-  status: z.enum(['active', 'inactive', 'archived']).optional(),
-  gender: z.enum(['male', 'female', 'other']).optional(),
-  sortBy: z.enum(['name', 'createdAt', 'updatedAt']).default('name'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  status: z.enum('active', 'inactive', 'archived']).optional(),
+  gender: z.enum('male', 'female', 'other']).optional(),
+  sortBy: z.enum('name', 'createdAt', 'updatedAt']).default('name'),
+  sortOrder: z.enum('asc', 'desc']).default('asc'),
 })
 
 // Patient summary schema for list response
@@ -35,8 +35,8 @@ const PatientSummarySchema = z.object({
   phone: z.string().optional(),
   cpf: z.string().optional(),
   birthDate: z.string().datetime().optional(),
-  gender: z.enum(['male', 'female', 'other']).optional(),
-  status: z.enum(['active', 'inactive', 'archived']).optional(),
+  gender: z.enum('male', 'female', 'other']).optional(),
+  status: z.enum('active', 'inactive', 'archived']).optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 })

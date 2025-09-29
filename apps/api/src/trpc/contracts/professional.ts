@@ -19,7 +19,7 @@ export const CreateProfessionalRequestSchema = z.object({
   phone: z.string().min(10),
   taxId: z.string().min(11), // CPF
   licenseNumber: z.string().min(1),
-  licenseType: z.enum(['CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']),
+  licenseType: z.enum('CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']),
   licenseState: z.string().length(2),
   licenseExpiry: z.string().optional(), // ISO string
   specialties: z.array(z.string()).min(1),
@@ -27,7 +27,7 @@ export const CreateProfessionalRequestSchema = z.object({
   services: z.array(z.string()).default([]),
   schedule: z.object({
     workingDays: z.array(
-      z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
+      z.enum('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
     ),
     startTime: z.string(), // HH:mm
     endTime: z.string(), // HH:mm
@@ -74,13 +74,13 @@ export const UpdateProfessionalRequestSchema = CreateProfessionalRequestSchema.p
 export const PaginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(20),
-  sortBy: z.enum(['name', 'specialty', 'createdAt', 'rating']).default('name'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  sortBy: z.enum('name', 'specialty', 'createdAt', 'rating']).default('name'),
+  sortOrder: z.enum('asc', 'desc']).default('asc'),
   search: z.string().optional(),
   filters: z.object({
     clinicId: z.string().optional(),
     specialty: z.string().optional(),
-    licenseType: z.enum(['CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']).optional(),
+    licenseType: z.enum('CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']).optional(),
     isActive: z.boolean().optional(),
     availableToday: z.boolean().optional(),
   }).optional(),
@@ -93,7 +93,7 @@ export const ProfessionalResponseSchema = z.object({
   phone: z.string(),
   taxId: z.string(),
   licenseNumber: z.string(),
-  licenseType: z.enum(['CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']),
+  licenseType: z.enum('CRM', 'CRO', 'COREN', 'COFEN', 'OUTRO']),
   licenseState: z.string(),
   licenseExpiry: z.string().nullable(),
   specialties: z.array(z.string()),
@@ -108,7 +108,7 @@ export const ProfessionalResponseSchema = z.object({
   noShowRate: z.number().min(0).max(1).default(0),
   schedule: z.object({
     workingDays: z.array(
-      z.enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
+      z.enum('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']),
     ),
     startTime: z.string(),
     endTime: z.string(),
@@ -428,7 +428,7 @@ export const professionalRouter = router({
         clinicId: z.string().uuid(),
         search: z.string().optional(),
         specialization: z.string().optional(),
-        licenseType: z.enum(['CRM', 'CRO', 'CRF', 'CREF', 'CRP']).optional(),
+        licenseType: z.enum('CRM', 'CRO', 'CRF', 'CREF', 'CRP']).optional(),
         isActive: z.boolean().default(true),
         availableOn: z.string().datetime().optional(),
         availabilityTimeSlot: z
@@ -445,7 +445,7 @@ export const professionalRouter = router({
             'licenseValidatedAt',
           ])
           .default('fullName'),
-        sortOrder: z.enum(['asc', 'desc']).default('asc'),
+        sortOrder: z.enum('asc', 'desc']).default('asc'),
       }),
     )
     .output(ProfessionalsListResponseSchema)

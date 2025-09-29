@@ -6,7 +6,7 @@
 
 import { appRouter } from '@/trpc/router'
 import { trpcServer } from '@hono/trpc-server'
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Hono } from 'hono'
 
 // Import middleware and utilities
@@ -15,8 +15,8 @@ import { getServices } from '@/services/shared-services'
 
 // Request validation schema - matches the 3-step flow
 const crudRequestSchema = z.object({
-  step: z.enum(['intent', 'confirm', 'execute']),
-  operation: z.enum(['create', 'read', 'update', 'delete']).optional(),
+  step: z.enum('intent', 'confirm', 'execute']),
+  operation: z.enum('create', 'read', 'update', 'delete']).optional(),
   entity: z
     .enum([
       'patients',
@@ -41,7 +41,7 @@ const crudRequestSchema = z.object({
   metadata: z
     .object({
       source: z.string().optional(),
-      priority: z.enum(['low', 'normal', 'high']).optional(),
+      priority: z.enum('low', 'normal', 'high']).optional(),
       patientId: z.string().optional(),
       sessionId: z.string().optional(),
     })
@@ -83,7 +83,7 @@ app.post(
   '/crud',
   requireAuth,
   requireAIAccess,
-  zValidator('json', crudRequestSchema),
+  validator('json', crudRequestSchema),
   async c => {
     const startTime = Date.now()
     const _user = c.get('user')

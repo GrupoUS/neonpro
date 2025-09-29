@@ -1,271 +1,295 @@
-# NeonPro - Smart Aesthetic Platform
-
-## Product Requirements Document
-
-**Version**: 1.0\
-**Last Updated**: 2025-09-10\
-**Target Audience**: Advanced aesthetic professionals managing clinics\
-**Focus**: User experience for aesthetic clinic management
-
+---
+title: "NeonPro Product Requirements Document"
+last_updated: 2025-09-29
+form: reference
+tags: [prd, product, requirements, aesthetic-clinics, brazil]
+related:
+  - ../architecture/architecture.md
+  - ../architecture/frontend-architecture.md
+  - ../AGENTS.md
 ---
 
-## 1. Executive Summary
+# NeonPro Product Requirements Document
 
-### 1.1 Product Vision
+## Overview
 
-NeonPro is a revolutionary smart platform designed specifically for aesthetic professionals managing clinics in Brazil. The platform transforms clinic operations through AI-powered automation, predictive analytics, and intelligent patient engagement, positioning practices at the forefront of aesthetic technology.
+NeonPro is a mobile-first SaaS platform for Brazilian aesthetic clinics, enabling multi-professional collaboration with AI-powered automation, compliance management, and comprehensive financial operations.
 
-### 1.2 Value Proposition
+**Version**: 8.0.0
+**Target Users**: Aesthetic clinic owners, managers, coordinators, and patients
+**Market**: Brazilian aesthetic healthcare sector
 
-- **AI-Powered Patient Engagement**: 24/7 intelligent chat system in Portuguese
-- **Predictive No-Show Prevention**: Reduce appointment cancellations by 25%
-- **Unified Operations Dashboard**: Complete clinic management in one interface
-- **Mobile-First Experience**: Optimized for smartphone-centric workflows
-- **Revenue Protection**: $468,750+ annual revenue protection through efficiency gains
+## Product Vision
 
-### 1.3 Success Metrics
+Transform aesthetic clinic operations through AI-powered automation, predictive analytics, and intelligent patient engagement while maintaining strict compliance with Brazilian healthcare regulations (LGPD, ANVISA, professional councils).
 
-- **No-Show Reduction**: From 30% to <10% within 6 months
-- **AI Response Time**: <2 seconds for 95% of queries
-- **Administrative Efficiency**: 40% reduction in manual tasks
-- **User Satisfaction**: NPS >70
-- **System Reliability**: 99.9% uptime
+## Value Proposition
 
----
+- **AI-First Interaction**: Universal AI chat as primary interface for patients and staff
+- **No-Show Prevention**: AI-powered prediction and automated intervention
+- **Multi-Professional Coordination**: Seamless collaboration across CFM, COREN, CFF, CNEP professionals
+- **Financial Excellence**: Complete Brazilian tax compliance with automated billing
+- **Mobile-Optimized**: 95% mobile usage with <2s page loads on 3G
 
-## 2. Market & User Analysis
+## Success Metrics
 
-### 2.1 Target Market
+**Operational Impact**
 
-**Primary Market**: 15,000+ aesthetic clinics in Brazil
+- No-show reduction: 30% → <10% within 6 months
+- Administrative efficiency: 40% reduction in manual tasks
+- Patient retention: 25% increase
+- Revenue protection: R$ 2.5M+ annually per clinic
 
-- **Market Size**: R$ 1.8B+ annual potential
-- **Growth Rate**: 18% annually in aesthetic sector
-- **Average Ticket**: R$ 2,500-8,000/month per clinic
+**Technical Performance**
 
-### 2.2 User Personas
+- AI response time: <2s for 95% of queries
+- System uptime: 99.9%
+- Page load time: <2s on 3G connections
+- User satisfaction: NPS >70
 
-**Primary: Clinic Owner/Manager**
+## Market Context
+
+**Target Market**: 15,000+ aesthetic clinics in Brazil
+**Market Size**: R$ 1.8B+ annual potential
+**Growth Rate**: 18% annually in aesthetic sector
+
+## User Personas
+
+### Primary: Clinic Owner/Manager
 
 - Advanced aesthetic professional (dermatologist, plastic surgeon, aesthetician)
-- Manages medium to large practices
+- Manages medium to large practices with multiple professionals
 - Mobile-first user (70% smartphone usage)
 - Seeks operational efficiency and revenue optimization
 
-**Secondary: Administrative Coordinator**
+### Secondary: Administrative Coordinator
 
 - Handles daily operations and patient management
 - Needs real-time visibility and process automation
 - Balanced mobile/desktop usage (40%/60%)
 
-**Tertiary: Premium Patients**
+### Tertiary: Premium Patients
 
 - Tech-savvy clients seeking convenience
 - Mobile-first expectations (95% smartphone usage)
 - Values personalized, immediate service
 
-### 2.3 Key Pain Points
+## Key Pain Points
 
-- **30% no-show rate** causing significant revenue loss
-- **Administrative chaos** with fragmented systems
-- **Manual inventory management** for time-sensitive products
-- **Limited patient engagement** outside business hours
-- **Complex scheduling** for multiple procedures and staff
+- 30% no-show rate causing significant revenue loss
+- Administrative chaos with fragmented systems
+- Manual inventory management for time-sensitive products
+- Limited patient engagement outside business hours
+- Complex multi-professional scheduling and coordination
 
----
+## Core Features
 
-## 3. Core Product Features
+### Universal AI Chat System
 
-### 3.1 Universal AI Chat System
+**Primary Interface**: AI-powered conversational interface for patients and staff
 
-**Capabilities:**
+**Capabilities**
 
-- Specialized conversational AI for aesthetic procedures
-- Native Portuguese language processing
-- WhatsApp Business API integration
-- 24/7 automated patient support
-- Intelligent appointment scheduling
+- Native Portuguese language processing for aesthetic procedures
+- WhatsApp Business API integration for 24/7 support
+- Intelligent appointment scheduling and rescheduling
 - Patient triage and consultation preparation
+- Automated responses for routine inquiries
 
-**User Benefits:**
+**Expected Outcomes**
 
 - Instant patient responses outside business hours
-- Reduced staff workload for routine inquiries
+- 40% reduction in staff workload for routine inquiries
 - Improved patient satisfaction and engagement
-- Automated appointment booking and rescheduling
 
-### 3.2 Anti-No-Show Engine
+### Anti-No-Show Engine
 
-**Capabilities:**
+**Purpose**: AI-powered prediction and intervention to reduce appointment cancellations
+
+**Capabilities**
 
 - Behavioral prediction algorithms (0.00-1.00 risk scoring)
-- Personalized reminder automation
-- Multi-channel communication (WhatsApp, SMS, email)
+- Personalized reminder automation via multiple channels
 - Optimal timing optimization for patient contact
-- Historical pattern analysis
+- Historical pattern analysis and learning
 - Automated rebooking suggestions
 
-**User Benefits:**
+**Expected Outcomes**
 
-- 78% reduction in no-show rates
-- Automated revenue protection
+- 78% reduction in no-show rates (30% → <10%)
+- Automated revenue protection (R$ 2.5M+ annually per clinic)
 - Optimized appointment scheduling
-- Reduced administrative burden
 
-### 3.3 Unified Command Dashboard
+### Multi-Professional Coordination
 
-**Capabilities:**
+**Purpose**: Seamless collaboration across CFM, COREN, CFF, CNEP professionals
 
-- Real-time operational metrics
-- Consolidated agenda management
-- Financial performance tracking
-- Intelligent alerts and notifications
-- Executive reporting automation
-- Mobile-responsive interface
+**Capabilities**
 
-**User Benefits:**
+- Dynamic team formation with role-based access
+- Cross-council referrals with scope validation
+- Collaborative session management
+- Secure inter-professional communication
+- Professional supervision and mentorship tracking
 
-- Complete business visibility in one view
-- Data-driven decision making
-- Streamlined daily operations
-- Performance tracking and optimization
+**Expected Outcomes**
 
-### 3.4 Intelligent Scheduling System
+- Improved care quality through multi-disciplinary collaboration
+- Compliance with professional council regulations
+- Enhanced professional development
 
-**Capabilities:**
+### Financial Management
+
+**Purpose**: Complete Brazilian tax compliance with automated billing and payment processing
+
+**Capabilities**
+
+- Automatic invoice generation with tax calculation (ISS, PIS, COFINS, CSLL, IRPJ)
+- Brazilian payment methods: PIX, boleto, credit card
+- Professional commission management
+- NFSe (electronic service invoice) generation
+- Financial analytics and reporting
+
+**Expected Outcomes**
+
+- 100% Brazilian tax compliance
+- Automated billing reducing administrative time by 40%
+- Real-time financial visibility
+
+### Patient Engagement
+
+**Purpose**: Multi-channel communication and loyalty management
+
+**Capabilities**
+
+- Email, SMS, WhatsApp, push notifications
+- Patient journey tracking with engagement scoring
+- Loyalty programs with points-based rewards
+- Automated campaigns and reengagement workflows
+- Survey and feedback systems
+
+**Expected Outcomes**
+
+- 25% increase in patient retention
+- Improved patient lifetime value
+- Enhanced patient satisfaction
+
+### Intelligent Scheduling
+
+**Purpose**: Optimized appointment management with resource allocation
+
+**Capabilities**
 
 - Drag-and-drop calendar interface
 - Real-time synchronization across devices
 - Automatic schedule optimization
 - Room and equipment management
-- External calendar integration
-- Smart notification system
+- External calendar integration (Google, Outlook, Apple)
 
-**User Benefits:**
+**Expected Outcomes**
 
-- Efficient appointment management
 - Reduced scheduling conflicts
 - Optimized resource utilization
 - Enhanced patient experience
 
-### 3.5 Behavioral CRM
+### Inventory Management
 
-**Capabilities:**
+**Purpose**: ANVISA-compliant product tracking with automated reordering
 
-- Patient behavior profiling
-- Consumption pattern analysis
-- Personalized communication strategies
-- Treatment cycle predictions
-- Automated follow-up sequences
-- Retention optimization
-
-**User Benefits:**
-
-- Improved patient retention (25% increase)
-- Personalized patient experiences
-- Predictive treatment planning
-- Enhanced patient lifetime value
-
-### 3.6 Predictive Inventory Management
-
-**Capabilities:**
+**Capabilities**
 
 - AI-driven stock predictions
 - Automated reorder suggestions
-- Expiration date tracking
+- Expiration date tracking and alerts
 - Cost optimization algorithms
-- Supplier integration
 - Waste reduction analytics
 
-**User Benefits:**
+**Expected Outcomes**
 
 - Reduced product waste
 - Optimized inventory costs
-- Automated procurement
 - Better cash flow management
 
----
+**For technical implementation details**, see [architecture.md](../architecture/architecture.md).
 
-## 4. Technical Architecture
+## Technical Requirements
 
-### 4.1 Technology Stack
+### Performance Targets
 
-**Frontend:**
+- Page load time: <2s on 3G connections
+- API response: <500ms for 95% of requests
+- AI chat response: <2s for 95% of queries
+- System uptime: 99.9%
+- Concurrent users: 10,000+ simultaneous
+- Real-time UI updates: <1.5s (P95)
 
-- TanStack Router with Vite build system
-- React 19 Server Components
-- TypeScript 5.0+
-- Tailwind CSS + shadcn/ui
-- Mobile-first responsive design
+### Core Data Domains
 
-**Backend:**
+**Clinics**: Practice information, settings, multi-professional teams
+**Patients**: Demographics, behavior profiles, engagement scores
+**Appointments**: Scheduling, status, no-show risk assessments
+**Professionals**: Credentials, council validation, scope authorization
+**Financial**: Invoices, payments, commissions, tax compliance
+**Inventory**: Products, stock levels, ANVISA compliance
+**Communications**: Multi-channel messages, templates, campaigns
 
-- Supabase (PostgreSQL + Auth + Storage)
-- Redis for caching and sessions
-- tRPC for type-safe APIs
-- Edge Functions for serverless computing
+### Integration Requirements
 
-**AI & ML:**
+**Communication Channels**
 
-- OpenAI GPT-4 for conversational AI
-- Custom ML models for no-show prediction
-- Vector database for knowledge base
-- Real-time processing capabilities
+- WhatsApp Business API for patient messaging
+- SMS providers (Twilio) for appointment reminders
+- Email services (Sendgrid/Postmark) for transactional emails
+- Push notifications for real-time alerts
 
-**Integrations:**
+**Payment Processing**
 
-- WhatsApp Business API
-- SMS providers (Twilio)
-- Payment gateways
-- Calendar systems
-- Push notification services
+- PIX integration for instant Brazilian payments
+- Boleto generation for bank slip payments
+- Credit card processing (Stripe, MercadoPago, PagSeguro)
+- Automated reconciliation
 
-### 4.2 Core Data Models
+**Calendar Systems**
 
-**Clinics**: Practice information, settings, subscription plans
-**Patients**: Demographics, behavior profiles, no-show scores
-**Appointments**: Scheduling, status, risk assessments
-**AI Conversations**: Chat history, context embeddings
-**Inventory**: Products, stock levels, expiration tracking
+- Google Calendar, Outlook Calendar, Apple Calendar
+- Two-way synchronization for professional availability
 
-### 4.3 Performance Requirements
+**Tax & Compliance**
 
-- **Page Load Time**: <2 seconds
-- **API Response**: <500ms for 95% of requests
-- **AI Chat Response**: <2 seconds
-- **System Uptime**: 99.9%
-- **Concurrent Users**: 10,000+ simultaneous
+- SEFAZ integration for state tax authority
+- Municipal tax system integration
+- NFSe generation for electronic service invoices
 
----
+**For detailed technical architecture**, see [architecture.md](../architecture/architecture.md) and [tech-stack.md](../architecture/tech-stack.md).
 
-## 5. User Experience Design
+## User Experience Requirements
 
-### 5.1 Design Principles
+### Design Principles
 
-**Mobile-First Philosophy:**
+**Mobile-First**
 
 - 95% of patients use mobile devices
-- Touch-optimized interfaces
+- Touch-optimized interfaces with 44px minimum touch targets
 - Offline-capable core functions
-- Fast loading on slow connections
+- <2s page loads on 3G connections
 
-**Simplicity & Efficiency:**
+**Simplicity & Efficiency**
 
 - Minimal clicks for frequent tasks
 - Contextual navigation
 - Clear visual hierarchy
 - Immediate feedback for all actions
 
-**Accessibility:**
+**Accessibility**
 
 - WCAG 2.1 AA compliance
 - Screen reader support
 - High contrast options
 - Keyboard navigation
 
-### 5.2 Key User Flows
+### Key User Flows
 
-**Patient Appointment Booking:**
+**Patient Appointment Booking**
 
 1. WhatsApp chat initiation
 2. AI-powered service selection
@@ -273,7 +297,7 @@ NeonPro is a revolutionary smart platform designed specifically for aesthetic pr
 4. Instant booking confirmation
 5. Automated reminder sequence
 
-**Clinic Daily Operations:**
+**Clinic Daily Operations**
 
 1. Dashboard overview check
 2. Schedule review and adjustments
@@ -281,64 +305,69 @@ NeonPro is a revolutionary smart platform designed specifically for aesthetic pr
 4. Real-time metrics monitoring
 5. End-of-day reporting
 
-**No-Show Prevention:**
+**No-Show Prevention**
 
-1. Risk score calculation
+1. Risk score calculation (0.00-1.00)
 2. Personalized reminder scheduling
 3. Multi-channel communication
 4. Rebooking automation
 5. Pattern analysis and optimization
 
-### 5.3 Interface Requirements
+### Interface Requirements
 
-**Navigation:**
+**Navigation**
 
 - Bottom tab navigation for mobile
-- Contextual breadcrumbs
+- Contextual breadcrumbs for desktop
 - Global search functionality
 - Quick action shortcuts
 
-**Visual Design:**
+**Visual Design**
 
-- Professional medical aesthetic
-- Consistent color scheme (medical blue #0066CC, health green #00CC66)
-- Clean typography (Inter primary, Roboto fallback)
-- Modular component system
+- Professional aesthetic clinic branding
+- Neumorphic design with 3D effects
+- Golden primary (#ac9469), deep blue (#112031)
+- Clean typography (Inter, Lora, Libre Baskerville)
 
----
+**For detailed UI/UX patterns**, see [frontend-architecture.md](../architecture/frontend-architecture.md).
 
-## 6. Success Metrics & Analytics
+## Success Metrics
 
-### 6.1 Key Performance Indicators
+### Key Performance Indicators
 
-**Operational Impact:**
+**Operational Impact**
 
-- No-show reduction: 25% improvement
+- No-show reduction: 30% → <10% within 6 months
 - Administrative efficiency: 40% time savings
 - Patient retention: 25% increase
-- Revenue protection: $468,750+ annually
+- Revenue protection: R$ 2.5M+ annually per clinic
 
-**Technical Performance:**
+**Technical Performance**
 
 - System uptime: 99.9%
-- Response times: <2s for AI, <500ms for APIs
+- AI response time: <2s for 95% of queries
+- API response time: <500ms for 95% of requests
+- Page load time: <2s on 3G connections
 - Error rates: <0.1% critical errors
-- User satisfaction: NPS >70
 
-**Business Growth:**
+**User Satisfaction**
+
+- NPS score: >70
+- Feature utilization: 80%
+- Monthly churn: <5%
+
+**Business Growth**
 
 - Market penetration: 100+ active clinics in 6 months
-- User adoption: 80% feature utilization
-- Customer success: <5% monthly churn
-- ROI: 300% return on investment
+- Patient users: 10,000+ within 6 months
+- ROI: 300% return on investment for customers
 
-### 6.2 Measurement Tools
+### Measurement Tools
 
-- **Analytics**: Vercel Analytics + Google Analytics 4
-- **Performance**: Lighthouse CI + Core Web Vitals
-- **Error Tracking**: Sentry for real-time monitoring
-- **User Behavior**: Hotjar for interaction analysis
-- **Business Metrics**: Custom Supabase dashboards
+- Vercel Analytics for performance monitoring
+- Core Web Vitals tracking (LCP ≤2.5s, INP ≤200ms, CLS ≤0.1)
+- Custom Supabase dashboards for business metrics
+- Real-time error tracking and alerting
 
 ---
 

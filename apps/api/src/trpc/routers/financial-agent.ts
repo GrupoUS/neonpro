@@ -217,7 +217,7 @@ export const financialAgentRouter = router({
     .input(
       z.object({
         session_id: z.string().uuid(),
-        message_type: z.enum([
+        message_type: z.enum(
           'billing_request',
           'payment_process',
           'analytics_query',
@@ -529,7 +529,7 @@ export const financialAgentRouter = router({
   getAuditTrail: protectedProcedure
     .input(
       z.object({
-        event_type: z.enum([
+        event_type: z.enum(
           'billing_created',
           'payment_processed',
           'fraud_alert',

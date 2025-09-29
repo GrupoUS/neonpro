@@ -147,11 +147,11 @@ const CreatePatientSchema = z.object({
   concerns: z.array(z.string()).optional(),
   allergies: z.array(z.string()).optional(),
   medications: z.array(z.string()).optional(),
-  pregnancyStatus: z.enum(['none', 'possible', 'confirmed']).optional(),
+  pregnancyStatus: z.enum('none', 'possible', 'confirmed']).optional(),
   consentTypes: z.array(z.enum(Object.values(LGPD_CONSENT_TYPES) as [string, ...string[]]))
     .min(1, 'At least one consent type is required'),
   marketingOptIn: z.boolean().optional(),
-  contactMethod: z.enum(['email', 'phone', 'whatsapp']).optional(),
+  contactMethod: z.enum('email', 'phone', 'whatsapp']).optional(),
 })
 
 class PatientIdentityService {

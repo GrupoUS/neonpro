@@ -30,7 +30,7 @@ const CreateBillingSchema = z.object({
   procedureCodes: z.array(z.string()),
   description: z.string().max(500),
   amount: z.number().positive(),
-  paymentMethod: z.enum([
+  paymentMethod: z.enum(
     'CASH',
     'PIX',
     'CREDIT_CARD',
@@ -47,7 +47,7 @@ const CreateBillingSchema = z.object({
 
 const PaymentProcessingSchema = z.object({
   billingId: z.string().uuid(),
-  paymentMethod: z.enum([
+  paymentMethod: z.enum(
     'CASH',
     'PIX',
     'CREDIT_CARD',
@@ -67,7 +67,7 @@ const PaymentProcessingSchema = z.object({
     bankCode: z.string().min(3).max(4),
     agency: z.string().min(1).max(10),
     account: z.string().min(1).max(20),
-    accountType: z.enum(['CHECKING', 'SAVINGS']),
+    accountType: z.enum('CHECKING', 'SAVINGS']),
   }).optional(),
 })
 
@@ -80,7 +80,7 @@ const BillingResponseSchema = z.object({
   procedureCodes: z.array(z.string()),
   description: z.string(),
   amount: z.number(),
-  status: z.enum(['PENDING', 'PARTIAL', 'PAID', 'OVERDUE', 'CANCELLED']),
+  status: z.enum('PENDING', 'PARTIAL', 'PAID', 'OVERDUE', 'CANCELLED']),
   paymentMethod: z.string(),
   dueDate: z.string().datetime(),
   createdAt: z.string().datetime(),

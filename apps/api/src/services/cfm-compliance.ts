@@ -54,7 +54,7 @@ export const CFMMedicalProfessionalSchema = z.object({
   fullName: z.string(),
   specialties: z.array(z.string()),
   category: z.nativeEnum(CFM_PROFESSIONAL_CATEGORIES),
-  licenseStatus: z.enum(['active', 'suspended', 'revoked', 'expired']),
+  licenseStatus: z.enum('active', 'suspended', 'revoked', 'expired']),
   licenseExpiryDate: z.date(),
   ethicsTrainingCompleted: z.boolean(),
   telemedicineAuthorized: z.boolean(),

@@ -30,7 +30,7 @@ const HEALTHCARE_PATTERNS = {
 } as const
 
 // Error severity levels
-const ErrorSeveritySchema = z.enum(['low', 'medium', 'high', 'critical'])
+const ErrorSeveritySchema = z.enum('low', 'medium', 'high', 'critical'])
 type ErrorSeverity = z.infer<typeof ErrorSeveritySchema>
 
 // Error context schema
@@ -53,7 +53,7 @@ const ErrorContextSchema = z.object({
 type ErrorContext = z.infer<typeof ErrorContextSchema>
 
 // Healthcare error classification
-const HealthcareErrorTypeSchema = z.enum([
+const HealthcareErrorTypeSchema = z.enum(
   'data_access_violation',
   'lgpd_compliance_issue',
   'patient_data_exposure',

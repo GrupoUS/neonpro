@@ -29,7 +29,7 @@ export const CreateClinicRequestSchema = z.object({
   }),
   taxId: z.string().min(11), // CNPJ
   licenseNumber: z.string().min(1),
-  licenseType: z.enum(['ANVISA', 'MUNICIPAL', 'ESTADUAL']),
+  licenseType: z.enum('ANVISA', 'MUNICIPAL', 'ESTADUAL']),
   licenseExpiry: z.string().optional(), // ISO string
   specializations: z.array(z.string()).default([]),
   settings: z.object({
@@ -58,13 +58,13 @@ export const UpdateClinicRequestSchema = CreateClinicRequestSchema.partial().ext
 export const PaginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).max(100).default(20),
-  sortBy: z.enum(['name', 'createdAt', 'email', 'city']).default('name'),
-  sortOrder: z.enum(['asc', 'desc']).default('asc'),
+  sortBy: z.enum('name', 'createdAt', 'email', 'city']).default('name'),
+  sortOrder: z.enum('asc', 'desc']).default('asc'),
   search: z.string().optional(),
   filters: z.object({
     state: z.string().optional(),
     city: z.string().optional(),
-    licenseType: z.enum(['ANVISA', 'MUNICIPAL', 'ESTADUAL']).optional(),
+    licenseType: z.enum('ANVISA', 'MUNICIPAL', 'ESTADUAL']).optional(),
     isActive: z.boolean().optional(),
   }).optional(),
 })
@@ -86,7 +86,7 @@ export const ClinicResponseSchema = z.object({
   }),
   taxId: z.string(),
   licenseNumber: z.string(),
-  licenseType: z.enum(['ANVISA', 'MUNICIPAL', 'ESTADUAL']),
+  licenseType: z.enum('ANVISA', 'MUNICIPAL', 'ESTADUAL']),
   licenseExpiry: z.string().nullable(),
   specializations: z.array(z.string()),
   isActive: z.boolean(),
@@ -117,7 +117,7 @@ export const ClinicResponseSchema = z.object({
       type: z.string(),
       number: z.string(),
       expiryDate: z.string(),
-      status: z.enum(['active', 'expired', 'pending']),
+      status: z.enum('active', 'expired', 'pending']),
     })),
   }),
   createdAt: z.string(),
@@ -433,7 +433,7 @@ export const clinicRouter = router({
         sortBy: z
           .enum(['name', 'createdAt', 'complianceStatus'])
           .default('name'),
-        sortOrder: z.enum(['asc', 'desc']).default('asc'),
+        sortOrder: z.enum('asc', 'desc']).default('asc'),
         userAccessOnly: z.boolean().default(false),
       }),
     )
@@ -705,7 +705,7 @@ export const clinicRouter = router({
         success: z.literal(true),
         data: z.object({
           clinicId: z.string(),
-          currentStatus: z.enum([
+          currentStatus: z.enum(
             'compliant',
             'non_compliant',
             'pending_review',

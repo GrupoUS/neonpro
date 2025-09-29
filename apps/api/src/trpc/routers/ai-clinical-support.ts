@@ -92,7 +92,7 @@ const PatientAssessmentSchema = z.object({
   id: z.string().uuid('Invalid assessment ID'),
   patientId: z.string().uuid('Invalid patient ID'),
   assessmentDate: z.date(),
-  skinType: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI'], {
+  skinType: z.enum('I', 'II', 'III', 'IV', 'V', 'VI'], {
     errorMap: () => ({ message: 'Tipo de pele inválido (I-VI)' }),
   }),
   fitzpatrickScale: z.number().min(1).max(6, 'Escala Fitzpatrick deve ser 1-6'),
@@ -102,7 +102,7 @@ const PatientAssessmentSchema = z.object({
     medications: z.array(z.string()).default([]),
     previousTreatments: z.array(z.string()).default([]),
     chronicConditions: z.array(z.string()).default([]),
-    pregnancyStatus: z.enum(['none', 'pregnant', 'breastfeeding', 'planning'], {
+    pregnancyStatus: z.enum('none', 'pregnant', 'breastfeeding', 'planning'], {
       errorMap: () => ({ message: 'Status de gravidez inválido' }),
     }),
   }),
@@ -110,7 +110,7 @@ const PatientAssessmentSchema = z.object({
   budgetRange: z.object({
     min: z.number().min(0, 'Valor mínimo não pode ser negativo'),
     max: z.number().min(0, 'Valor máximo não pode ser negativo'),
-    currency: z.enum(['BRL', 'USD', 'EUR'], {
+    currency: z.enum('BRL', 'USD', 'EUR'], {
       errorMap: () => ({ message: 'Moeda inválida' }),
     }),
   }).refine(data => data.max >= data.min, {
@@ -175,7 +175,7 @@ const OutcomePredictionSchema = z.object({
   procedureId: z.string().uuid('Invalid procedure ID'),
   treatmentPlan: z.object({
     sessions: z.number().min(1, 'Número de sessões inválido'),
-    intensity: z.enum(['low', 'medium', 'high'], {
+    intensity: z.enum('low', 'medium', 'high'], {
       errorMap: () => ({ message: 'Intensidade inválida' }),
     }),
     frequency: z.string().min(1, 'Frequência é obrigatória'),
@@ -191,14 +191,14 @@ const ProgressMonitoringSchema = z.object({
   patientFeedback: z.object({
     satisfaction: z.number().min(0).max(100, 'Satisfação deve ser 0-100'),
     sideEffects: z.array(z.string()).default([]),
-    adherenceToAftercare: z.enum(['excellent', 'good', 'fair', 'poor'], {
+    adherenceToAftercare: z.enum('excellent', 'good', 'fair', 'poor'], {
       errorMap: () => ({ message: 'Nível de adesão inválido' }),
     }),
   }),
   clinicalAssessment: z.object({
     improvement: z.number().min(0).max(100, 'Melhora deve ser 0-100'),
     complications: z.array(z.string()).default([]),
-    healing: z.enum(['excellent', 'good', 'fair', 'poor'], {
+    healing: z.enum('excellent', 'good', 'fair', 'poor'], {
       errorMap: () => ({ message: 'Nível de cicatrização inválido' }),
     }),
   }),
@@ -225,7 +225,7 @@ const TreatmentRecommendationSchema = z.object({
     longevity: z.string(),
   }),
   risks: z.array(z.object({
-    type: z.enum(['common', 'rare', 'serious']),
+    type: z.enum('common', 'rare', 'serious']),
     description: z.string(),
     probability: z.number().min(0).max(1),
   })),
@@ -237,7 +237,7 @@ const TreatmentRecommendationSchema = z.object({
     downtime: z.string(),
     activityRestrictions: z.array(z.string()),
   }),
-  evidenceLevel: z.enum(['A', 'B', 'C', 'D']),
+  evidenceLevel: z.enum('A', 'B', 'C', 'D']),
 })
 
 /**
@@ -263,7 +263,7 @@ const _TreatmentPlanSchema = z.object({
     })),
   }),
   riskAssessment: z.object({
-    overall: z.enum(['low', 'medium', 'high']),
+    overall: z.enum('low', 'medium', 'high']),
     factors: z.array(z.string()),
     mitigations: z.array(z.string()),
   }),
@@ -338,7 +338,7 @@ const _OutcomePredictionOutputSchema = z.object({
   risks: z.array(z.object({
     type: z.string(),
     probability: z.number().min(0).max(1),
-    severity: z.enum(['low', 'medium', 'high']),
+    severity: z.enum('low', 'medium', 'high']),
   })),
   timeline: z.object({
     initialResults: z.string(),
@@ -352,10 +352,10 @@ const _OutcomePredictionOutputSchema = z.object({
  * Progress monitoring output schema
  */
 const _ProgressMonitoringOutputSchema = z.object({
-  progress: z.enum(['ahead', 'on_track', 'behind', 'concerns']),
+  progress: z.enum('ahead', 'on_track', 'behind', 'concerns']),
   recommendations: z.array(z.string()),
   adjustments: z.array(z.object({
-    type: z.enum(['intensity', 'frequency', 'technique', 'aftercare']),
+    type: z.enum('intensity', 'frequency', 'technique', 'aftercare']),
     current: z.string(),
     recommended: z.string(),
     reason: z.string(),

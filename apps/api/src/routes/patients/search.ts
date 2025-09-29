@@ -98,8 +98,8 @@ const searchCriteriaSchema = z.object({
     .default('fulltext'),
   filters: z
     .object({
-      gender: z.enum(['male', 'female', 'other']).optional(),
-      status: z.union([z.string(), z.array(z.string())]).optional(),
+      gender: z.enum('male', 'female', 'other']).optional(),
+      status: z.union(z.string(), z.array(z.string())]).optional(),
       ageRange: z
         .object({
           min: z.number().min(0).max(150).optional(),
@@ -108,7 +108,7 @@ const searchCriteriaSchema = z.object({
         .optional(),
       dateRange: z
         .object({
-          field: z.enum(['createdAt', 'updatedAt', 'birthDate']).optional(),
+          field: z.enum('createdAt', 'updatedAt', 'birthDate']).optional(),
           start: z.string().datetime().optional(),
           end: z.string().datetime().optional(),
         })
@@ -140,7 +140,7 @@ const searchCriteriaSchema = z.object({
         .enum(['name', 'createdAt', 'updatedAt', 'birthDate'])
         .optional()
         .default('name'),
-      order: z.enum(['asc', 'desc']).optional().default('asc'),
+      order: z.enum('asc', 'desc']).optional().default('asc'),
     })
     .optional()
     .default({ field: 'name', order: 'asc' }),

@@ -122,34 +122,34 @@ export const PatientBehaviorProfileSchema = z.object({
     seasonalPatterns: z.record(z.string(), z.number()),
   }),
   demographicFactors: z.object({
-    ageGroup: z.enum(['18-25', '26-35', '36-45', '46-55', '56-65', '65+']),
-    region: z.enum(['north', 'northeast', 'southeast', 'south', 'center_west']),
-    urbanRural: z.enum(['urban', 'suburban', 'rural']),
-    educationLevel: z.enum([
+    ageGroup: z.enum('18-25', '26-35', '36-45', '46-55', '56-65', '65+']),
+    region: z.enum('north', 'northeast', 'southeast', 'south', 'center_west']),
+    urbanRural: z.enum('urban', 'suburban', 'rural']),
+    educationLevel: z.enum(
       'elementary',
       'high_school',
       'undergraduate',
       'graduate',
     ]),
-    employmentStatus: z.enum([
+    employmentStatus: z.enum(
       'employed',
       'unemployed',
       'retired',
       'student',
       'self_employed',
     ]),
-    healthcareType: z.enum(['sus', 'private', 'mixed']),
+    healthcareType: z.enum('sus', 'private', 'mixed']),
   }),
   communicationPreferences: z.object({
-    preferredChannel: z.enum(['whatsapp', 'sms', 'email', 'phone', 'app']),
-    preferredTime: z.enum(['morning', 'afternoon', 'evening']),
-    reminderFrequency: z.enum([
+    preferredChannel: z.enum('whatsapp', 'sms', 'email', 'phone', 'app']),
+    preferredTime: z.enum('morning', 'afternoon', 'evening']),
+    reminderFrequency: z.enum(
       'none',
       'day_before',
       '2_days_before',
       'week_before',
     ]),
-    languagePreference: z.enum(['portuguese', 'spanish', 'english']),
+    languagePreference: z.enum('portuguese', 'spanish', 'english']),
   }),
   riskFactors: z.object({
     transportationIssues: z.number().min(0).max(1),
@@ -186,9 +186,9 @@ export const NoShowPredictionSchema = z.object({
   recommendedInterventions: z.array(
     z.object({
       type: z.nativeEnum(INTERVENTION_TYPES),
-      priority: z.enum(['high', 'medium', 'low']),
+      priority: z.enum('high', 'medium', 'low']),
       expectedImpact: z.number().min(0).max(1),
-      implementationCost: z.enum(['low', 'medium', 'high']),
+      implementationCost: z.enum('low', 'medium', 'high']),
       timeToImplement: z.number(), // hours
       description: z.string(),
     }),

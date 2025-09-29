@@ -18,7 +18,7 @@ export const BaseAppointmentSchema = z.object({
   duration: z.number()
     .min(15, 'Duration must be at least 15 minutes')
     .max(480, 'Duration cannot exceed 8 hours (480 minutes)'),
-  status: z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'], {
+  status: z.enum('scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'], {
     message: 'Invalid appointment status',
   }),
   notes: z.string()
@@ -39,7 +39,7 @@ export const CreateAppointmentZod = z.object({
   duration: z.number()
     .min(15, 'Duration must be at least 15 minutes')
     .max(480, 'Duration cannot exceed 8 hours (480 minutes)'),
-  status: z.enum(['scheduled', 'confirmed']).optional(),
+  status: z.enum('scheduled', 'confirmed']).optional(),
   notes: z.string()
     .max(1000, 'Notes cannot exceed 1000 characters')
     .optional(),
@@ -58,7 +58,7 @@ export const UpdateAppointmentZod = z.object({
     .min(15, 'Duration must be at least 15 minutes')
     .max(480, 'Duration cannot exceed 8 hours (480 minutes)')
     .optional(),
-  status: z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'], {
+  status: z.enum('scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'], {
     message: 'Invalid appointment status',
   }).optional(),
   notes: z.string()
@@ -73,11 +73,11 @@ export const AppointmentReminderZod = z.object({
   id: z.string().uuid().optional(),
   appointmentId: z.string().uuid('Invalid appointment ID'),
   patientId: z.string().uuid('Invalid patient ID'),
-  reminderType: z.enum(['sms', 'email', 'whatsapp', 'push'], {
+  reminderType: z.enum('sms', 'email', 'whatsapp', 'push'], {
     message: 'Invalid reminder type',
   }),
   reminderTime: z.string().datetime('Invalid reminder time format'),
-  status: z.enum(['pending', 'sent', 'delivered', 'failed'], {
+  status: z.enum('pending', 'sent', 'delivered', 'failed'], {
     message: 'Invalid reminder status',
   }),
   message: z.string()
@@ -129,7 +129,7 @@ export const CancelAppointmentZod = z.object({
   reason: z.string()
     .min(1, 'Cancellation reason is required')
     .max(500, 'Reason cannot exceed 500 characters'),
-  cancelledBy: z.enum(['patient', 'doctor', 'clinic', 'system'], {
+  cancelledBy: z.enum('patient', 'doctor', 'clinic', 'system'], {
     message: 'Invalid cancelled by value',
   }),
 })
@@ -143,7 +143,7 @@ export const RescheduleAppointmentZod = z.object({
   reason: z.string()
     .min(1, 'Rescheduling reason is required')
     .max(500, 'Reason cannot exceed 500 characters'),
-  requestedBy: z.enum(['patient', 'doctor', 'clinic'], {
+  requestedBy: z.enum('patient', 'doctor', 'clinic'], {
     message: 'Invalid requested by value',
   }),
 })
@@ -155,7 +155,7 @@ export const AppointmentSearchFiltersZod = z.object({
   patientId: z.string().uuid('Invalid patient ID').optional(),
   doctorId: z.string().uuid('Invalid doctor ID').optional(),
   clinicId: z.string().uuid('Invalid clinic ID').optional(),
-  status: z.enum(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'], {
+  status: z.enum('scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'], {
     message: 'Invalid appointment status',
   }).optional(),
   startDate: z.string().date('Invalid start date format').optional(),
@@ -177,7 +177,7 @@ export const AppointmentStatisticsZod = z.object({
   doctorId: z.string().uuid('Invalid doctor ID').optional(),
   startDate: z.string().date('Invalid start date format'),
   endDate: z.string().date('Invalid end date format'),
-  groupBy: z.enum(['day', 'week', 'month', 'doctor', 'status'], {
+  groupBy: z.enum('day', 'week', 'month', 'doctor', 'status'], {
     message: 'Invalid group by value',
   }).optional(),
 })
@@ -206,7 +206,7 @@ export const HealthcareAppointmentSchema = BaseAppointmentSchema.extend({
   
   // Emergency flags
   isEmergency: z.boolean().optional(),
-  emergencyLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+  emergencyLevel: z.enum('low', 'medium', 'high', 'critical']).optional(),
   
   // No-show risk assessment
   noShowRisk: z.number()
@@ -248,7 +248,7 @@ export const UpdateHealthcareAppointmentSchema = HealthcareAppointmentSchema.par
  */
 export const CancelHealthcareAppointmentSchema = CancelAppointmentZod.extend({
   // Healthcare-specific cancellation reasons
-  cancellationReason: z.enum([
+  cancellationReason: z.enum(
     'patient_request',
     'doctor_recommendation',
     'medical_contraindication',
@@ -275,7 +275,7 @@ export const CancelHealthcareAppointmentSchema = CancelAppointmentZod.extend({
   refundAmount: z.number()
     .min(0, 'Refund amount cannot be negative')
     .optional(),
-  refundMethod: z.enum(['cash', 'credit', 'bank_transfer', 'insurance']).optional(),
+  refundMethod: z.enum('cash', 'credit', 'bank_transfer', 'insurance']).optional(),
 })
 
 /**
@@ -293,7 +293,7 @@ export const RescheduleHealthcareAppointmentSchema = RescheduleAppointmentZod.ex
   
   // Patient communication
   patientNotified: z.boolean().optional(),
-  notificationMethod: z.enum(['phone', 'email', 'sms', 'whatsapp', 'in_person']).optional(),
+  notificationMethod: z.enum('phone', 'email', 'sms', 'whatsapp', 'in_person']).optional(),
 })
 
 /**
@@ -309,10 +309,10 @@ export const WaitlistAppointmentSchema = z.object({
   duration: z.number()
     .min(15, 'Duration must be at least 15 minutes')
     .max(480, 'Duration cannot exceed 8 hours (480 minutes)'),
-  urgencyLevel: z.enum(['low', 'medium', 'high', 'urgent'], {
+  urgencyLevel: z.enum('low', 'medium', 'high', 'urgent'], {
     message: 'Invalid urgency level',
   }),
-  contactPreference: z.enum(['phone', 'email', 'sms', 'whatsapp'], {
+  contactPreference: z.enum('phone', 'email', 'sms', 'whatsapp'], {
     message: 'Invalid contact preference',
   }),
   notes: z.string()

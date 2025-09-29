@@ -46,17 +46,17 @@ const withdrawalRequestSchema = z.object({
   consentId: z.string(),
   categories: z.array(z.string()).min(1),
   reason: z.string().min(5),
-  method: z.enum(['web', 'mobile', 'email', 'phone', 'in_person']).default('web'),
+  method: z.enum('web', 'mobile', 'email', 'phone', 'in_person']).default('web'),
   effectiveImmediately: z.boolean().default(true)
 })
 
 const dataSubjectRightsSchema = z.object({
-  rightType: z.enum(['access', 'rectification', 'erasure', 'portability', 'restriction', 'objection']),
+  rightType: z.enum('access', 'rectification', 'erasure', 'portability', 'restriction', 'objection']),
   requestData: z.record(z.any()).optional()
 })
 
 const consentValidationSchema = z.object({
-  dataType: z.enum(['basic', 'sensitive', 'medical', 'genetic', 'biometric']),
+  dataType: z.enum('basic', 'sensitive', 'medical', 'genetic', 'biometric']),
   purpose: z.string().min(1),
   isEmergency: z.boolean().default(false)
 })

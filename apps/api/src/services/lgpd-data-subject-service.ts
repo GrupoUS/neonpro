@@ -5,7 +5,7 @@ import { lgpdAuditService } from './lgpd-audit-service.js'
 import { lgpdConsentService } from './lgpd-consent-service.js'
 
 // Data Subject Request Types
-export const RequestType = z.enum([
+export const RequestType = z.enum(
   'ACCESS',
   'DELETION',
   'CORRECTION',
@@ -15,7 +15,7 @@ export const RequestType = z.enum([
   'AUTOMATED_DECISION_EXPLANATION',
 ])
 
-export const RequestStatus = z.enum([
+export const RequestStatus = z.enum(
   'PENDING',
   'PROCESSING',
   'REVIEW_REQUIRED',
@@ -24,7 +24,7 @@ export const RequestStatus = z.enum([
   'ESCALATED',
 ])
 
-export const ProcessingPriority = z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT'])
+export const ProcessingPriority = z.enum('LOW', 'MEDIUM', 'HIGH', 'URGENT'])
 
 export interface DataSubjectRequest {
   id: string

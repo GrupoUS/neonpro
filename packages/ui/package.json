@@ -31,7 +31,27 @@
     "build": "tsc && vite build",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "dev:bun": "vite dev --force",
+    "build:bun": "vite build --mode production && tsc --emitDeclarationOnly",
+    "build:analyze": "vite build --mode analyze",
+    "test:bun": "vitest run --reporter=dot",
+    "test:watch:bun": "vitest watch --reporter=dot",
+    "type-check:bun": "tsc --noEmit",
+    "clean:bun": "rm -rf dist node_modules/.cache",
+    "format:bun": "biome format . --write",
+    "lint:bun": "oxlint . --fix",
+    "perf:test": "vitest run --reporter=verbose --isolate",
+    "setup:test": "bun install && bun run build",
+    "build:lib": "tsup",
+    "build:types": "tsc --emitDeclarationOnly",
+    "dev:storybook": "vite dev --config .storybook/vite.config.ts",
+    "build:storybook": "vite build --config .storybook/vite.config.ts",
+    "test:visual": "playwright test tests/visual/",
+    "test:accessibility": "axe tests/accessibility/",
+    "export:components": "bun run src/export-components.ts",
+    "analyze:bundle": "bun run build && webpack-bundle-analyzer stats.json",
+    "optimize:images": "bun run src/optimize-images.ts"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -84,5 +104,8 @@
     "aesthetic"
   ],
   "author": "NeonPro Team",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
+  }
 }

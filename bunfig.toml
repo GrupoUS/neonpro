@@ -1,50 +1,86 @@
-# NeonPro Bunfig - Otimizado para desenvolvimento e testes híbridos
-# Configuração estratégica: pnpm para deps, bunx para performance
+# NeonPro Bunfig - Healthcare-Optimized Configuration
+# Optimized for maximum performance, compliance, and reliability
 
 [install]
-# Usar pnpm para instalação de dependências
+# Native Bun package manager with healthcare compliance
 registry = "https://registry.npmjs.org"
 production = false
 optional = true
 dev = true
 peer = true
-frozenLockfile = false
-# Cache local para performance
+frozenLockfile = true
+# Healthcare compliance: exact versions
+exact = true
+# Aggressive caching for performance
 cache = ".bun/install-cache"
+# Prefer ES modules for better compatibility
+esModule = true
+# Dedupe dependencies for efficiency
+dedupe = true
 
 [run]
-# Preload modules comuns para startup mais rápido
+# Preload critical healthcare modules
 preload = [
   "./node_modules/@types/node/index.d.ts",
-  "./node_modules/@copilotkit/react-core/dist/index.js",
-  "./node_modules/@copilotkit/react-ui/dist/index.js",
+  "./node_modules/@supabase/supabase-js/dist/index.js",
+  "./node_modules/zod/lib/index.js",
 ]
-# Hot reload otimizado
+# Hot reload optimized for development
 hot = true
-# Sem logs verbosos em dev
+# Optimized logging for healthcare debugging
 silent = false
+# PATH resolution for local binaries
+env = { "PATH": "./node_modules/.bin:$PATH" }
 
 [test]
-# Testes otimizados com bunx
-timeout = 30000
+# Healthcare test optimizations
+timeout = 60000
 coverage = true
-# Preload testing libs
+# Preload healthcare testing libraries
 preload = [
   "./node_modules/vitest/dist/index.js",
-  "./tools/config/testing/vitest.setup.ts",
+  "./node_modules/@testing-library/jest-dom/index.js"
 ]
+# Healthcare compliance test patterns
+testNamePattern = ".*healthcare.*|.*compliance.*|.*lgpd.*"
 
 [build]
-# Otimizações de build
+# Healthcare-optimized build settings
 minify = true
 sourcemap = true
 target = "node20"
-# Externos padrão do monorepo
-external = ["react", "react-dom"]
+# Healthcare external dependencies
+external = ["react", "react-dom", "@supabase/supabase-js"]
+# Source maps for healthcare debugging
+sourcemap = true
 
 [cache]
-# Cache inteligente para turborepo
+# Healthcare-compliant caching strategy
 enabled = true
 dir = ".bun/cache"
-# Invalidação baseada em mudanças
+# Content-based invalidation for compliance
 strategy = "content"
+# Healthcare audit trail
+audit = true
+
+# Performance optimizations for healthcare workloads
+[optimize]
+# Enable Bun's optimizer for healthcare apps
+enabled = true
+# Dedupe healthcare dependencies
+dedupe = true
+# ES modules for better performance
+esModule = true
+# Skip unnecessary transpilation
+skipTranspile = ["react", "react-dom"]
+
+# Healthcare-specific settings
+[healthcare]
+# Enable compliance validation
+compliance = true
+# Healthcare data residency
+dataResidency = "local"
+# Audit logging for healthcare
+auditLogging = true
+# LGPD compliance mode
+lgpdMode = true

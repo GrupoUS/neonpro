@@ -4,7 +4,7 @@
  * Integration with AIChatService for model management
  */
 
-import { zValidator } from '@hono/zod-validator'
+import { validator } from 'hono/validator'
 import { Context, Hono, Next } from 'hono'
 import { z } from 'zod'
 import { AIChatService } from '../../services/ai-chat-service.js'
@@ -125,7 +125,7 @@ const getServices = async (): Promise<ServiceInterface> => {
 app.get(
   '/',
   mockAuthMiddleware,
-  zValidator('query', modelsQuerySchema),
+  validator('query', modelsQuerySchema),
   async c => {
     const startTime = Date.now()
     const user = c.get('user')

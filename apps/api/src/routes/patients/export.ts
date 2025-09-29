@@ -7,7 +7,7 @@ import { ExportFilter, ExportPagination, LGPDComplianceOptions } from '../../ser
 const exportRouter = new Hono()
 
 const exportSchema = z.object({
-  format: z.enum(['csv', 'xlsx']).default('csv'),
+  format: z.enum('csv', 'xlsx']).default('csv'),
   filters: z
     .object({
       search: z.string().optional(),

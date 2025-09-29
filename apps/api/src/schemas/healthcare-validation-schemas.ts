@@ -65,7 +65,7 @@ export const PatientSchema = z
         const age = calculateAge(birthDate)
         return age >= 0 && age <= 150
       }, 'Idade deve estar entre 0 e 150 anos'),
-    gender: z.enum(['M', 'F', 'X', 'OUTRO']).optional(),
+    gender: z.enum('M', 'F', 'X', 'OUTRO']).optional(),
     contact: ContactSchema.optional(),
     address: AddressSchema.optional(),
     bloodType: z
@@ -167,7 +167,7 @@ export const AppointmentSchema = z
       .optional(),
     isVirtual: z.boolean().default(false),
     virtualLink: z.string().url().optional().nullable(),
-    priority: z.enum(['BAIXA', 'NORMAL', 'ALTA', 'URGENCIA']).default('NORMAL'),
+    priority: z.enum('BAIXA', 'NORMAL', 'ALTA', 'URGENCIA']).default('NORMAL'),
     reminderSent: z.boolean().default(false),
   })
   .refine(data => {

@@ -33,7 +33,7 @@ const cfmValidationSchema = z.object({
     .refine(val => val === true, 'Patient consent is required'),
 
   // Procedure Information
-  procedureType: z.enum([
+  procedureType: z.enum(
     'consultation',
     'aesthetic_procedure',
     'medical_evaluation',

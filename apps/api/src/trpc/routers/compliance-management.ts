@@ -12,7 +12,7 @@ import { z } from 'zod'
 const ComplianceAssessmentInputSchema = z.object({
   requirementId: z.string(),
   clinicId: z.string(),
-  assessmentType: z.enum(['automated', 'manual', 'external_audit']),
+  assessmentType: z.enum('automated', 'manual', 'external_audit']),
   findings: z.array(z.string()).optional(),
   recommendations: z.array(z.string()).optional(),
   evidenceUrls: z.array(z.string()).optional(),
@@ -22,7 +22,7 @@ const ComplianceAssessmentInputSchema = z.object({
 const DataConsentInputSchema = z.object({
   clientId: z.string(),
   clinicId: z.string(),
-  consentType: z.enum(['data_processing', 'marketing', 'photos', 'treatment_sharing']),
+  consentType: z.enum('data_processing', 'marketing', 'photos', 'treatment_sharing']),
   consentVersion: z.string(),
   consentDocumentUrl: z.string().url().optional(),
   ipAddress: z.string().ip().optional(),
@@ -32,15 +32,15 @@ const DataConsentInputSchema = z.object({
 const DataSubjectRequestInputSchema = z.object({
   clientId: z.string(),
   clinicId: z.string(),
-  requestType: z.enum(['access', 'rectification', 'erasure', 'portability', 'objection']),
+  requestType: z.enum('access', 'rectification', 'erasure', 'portability', 'objection']),
   requestDescription: z.string().optional(),
   requestedData: z.array(z.string()).optional(),
 })
 
 const DataBreachInputSchema = z.object({
   clinicId: z.string(),
-  breachType: z.enum(['unauthorized_access', 'data_loss', 'theft', 'disclosure']),
-  severityLevel: z.enum(['low', 'medium', 'high', 'critical']),
+  breachType: z.enum('unauthorized_access', 'data_loss', 'theft', 'disclosure']),
+  severityLevel: z.enum('low', 'medium', 'high', 'critical']),
   description: z.string().min(10),
   affectedDataTypes: z.array(z.string()).optional(),
   affectedClientsCount: z.number().int().min(0).optional(),
@@ -49,14 +49,14 @@ const DataBreachInputSchema = z.object({
 
 const ComplianceAlertInputSchema = z.object({
   clinicId: z.string(),
-  alertType: z.enum([
+  alertType: z.enum(
     'consent_expiry',
     'license_expiry',
     'assessment_due',
     'data_breach',
     'compliance_violation',
   ]),
-  severityLevel: z.enum(['low', 'medium', 'high', 'critical']),
+  severityLevel: z.enum('low', 'medium', 'high', 'critical']),
   title: z.string().min(1),
   description: z.string().min(1),
   referenceId: z.string().optional(),
@@ -65,7 +65,7 @@ const ComplianceAlertInputSchema = z.object({
 
 const ComplianceReportInputSchema = z.object({
   clinicId: z.string(),
-  reportType: z.enum([
+  reportType: z.enum(
     'lgpd_summary',
     'anvisa_compliance',
     'license_status',
@@ -79,7 +79,7 @@ const ComplianceReportInputSchema = z.object({
 
 const UpdateAssessmentStatusSchema = z.object({
   assessmentId: z.string(),
-  status: z.enum(['pending', 'in_progress', 'passed', 'failed', 'requires_action']),
+  status: z.enum('pending', 'in_progress', 'passed', 'failed', 'requires_action']),
   score: z.number().min(0).max(100).optional(),
 })
 
@@ -90,7 +90,7 @@ const WithdrawConsentSchema = z.object({
 
 const ProcessDataSubjectRequestSchema = z.object({
   requestId: z.string(),
-  status: z.enum(['pending', 'in_progress', 'completed', 'rejected']),
+  status: z.enum('pending', 'in_progress', 'completed', 'rejected']),
   responseText: z.string().optional(),
   processedBy: z.string().optional(),
 })
@@ -108,7 +108,7 @@ const UpdateDataBreachSchema = z.object({
 const UpdateAnvisaComplianceSchema = z.object({
   productId: z.string(),
   anvisaRegistrationNumber: z.string().optional(),
-  registrationStatus: z.enum(['active', 'expired', 'suspended', 'cancelled']).optional(),
+  registrationStatus: z.enum('active', 'expired', 'suspended', 'cancelled']).optional(),
   registrationDate: z.string().date().optional(),
   expiryDate: z.string().date().optional(),
   lastVerificationDate: z.string().date().optional(),
@@ -119,10 +119,10 @@ const UpdateAnvisaComplianceSchema = z.object({
 
 const UpdateLicenseComplianceSchema = z.object({
   professionalId: z.string(),
-  licenseType: z.enum(['CRM', 'COREN', 'CFF', 'CNEP']),
+  licenseType: z.enum('CRM', 'COREN', 'CFF', 'CNEP']),
   licenseNumber: z.string(),
   issuingCouncil: z.string(),
-  licenseStatus: z.enum(['active', 'expired', 'suspended', 'cancelled']),
+  licenseStatus: z.enum('active', 'expired', 'suspended', 'cancelled']),
   expiryDate: z.string().date(),
   renewalDate: z.string().date().optional(),
   isVerified: z.boolean().optional(),

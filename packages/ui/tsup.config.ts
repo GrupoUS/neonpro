@@ -11,7 +11,6 @@ export default defineConfig({
     'react-dom',
     'framer-motion',
     '@radix-ui/react-slot',
-    // Removed: '@neonpro/utils' - package no longer exists
     'lucide-react',
     'class-variance-authority',
     'clsx',

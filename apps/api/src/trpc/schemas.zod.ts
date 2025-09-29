@@ -252,9 +252,9 @@ export const ScheduleAestheticProceduresSchema = z.object({
     previousProcedures: z.array(z.string()),
     skinConditions: z.array(z.string()),
     contraindications: z.array(z.string()),
-    pregnancyStatus: z.enum(['not_pregnant', 'pregnant', 'breastfeeding', 'none', 'planning']).optional(),
+    pregnancyStatus: z.enum('not_pregnant', 'pregnant', 'breastfeeding', 'none', 'planning']).optional(),
   }).optional(),
-  urgencyLevel: z.enum(['low', 'medium', 'high', 'immediate']).optional(),
+  urgencyLevel: z.enum('low', 'medium', 'high', 'immediate']).optional(),
   budgetRange: z.object({
     min: z.number().min(0, 'Minimum budget must be positive'),
     max: z.number().min(0, 'Maximum budget must be positive'),
@@ -270,7 +270,7 @@ export const ScheduleTreatmentPackageSchema = z.object({
   startDate: z.date(),
   preferences: z.object({
     preferredProfessionals: z.array(z.string().uuid('Invalid professional ID')),
-    timePreferences: z.enum(['morning', 'afternoon', 'evening']).optional(),
+    timePreferences: z.enum('morning', 'afternoon', 'evening']).optional(),
     dayPreferences: z.array(z.string()),
   }).optional(),
 })
@@ -314,7 +314,7 @@ export const CheckContraindicationsSchema = z.object({
     previousProcedures: z.array(z.string()),
     skinConditions: z.array(z.string()),
     contraindications: z.array(z.string()),
-    pregnancyStatus: z.enum(['not_pregnant', 'pregnant', 'breastfeeding']).optional(),
+    pregnancyStatus: z.enum('not_pregnant', 'pregnant', 'breastfeeding']).optional(),
   }).optional(),
 })
 
@@ -322,8 +322,8 @@ export const CheckContraindicationsSchema = z.object({
  * Duration Variable Factor Schema
  */
 export const DurationVariableFactorSchema = z.object({
-  factor: z.enum(['area_size', 'complexity', 'patient_condition', 'combination_procedure']),
-  impact: z.enum(['add_minutes', 'multiply_duration']),
+  factor: z.enum('area_size', 'complexity', 'patient_condition', 'combination_procedure']),
+  impact: z.enum('add_minutes', 'multiply_duration']),
   value: z.number().min(0, 'Factor value must be positive'),
   description: z.string().min(1, 'Description is required'),
 })
@@ -341,7 +341,7 @@ export const CalculateVariableDurationSchema = z.object({
  */
 export const GetAestheticProceduresSchema = z.object({
   category: z.string().optional(),
-  procedureType: z.enum(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']).optional(),
+  procedureType: z.enum('injectable', 'laser', 'facial', 'body', 'surgical', 'combination']).optional(),
   search: z.string().optional(),
   limit: z.number()
     .int('Limit must be an integer')
@@ -380,7 +380,7 @@ export const AestheticProcedureDetailsSchema = z.object({
   id: z.string().uuid('Invalid procedure ID'),
   name: z.string().min(1, 'Procedure name is required'),
   category: z.string().min(1, 'Category is required'),
-  procedureType: z.enum(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']),
+  procedureType: z.enum('injectable', 'laser', 'facial', 'body', 'surgical', 'combination']),
   baseDurationMinutes: z.number().min(1, 'Duration must be positive'),
   variableDurationFactors: z.array(DurationVariableFactorSchema),
   requiredCertifications: z.array(z.string()),
@@ -388,7 +388,7 @@ export const AestheticProcedureDetailsSchema = z.object({
   contraindications: z.array(z.string()),
   aftercareInstructions: z.array(z.string()),
   recoveryPeriodDays: z.number().min(0, 'Recovery period must be non-negative'),
-  anestheticType: z.enum(['none', 'topical', 'local', 'sedation']),
+  anestheticType: z.enum('none', 'topical', 'local', 'sedation']),
   sessionCount: z.number().min(1, 'Session count must be positive'),
   intervalBetweenSessionsDays: z.number().min(0, 'Interval must be non-negative'),
   specialRequirements: z.array(z.string()),
@@ -421,25 +421,25 @@ export const TreatmentPackageDetailsSchema = z.object({
  */
 export const CreateAestheticClientProfileSchema = z.object({
   patientId: z.string().uuid('Invalid patient ID'),
-  skinType: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']).optional(),
+  skinType: z.enum('I', 'II', 'III', 'IV', 'V', 'VI']).optional(),
   skinConditions: z.array(z.string()).optional(),
   aestheticHistory: z.array(z.string()).optional(),
   previousProcedures: z.array(z.string()).optional(),
   allergies: z.array(z.string()).optional(),
   currentMedications: z.array(z.string()).optional(),
   lifestyleFactors: z.object({
-    smokingStatus: z.enum(['never', 'former', 'current']),
-    alcoholConsumption: z.enum(['none', 'occasional', 'moderate', 'frequent']),
-    sunExposure: z.enum(['minimal', 'moderate', 'significant', 'extensive']),
-    stressLevel: z.enum(['low', 'moderate', 'high', 'very_high']),
-    sleepQuality: z.enum(['poor', 'fair', 'good', 'excellent']),
+    smokingStatus: z.enum('never', 'former', 'current']),
+    alcoholConsumption: z.enum('none', 'occasional', 'moderate', 'frequent']),
+    sunExposure: z.enum('minimal', 'moderate', 'significant', 'extensive']),
+    stressLevel: z.enum('low', 'moderate', 'high', 'very_high']),
+    sleepQuality: z.enum('poor', 'fair', 'good', 'excellent']),
   }).optional(),
   aestheticGoals: z.array(z.string()).optional(),
   budgetRange: z.object({
     min: z.number().min(0, 'Minimum budget must be positive'),
     max: z.number().min(0, 'Maximum budget must be positive'),
   }).optional(),
-  preferredContactMethod: z.enum(['email', 'phone', 'whatsapp', 'sms']).optional(),
+  preferredContactMethod: z.enum('email', 'phone', 'whatsapp', 'sms']).optional(),
   marketingConsent: z.boolean().optional(),
   photoConsent: z.boolean().optional(),
   emergencyContact: z.object({
@@ -506,7 +506,7 @@ export const CreatePhotoAssessmentSchema = z.object({
   sessionNumber: z.number().min(1, 'Session number must be positive'),
   photos: z.array(z.object({
     url: z.string().url('Invalid photo URL'),
-    type: z.enum(['before', 'after', 'side_profile', 'close_up']),
+    type: z.enum('before', 'after', 'side_profile', 'close_up']),
     angle: z.string().optional(),
     lighting: z.string().optional(),
     notes: z.string().optional(),
@@ -547,8 +547,8 @@ export const CreateFinancialTransactionSchema = z.object({
   procedureId: z.string().uuid('Invalid procedure ID').optional(),
   amount: z.number().min(0, 'Amount must be non-negative'),
   currency: z.string().default('BRL'),
-  paymentMethod: z.enum(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'installment']),
-  status: z.enum(['pending', 'completed', 'failed', 'refunded']),
+  paymentMethod: z.enum('cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'installment']),
+  status: z.enum('pending', 'completed', 'failed', 'refunded']),
   transactionDate: z.date(),
   description: z.string().min(1, 'Description is required'),
   invoiceNumber: z.string().optional(),
@@ -573,7 +573,7 @@ export const GetRevenueAnalyticsSchema = z.object({
   endDate: z.date(),
   procedureCategory: z.string().optional(),
   professionalId: z.string().uuid('Invalid professional ID').optional(),
-  groupBy: z.enum(['day', 'week', 'month', 'procedure', 'professional']).optional(),
+  groupBy: z.enum('day', 'week', 'month', 'procedure', 'professional']).optional(),
 })
 
 /**
@@ -582,7 +582,7 @@ export const GetRevenueAnalyticsSchema = z.object({
 export const GetPredictiveAnalyticsSchema = z.object({
   patientId: z.string().uuid('Invalid patient ID').optional(),
   procedureCategory: z.string().optional(),
-  timeframe: z.enum(['30_days', '90_days', '180_days', '1_year']),
+  timeframe: z.enum('30_days', '90_days', '180_days', '1_year']),
 })
 
 /**
@@ -590,8 +590,8 @@ export const GetPredictiveAnalyticsSchema = z.object({
  */
 export const SearchAestheticClientsSchema = z.object({
   name: z.string().optional(),
-  skinType: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']).optional(),
-  procedureType: z.enum(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']).optional(),
+  skinType: z.enum('I', 'II', 'III', 'IV', 'V', 'VI']).optional(),
+  procedureType: z.enum('injectable', 'laser', 'facial', 'body', 'surgical', 'combination']).optional(),
   lastVisitAfter: z.date().optional(),
   lastVisitBefore: z.date().optional(),
   limit: z.number()
@@ -612,7 +612,7 @@ export const ListAestheticSessionsSchema = z.object({
   clientProfileId: z.string().uuid('Invalid client profile ID').optional(),
   professionalId: z.string().uuid('Invalid professional ID').optional(),
   procedureId: z.string().uuid('Invalid procedure ID').optional(),
-  status: z.enum(['scheduled', 'completed', 'cancelled', 'no_show']).optional(),
+  status: z.enum('scheduled', 'completed', 'cancelled', 'no_show']).optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   limit: z.number()
@@ -649,8 +649,8 @@ export const ListPhotoAssessmentsSchema = z.object({
  */
 export const ListFinancialTransactionsSchema = z.object({
   patientId: z.string().uuid('Invalid patient ID').optional(),
-  status: z.enum(['pending', 'completed', 'failed', 'refunded']).optional(),
-  paymentMethod: z.enum(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'installment']).optional(),
+  status: z.enum('pending', 'completed', 'failed', 'refunded']).optional(),
+  paymentMethod: z.enum('cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'installment']).optional(),
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   limit: z.number()
@@ -669,7 +669,7 @@ export const ListFinancialTransactionsSchema = z.object({
  */
 export const GetTreatmentCatalogSchema = z.object({
   category: z.string().optional(),
-  procedureType: z.enum(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']).optional(),
+  procedureType: z.enum('injectable', 'laser', 'facial', 'body', 'surgical', 'combination']).optional(),
   minPrice: z.number().min(0).optional(),
   maxPrice: z.number().min(0).optional(),
   search: z.string().optional(),
@@ -689,7 +689,7 @@ export const GetTreatmentCatalogSchema = z.object({
  */
 export const GetTreatmentPlansByClientSchema = z.object({
   clientProfileId: z.string().uuid('Invalid client profile ID'),
-  status: z.enum(['active', 'completed', 'cancelled']).optional(),
+  status: z.enum('active', 'completed', 'cancelled']).optional(),
   limit: z.number()
     .int('Limit must be an integer')
     .min(1, 'Limit must be at least 1')

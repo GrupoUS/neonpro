@@ -3,7 +3,7 @@ import { type LGPDOperationResult } from '../types/lgpd.js'
 import { createHealthcareError } from './createHealthcareError.js'
 
 // LGPD Consent Types
-export const ConsentPurpose = z.enum([
+export const ConsentPurpose = z.enum(
   'TREATMENT',
   'BILLING',
   'RESEARCH',
@@ -15,7 +15,7 @@ export const ConsentPurpose = z.enum([
   'THIRD_PARTY_SHARING',
 ])
 
-export const ConsentStatus = z.enum([
+export const ConsentStatus = z.enum(
   'ACTIVE',
   'REVOKED',
   'EXPIRED',
@@ -23,7 +23,7 @@ export const ConsentStatus = z.enum([
   'WITHDRAWN',
 ])
 
-export const ConsentChannel = z.enum([
+export const ConsentChannel = z.enum(
   'WEB_PORTAL',
   'MOBILE_APP',
   'IN_PERSON',
