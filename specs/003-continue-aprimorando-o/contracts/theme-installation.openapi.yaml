@@ -1,0 +1,548 @@
+openapi: 3.0.3
+info:
+  title: NEONPRO Theme Installation API
+  description: API endpoints for NEONPRO theme installation and configuration
+  version: 1.0.0
+  contact:
+    name: NeonPro Development Team
+    email: dev@neonpro.com
+
+paths:
+  /api/theme/install:
+    post:
+      summary: Install NEONPRO theme
+      description: Installs the NEONPRO theme from tweakcn registry using shadcn CLI
+      operationId: installTheme
+      tags:
+        - Theme Installation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeInstallationRequest'
+      responses:
+        '200':
+          description: Theme installation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeInstallationResponse'
+        '400':
+          description: Invalid installation parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Installation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/theme/configure:
+    post:
+      summary: Configure theme settings
+      description: Configures theme settings including fonts, colors, and monorepo integration
+      operationId: configureTheme
+      tags:
+        - Theme Configuration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ThemeConfigurationRequest'
+      responses:
+        '200':
+          description: Theme configuration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeConfigurationResponse'
+        '400':
+          description: Invalid configuration parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Configuration failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/theme/validate:
+    get:
+      summary: Validate theme installation
+      description: Validates that the theme is properly installed and configured
+      operationId: validateTheme
+      tags:
+        - Theme Validation
+      responses:
+        '200':
+          description: Theme validation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ThemeValidationResponse'
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/theme/fonts/{fontFamily}:
+    post:
+      summary: Install font
+      description: Installs a specific font locally
+      operationId: installFont
+      tags:
+        - Font Management
+      parameters:
+        - name: fontFamily
+          in: path
+          required: true
+          description: Font family name to install
+          schema:
+            type: string
+            enum: [Inter, Lora, Libre Baskerville]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FontInstallationRequest'
+      responses:
+        '200':
+          description: Font installation successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FontInstallationResponse'
+        '400':
+          description: Invalid font parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Font not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ThemeInstallationRequest:
+      type: object
+      required:
+        - registryUrl
+        - targetDirectory
+      properties:
+        registryUrl:
+          type: string
+          description: URL of the theme registry
+          example: "https://tweakcn.com/r/themes/cmesqts4l000r04l7bgdqfpxb"
+        targetDirectory:
+          type: string
+          description: Target directory for installation
+          example: "packages/ui"
+        useCli:
+          type: boolean
+          description: Whether to use shadcn CLI for installation
+          example: true
+        manualAdjustments:
+          type: boolean
+          description: Whether manual adjustments are needed
+          example: true
+
+    ThemeInstallationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Installation success status
+        message:
+          type: string
+          description: Installation status message
+        installationPath:
+          type: string
+          description: Path where theme was installed
+        filesCreated:
+          type: array
+          items:
+            type: string
+          description: List of files created during installation
+        warnings:
+          type: array
+          items:
+            type: string
+          description: List of warnings during installation
+
+    ThemeConfigurationRequest:
+      type: object
+      required:
+        - themeName
+        - colorScheme
+        - fonts
+      properties:
+        themeName:
+          type: string
+          description: Name of the theme
+          example: "NEONPRO"
+        colorScheme:
+          $ref: '#/components/schemas/ColorScheme'
+        fonts:
+          $ref: '#/components/schemas/FontConfiguration'
+        spacing:
+          $ref: '#/components/schemas/SpacingConfiguration'
+        borderRadius:
+          $ref: '#/components/schemas/BorderRadiusConfiguration'
+        shadows:
+          $ref: '#/components/schemas/ShadowConfiguration'
+
+    ThemeConfigurationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Configuration success status
+        message:
+          type: string
+          description: Configuration status message
+        configurationPath:
+          type: string
+          description: Path to configuration file
+        validationResults:
+          $ref: '#/components/schemas/ValidationResults'
+
+    ThemeValidationResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Whether the theme is valid
+        issues:
+          type: array
+          items:
+            type: string
+          description: List of validation issues
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: List of recommendations
+        performanceMetrics:
+          $ref: '#/components/schemas/PerformanceMetrics'
+
+    FontInstallationRequest:
+      type: object
+      required:
+        - sourceUrl
+        - targetPath
+      properties:
+        sourceUrl:
+          type: string
+          description: URL to download font from
+          example: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700"
+        targetPath:
+          type: string
+          description: Local path to save font
+          example: "packages/ui/fonts/inter"
+        weights:
+          type: array
+          items:
+            type: integer
+          description: Font weights to download
+          example: [400, 500, 600, 700]
+
+    FontInstallationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Font installation success status
+        message:
+          type: string
+          description: Installation status message
+        fontFiles:
+          type: array
+          items:
+            type: string
+          description: List of font files installed
+        fileSize:
+          type: integer
+          description: Total size of installed fonts in bytes
+
+    ColorScheme:
+      type: object
+      required:
+        - light
+        - dark
+      properties:
+        light:
+          $ref: '#/components/schemas/ColorPalette'
+        dark:
+          $ref: '#/components/schemas/ColorPalette'
+        format:
+          type: string
+          enum: [oklch, hex, rgb]
+          example: "oklch"
+
+    ColorPalette:
+      type: object
+      required:
+        - background
+        - foreground
+        - primary
+        - secondary
+      properties:
+        background:
+          type: string
+          example: "oklch(1 0 0)"
+        foreground:
+          type: string
+          example: "oklch(0.11 0 0)"
+        card:
+          type: string
+          example: "oklch(1 0 0)"
+        cardForeground:
+          type: string
+          example: "oklch(0.11 0 0)"
+        primary:
+          type: string
+          example: "oklch(0.46 0.18 220)"
+        primaryForeground:
+          type: string
+          example: "oklch(0.98 0.02 220)"
+        secondary:
+          type: string
+          example: "oklch(0.97 0.01 220)"
+        secondaryForeground:
+          type: string
+          example: "oklch(0.21 0.01 220)"
+        muted:
+          type: string
+          example: "oklch(0.97 0.01 220)"
+        mutedForeground:
+          type: string
+          example: "oklch(0.45 0.02 220)"
+        accent:
+          type: string
+          example: "oklch(0.97 0.01 220)"
+        accentForeground:
+          type: string
+          example: "oklch(0.21 0.01 220)"
+        destructive:
+          type: string
+          example: "oklch(0.5 0.19 15)"
+        destructiveForeground:
+          type: string
+          example: "oklch(0.98 0.02 15)"
+        border:
+          type: string
+          example: "oklch(0.92 0.02 220)"
+        input:
+          type: string
+          example: "oklch(0.92 0.02 220)"
+        ring:
+          type: string
+          example: "oklch(0.46 0.18 220)"
+
+    FontConfiguration:
+      type: object
+      required:
+        - sans
+        - serif
+        - mono
+      properties:
+        sans:
+          $ref: '#/components/schemas/FontDefinition'
+        serif:
+          $ref: '#/components/schemas/FontDefinition'
+        mono:
+          $ref: '#/components/schemas/FontDefinition'
+
+    FontDefinition:
+      type: object
+      required:
+        - family
+        - source
+        - weights
+      properties:
+        family:
+          type: string
+          example: "Inter"
+        source:
+          type: string
+          enum: [local, google, cdn]
+          example: "local"
+        weights:
+          type: array
+          items:
+            type: integer
+          example: [400, 500, 600, 700]
+        fallback:
+          type: array
+          items:
+            type: string
+          example: ["system-ui", "sans-serif"]
+
+    SpacingConfiguration:
+      type: object
+      required:
+        - unit
+        - scale
+      properties:
+        unit:
+          type: string
+          enum: [rem, px, em]
+          example: "rem"
+        scale:
+          type: array
+          items:
+            type: number
+          example: [0, 0.25, 0.5, 1, 1.5, 2, 4, 8]
+        breakpoints:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            sm: "640px"
+            md: "768px"
+            lg: "1024px"
+            xl: "1280px"
+
+    BorderRadiusConfiguration:
+      type: object
+      required:
+        - none
+        - sm
+        - md
+        - lg
+        - xl
+        - full
+      properties:
+        none:
+          type: string
+          example: "0"
+        sm:
+          type: string
+          example: "0.125rem"
+        md:
+          type: string
+          example: "0.375rem"
+        lg:
+          type: string
+          example: "0.5rem"
+        xl:
+          type: string
+          example: "0.75rem"
+        full:
+          type: string
+          example: "9999px"
+
+    ShadowConfiguration:
+      type: object
+      required:
+        - sm
+        - md
+        - lg
+        - xl
+        - colors
+      properties:
+        sm:
+          type: string
+          example: "0 1px 2px 0 rgb(0 0 0 / 0.05)"
+        md:
+          type: string
+          example: "0 4px 6px -1px rgb(0 0 0 / 0.1)"
+        lg:
+          type: string
+          example: "0 10px 15px -3px rgb(0 0 0 / 0.1)"
+        xl:
+          type: string
+          example: "0 20px 25px -5px rgb(0 0 0 / 0.1)"
+        colors:
+          type: object
+          properties:
+            light:
+              type: string
+              example: "0 0 0 / 0.05"
+            dark:
+              type: string
+              example: "0 0 0 / 0.3"
+
+    ValidationResults:
+      type: object
+      properties:
+        colorContrast:
+          type: boolean
+          description: Whether color contrast meets WCAG standards
+        fontLoading:
+          type: boolean
+          description: Whether fonts load correctly
+        themeConsistency:
+          type: boolean
+          description: Whether theme is consistent across all apps
+        performance:
+          type: boolean
+          description: Whether theme meets performance requirements
+        errors:
+          type: array
+          items:
+            type: string
+          description: List of validation errors
+        warnings:
+          type: array
+          items:
+            type: string
+          description: List of validation warnings
+
+    PerformanceMetrics:
+      type: object
+      properties:
+        themeSwitchTime:
+          type: number
+          description: Time to switch themes in milliseconds
+        fontLoadTime:
+          type: number
+          description: Time to load fonts in milliseconds
+        bundleSize:
+          type: number
+          description: Theme bundle size in bytes
+        renderTime:
+          type: number
+          description: Time to render themed components in milliseconds
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error type
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+        timestamp:
+          type: string
+          format: date-time
+          description: Error timestamp
+
+tags:
+  - name: Theme Installation
+    description: Theme installation endpoints
+  - name: Theme Configuration
+    description: Theme configuration endpoints
+  - name: Theme Validation
+    description: Theme validation endpoints
+  - name: Font Management
+    description: Font management endpoints

@@ -79,7 +79,8 @@
       "mcp__chrome-devtools__evaluate_script",
       "mcp__chrome-devtools__fill",
       "mcp__chrome-devtools__list_network_requests",
-      "mcp__chrome-devtools__close_page"
+      "mcp__chrome-devtools__close_page",
+      "SlashCommand(/tasks)"
     ],
     "deny": [
       "Edit",

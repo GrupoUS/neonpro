@@ -14,7 +14,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "composite": true,
-    "noEmit": true,
+    "noEmit": false,
     "skipLibCheck": true
   },
   "include": ["src/**/*"],

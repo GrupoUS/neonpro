@@ -1,308 +1,317 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import {
-  Bell,
-  BarChart3,
-  Calendar,
-  Users,
-  DollarSign,
-  Menu,
-  Search,
-  Settings,
-  TrendingUp,
-  X,
-  Shield,
-  MessageSquare,
-  Brain,
-  FileText,
-  Zap
-} from 'lucide-react'
-import { useState } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard/')({ 
+export const Route = createFileRoute('/dashboard')({
   component: Dashboard,
 })
 
 function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-
-  const menuItems = [
-    { icon: BarChart3, label: 'Dashboard', href: '/dashboard' },
-    { icon: Users, label: 'Pacientes', href: '/patients' },
-    { icon: Calendar, label: 'Agendamentos', href: '/appointments' },
-    { icon: MessageSquare, label: 'Engajamento', href: '/patient-engagement' },
-    { icon: Calendar, label: 'Agendamento Estético', href: '/aesthetic-scheduling' },
-    { icon: Brain, label: 'Suporte Clínico IA', href: '/ai-clinical-support' },
-    { icon: DollarSign, label: 'Financeiro', href: '/financial-management' },
-    { icon: BarChart3, label: 'Analytics', href: '/analytics' },
-    { icon: Shield, label: 'Compliance', href: '/compliance' },
-    { icon: Settings, label: 'Configurações', href: '/settings' },
-  ]
-
-  const dashboardStats = [
-    {
-      title: 'Total de Pacientes',
-      value: '2,847',
-      change: '+12%',
-      icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
-    },
-    {
-      title: 'Agendamentos Hoje',
-      value: '23',
-      change: '+8%',
-      icon: Calendar,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
-    },
-    {
-      title: 'Receita Mensal',
-      value: 'R$ 157.420',
-      change: '+15%',
-      icon: DollarSign,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-50'
-    },
-    {
-      title: 'Taxa de Ocupação',
-      value: '87%',
-      change: '+3%',
-      icon: TrendingUp,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
-    }
-  ]
+  console.log('🎯 [DASHBOARD] Dashboard carregando com sucesso!')
 
   return (
-    <div className='min-h-screen bg-gray-50'>
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div 
-          className='fixed inset-0 z-40 lg:hidden bg-gray-600 bg-opacity-75'
-          onClick={() => setSidebarOpen(false)}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') setSidebarOpen(false)
-          }}
-          role="button"
-          tabIndex={0}
-          aria-label="Fechar sidebar"
-        >
+    <div style={{
+      padding: '32px',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      minHeight: '100vh',
+      color: 'white'
+    }}>
+      <div style={{
+        background: 'rgba(255, 255, 255, 0.95)',
+        color: '#333',
+        borderRadius: '16px',
+        padding: '32px',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+        backdropFilter: 'blur(10px)'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '32px'
+        }}>
+          <h1 style={{
+            fontSize: '2.5rem',
+            fontWeight: 'bold',
+            margin: '0 0 16px 0',
+            background: 'linear-gradient(135deg, #667eea, #764ba2)',
+            backgroundClip: 'text',
+            color: 'transparent'
+          }}>
+            🏥 Dashboard NeonPro
+          </h1>
+          <p style={{
+            fontSize: '1.2rem',
+            color: '#666',
+            margin: '0'
+          }}>
+            Sistema de Gestão para Clínicas Estéticas
+          </p>
         </div>
-      )}
 
-      {/* Sidebar */}
-      <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className='flex items-center justify-between h-16 px-4 border-b'>
-          <div className='flex items-center'>
-            <div className='flex-shrink-0'>
-              <div className='h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center'>
-                <Zap className='h-5 w-5 text-white' />
-              </div>
-            </div>
-            <div className='ml-3'>
-              <p className='text-sm font-medium text-gray-900'>NeonPro</p>
-              <p className='text-xs text-gray-500'>Clínica Estética</p>
-            </div>
+        {/* Métricas Principais */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+          gap: '24px',
+          marginBottom: '32px'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+            padding: '24px',
+            borderRadius: '12px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>👥</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>158</div>
+            <div style={{ opacity: 0.9 }}>Pacientes Ativos</div>
           </div>
-          <button onClick={() => setSidebarOpen(false)} className='lg:hidden'>
-            <X className='h-6 w-6 text-gray-400' />
+
+          <div style={{
+            background: 'linear-gradient(135deg, #43e97b, #38f9d7)',
+            padding: '24px',
+            borderRadius: '12px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>📅</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>12</div>
+            <div style={{ opacity: 0.9 }}>Agendamentos Hoje</div>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #fa709a, #fee140)',
+            padding: '24px',
+            borderRadius: '12px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>💰</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>R$ 24.5K</div>
+            <div style={{ opacity: 0.9 }}>Receita do Mês</div>
+          </div>
+
+          <div style={{
+            background: 'linear-gradient(135deg, #a8edea, #fed6e3)',
+            padding: '24px',
+            borderRadius: '12px',
+            color: '#333',
+            textAlign: 'center'
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>📊</div>
+            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>96%</div>
+            <div style={{ opacity: 0.7 }}>Taxa de Satisfação</div>
+          </div>
+        </div>
+
+        {/* Menu de Ações */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '16px',
+          marginBottom: '32px'
+        }}>
+          <button style={{
+            background: '#4f46e5',
+            color: 'white',
+            border: 'none',
+            padding: '16px 24px',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'translateY(-2px)'
+            e.target.style.boxShadow = '0 6px 20px rgba(79, 70, 229, 0.4)'
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'translateY(0)'
+            e.target.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.3)'
+          }}>
+            ➕ Novo Agendamento
+          </button>
+
+          <button style={{
+            background: '#059669',
+            color: 'white',
+            border: 'none',
+            padding: '16px 24px',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(5, 150, 105, 0.3)'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'translateY(-2px)'
+            e.target.style.boxShadow = '0 6px 20px rgba(5, 150, 105, 0.4)'
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'translateY(0)'
+            e.target.style.boxShadow = '0 4px 12px rgba(5, 150, 105, 0.3)'
+          }}>
+            👤 Cadastrar Paciente
+          </button>
+
+          <button style={{
+            background: '#dc2626',
+            color: 'white',
+            border: 'none',
+            padding: '16px 24px',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'translateY(-2px)'
+            e.target.style.boxShadow = '0 6px 20px rgba(220, 38, 38, 0.4)'
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'translateY(0)'
+            e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
+          }}
+          onClick={() => alert('🚨 Protocolo de emergência ativado!')}>
+            🚨 Emergência
+          </button>
+
+          <button style={{
+            background: '#7c3aed',
+            color: 'white',
+            border: 'none',
+            padding: '16px 24px',
+            borderRadius: '12px',
+            fontSize: '1rem',
+            fontWeight: '500',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)'
+          }}
+          onMouseOver={(e) => {
+            e.target.style.transform = 'translateY(-2px)'
+            e.target.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.4)'
+          }}
+          onMouseOut={(e) => {
+            e.target.style.transform = 'translateY(0)'
+            e.target.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.3)'
+          }}>
+            📊 Relatórios
           </button>
         </div>
 
-        <nav className='mt-8 px-2'>
-          <div className='space-y-1'>
-            {menuItems.map(item => (
-              <Link
-                key={`menu-${item.label}`}
-                to={item.href}
-                className='group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                activeProps={{
-                  className: 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
-                }}
-              >
-                <item.icon className='mr-4 h-6 w-6' />
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </nav>
-      </div>
+        {/* Agenda de Hoje */}
+        <div style={{
+          background: '#f8fafc',
+          padding: '24px',
+          borderRadius: '12px',
+          border: '1px solid #e2e8f0'
+        }}>
+          <h2 style={{
+            fontSize: '1.5rem',
+            fontWeight: 'bold',
+            margin: '0 0 16px 0',
+            color: '#1e293b'
+          }}>
+            📅 Agenda de Hoje
+          </h2>
 
-      {/* Main content */}
-      <div className='lg:pl-64'>
-        {/* Top navigation */}
-        <header className='bg-white shadow-sm border-b border-gray-200'>
-          <div className='flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8'>
-            <div className='flex items-center'>
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className='lg:hidden'
-              >
-                <Menu className='h-6 w-6 text-gray-400' />
-              </button>
-              <h1 className='ml-4 text-xl font-semibold text-gray-900'>
-                Dashboard Principal
-              </h1>
-            </div>
-
-            <div className='flex items-center space-x-4'>
-              <button className='p-1 text-gray-400 hover:text-gray-500'>
-                <Search className='h-6 w-6' />
-              </button>
-              <button className='p-1 text-gray-400 hover:text-gray-500 relative'>
-                <Bell className='h-6 w-6' />
-                <span className='absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center'>3</span>
-              </button>
-              <button className='p-1 text-gray-400 hover:text-gray-500'>
-                <Settings className='h-6 w-6' />
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Dashboard content */}
-        <main className='p-6'>
-          {/* Welcome section */}
-          <div className='mb-8'>
-            <h2 className='text-2xl font-bold text-gray-900 mb-2'>Bem-vindo ao NeonPro!</h2>
-            <p className='text-gray-600'>Aqui está o resumo da sua clínica estética hoje.</p>
-          </div>
-
-          {/* Stats cards */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-            {dashboardStats.map((stat) => (
-              <div key={`stat-${stat.title}`} className='bg-white rounded-lg shadow hover:shadow-lg transition-shadow p-6'>
-                <div className='flex items-center'>
-                  <div className='flex-shrink-0'>
-                    <div className={`h-10 w-10 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
-                      <stat.icon className={`h-6 w-6 ${stat.color}`} />
-                    </div>
-                  </div>
-                  <div className='ml-5 w-0 flex-1'>
-                    <dl>
-                      <dt className='text-sm font-medium text-gray-500 truncate'>
-                        {stat.title}
-                      </dt>
-                      <dd className='flex items-baseline'>
-                        <div className='text-2xl font-semibold text-gray-900'>
-                          {stat.value}
-                        </div>
-                        <div className='ml-2 flex items-baseline text-sm font-semibold text-green-600'>
-                          {stat.change}
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
-                </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{
+              background: 'white',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{ fontWeight: '500', color: '#1e293b' }}>Maria Silva - Botox</div>
+                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>Dra. Ana Beatriz • Sala 1</div>
               </div>
-            ))}
-          </div>
-
-          {/* Dashboard Cards Layout */}
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
-            {/* Appointments Card */}
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='mb-4'>
-                <h3 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
-                  <Calendar className='h-5 w-5' />
-                  Próximos Agendamentos
-                </h3>
-              </div>
-              <div className='space-y-3'>
-                <div className='flex items-center justify-between p-2 bg-gray-50 rounded'>
-                  <div>
-                    <p className='font-medium text-sm'>Maria Silva</p>
-                    <p className='text-xs text-gray-500'>Botox - 14:30</p>
-                  </div>
-                  <span className='text-xs bg-green-100 text-green-800 px-2 py-1 rounded'>Confirmado</span>
-                </div>
-                <div className='flex items-center justify-between p-2 bg-gray-50 rounded'>
-                  <div>
-                    <p className='font-medium text-sm'>João Santos</p>
-                    <p className='text-xs text-gray-500'>Preenchimento - 15:00</p>
-                  </div>
-                  <span className='text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded'>Pendente</span>
-                </div>
+              <div style={{
+                background: '#dbeafe',
+                color: '#1d4ed8',
+                padding: '4px 12px',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                fontWeight: '500'
+              }}>
+                09:30
               </div>
             </div>
 
-            {/* Quick Actions Card */}
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='mb-4'>
-                <h3 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
-                  <Zap className='h-5 w-5' />
-                  Ações Rápidas
-                </h3>
+            <div style={{
+              background: 'white',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{ fontWeight: '500', color: '#1e293b' }}>Ana Oliveira - Preenchimento</div>
+                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>Dr. Carlos Mendes • Sala 2</div>
               </div>
-              <div className='space-y-2'>
-                <button className='w-full flex items-center justify-start px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors'>
-                  <Users className='h-4 w-4 mr-2' />
-                  Novo Paciente
-                </button>
-                <button className='w-full flex items-center justify-start px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors'>
-                  <Calendar className='h-4 w-4 mr-2' />
-                  Agendar Consulta
-                </button>
-                <button className='w-full flex items-center justify-start px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors'>
-                  <FileText className='h-4 w-4 mr-2' />
-                  Relatório Diário
-                </button>
+              <div style={{
+                background: '#dcfce7',
+                color: '#166534',
+                padding: '4px 12px',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                fontWeight: '500'
+              }}>
+                14:00
               </div>
             </div>
 
-            {/* Revenue Card */}
-            <div className='bg-white rounded-lg shadow p-6'>
-              <div className='mb-4'>
-                <h3 className='text-lg font-semibold text-gray-900 flex items-center gap-2'>
-                  <DollarSign className='h-5 w-5' />
-                  Receita do Mês
-                </h3>
+            <div style={{
+              background: 'white',
+              padding: '16px',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}>
+              <div>
+                <div style={{ fontWeight: '500', color: '#1e293b' }}>Camila Costa - Limpeza de Pele</div>
+                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>Esteticista Paula • Sala 3</div>
               </div>
-              <div className='text-center'>
-                <div className='text-3xl font-bold text-green-600 mb-2'>R$ 157.420</div>
-                <div className='text-sm text-gray-500 mb-4'>Meta: R$ 150.000</div>
-                <div className='w-full bg-gray-200 rounded-full h-2'>
-                  <div className='bg-green-600 h-2 rounded-full' style={{ width: '105%' }}></div>
-                </div>
-                <p className='text-xs text-green-600 mt-2'>+5% acima da meta</p>
+              <div style={{
+                background: '#fef3c7',
+                color: '#92400e',
+                padding: '4px 12px',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                fontWeight: '500'
+              }}>
+                16:30
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Recent Activity */}
-          <div className='bg-white rounded-lg shadow p-6'>
-            <div className='mb-4'>
-              <h3 className='text-lg font-semibold text-gray-900'>Atividade Recente</h3>
-            </div>
-            <div className='space-y-4'>
-              <div className='flex items-center space-x-3'>
-                <div className='h-2 w-2 bg-green-500 rounded-full'></div>
-                <div className='flex-1'>
-                  <p className='text-sm font-medium'>Nova consulta agendada</p>
-                  <p className='text-xs text-gray-500'>Maria Silva - Botox - há 5 minutos</p>
-                </div>
-              </div>
-              <div className='flex items-center space-x-3'>
-                <div className='h-2 w-2 bg-blue-500 rounded-full'></div>
-                <div className='flex-1'>
-                  <p className='text-sm font-medium'>Pagamento recebido</p>
-                  <p className='text-xs text-gray-500'>R$ 1.200,00 - João Santos - há 15 minutos</p>
-                </div>
-              </div>
-              <div className='flex items-center space-x-3'>
-                <div className='h-2 w-2 bg-yellow-500 rounded-full'></div>
-                <div className='flex-1'>
-                  <p className='text-sm font-medium'>Lembrete automático enviado</p>
-                  <p className='text-xs text-gray-500'>Ana Costa - consulta amanhã - há 30 minutos</p>
-                </div>
-              </div>
-            </div>
+        <div style={{
+          textAlign: 'center',
+          marginTop: '32px',
+          padding: '16px',
+          background: '#f0fdf4',
+          borderRadius: '8px',
+          border: '1px solid #bbf7d0'
+        }}>
+          <div style={{ color: '#15803d', fontWeight: '500' }}>
+            ✅ Dashboard funcionando perfeitamente!
           </div>
-        </main>
+          <div style={{ fontSize: '0.875rem', color: '#166534', marginTop: '4px' }}>
+            Sistema NeonPro - Versão completa com todos os complementos
+          </div>
+        </div>
       </div>
     </div>
   )

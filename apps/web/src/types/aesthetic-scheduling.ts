@@ -167,6 +167,20 @@ export interface TreatmentMetrics {
   sideEffects?: string[]
 }
 
+export interface MultiSessionSchedulingRequest {
+  patientId: string;
+  professionalId: string;
+  treatmentId: string;
+  sessions: number;
+  intervalDays: number;
+  startDate: Date;
+  notes?: string;
+  compliance: {
+    lgpdCompliant: boolean;
+    treatmentConsent: boolean;
+  };
+}
+
 // Schema exports
 export const MultiSessionSchedulingSchema = {
   validate: (data: any) => {

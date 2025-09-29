@@ -9,20 +9,20 @@
  * Compliance: LGPD, ANVISA, CFM, WCAG 2.1 AA
  */
 
-import React, { createContext, useContext, useEffect, useState } from 'react'
 import supabase from '@/integrations/supabase/client'
 import type {
-  AuthUser,
+  AuthCredentials,
+  AuthError,
   AuthSession,
   AuthState,
-  AuthCredentials,
-  SignUpData,
-  AuthError,
-  UseAuthReturn,
+  AuthUser,
   OAuthConfig,
-  PasswordResetRequest
+  PasswordResetRequest,
+  SignUpData,
+  UseAuthReturn
 } from '@neonpro/types'
-import type { User as SupabaseUser, Session as SupabaseSession, AuthChangeEvent } from '@supabase/supabase-js'
+import type { AuthChangeEvent, Session as SupabaseSession, User as SupabaseUser } from '@supabase/supabase-js'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
 // Criar contexto de autenticação
 const AuthContext = createContext<UseAuthReturn | undefined>(undefined)
@@ -216,6 +216,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           message: 'Erro interno durante o cadastro'
         }
       }
+    } finally {
+      setAuthState(prev => ({ ...prev, isLoading: false }))
     }
   }
 
@@ -246,6 +248,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           message: 'Erro interno durante o login'
         }
       }
+    } finally {
+      setAuthState(prev => ({ ...prev, isLoading: false }))
     }
   }
 

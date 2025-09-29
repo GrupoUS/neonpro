@@ -66,8 +66,7 @@ import type {
   PatientData, 
   TreatmentSession, 
   AestheticTreatment,
-  HealthcareContext,
-  HealthcareDashboardMetrics 
+  HealthcareContext
 } from '@/types/healthcare'
 
 /**
@@ -241,15 +240,15 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
 
   // Filter sessions based on selected time range
   const filteredSessions = sessions.filter(session => {
-    const sessionDate = new Date(session.scheduledStart)
+    const sessionDate = new Date(session.scheduledDate)
     return sessionDate >= selectedTimeFilter.dateRange.start && 
            sessionDate <= selectedTimeFilter.dateRange.end
   })
 
   // Calculate dashboard metrics
   const metrics = React.useMemo(() => {
-    const todaySessions = sessions.filter(session => isToday(new Date(session.scheduledStart)))
-    const weekSessions = sessions.filter(session => isThisWeek(new Date(session.scheduledStart)))
+    const todaySessions = sessions.filter(session => isToday(new Date(session.scheduledDate)))
+    const weekSessions = sessions.filter(session => isThisWeek(new Date(session.scheduledDate)))
     
     const completedSessions = filteredSessions.filter(s => s.status === 'completed')
     const scheduledSessions = filteredSessions.filter(s => s.status === 'scheduled')
@@ -263,7 +262,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
     const averageSessionValue = completedSessions.length > 0 ? totalRevenue / completedSessions.length : 0
     
     const patientRetention = patients.length > 0 
-      ? (patients.filter(p => p.medicalHistory.aestheticTreatments.length > 1).length / patients.length) * 100
+      ? (patients.filter(p => p.medicalHistory.previousTreatments && p.medicalHistory.previousTreatments.length > 1).length / patients.length) * 100
       : 0
     
     const treatmentPopularity = treatments.map(treatment => ({
@@ -273,7 +272,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
 
     const upcomingSessions = sessions
       .filter(s => s.status === 'scheduled')
-      .sort((a, b) => new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime())
+      .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
       .slice(0, 5)
 
     const emergencyAlerts = [
@@ -476,23 +475,28 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
               <CardContent>
                 {metrics.upcomingSessions.length > 0 ? (
                   <div className="space-y-3">
-                    {metrics.upcomingSessions.map(session => (
-                      <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <div className={`w-2 h-2 rounded-full ${getStatusColor(session.status)}`} />
-                          <div>
-                            <p className="font-medium">{session.patientName}</p>
-                            <p className="text-sm text-muted-foreground">{session.treatmentName}</p>
+                    {metrics.upcomingSessions.map(session => {
+                      const patient = patients.find(p => p.personalInfo.fullName === session.patientId)
+                      const treatment = treatments.find(t => t.id === session.treatmentId)
+                      
+                      return (
+                        <div key={session.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full ${getStatusColor(session.status)}`} />
+                            <div>
+                              <p className="font-medium">{patient?.personalInfo.fullName || 'Paciente não encontrado'}</p>
+                              <p className="text-sm text-muted-foreground">{treatment?.name || 'Tratamento não encontrado'}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-medium">
+                              {format(new Date(session.scheduledDate), 'HH:mm', { locale: ptBR })}
+                            </p>
+                            <p className="text-xs text-muted-foreground">{session.professionalId}</p>
                           </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium">
-                            {format(new Date(session.scheduledStart), 'HH:mm', { locale: ptBR })}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{session.professional}</p>
-                        </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8 text-muted-foreground">
@@ -620,7 +624,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
                   </div>
                   <Progress value={metrics.patientRetention} className="w-full" />
                   <div className="text-center text-sm text-muted-foreground">
-                    {patients.filter(p => p.medicalHistory.aestheticTreatments.length > 1).length} de {metrics.totalPatients} pacientes retornaram
+                    {patients.filter(p => p.medicalHistory.previousTreatments && p.medicalHistory.previousTreatments.length > 1).length} de {metrics.totalPatients} pacientes retornaram
                   </div>
                 </div>
               </CardContent>

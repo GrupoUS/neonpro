@@ -73,7 +73,7 @@ export const HEALTHCARE_CONSENT_CATEGORIES: ConsentCategory[] = [
     withdrawalImpact: 'delayed',
     healthcareSpecific: false
   },
-  
+
   // Medical Data Collection
   {
     id: 'medical_data_collection',
@@ -252,13 +252,13 @@ export class LGPDConsentManager {
     consentText: string,
     metadata: Record<string, any> = {}
   ): Promise<GranularConsent> {
-    const selectedCategories = this.categories.filter(cat => 
+    const selectedCategories = this.categories.filter(cat =>
       selectedCategoryIds.includes(cat.id)
     )
 
     // Validate required categories
     const requiredCategories = this.getRequiredCategories()
-    const missingRequired = requiredCategories.filter(reqCat => 
+    const missingRequired = requiredCategories.filter(reqCat =>
       !selectedCategories.some(selected => selected.id === reqCat.id)
     )
 
@@ -331,11 +331,11 @@ export class LGPDConsentManager {
    * Validate consent for data access
    */
   async validateConsentForDataAccess(
-    _patientId: string,
-    _clinicId: string,
-    _dataType: string,
-    _purpose: string,
-    _isEmergency = false
+    _patientId: string,  // Prefixed
+    _clinicId: string,   // Prefixed
+    dataType: string,
+    _purpose: string,    // Prefixed
+    isEmergency = false
   ): Promise<{
     authorized: boolean
     consentId?: string
@@ -343,7 +343,7 @@ export class LGPDConsentManager {
     emergencyOverride?: boolean
   }> {
     // Emergency override for vital interests
-    if (_isEmergency) {
+    if (isEmergency) {
       const emergencyCategory = this.categories.find(c => c.id === 'emergency_services')
       if (emergencyCategory) {
         return {
@@ -364,7 +364,7 @@ export class LGPDConsentManager {
     }
 
     // For legitimate interest and legal obligation, basic validation
-    if (requiredCategory.legalBasis === 'legitimate_interest' || 
+    if (requiredCategory.legalBasis === 'legitimate_interest' ||
         requiredCategory.legalBasis === 'legal_obligation') {
       return {
         authorized: true,

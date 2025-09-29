@@ -37,6 +37,27 @@ export interface Treatment {
 
 export type HealthcareUser = Patient | Professional
 
+export type Database = {
+  public: {
+    Tables: {
+      patients: {
+        Row: Patient;
+        Insert: Omit<Patient, 'id' | 'createdAt'>;
+        Update: Partial<Patient>;
+      };
+      appointments: {
+        Row: Appointment;
+        Insert: Omit<Appointment, 'id'>;
+        Update: Partial<Appointment>;
+      };
+      // Add other tables as needed based on schema
+    };
+    Views: Record<string, unknown>;
+    Functions: Record<string, unknown>;
+    Enums: Record<string, unknown>;
+  };
+};
+
 export * from './common.js'
 export * from './database.js'
 export * from './healthcare.js'

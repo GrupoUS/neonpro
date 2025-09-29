@@ -66,10 +66,10 @@ export class ConsentWithdrawalService {
   }> {
     const confirmationId = crypto.randomUUID()
     const processedAt = new Date()
-    
+
     // Generate impact analysis
     const impact = this.generateWithdrawalImpact(request.categories)
-    
+
     // Check for emergency overrides
     const emergencyOverrides = this.checkEmergencyOverrides(request.categories, request.reason)
 
@@ -127,10 +127,10 @@ export class ConsentWithdrawalService {
         case 'immediate':
           immediateActions.push(`Parada imediata do processamento: ${category.name}`)
           immediateActions.push(`Notificação de sistemas dependentes: ${category.name}`)
-          
+
           dataProcessingChanges.stopped.push(category.name)
           serviceImpacts.interrupted.push(category.name)
-          
+
           if (category.dataType === 'genetic' || category.dataType === 'biometric') {
             immediateActions.push(`Início de anonimização de dados sensíveis: ${category.name}`)
           }
@@ -139,10 +139,10 @@ export class ConsentWithdrawalService {
         case 'delayed':
           delayedActions.push(`Encerramento gradual de processamento: ${category.name}`)
           delayedActions.push(`Notificação de parceiros de dados: ${category.name}`)
-          
+
           dataProcessingChanges.restricted.push(category.name)
           serviceImpacts.modified.push(category.name)
-          
+
           // Schedule data deletion after retention period
           const deletionDate = new Date(Date.now() + (category.retentionPeriod * 24 * 60 * 60 * 1000))
           delayedActions.push(`Exclusão programada para ${deletionDate.toLocaleDateString('pt-BR')}: ${category.name}`)
@@ -151,10 +151,10 @@ export class ConsentWithdrawalService {
         case 'partial':
           immediateActions.push(`Restrição de uso não emergencial: ${category.name}`)
           delayedActions.push(`Manutenção para casos vitais: ${category.name}`)
-          
+
           dataProcessingChanges.restricted.push(category.name)
           serviceImpacts.modified.push(category.name)
-          
+
           if (category.id === 'emergency_services') {
             immediateActions.push(`Manutenção de acesso emergencial: ${category.name}`)
             dataProcessingChanges.continued.push(category.name)
@@ -167,7 +167,7 @@ export class ConsentWithdrawalService {
     // Calculate timeline
     const timeline = {
       immediate: new Date(),
-      dataDeletion: selectedCategories.some(c => c.withdrawalImpact === 'immediate') 
+      dataDeletion: selectedCategories.some(c => c.withdrawalImpact === 'immediate')
         ? new Date(Date.now() + (24 * 60 * 60 * 1000)) // 24 hours for immediate deletion
         : undefined,
       serviceTermination: selectedCategories.some(c => c.withdrawalImpact === 'immediate')
@@ -217,7 +217,7 @@ export class ConsentWithdrawalService {
     }
 
     // Check for public health emergency overrides
-    if (reason.toLowerCase().includes('saúde pública') || 
+    if (reason.toLowerCase().includes('saúde pública') ||
         reason.toLowerCase().includes('pandemia') ||
         reason.toLowerCase().includes('emergência sanitária')) {
       overrides.push({
@@ -276,15 +276,15 @@ export class ConsentWithdrawalService {
    */
   private async scheduleDelayedActions(
     request: ConsentWithdrawalRequest,
-    _impact: WithdrawalImpact
+    impact: WithdrawalImpact  // Prefixed to suppress unused warning
   ): Promise<void> {
     // Schedule data deletion jobs
-    if (impact.timeline.dataDeletion) {
+    if (impact.timeline.dataDeletion) {  // Updated reference
       await this.scheduleDataDeletion({
         patientId: request.patientId,
         clinicId: request.clinicId,
         categories: request.categories,
-        scheduledAt: impact.timeline.dataDeletion,
+        scheduledAt: impact.timeline.dataDeletion,  // Updated reference
         reason: request.reason
       })
     }
@@ -294,7 +294,7 @@ export class ConsentWithdrawalService {
       await this.scheduleServiceTermination({
         patientId: request.patientId,
         clinicId: request.clinicId,
-        services: impact.serviceImpacts.interrupted,
+        services: impact.serviceImpacts.interrupted,  // Updated reference
         scheduledAt: impact.timeline.serviceTermination
       })
     }
@@ -303,7 +303,7 @@ export class ConsentWithdrawalService {
     await this.scheduleComplianceVerification({
       patientId: request.patientId,
       clinicId: request.clinicId,
-      verificationDate: impact.timeline.complianceVerification
+      verificationDate: impact.timeline.complianceVerification  // Updated reference
     })
   }
 
@@ -347,7 +347,7 @@ export class ConsentWithdrawalService {
    */
   private async notifyDependentSystems(
     request: ConsentWithdrawalRequest,
-    impact: WithdrawalImpact
+    _impact: WithdrawalImpact
   ): Promise<void> {
     // This would send notifications to affected systems
     const notifications = [

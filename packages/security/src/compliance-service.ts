@@ -1,28 +1,12 @@
-import { ComplianceMetrics, ConsentStats, ComplianceReport, DataSubjectRightsRequest } from '@neonpro/types/compliance';
-import { LGPDConsentManager } from './consent-manager';
-import { ConsentWithdrawalService } from './consent-withdrawal';
-import { ConsentAuditService } from './consent-audit';
+import { ComplianceMetrics, ConsentStats, ComplianceReport, DataSubjectRightsRequest, WithdrawalStats } from '@neonpro/types/compliance';
 
 export class ComplianceService {
-  private consentManager: LGPDConsentManager;
-  private withdrawalService: ConsentWithdrawalService;
-  private auditService: ConsentAuditService;
-
   constructor() {
-    this.consentManager = new LGPDConsentManager();
-    this.withdrawalService = new ConsentWithdrawalService();
-    this.auditService = new ConsentAuditService();
+    // Removed unused private properties: consentManager, withdrawalService, auditService
   }
 
   async generateComplianceMetrics(clinicId: string): Promise<ComplianceMetrics> {
     const securityData = await this.performSecurityValidations();
-
-    // Placeholder for consent and audit data until proper methods are implemented
-    const consentData = {
-      totalConsents: 150,
-      activeConsents: 142,
-      recentConsents: 8
-    };
 
     const auditData = {
       incidentCount: 0,
@@ -45,7 +29,8 @@ export class ComplianceService {
     };
   }
 
-  async generateConsentStats(clinicId: string): Promise<ConsentStats> {
+  async generateConsentStats(): Promise<ConsentStats> {
+    // Removed unused clinicId parameter
     // Placeholder implementation until proper methods are implemented
     const stats = {
       totalPatients: 150,
@@ -53,10 +38,12 @@ export class ComplianceService {
       consentedPatients: 138
     };
 
-    const recentActivities = [];
-    const withdrawalStats = {
+    const recentActivities: any[] = [];
+    const withdrawalStats: WithdrawalStats = {
       totalWithdrawals: 3,
-      recentWithdrawals: 1
+      emergencyOverrides: 0,
+      averageProcessingTime: 24,
+      byReason: []  // Fixed: empty array to match WithdrawalReason[]
     };
 
     return {
@@ -64,9 +51,9 @@ export class ComplianceService {
       activePatients: stats.activePatients,
       consentedPatients: stats.consentedPatients,
       consentRate: Math.round((stats.consentedPatients / stats.totalPatients) * 100),
-      byCategory: stats.byCategory,
       recentActivities,
-      withdrawalStats
+      withdrawalStats,
+      byCategory: []  // Fixed: empty array to match CategoryStats[]
     };
   }
 
@@ -78,7 +65,7 @@ export class ComplianceService {
   }): Promise<ComplianceReport> {
     const reportId = `report_${clinicId}_${Date.now()}`;
     const metrics = options.includeMetrics ? await this.generateComplianceMetrics(clinicId) : null;
-    const stats = await this.generateConsentStats(clinicId);
+    const stats = await this.generateConsentStats();
     // Placeholder audit data until proper methods are implemented
     const auditData = options.includeAudit ? {
       entries: [],
@@ -97,7 +84,7 @@ export class ComplianceService {
       period: options.period,
       format: options.format,
       content,
-      sections: this.generateReportSections(metrics, stats, auditData),
+      sections: this.generateReportSections(metrics, stats),
       metadata: {
         generatedBy: 'NeonPro Compliance System',
         version: '1.0.0',
@@ -248,7 +235,7 @@ export class ComplianceService {
     const regulatoryScore = regulatory.reduce((sum, r) => sum + r.score, 0) / regulatory.length;
     const lgpdScore = lgpd.filter(r => r.status === 'compliant').length / lgpd.length * 100;
     const securityScore = security.filter(s => s.passed).length / security.length * 100;
-    
+
     return Math.round((regulatoryScore + lgpdScore + securityScore) / 3);
   }
 
@@ -257,17 +244,17 @@ export class ComplianceService {
     return 3;
   }
 
-  private async generateReportContent(_clinicId: string, options: any, metrics: any, stats: any, _auditData: any): Promise<string> {
+  private async generateReportContent(_clinicId: string, options: any, metrics: any, stats: any, auditData: any): Promise<string> {  // Prefixed clinicId
     // Generate report content based on format
     if (options.format === 'json') {
       return JSON.stringify({ metrics, stats, auditData }, null, 2);
     }
-    
+
     // For PDF and CSV formats, return base64 encoded content
     return 'base64-encoded-report-content';
   }
 
-  private generateReportSections(metrics: any, stats: any, auditData: any) {
+  private generateReportSections(metrics: any, stats: any) {
     return [
       {
         title: 'Resumo Executivo',
@@ -284,15 +271,15 @@ export class ComplianceService {
 
   private async generateRecommendations(metrics: any): Promise<string[]> {
     const recommendations = [];
-    
+
     if (metrics.overallScore < 90) {
       recommendations.push('Implementar melhorias nos processos de consentimento');
     }
-    
+
     if (metrics.pendingRequests > 5) {
       recommendations.push('Reduzir tempo de processamento de solicitações');
     }
-    
+
     return recommendations;
   }
 
@@ -320,14 +307,14 @@ export class ComplianceService {
     // Implement deletion request processing with consent checks
     // Placeholder consent check until proper methods are implemented
     const hasActiveConsent = false; // Assuming no active consent for deletion
-    
+
     if (hasActiveConsent) {
       request.status = 'denied';
       request.denialReason = 'Não é possível excluir dados enquanto consentimentos ativos existem';
     } else {
       request.status = 'processing';
     }
-    
+
     return request;
   }
 

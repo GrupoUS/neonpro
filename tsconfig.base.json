@@ -39,7 +39,7 @@
     "sourceMap": true,
     "removeComments": false,
     "incremental": true,
-    "tsBuildInfoFile": "./.tsbuildinfo",
+    // "tsBuildInfoFile": "./.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
