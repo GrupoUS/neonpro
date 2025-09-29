@@ -62,9 +62,9 @@ describe('Theme Switching Workflow Integration Tests', () => {
 
     // Act - THIS WILL FAIL until implementation exists
     render(
-      <ThemeProvider defaultTheme="light" brazilianOptimization={true} lgpdCompliance={true}>
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { defaultTheme: 'light', brazilianOptimization: true, lgpdCompliance: true },
+        React.createElement(TestComponent)
+      )
     );
 
     // Assert
