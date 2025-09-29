@@ -1,23 +1,8 @@
 // Main exports for @neonpro/database package
 
-// Type definitions
-export * from './types/supabase-generated';
-
 // Database client and utilities
-export * from './lib/client';
-export * from './lib/realtime';
-export * from './lib/migrations';
-
-// Re-export commonly used types for convenience
-export type {
-  Database,
-  Tables,
-  TablesInsert,
-  TablesUpdate,
-  TablesRow,
-  Views,
-  ViewsRow
-} from './types/supabase-generated';
+export * from './lib/simple-client.js';
+export * from './lib/migrations.js';
 
 // Version info
 export const version = '0.1.0';
@@ -33,16 +18,8 @@ export const metadata = {
   homepage: 'https://neonpro.vercel.app'
 };
 
-// Default export for convenience
-export { db, dbUtils, defaultConfig } from './lib/client';
-
-// Initialize with environment variables by default
-export const database = {
-  client: db,
-  utils: dbUtils,
-  realtime: (client = db) => import('./lib/realtime').then(m => m.createRealtimeManager(client)),
-  migrations: () => import('./lib/migrations').then(m => new m.MigrationManager())
-};
+// Import client utilities
+import { db } from './lib/simple-client.js';
 
 // Health check function
 export async function healthCheck(): Promise<{
@@ -78,12 +55,3 @@ export async function healthCheck(): Promise<{
     };
   }
 }
-
-// Export for CommonJS compatibility
-export default {
-  db,
-  dbUtils,
-  healthCheck,
-  metadata,
-  ...database
-};

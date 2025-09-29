@@ -58,9 +58,25 @@ export type Database = {
   };
 };
 
-// Export Zod schemas with new type definitions
-export * from './schemas/index.js';
+// Export specific schemas to avoid conflicts
+export {
+  AppointmentSchema,
+  CreateAppointmentSchema,
+  UpdateAppointmentSchema
+} from './schemas/appointments.js';
 
+export {
+  UserSchema,
+  CreateUserSchema,
+  UpdateUserSchema,
+  UserClinicSchema
+} from './schemas/users.js';
+
+export * from './schemas/leads.js';
+export * from './schemas/messages.js';
+export * from './schemas/clinics.js';
+
+// Export other modules
 export * from './common.js'
 export * from './database.js'
 export * from './healthcare.js'
