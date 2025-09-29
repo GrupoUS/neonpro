@@ -42,6 +42,13 @@ PRODUCTION_URL="https://neonpro.vercel.app"
 TIMEOUT=${DEPLOYMENT_TIMEOUT:-10}
 MAX_RETRIES=${MAX_ROLLBACK_ATTEMPTS:-3}
 
+# Vercel Limits Configuration
+readonly VERCEL_FUNCTION_SIZE_LIMIT=262144000  # 250MB in bytes
+readonly VERCEL_BUILD_SIZE_LIMIT=1073741824    # 1GB in bytes
+readonly VERCEL_BUILD_TIME_LIMIT=2700          # 45 minutes in seconds
+readonly SAFETY_MARGIN_RATIO=0.85              # 85% of limit for safety
+readonly CHUNK_SIZE_SAFETY=$(echo "$VERCEL_FUNCTION_SIZE_LIMIT * $SAFETY_MARGIN_RATIO" | bc | cut -d. -f1)
+
 # ==============================================
 # UTILITY FUNCTIONS
 # ==============================================
@@ -302,6 +309,249 @@ pre_deployment_checks() {
 # ==============================================
 # INTELLIGENT BUILD CHUNKING FOR VERCEL LIMITS
 # ==============================================
+
+# Enhanced package size estimation
+estimate_package_size() {
+    local package_path="$1"
+    local estimated_size=0
+    
+    if [ ! -d "$package_path" ]; then
+        echo "0"
+        return
+    fi
+    
+    # Calculate source files size
+    local source_size=$(find "$package_path" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) -exec wc -c {} + 2>/dev/null | awk '{sum += $1} END {print sum+0}')
+    
+    # Calculate node_modules size (estimated based on package.json dependencies)
+    if [ -f "$package_path/package.json" ]; then
+        local dep_count=$(jq -r '.dependencies | keys | length' "$package_path/package.json" 2>/dev/null || echo "0")
+        local dev_dep_count=$(jq -r '.devDependencies | keys | length' "$package_path/package.json" 2>/dev/null || echo "0")
+        local estimated_deps_size=$(( (dep_count + dev_dep_count) * 500000 )) # ~500KB per dependency
+    else
+        local estimated_deps_size=0
+    fi
+    
+    # Add build output estimate
+    local build_estimate=$((source_size * 3)) # Build output is typically 3x source size
+    
+    estimated_size=$((source_size + estimated_deps_size + build_estimate))
+    echo "$estimated_size"
+}
+
+# Detect affected packages using Turborepo --affected
+detect_affected_packages() {
+    log_info "Detecting affected packages using Turborepo --affected"
+    
+    if ! command -v turbo >/dev/null 2>&1; then
+        log_warning "Turborepo not available - considering all packages as affected"
+        echo "apps/web apps/api packages/core packages/database packages/ui packages/types"
+        return
+    fi
+    
+    local affected_packages=""
+    
+    # Get affected packages from Turborepo
+    if turbo run build --affected --dry-run 2>/dev/null | grep -E "packages/|apps/" >/dev/null 2>&1; then
+        affected_packages=$(turbo run build --affected --dry-run json 2>/dev/null | jq -r '.packages[]' 2>/dev/null | tr '\n' ' ' || echo "")
+    fi
+    
+    # Fallback to all packages if detection fails
+    if [ -z "$affected_packages" ]; then
+        log_warning "Could not detect affected packages - using all packages"
+        affected_packages="apps/web apps/api packages/core packages/database packages/ui packages/types"
+    fi
+    
+    echo "$affected_packages"
+}
+
+# Calculate optimal chunks based on package sizes and Vercel limits
+calculate_optimal_chunks() {
+    local packages="$1"
+    local chunks=()
+    local current_chunk=""
+    local current_size=0
+    
+    for package in $packages; do
+        if [ -d "$package" ]; then
+            local package_size=$(estimate_package_size "$package")
+            
+            # If adding this package would exceed the limit, start a new chunk
+            if [ $((current_size + package_size)) -gt $CHUNK_SIZE_SAFETY ] && [ -n "$current_chunk" ]; then
+                chunks+=("$current_chunk")
+                current_chunk="$package"
+                current_size=$package_size
+            else
+                current_chunk="${current_chunk} ${package}"
+                current_size=$((current_size + package_size))
+            fi
+        fi
+    done
+    
+    # Add the final chunk
+    if [ -n "$current_chunk" ]; then
+        chunks+=("$current_chunk")
+    fi
+    
+    # Return chunks as array reference
+    printf '%s\n' "${chunks[@]}"
+}
+
+# Deploy chunks in parallel for independent packages
+deploy_chunks_in_parallel() {
+    local chunks=("$@")
+    local max_parallel=${MAX_PARALLEL_DEPLOYS:-3}
+    local pids=()
+    local chunk_results=()
+    
+    log_info "Deploying ${#chunks[@]} chunks with up to $max_parallel parallel deployments"
+    
+    for i in "${!chunks[@]}"; do
+        local chunk="${chunks[$i]}"
+        local chunk_number=$((i + 1))
+        
+        # Limit parallel deployments
+        while [ ${#pids[@]} -ge "$max_parallel" ]; do
+            for j in "${!pids[@]}"; do
+                if ! kill -0 "${pids[j]}" 2>/dev/null; then
+                    wait "${pids[j]}"
+                    local exit_code=$?
+                    chunk_results[$j]=$exit_code
+                    unset "pids[j]"
+                fi
+            done
+            sleep 1
+        done
+        
+        # Start deployment in background
+        (
+            deploy_single_chunk "$chunk" "$chunk_number" "${#chunks[@]}"
+        ) &
+        pids+=($!)
+        
+        log_info "Started deployment of chunk $chunk_number/${#chunks[@]} (PID: ${pids[-1]})"
+    done
+    
+    # Wait for all deployments to complete
+    for pid in "${pids[@]}"; do
+        wait "$pid"
+        local exit_code=$?
+        chunk_results+=($exit_code)
+    done
+    
+    # Check results
+    local failed_count=0
+    for result in "${chunk_results[@]}"; do
+        if [ "$result" -ne 0 ]; then
+            ((failed_count++))
+        fi
+    done
+    
+    if [ "$failed_count" -gt 0 ]; then
+        log_error "$failed_count chunk(s) failed to deploy"
+        return 1
+    fi
+    
+    log_success "All ${#chunks[@]} chunks deployed successfully"
+}
+
+# Deploy a single chunk with enhanced Vercel optimization
+deploy_single_chunk() {
+    local chunk="$1"
+    local chunk_number="$2"
+    local total_chunks="$3"
+    
+    log_step "Deploying chunk $chunk_number/$total_chunks: $chunk"
+    
+    # Create temporary vercel.json for this chunk
+    local temp_vercel_config="/tmp/vercel-chunk-${chunk_number}.json"
+    
+    # Build the chunk first
+    log_info "Building chunk $chunk_number..."
+    for package in $chunk; do
+        if [ -d "$package" ] && [ -f "$package/package.json" ]; then
+            local build_script=$(jq -r '.scripts.build // empty' "$package/package.json" 2>/dev/null)
+            if [ -n "$build_script" ]; then
+                (cd "$package" && npm run build 2>/dev/null) || log_warning "Build failed for $package"
+            fi
+        fi
+    done
+    
+    # Configure Vercel deployment for this chunk
+    cat > "$temp_vercel_config" << EOF
+{
+  "buildCommand": "cd $package && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
+  "framework": "nextjs",
+  "regions": ["sfo1"],
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}
+EOF
+    
+    # Deploy to Vercel
+    local deployment_result
+    if deployment_result=$(npx vercel deploy --prod --yes --local-config "$temp_vercel_config" 2>&1); then
+        local deployment_url=$(echo "$deployment_result" | grep -E 'https://[^\s]+\.vercel\.app' | head -1)
+        log_success "Chunk $chunk_number deployed: $deployment_url"
+    else
+        log_error "Chunk $chunk_number deployment failed: $deployment_result"
+        rm -f "$temp_vercel_config"
+        return 1
+    fi
+    
+    # Cleanup
+    rm -f "$temp_vercel_config"
+}
+
+# Enhanced Vercel deployment with intelligent chunking
+enhanced_vercel_deployment() {
+    log_step "Enhanced Vercel Deployment with Intelligent Chunking"
+    
+    # Detect affected packages first
+    local affected_packages=$(detect_affected_packages)
+    log_info "Detected affected packages: $affected_packages"
+    
+    # Calculate optimal chunks
+    local chunks=()
+    while IFS= read -r chunk; do
+        chunks+=("$chunk")
+    done < <(calculate_optimal_chunks "$affected_packages")
+    
+    log_info "Calculated ${#chunks[@]} deployment chunks"
+    
+    # Display chunk information
+    for i in "${!chunks[@]}"; do
+        local chunk="${chunks[$i]}"
+        local chunk_size=0
+        
+        # Calculate chunk size
+        for package in $chunk; do
+            if [ -d "$package" ]; then
+                local package_size=$(estimate_package_size "$package")
+                chunk_size=$((chunk_size + package_size))
+            fi
+        done
+        
+        local chunk_size_mb=$((chunk_size / 1024 / 1024))
+        local limit_mb=$((CHUNK_SIZE_SAFETY / 1024 / 1024))
+        
+        log_info "Chunk $((i + 1)): $chunk (${chunk_size_mb}MB/${limit_mb}MB)"
+    done
+    
+    # Deploy chunks in parallel
+    if deploy_chunks_in_parallel "${chunks[@]}"; then
+        log_success "Enhanced Vercel deployment completed successfully"
+        return 0
+    else
+        log_error "Enhanced Vercel deployment failed"
+        return 1
+    fi
+}
 
 check_vercel_limits() {
     log_step "Checking Vercel deployment limits"

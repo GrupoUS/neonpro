@@ -88,32 +88,32 @@ export class HealthcareSecurityLogger {
     // Replace console methods with secure versions
     // eslint-disable-next-line no-console
     console.log = (...args: unknown[]) => {
-      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg as any))
+      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg))
       logger.originalConsole?.log(...sanitized)
     }
 
     // eslint-disable-next-line no-console
     console.error = (...args: unknown[]) => {
-      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg as any))
+      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg))
       logger.originalConsole?.error(...sanitized)
     }
 
     // eslint-disable-next-line no-console
     console.warn = (...args: unknown[]) => {
-      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg as any))
+      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg))
       logger.originalConsole?.warn(...sanitized)
     }
 
     // eslint-disable-next-line no-console
     console.info = (...args: unknown[]) => {
-      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg as any))
+      const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg))
       logger.originalConsole?.info(...sanitized)
     }
 
     // eslint-disable-next-line no-console
     console.debug = (...args: unknown[]) => {
       if (logger.logLevel === 'debug') {
-        const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg as any))
+        const sanitized = args.map(arg => HealthcareSecurityLogger.sanitizeLogArgument(arg))
         logger.originalConsole?.debug(...sanitized)
       }
     }
@@ -135,11 +135,11 @@ export class HealthcareSecurityLogger {
     }
   }
 
-  static sanitizeLogArgument(arg: any): any {
+  static sanitizeLogArgument(arg: unknown): unknown {
     if (typeof arg === 'object' && arg !== null) {
       // Sanitize objects by removing sensitive fields
       const sensitiveFields = ['password', 'token', 'secret', 'cpf', 'rg', 'credit', 'ssn']
-      const sanitized = { ...arg }
+      const sanitized = { ...(arg as Record<string, unknown>) }
       sensitiveFields.forEach(field => {
         if (field in sanitized) {
           sanitized[field] = '[REDACTED]'

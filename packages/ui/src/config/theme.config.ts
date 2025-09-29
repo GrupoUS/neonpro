@@ -16,15 +16,15 @@ export const ThemeConfigSchema = z.object({
 
   // Color Scheme Configuration (OKLCH format for better accessibility)
   colors: z.object({
-    primary: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/),
-    accent: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/),
-    deepBlue: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/),
-    neutral: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/),
-    background: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/),
+    primary: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/),
+    accent: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/),
+    deepBlue: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/),
+    neutral: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/),
+    background: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/),
     // Dark mode variants
-    darkPrimary: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/).optional(),
-    darkAccent: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/).optional(),
-    darkBackground: z.string().regex(/^oklch\([\d\s\.%\/]+\)$|^#[0-9A-Fa-f]{6}$/).optional(),
+    darkPrimary: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/).optional(),
+    darkAccent: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/).optional(),
+    darkBackground: z.string().regex(/^oklch\([\d\s.%/]+\)$|^#[0-9A-Fa-f]{6}$/).optional(),
   }),
 
   // Typography Configuration
@@ -246,7 +246,7 @@ export class ThemeConfigManager {
     // Color format validation
     const colorValues = Object.values(colors)
     const invalidColors = colorValues.filter(color =>
-      !color.match(/^oklch\([\d\s\.%\/]+\)$/) && !color.match(/^#[0-9A-Fa-f]{6}$/)
+      !color.match(/^oklch\([\d\s.%/]+\)$/) && !color.match(/^#[0-9A-Fa-f]{6}$/)
     )
 
     if (invalidColors.length > 0) {

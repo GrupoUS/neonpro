@@ -1,4 +1,4 @@
-export interface Patient {
+export interface LegacyPatient {
   id: string
   name: string
   email: string
@@ -8,7 +8,7 @@ export interface Patient {
   createdAt: Date
 }
 
-export interface Appointment {
+export interface LegacyAppointment {
   id: string
   patientId: string
   professionalId: string
@@ -35,20 +35,20 @@ export interface Treatment {
   category: 'aesthetic' | 'medical' | 'wellness'
 }
 
-export type HealthcareUser = Patient | Professional
+export type HealthcareUser = LegacyPatient | Professional
 
 export type Database = {
   public: {
     Tables: {
       patients: {
-        Row: Patient;
-        Insert: Omit<Patient, 'id' | 'createdAt'>;
-        Update: Partial<Patient>;
+        Row: LegacyPatient;
+        Insert: Omit<LegacyPatient, 'id' | 'createdAt'>;
+        Update: Partial<LegacyPatient>;
       };
       appointments: {
-        Row: Appointment;
-        Insert: Omit<Appointment, 'id'>;
-        Update: Partial<Appointment>;
+        Row: LegacyAppointment;
+        Insert: Omit<LegacyAppointment, 'id'>;
+        Update: Partial<LegacyAppointment>;
       };
       // Add other tables as needed based on schema
     };
@@ -57,6 +57,9 @@ export type Database = {
     Enums: Record<string, unknown>;
   };
 };
+
+// Export Zod schemas with new type definitions
+export * from './schemas/index.js';
 
 export * from './common.js'
 export * from './database.js'

@@ -84,8 +84,8 @@ export class InMemoryKPIService {
     const kpi = this.store.get(id)
     if (!kpi) throw new Error('KPI_NOT_FOUND')
     const value = data?.value ?? 0
-    const target = (kpi as any).target ?? 0
-    const direction = (kpi as any).direction ?? 'lower-better'
+    const target = kpi.target ?? 0
+    const direction = kpi.direction ?? 'lower-better'
     const { status, delta } = evaluateKPIValue({ value, target, direction })
     return { kpiId: id, status, value, target, direction, delta }
   }

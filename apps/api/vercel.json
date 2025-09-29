@@ -3,6 +3,15 @@
   "buildCommand": "cd ../.. && bun install --frozen-lockfile && cd apps/api && bun run build",
   "installCommand": "cd ../.. && bun install --frozen-lockfile",
   "functions": {
+    "src/edge/**/*.ts": {
+      "runtime": "edge",
+      "memory": 256
+    },
+    "src/node/**/*.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 60
+    },
     "vercel/**/*.ts": {
       "runtime": "nodejs20.x",
       "memory": 1024,

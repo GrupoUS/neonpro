@@ -29,14 +29,14 @@ try {
 
 // Try to import tRPC contracts
 try {
-  const patientContracts = require('./apps/api/src/trpc/contracts/patient.ts');
+  require('./apps/api/src/trpc/contracts/patient.ts');
   console.log('✅ Patient tRPC contracts imported successfully');
 } catch (error) {
   console.error('❌ Patient tRPC contracts import failed:', error.message);
 }
 
 try {
-  const appointmentContracts = require('./apps/api/src/trpc/contracts/appointment.ts');
+  require('./apps/api/src/trpc/contracts/appointment.ts');
   console.log('✅ Appointment tRPC contracts imported successfully');
 } catch (error) {
   console.error('❌ Appointment tRPC contracts import failed:', error.message);

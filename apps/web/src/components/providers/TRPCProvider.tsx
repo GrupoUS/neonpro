@@ -70,13 +70,12 @@ export function TRPCProvider({ children }: TRPCProviderProps) {
   // Configure tRPC client with healthcare compliance
   const client = React.useMemo(() => {
     return getTRPCClient(queryClient)
-  }, [queryClient])
+  }, [])
 
   // Enhanced query client for healthcare operations
   const enhancedQueryClient = React.useMemo(() => {
-    return {
-      ...queryClient,
-      // Add healthcare-specific defaults
+    // Create a new QueryClient with healthcare-specific defaults
+    return new QueryClient({
       defaultOptions: {
         queries: {
           ...queryClient.getDefaultOptions().queries,
@@ -123,8 +122,8 @@ export function TRPCProvider({ children }: TRPCProviderProps) {
           gcTime: 1000 * 60 * 10, // 10 minutes
         },
       },
-    }
-  }, [queryClient])
+    })
+  }, [])
 
   // Create tRPC provider with enhanced configuration
   const trpcClient = React.useMemo(() => {

@@ -564,12 +564,10 @@ export const patientsRouter = router({
    */
   withdrawConsent: patientProcedure
     .input(
-      v.object({
-        patientId: v.string([v.uuid('Invalid patient ID')]),
-        reason: v.string([
-          v.minLength(10, 'Reason must be at least 10 characters'),
-        ]),
-        digitalSignature: v.optional(v.string()),
+      z.object({
+        patientId: z.string().uuid('ID do paciente inválido'),
+        reason: z.string().min(10, 'Motivo deve ter pelo menos 10 caracteres'),
+        digitalSignature: z.string().optional(),
       }),
     )
     .mutation(async ({ ctx, _input }) => {

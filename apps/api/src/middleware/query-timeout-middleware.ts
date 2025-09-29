@@ -530,7 +530,7 @@ export function createHealthcareTimeoutMiddleware(): QueryTimeoutMiddleware {
 // Extend Hono Context for our custom properties
 declare module 'hono' {
   interface Context {
-    getQueryId(): string | undefined
-    getQueryTimeout(): number | undefined
+    get: (key: string) => any
+    set: (key: string, value: any) => void
   }
 }

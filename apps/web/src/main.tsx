@@ -2,7 +2,8 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { TanStackQueryProvider } from './components/stubs/TanStackQueryProvider'
-import { TRPCProvider } from './components/stubs/TRPCProvider'
+import { TRPCProvider } from './components/providers/TRPCProvider'
+import { AuthProvider } from './contexts/AuthContext'
 import { routeTree } from './routeTree.gen'
 
 // Import NeonPro Styles from @apex-ui-ux-designer.md
@@ -169,7 +170,9 @@ root.render(
   <React.StrictMode>
     <TanStackQueryProvider>
       <TRPCProvider>
-        <RouterProvider router={router} />
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
       </TRPCProvider>
     </TanStackQueryProvider>
   </React.StrictMode>,
