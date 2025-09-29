@@ -17,7 +17,7 @@ expect.extend(toHaveNoViolations);
 
 // Mock implementations for TDD testing - these will be replaced with real implementations
 const ThemeProvider = ({ children, ...props }: any) => {
-  return <div data-theme-provider="true" {...props}>{children}</div>;
+  return React.createElement('div', { 'data-theme-provider': 'true', ...props }, children);
 };
 
 const useTheme = () => ({
@@ -27,8 +27,8 @@ const useTheme = () => ({
   forcedTheme: null,
 });
 
-const ThemeToggleButton = (props: any) => <button {...props}>Theme Toggle</button>;
-const NeonproThemeWrapper = (props: any) => <div {...props}>NEONPRO Theme Wrapper</div>;
+const ThemeToggleButton = (props: any) => React.createElement('button', props, 'Theme Toggle');
+const NeonproThemeWrapper = (props: any) => React.createElement('div', props, 'NEONPRO Theme Wrapper');
 
 // Mock localStorage for testing
 const localStorageMock = {

@@ -226,7 +226,7 @@ if (typeof global !== 'undefined') {
     mark: (markName: string, markOptions?: PerformanceMarkOptions) => {
       return { name: markName, entryType: 'mark', startTime: Date.now(), duration: 0 } as PerformanceMark
     },
-    measure: (measureName: string, startMark?: string, endMark?: string) => {
+    measure: (measureName: string, _startMark?: string, _endMark?: string) => {
       return { name: measureName, entryType: 'measure', startTime: Date.now(), duration: 0 } as PerformanceMeasure
     },
     getEntriesByName: () => [],

@@ -20,35 +20,35 @@ import { validateWCAGCompliance } from '@/lib/accessibility/wcag-audit';
 
 describe('WCAG 2.1 AA Compliance Across All Components', () => {
   const AestheticClinicInterface = () => (
-    <div role="main" aria-label="NEONPRO Aesthetic Clinic Management System">
-      <header role="banner" className="bg-neonpro-deep-blue text-neonpro-background p-4">
-        <h1 className="text-2xl font-bold">NEONPRO Clínica Estética</h1>
-        <nav role="navigation" aria-label="Main navigation">
-          <ul className="flex space-x-4 mt-2">
-            <li>
-              <a href="#patients" className="hover:text-neonpro-accent focus:ring-2 focus:ring-neonpro-accent">
-                Pacientes
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </header>
-      <main className="p-6">
-        <h2 className="text-xl font-semibold text-neonpro-deep-blue mb-4">Cadastro de Paciente</h2>
-        <form>
-          <label htmlFor="patient-name" className="block text-sm font-medium text-neonpro-deep-blue">
-            Nome Completo *
-          </label>
-          <input
-            id="patient-name"
-            type="text"
-            required
-            aria-required="true"
-            className="mt-1 block w-full rounded-md border-neonpro-accent p-2 focus:ring-2 focus:ring-neonpro-primary"
-          />
-        </form>
-      </main>
-    </div>
+    React.createElement('div', { role: 'main', 'aria-label': 'NEONPRO Aesthetic Clinic Management System' },
+      React.createElement('header', { role: 'banner', className: 'bg-neonpro-deep-blue text-neonpro-background p-4' },
+        React.createElement('h1', { className: 'text-2xl font-bold' }, 'NEONPRO Clínica Estética'),
+        React.createElement('nav', { role: 'navigation', 'aria-label': 'Main navigation' },
+          React.createElement('ul', { className: 'flex space-x-4 mt-2' },
+            React.createElement('li', null,
+              React.createElement('a', { href: '#patients', className: 'hover:text-neonpro-accent focus:ring-2 focus:ring-neonpro-accent' },
+                'Pacientes'
+              )
+            )
+          )
+        )
+      ),
+      React.createElement('main', { className: 'p-6' },
+        React.createElement('h2', { className: 'text-xl font-semibold text-neonpro-deep-blue mb-4' }, 'Cadastro de Paciente'),
+        React.createElement('form', null,
+          React.createElement('label', { htmlFor: 'patient-name', className: 'block text-sm font-medium text-neonpro-deep-blue' },
+            'Nome Completo *'
+          ),
+          React.createElement('input', {
+            id: 'patient-name',
+            type: 'text',
+            required: true,
+            'aria-required': 'true',
+            className: 'mt-1 block w-full rounded-md border-neonpro-accent p-2 focus:ring-2 focus:ring-neonpro-primary'
+          })
+        )
+      )
+    )
   );
 
   beforeEach(() => {

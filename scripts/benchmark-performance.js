@@ -278,7 +278,7 @@ class PerformanceBenchmark {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const benchmark = new PerformanceBenchmark();
   benchmark.runFullBenchmark()
-    .then(results => {
+    .then(_results => {
       console.log('\n✅ Benchmark completed successfully!');
       process.exit(0);
     })

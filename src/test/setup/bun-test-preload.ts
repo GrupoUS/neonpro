@@ -205,7 +205,7 @@ globalThis.performance = {
       console.log(`[PERF] Mark: ${name}`)
     }
   },
-  measure: (name: string, startMark?: string, endMark?: string) => {
+  measure: (name: string, _startMark?: string, _endMark?: string) => {
     if (process.env.TEST_DEBUG === 'true') {
       console.log(`[PERF] Measure: ${name}`)
     }

@@ -127,7 +127,7 @@ export function CertificationValidator(
       if (mobileState.isOffline && mobileState.cachedProfessionals.length > 0) {
         return mobileState.cachedProfessionals
       }
-      const data = await (trpc as any).professional.getAll.useQuery().fn()
+      const data = await (trpc as { professional: { getAll: { useQuery: () => { fn: () => Promise<ProfessionalDetails[]> } } } }).professional.getAll.useQuery().fn()
       // Cache for offline use
       localStorage.setItem(STORAGE_KEYS.PROFESSIONALS, JSON.stringify(data))
       setMobileState(prev => ({ ...prev, cachedProfessionals: data, lastSyncTime: new Date() }))
@@ -143,7 +143,13 @@ export function CertificationValidator(
       if (mobileState.isOffline && mobileState.cachedProcedures.length > 0) {
         return mobileState.cachedProcedures
       }
-      const data = await (trpc as any).aestheticScheduling.getAestheticProcedures.useQuery(
+      const data = await (trpc as { 
+        aestheticScheduling: { 
+          getAestheticProcedures: { 
+            useQuery: (params: { limit: number; offset: number }, options: { select: (data: { procedures: AestheticProcedure[] }) => AestheticProcedure[] }) => { fn: () => Promise<AestheticProcedure[]> } 
+          } 
+        } 
+      }).aestheticScheduling.getAestheticProcedures.useQuery(
         { limit: 100, offset: 0 },
         { select: (data: { procedures: AestheticProcedure[] }) => data.procedures }
       ).fn()
@@ -162,9 +168,15 @@ export function CertificationValidator(
         // Offline validation using cached data
         return performOfflineValidation(professionalId, procedureIds)
       }
-      return await (trpc as any).aestheticScheduling.validateProfessionalCertifications.mutateAsync({
-        professionalId: profId,
-        procedureIds: procIds,
+      return await (trpc as { 
+        aestheticScheduling: { 
+          validateProfessionalCertifications: { 
+            mutateAsync: (params: { professionalId: string; procedureIds: string[] }) => Promise<CertificationValidation> 
+          } 
+        } 
+      }).aestheticScheduling.validateProfessionalCertifications.mutateAsync({
+        professionalId: professionalId,
+        procedureIds: procedureIds,
       })
     },
     onSuccess: (data: CertificationValidation) => {
@@ -214,12 +226,12 @@ export function CertificationValidator(
     }
   }, [mobileState.cachedProfessionals, mobileState.cachedProcedures])
 
-  const filteredProfessionals = professionalsData?.filter((professional: any) =>
+  const filteredProfessionals = professionalsData?.filter((professional: ProfessionalDetails) =>
     professional.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     professional.specialization.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
 
-  const filteredProcedures = proceduresData?.filter((procedure: any) =>
+  const filteredProcedures = proceduresData?.filter((procedure: AestheticProcedure) =>
     procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     procedure.category.toLowerCase().includes(searchTerm.toLowerCase())
   ) || []
@@ -269,8 +281,8 @@ export function CertificationValidator(
     }
   }
 
-  const selectedProfessionalData = professionalsData?.find((p: any) => p.id === selectedProfessional)
-  const selectedProceduresData = proceduresData?.filter((p: any) => selectedProcedures.includes(p.id)) || []
+  const selectedProfessionalData = professionalsData?.find((p: ProfessionalDetails) => p.id === selectedProfessional)
+  const selectedProceduresData = proceduresData?.filter((p: AestheticProcedure) => selectedProcedures.includes(p.id)) || []
   const isValidating = validateMutation.isPending
 
   const getExperienceLevelColor = (level: string) => {
@@ -368,7 +380,7 @@ export function CertificationValidator(
   )
 
   // Touch-optimized mobile components
-  const MobileProfessionalCard = ({ professional, isSelected, onSelect }: { professional: any; isSelected: boolean; onSelect: (id: string) => void }) => (
+  const MobileProfessionalCard = ({ professional, isSelected, onSelect }: { professional: ProfessionalDetails; isSelected: boolean; onSelect: (id: string) => void }) => (
     <Card
       className={`cursor-pointer transition-all hover:shadow-md mb-3 ${isSelected ? 'ring-2 ring-blue-500 shadow-lg' : ''}`}
       onClick={() => onSelect(professional.id)}
@@ -408,7 +420,7 @@ export function CertificationValidator(
     </Card>
   )
 
-  const MobileProcedureCard = ({ procedure, isSelected, onSelect }: { procedure: any; isSelected: boolean; onSelect: (id: string, checked: boolean) => void }) => (
+  const MobileProcedureCard = ({ procedure, isSelected, onSelect }: { procedure: AestheticProcedure; isSelected: boolean; onSelect: (id: string, checked: boolean) => void }) => (
     <Card className='mb-3 hover:shadow-md transition-shadow'>
       <CardContent className='p-4'>
         <div className='flex items-start gap-3 mb-3'>
@@ -561,7 +573,7 @@ export function CertificationValidator(
                     <span className='ml-2'>Carregando...</span>
                   </div>
                 ) : (
-                  filteredProfessionals.slice(0, 5).map((professional: any) => (
+                  filteredProfessionals.slice(0, 5).map((professional: ProfessionalDetails) => (
                     <MobileProfessionalCard
                       key={professional.id}
                       professional={professional}
@@ -583,7 +595,7 @@ export function CertificationValidator(
                         <span className='ml-2'>Carregando...</span>
                       </div>
                     ) : (
-                      filteredProcedures.slice(0, 8).map((procedure: any) => (
+                      filteredProcedures.slice(0, 8).map((procedure: AestheticProcedure) => (
                         <MobileProcedureCard
                           key={procedure.id}
                           procedure={procedure}

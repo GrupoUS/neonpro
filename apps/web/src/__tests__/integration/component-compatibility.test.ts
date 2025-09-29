@@ -7,6 +7,7 @@
  * Tests all 7 UI components with NEONPRO theme integration
  */
 
+import React from 'react';
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'vitest-axe';
@@ -25,16 +26,12 @@ import { HoverBorderGradientButton } from '@/components/ui/hover-border-gradient
 
 describe('Component Compatibility with NEONPRO Theme', () => {
   const renderWithTheme = (component: React.ReactNode, theme: 'light' | 'dark' = 'light') => {
-    return render(
-      <ThemeProvider 
-        defaultTheme={theme}
-        brazilianOptimization={true}
-        aestheticClinicMode={true}
-        lgpdCompliance={true}
-      >
-        {component}
-      </ThemeProvider>
-    );
+    return React.createElement(ThemeProvider, {
+      defaultTheme: theme,
+      brazilianOptimization: true,
+      aestheticClinicMode: true,
+      lgpdCompliance: true,
+    }, component);
   };
 
   beforeEach(() => {

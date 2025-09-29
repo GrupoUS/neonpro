@@ -197,7 +197,7 @@ describe('Migration Script Dry-Run Tests', () => {
       
       // Mock a failure scenario
       const originalMigrateClinics = migration.migrateClinics
-      migration.migrateClinics = async function(clinics: any[]) {
+      migration.migrateClinics = async function(_clinics: any[]) {
         const result = {
           success: false,
           migratedCount: 1,
