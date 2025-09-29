@@ -53,12 +53,10 @@ describe('Theme Switching Workflow Integration Tests', () => {
     // Arrange
     const TestComponent = () => {
       const { theme, setTheme, resolvedTheme } = useTheme();
-      return (
-        <div>
-          <span data-testid="current-theme">{theme}</span>
-          <span data-testid="resolved-theme">{resolvedTheme}</span>
-          <button onClick={() => setTheme('dark')}>Switch to Dark</button>
-        </div>
+      return React.createElement('div', null,
+        React.createElement('span', { 'data-testid': 'current-theme' }, theme),
+        React.createElement('span', { 'data-testid': 'resolved-theme' }, resolvedTheme),
+        React.createElement('button', { onClick: () => setTheme('dark') }, 'Switch to Dark')
       );
     };
 
