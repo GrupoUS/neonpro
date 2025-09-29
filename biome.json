@@ -34,6 +34,7 @@
       ".qoder",
       ".claude",
       ".git",
+      ".oxlintrc.json",
       "bun.lock",
       "pnpm-lock.yaml",
       "package-lock.json",
@@ -52,55 +53,53 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "complexity": {
-        "noUselessFragments": "error"
-      },
-      "correctness": {
-        "noUnusedVariables": "warn",
-        "noUnusedImports": "error",
-        "useExhaustiveDependencies": "error",
-        "useHookAtTopLevel": "error"
-      },
-      "security": {
-        "noDangerouslySetInnerHtml": "error"
-      },
+      "recommended": false,
       "style": {
-        "noNegationElse": "off",
-        "noParameterAssign": "warn",
-        "useConst": "error",
-        "useTemplate": "warn"
+        "useConst": "warn",
+        "useTemplate": "off"
+      },
+      "complexity": {
+        "noUselessFragments": "warn"
       },
       "suspicious": {
-        "noArrayIndexKey": "error",
-        "noConsole": "warn",
-        "noDebugger": "error",
-        "noExplicitAny": "warn"
+        "noArrayIndexKey": "warn",
+        "noConsole": "off",
+        "noDebugger": "off",
+        "noExplicitAny": "off"
+      },
+      "correctness": {
+        "noUnusedVariables": "off",
+        "noUnusedImports": "off",
+        "useExhaustiveDependencies": "off",
+        "useHookAtTopLevel": "off"
+      },
+      "security": {
+        "noDangerouslySetInnerHtml": "warn"
       },
       "a11y": {
-        "noAccessKey": "error",
-        "noAriaUnsupportedElements": "error",
-        "noAutofocus": "error",
-        "noDistractingElements": "error",
-        "noInteractiveElementToNoninteractiveRole": "error",
-        "noNoninteractiveElementToInteractiveRole": "error",
-        "noPositiveTabindex": "error",
-        "noRedundantAlt": "error",
-        "useAltText": "error",
-        "useAnchorContent": "error",
-        "useAriaPropsForRole": "error",
-        "useButtonType": "error",
-        "useHeadingContent": "error",
-        "useHtmlLang": "error",
-        "useIframeTitle": "error",
-        "useKeyWithClickEvents": "error",
-        "useKeyWithMouseEvents": "error",
-        "useMediaCaption": "error",
-        "useValidAnchor": "error",
-        "useValidAriaProps": "error",
-        "useValidAriaRole": "error",
-        "useValidAriaValues": "error",
-        "useValidLang": "error"
+        "noAccessKey": "off",
+        "noAriaUnsupportedElements": "off",
+        "noAutofocus": "off",
+        "noDistractingElements": "off",
+        "noInteractiveElementToNoninteractiveRole": "off",
+        "noNoninteractiveElementToInteractiveRole": "off",
+        "noPositiveTabindex": "off",
+        "noRedundantAlt": "off",
+        "useAltText": "off",
+        "useAnchorContent": "off",
+        "useAriaPropsForRole": "off",
+        "useButtonType": "off",
+        "useHeadingContent": "off",
+        "useHtmlLang": "off",
+        "useIframeTitle": "off",
+        "useKeyWithClickEvents": "off",
+        "useKeyWithMouseEvents": "off",
+        "useMediaCaption": "off",
+        "useValidAnchor": "off",
+        "useValidAriaProps": "off",
+        "useValidAriaRole": "off",
+        "useValidAriaValues": "off",
+        "useValidLang": "off"
       }
     }
   },

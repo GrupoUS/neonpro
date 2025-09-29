@@ -49,9 +49,9 @@ describe('Light/Dark Mode Consistency Across All Components', () => {
         <nav className="bg-neonpro-deep-blue text-neonpro-background p-4 mt-4 rounded-lg">
           <h3 className="font-semibold mb-2">Navegação Principal</h3>
           <ul className="space-y-1">
-            <li><a href="#" className="hover:text-neonpro-accent transition-colors">Pacientes</a></li>
-            <li><a href="#" className="hover:text-neonpro-accent transition-colors">Agendamentos</a></li>
-            <li><a href="#" className="hover:text-neonpro-accent transition-colors">Procedimentos</a></li>
+            <li><a href="#pacientes" className="hover:text-neonpro-accent transition-colors block">Pacientes</a></li>
+            <li><a href="#agendamentos" className="hover:text-neonpro-accent transition-colors block">Agendamentos</a></li>
+            <li><a href="#procedimentos" className="hover:text-neonpro-accent transition-colors block">Procedimentos</a></li>
           </ul>
         </nav>
       </div>

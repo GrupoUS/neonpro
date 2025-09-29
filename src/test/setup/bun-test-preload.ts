@@ -225,34 +225,34 @@ globalThis.cleanup = () => {
 
 // Type definitions for global test objects
 declare global {
-  var healthcareCompliance: {
+  const healthcareCompliance: {
     validateANVISA(data: any): boolean
     sanitizeData(data: any): any
     validateProfessionalLicense(license: string): boolean
     generateHealthcareTimestamp(): string
   }
   
-  var lgpdValidation: {
+  const lgpdValidation: {
     validateConsent(consentData: any): boolean
     anonymizeData(data: any): any
     validateRetention(data: any): boolean
   }
   
-  var securityContext: {
+  const securityContext: {
     encrypt(data: string): string
     decrypt(encryptedData: string): string
     validateAccess(userRole: string, dataType: string): boolean
     generateAuditLog(action: string, userId: string, dataType: string): any
   }
   
-  var testUtils: {
+  const testUtils: {
     wait(ms: number): Promise<void>
     createMockPatientData(): any
     createMockAppointmentData(): any
     validateHealthcareCompliance(data: any): boolean
   }
   
-  var cleanup: () => void
+  const cleanup: () => void
 }
 
 console.log('[BUN TEST SETUP] Healthcare compliance test environment loaded')

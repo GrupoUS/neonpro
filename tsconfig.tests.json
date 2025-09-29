@@ -7,12 +7,26 @@
     "declaration": false,
     "sourceMap": true,
     "types": ["vitest", "vitest/globals", "@testing-library/jest-dom", "node"],
-    "exactOptionalPropertyTypes": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./packages/*"],
+      "@/*": ["./src/*"],
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/types/*": ["./packages/types/src/*"],
+      "@neonpro/database": ["./packages/database/src"],
+      "@neonpro/database/*": ["./packages/database/src/*"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
+      "@neonpro/config": ["./packages/config/src"],
+      "@neonpro/config/*": ["./packages/config/src/*"],
+      "@neonpro/core": ["./packages/core/src"],
+      "@neonpro/core/*": ["./packages/core/src/*"],
       "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"],
       "@tests/*": ["./tools/tests/*"]
@@ -32,10 +46,10 @@
   "exclude": ["node_modules", "dist", "**/dist/**/*", "**/*.js", "**/*.d.ts"],
   "references": [
     { "path": "./packages/types" },
-    { "path": "./packages/utils" },
     { "path": "./packages/shared" },
     { "path": "./packages/database" },
-    { "path": "./packages/security" },
-    { "path": "./packages/ui" }
+    { "path": "./packages/core" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/config" }
   ]
 }

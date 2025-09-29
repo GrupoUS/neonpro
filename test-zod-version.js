@@ -1,7 +1,7 @@
 // Test file to validate Zod v4.1.11 functionality
 import { z } from 'zod';
 
-console.log('Testing Zod version:', z.version);
+console.log('Testing Zod functionality...');
 
 // Test basic schema functionality
 const testSchema = z.object({
@@ -43,4 +43,4 @@ try {
   console.error('❌ Transform functionality failed:', error);
 }
 
-console.log('🎉 Zod v4.1.11 test completed successfully!');
+console.log('🎉 Zod functionality test completed successfully!');

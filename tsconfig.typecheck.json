@@ -1,15 +1,27 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["apps/**/*", "packages/**/*"],
-  "exclude": [
-    "**/__tests__/**",
+  "include": [
+    "apps/**/*", 
+    "packages/**/*",
     "**/*.test.ts",
-    "**/*.spec.ts",
     "**/*.test.tsx",
+    "**/*.spec.ts",
     "**/*.spec.tsx",
+    "tests/**/*",
+    "tools/tests/**/*",
+    "**/__tests__/**/*"
+  ],
+  "exclude": [
     "**/dist/**",
     "**/build/**",
     "node_modules"
   ],
-  "compilerOptions": { "noEmit": true, "incremental": false }
+  "compilerOptions": { 
+    "noEmit": true, 
+    "incremental": false,
+    "strict": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "noPropertyAccessFromIndexSignature": true
+  }
 }

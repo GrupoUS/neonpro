@@ -15,6 +15,8 @@ import { trpc } from '@/lib/trpc.js'
 import {
   type CertificationValidation,
   type ProfessionalDetails,
+  type AestheticProcedure,
+  type ProfessionalCertification,
 } from '@/types/aesthetic-scheduling.js'
 
 // Export interfaces for direct use
@@ -54,8 +56,8 @@ interface MobileValidationState {
   isOffline: boolean
   emergencyMode: boolean
   lastSyncTime: Date | null
-  cachedProfessionals: any[]
-  cachedProcedures: any[]
+  cachedProfessionals: ProfessionalDetails[]
+  cachedProcedures: AestheticProcedure[]
 }
 
 // Local storage keys for offline capability
@@ -143,7 +145,7 @@ export function CertificationValidator(
       }
       const data = await (trpc as any).aestheticScheduling.getAestheticProcedures.useQuery(
         { limit: 100, offset: 0 },
-        { select: (data: any) => data.procedures }
+        { select: (data: { procedures: AestheticProcedure[] }) => data.procedures }
       ).fn()
       // Cache for offline use
       localStorage.setItem(STORAGE_KEYS.PROCEDURES, JSON.stringify(data))
@@ -165,7 +167,7 @@ export function CertificationValidator(
         procedureIds: procIds,
       })
     },
-    onSuccess: (data: any) => {
+    onSuccess: (data: CertificationValidation) => {
       setValidationResults(data)
       onValidationComplete?.(data)
       
@@ -181,15 +183,15 @@ export function CertificationValidator(
       
       queryClient.invalidateQueries({ queryKey: ['professionals'] })
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       onError?.(error as Error)
     },
   })
 
   // Offline validation simulation
   const performOfflineValidation = useCallback((profId: string, procIds: string[]) => {
-    const professional = mobileState.cachedProfessionals.find((p: any) => p.id === profId)
-    const procedures = mobileState.cachedProcedures.filter((p: any) => procIds.includes(p.id))
+    const professional = mobileState.cachedProfessionals.find((p: ProfessionalDetails) => p.id === profId)
+    const procedures = mobileState.cachedProcedures.filter((p: AestheticProcedure) => procIds.includes(p.id))
     
     if (!professional || !procedures.length) {
       throw new Error('Dados não disponíveis offline')
@@ -197,7 +199,7 @@ export function CertificationValidator(
 
     // Simulate validation based on cached data
     const hasRequiredCerts = procedures.every(p => !p.requiresCertification || 
-      professional.certifications?.some((c: any) => c.procedureId === p.id))
+      professional.certifications?.some((c: ProfessionalCertification) => c.procedureId === p.id))
 
     return {
       id: `offline_${Date.now()}`,

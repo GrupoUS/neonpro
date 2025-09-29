@@ -152,11 +152,5 @@
   "remoteCache": {
     "enabled": true
   },
-  "daemon": false,
-  "pipeline": {
-    "dev": {
-      "cache": false,
-      "persistent": true
-    }
-  }
+  "daemon": false
 }

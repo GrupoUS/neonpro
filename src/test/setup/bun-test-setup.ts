@@ -134,7 +134,7 @@ global.testUtils = {
 
 // Type definitions for global test utilities
 declare global {
-  var testUtils: {
+  const testUtils: {
     wait(ms: number): Promise<void>
     createMockPatientData(): any
     createMockAppointmentData(): any
