@@ -81,13 +81,13 @@ COMPONENT_PLACEMENT_ALGORITHM:
   shared_components:
     criteria: "Used across multiple apps, core design system, no business logic"
     location: "packages/ui/src/components/ui/"
-    command: "cd packages/ui && pnpm dlx shadcn@latest add"
+    command: "cd packages/ui && bunx shadcn@latest add"
     post_install: "Update packages/ui/src/index.ts with exports"
 
   app_specific_components:
     criteria: "Single app usage, business logic integration, complex state"
     location: "apps/web/src/components/molecules/"
-    command: "cd apps/web && pnpm dlx shadcn@latest add"
+    command: "cd apps/web && bunx shadcn@latest add"
     post_install: "Organize in appropriate atomic design folder"
 
 IMPORT_HIERARCHY:

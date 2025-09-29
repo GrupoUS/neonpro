@@ -1,0 +1,913 @@
+# OpenAPI 3.0 Specification for NeonPro Hybrid Architecture
+openapi: 3.0.3
+info:
+  title: NeonPro Healthcare Platform API
+  description: |
+    Hybrid architecture API combining Vercel Edge (reads) and Supabase Functions (writes).
+    Compliant with LGPD, ANVISA, and CFM healthcare regulations.
+  version: 1.0.0
+  contact:
+    name: NeonPro Architecture Team
+    email: archon@neonpro.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.neonpro.com/v1
+    description: Production server
+  - url: https://staging-api.neonpro.com/v1
+    description: Staging server
+  - url: http://localhost:3000/api/v1
+    description: Development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  # Architecture Management
+  /architecture/config:
+    get:
+      summary: Get architecture configuration
+      description: Retrieve current hybrid architecture configuration
+      operationId: getArchitectureConfig
+      tags:
+        - Architecture
+      responses:
+        '200':
+          description: Architecture configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArchitectureConfig'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    
+    put:
+      summary: Update architecture configuration
+      description: Update hybrid architecture configuration
+      operationId: updateArchitectureConfig
+      tags:
+        - Architecture
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArchitectureConfigUpdate'
+      responses:
+        '200':
+          description: Architecture configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArchitectureConfig'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Migration Management
+  /migration/status:
+    get:
+      summary: Get migration status
+      description: Retrieve current migration status and progress
+      operationId: getMigrationStatus
+      tags:
+        - Migration
+      responses:
+        '200':
+          description: Migration status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MigrationStatus'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /migration/start:
+    post:
+      summary: Start migration phase
+      description: Start a specific migration phase
+      operationId: startMigration
+      tags:
+        - Migration
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MigrationStartRequest'
+      responses:
+        '200':
+          description: Migration started successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MigrationStatus'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Package Management
+  /package-manager/config:
+    get:
+      summary: Get package manager configuration
+      description: Retrieve current package manager configuration
+      operationId: getPackageManagerConfig
+      tags:
+        - Package Management
+      responses:
+        '200':
+          description: Package manager configuration retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageManagerConfig'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update package manager configuration
+      description: Update package manager configuration
+      operationId: updatePackageManagerConfig
+      tags:
+        - Package Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PackageManagerConfigUpdate'
+      responses:
+        '200':
+          description: Package manager configuration updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackageManagerConfig'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Performance Monitoring
+  /performance/metrics:
+    get:
+      summary: Get performance metrics
+      description: Retrieve current performance metrics
+      operationId: getPerformanceMetrics
+      tags:
+        - Performance
+      responses:
+        '200':
+          description: Performance metrics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformanceMetrics'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # Compliance Management
+  /compliance/status:
+    get:
+      summary: Get compliance status
+      description: Retrieve current compliance status
+      operationId: getComplianceStatus
+      tags:
+        - Compliance
+      responses:
+        '200':
+          description: Compliance status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceStatus'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /compliance/audit:
+    post:
+      summary: Run compliance audit
+      description: Run a compliance audit for specified frameworks
+      operationId: runComplianceAudit
+      tags:
+        - Compliance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplianceAuditRequest'
+      responses:
+        '200':
+          description: Compliance audit completed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplianceAuditResult'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Architecture Schemas
+    ArchitectureConfig:
+      type: object
+      required:
+        - id
+        - name
+        - environment
+        - edgeEnabled
+        - supabaseFunctionsEnabled
+        - bunEnabled
+        - performanceMetrics
+        - complianceStatus
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the architecture configuration
+        name:
+          type: string
+          description: Name of the architecture configuration
+        environment:
+          type: string
+          enum: [development, staging, production]
+          description: Environment type
+        edgeEnabled:
+          type: boolean
+          description: Whether Edge functions are enabled
+        supabaseFunctionsEnabled:
+          type: boolean
+          description: Whether Supabase functions are enabled
+        bunEnabled:
+          type: boolean
+          description: Whether Bun package manager is enabled
+        performanceMetrics:
+          $ref: '#/components/schemas/PerformanceMetrics'
+        complianceStatus:
+          $ref: '#/components/schemas/ComplianceStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+
+    ArchitectureConfigUpdate:
+      type: object
+      properties:
+        edgeEnabled:
+          type: boolean
+          description: Whether Edge functions are enabled
+        supabaseFunctionsEnabled:
+          type: boolean
+          description: Whether Supabase functions are enabled
+        bunEnabled:
+          type: boolean
+          description: Whether Bun package manager is enabled
+
+    # Migration Schemas
+    MigrationStatus:
+      type: object
+      required:
+        - id
+        - phase
+        - status
+        - progress
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the migration
+        phase:
+          type: string
+          enum: [planning, bun-migration, edge-expansion, security-enhancement, performance-optimization, complete]
+          description: Current migration phase
+        status:
+          type: string
+          enum: [pending, in-progress, completed, failed]
+          description: Migration status
+        progress:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Migration progress percentage
+        startTime:
+          type: string
+          format: date-time
+          description: Migration start time
+        endTime:
+          type: string
+          format: date-time
+          description: Migration end time
+        rollbackPoint:
+          type: string
+          description: Rollback point identifier
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/MigrationIssue'
+          description: Migration issues
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+
+    MigrationStartRequest:
+      type: object
+      required:
+        - phase
+      properties:
+        phase:
+          type: string
+          enum: [bun-migration, edge-expansion, security-enhancement, performance-optimization]
+          description: Migration phase to start
+
+    MigrationIssue:
+      type: object
+      required:
+        - id
+        - type
+        - message
+        - severity
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the issue
+        type:
+          type: string
+          enum: [configuration, performance, security, compliance, dependency]
+          description: Issue type
+        message:
+          type: string
+          description: Issue description
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Issue severity
+        resolved:
+          type: boolean
+          description: Whether the issue is resolved
+        createdAt:
+          type: string
+          format: date-time
+          description: Issue creation timestamp
+
+    # Package Management Schemas
+    PackageManagerConfig:
+      type: object
+      required:
+        - id
+        - name
+        - version
+        - scripts
+        - buildPerformance
+        - compatibility
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the configuration
+        name:
+          type: string
+          enum: [bun, pnpm, npm]
+          description: Package manager name
+        version:
+          type: string
+          description: Package manager version
+        scripts:
+          $ref: '#/components/schemas/BuildScripts'
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+          description: Production dependencies
+        devDependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+          description: Development dependencies
+        buildPerformance:
+          $ref: '#/components/schemas/BuildPerformance'
+        compatibility:
+          $ref: '#/components/schemas/CompatibilityMatrix'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+
+    PackageManagerConfigUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          enum: [bun, pnpm, npm]
+          description: Package manager name
+        scripts:
+          $ref: '#/components/schemas/BuildScripts'
+        dependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+          description: Production dependencies
+        devDependencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Dependency'
+          description: Development dependencies
+
+    BuildScripts:
+      type: object
+      properties:
+        dev:
+          type: string
+          description: Development server script
+        build:
+          type: string
+          description: Build script
+        test:
+          type: string
+          description: Test script
+        lint:
+          type: string
+          description: Linting script
+        typeCheck:
+          type: string
+          description: Type checking script
+        clean:
+          type: string
+          description: Clean script
+        db:
+          $ref: '#/components/schemas/DatabaseScripts'
+        deploy:
+          $ref: '#/components/schemas/DeployScripts'
+
+    DatabaseScripts:
+      type: object
+      properties:
+        push:
+          type: string
+          description: Database push script
+        types:
+          type: string
+          description: Database types generation script
+        reset:
+          type: string
+          description: Database reset script
+        studio:
+          type: string
+          description: Database studio script
+
+    DeployScripts:
+      type: object
+      properties:
+        staging:
+          type: string
+          description: Staging deployment script
+        production:
+          type: string
+          description: Production deployment script
+
+    Dependency:
+      type: object
+      required:
+        - name
+        - version
+        - type
+      properties:
+        name:
+          type: string
+          description: Dependency name
+        version:
+          type: string
+          description: Dependency version
+        type:
+          type: string
+          enum: [production, development]
+          description: Dependency type
+
+    BuildPerformance:
+      type: object
+      properties:
+        buildTime:
+          type: number
+          description: Build time in milliseconds
+        bundleSize:
+          type: object
+          properties:
+            main:
+              type: number
+              description: Main bundle size in bytes
+            vendor:
+              type: number
+              description: Vendor bundle size in bytes
+            total:
+              type: number
+              description: Total bundle size in bytes
+        cacheHitRate:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Cache hit rate percentage
+
+    CompatibilityMatrix:
+      type: object
+      properties:
+        nodejs:
+          type: boolean
+          description: Node.js compatibility
+        bun:
+          type: boolean
+          description: Bun compatibility
+        typescript:
+          type: boolean
+          description: TypeScript compatibility
+        react:
+          type: boolean
+          description: React compatibility
+
+    # Performance Schemas
+    PerformanceMetrics:
+      type: object
+      required:
+        - edgeTTFB
+        - realtimeUIPatch
+        - copilotToolRoundtrip
+        - buildTime
+        - bundleSize
+        - uptime
+        - timestamp
+      properties:
+        edgeTTFB:
+          type: number
+          description: Edge time to first byte in milliseconds
+        realtimeUIPatch:
+          type: number
+          description: Realtime UI patch time in seconds
+        copilotToolRoundtrip:
+          type: number
+          description: Copilot tool round trip time in seconds
+        buildTime:
+          type: number
+          description: Build time in milliseconds
+        bundleSize:
+          $ref: '#/components/schemas/BundleSize'
+        uptime:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Uptime percentage
+        timestamp:
+          type: string
+          format: date-time
+          description: Metrics timestamp
+
+    BundleSize:
+      type: object
+      required:
+        - main
+        - vendor
+        - total
+      properties:
+        main:
+          type: number
+          description: Main bundle size in bytes
+        vendor:
+          type: number
+          description: Vendor bundle size in bytes
+        total:
+          type: number
+          description: Total bundle size in bytes
+
+    # Compliance Schemas
+    ComplianceStatus:
+      type: object
+      required:
+        - lgpd
+        - anvisa
+        - cfm
+        - wcag
+        - timestamp
+      properties:
+        lgpd:
+          $ref: '#/components/schemas/ComplianceFramework'
+        anvisa:
+          $ref: '#/components/schemas/ComplianceFramework'
+        cfm:
+          $ref: '#/components/schemas/ComplianceFramework'
+        wcag:
+          $ref: '#/components/schemas/WCAGCompliance'
+        timestamp:
+          type: string
+          format: date-time
+          description: Compliance timestamp
+
+    ComplianceFramework:
+      type: object
+      required:
+        - compliant
+        - lastAudit
+        - nextAudit
+        - issues
+      properties:
+        compliant:
+          type: boolean
+          description: Whether the framework is compliant
+        lastAudit:
+          type: string
+          format: date-time
+          description: Last audit timestamp
+        nextAudit:
+          type: string
+          format: date-time
+          description: Next audit timestamp
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComplianceIssue'
+          description: Compliance issues
+
+    WCAGCompliance:
+      type: object
+      required:
+        - level
+        - compliant
+        - lastAudit
+        - issues
+      properties:
+        level:
+          type: string
+          enum: [2.1 AA+, 2.1 AAA]
+          description: WCAG compliance level
+        compliant:
+          type: boolean
+          description: Whether WCAG compliance is achieved
+        lastAudit:
+          type: string
+          format: date-time
+          description: Last audit timestamp
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessibilityIssue'
+          description: Accessibility issues
+
+    ComplianceIssue:
+      type: object
+      required:
+        - id
+        - regulation
+        - requirement
+        - description
+        - severity
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the issue
+        regulation:
+          type: string
+          enum: [LGPD, ANVISA, CFM]
+          description: Regulation type
+        requirement:
+          type: string
+          description: Specific requirement
+        description:
+          type: string
+          description: Issue description
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+          description: Issue severity
+        status:
+          type: string
+          enum: [open, in-progress, resolved, closed]
+          description: Issue status
+        createdAt:
+          type: string
+          format: date-time
+          description: Issue creation timestamp
+        resolvedAt:
+          type: string
+          format: date-time
+          description: Issue resolution timestamp
+
+    AccessibilityIssue:
+      type: object
+      required:
+        - id
+        - guideline
+        - description
+        - severity
+        - status
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the issue
+        guideline:
+          type: string
+          description: WCAG guideline
+        description:
+          type: string
+          description: Issue description
+        severity:
+          type: string
+          enum: [minor, moderate, serious, critical]
+          description: Issue severity
+        status:
+          type: string
+          enum: [open, in-progress, resolved, closed]
+          description: Issue status
+        createdAt:
+          type: string
+          format: date-time
+          description: Issue creation timestamp
+        resolvedAt:
+          type: string
+          format: date-time
+          description: Issue resolution timestamp
+
+    ComplianceAuditRequest:
+      type: object
+      required:
+        - frameworks
+      properties:
+        frameworks:
+          type: array
+          items:
+            type: string
+            enum: [LGPD, ANVISA, CFM, WCAG]
+          description: Frameworks to audit
+
+    ComplianceAuditResult:
+      type: object
+      required:
+        - id
+        - auditDate
+        - frameworks
+        - overallStatus
+        - recommendations
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the audit
+        auditDate:
+          type: string
+          format: date-time
+          description: Audit date
+        frameworks:
+          type: array
+          items:
+            $ref: '#/components/schemas/FrameworkAudit'
+          description: Framework audit results
+        overallStatus:
+          type: string
+          enum: [pass, fail, warning]
+          description: Overall audit status
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: Audit recommendations
+
+    FrameworkAudit:
+      type: object
+      required:
+        - framework
+        - status
+        - score
+        - issues
+      properties:
+        framework:
+          type: string
+          enum: [LGPD, ANVISA, CFM, WCAG]
+          description: Audited framework
+        status:
+          type: string
+          enum: [pass, fail, warning]
+          description: Framework audit status
+        score:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Framework compliance score
+        issues:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ComplianceIssue'
+              - $ref: '#/components/schemas/AccessibilityIssue'
+          description: Framework-specific issues
+
+  responses:
+    BadRequestError:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error
+              - message
+            properties:
+              error:
+                type: string
+                description: Error type
+              message:
+                type: string
+                description: Error message
+              details:
+                type: object
+                description: Error details
+
+    UnauthorizedError:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error
+              - message
+            properties:
+              error:
+                type: string
+                description: Error type
+              message:
+                type: string
+                description: Error message
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - error
+              - message
+            properties:
+              error:
+                type: string
+                description: Error type
+              message:
+                type: string
+                description: Error message
+              details:
+                type: object
+                description: Error details
+
+tags:
+  - name: Architecture
+    description: Architecture configuration and management
+  - name: Migration
+    description: Migration process management
+  - name: Package Management
+    description: Package manager configuration
+  - name: Performance
+    description: Performance monitoring and metrics
+  - name: Compliance
+    description: Compliance monitoring and auditing

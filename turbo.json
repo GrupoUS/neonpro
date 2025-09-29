@@ -12,7 +12,12 @@
     "LGPD_COMPLIANCE",
     "DATA_RESIDENCY",
     "CLIENT_DATA_PROTECTION",
-    "AUDIT_LOGGING"
+    "AUDIT_LOGGING",
+    "SUPABASE_PROJECT_ID",
+    "SUPABASE_SERVICE_KEY",
+    "DATABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
   ],
   "tasks": {
     "//#biome:check": {
@@ -42,7 +47,7 @@
       "cache": true,
       "persistent": false,
       "env": ["NODE_ENV", "CI", "VERCEL_ENV"],
-      "inputs": ["tsconfig*.json", "package.json", "pnpm-lock.yaml", "vercel.json"]
+      "inputs": ["tsconfig*.json", "package.json", "vercel.json"]
     },
     "build:vercel": {
       "dependsOn": ["^build", "build:core"],
@@ -60,12 +65,11 @@
     },
     "build:core": {
       "dependsOn": [
-        "@neonpro/healthcare-core#build",
-        "@neonpro/utils#build",
-        "@neonpro/security#build",
-        "@neonpro/database#build",
-        "@neonpro/ai-services#build",
-        "@neonpro/ui#build"
+        "@neonpro/core#build",
+        "@neonpro/database#build", 
+        "@neonpro/types#build",
+        "@neonpro/ui#build",
+        "@neonpro/config#build"
       ],
       "outputs": ["dist/**", "**/.tsbuildinfo/**"],
       "cache": true,
@@ -74,7 +78,8 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["NODE_ENV=development"]
+      "env": ["NODE_ENV=development"],
+      "passThroughEnv": ["NODE_ENV", "CI", "VERCEL_ENV"]
     },
     "test": {
       "dependsOn": ["build"],
@@ -121,9 +126,37 @@
       "cache": false,
       "persistent": false,
       "env": ["VERCEL_ENV", "LGPD_COMPLIANCE", "DATA_RESIDENCY"]
+    },
+    "db:push": {
+      "cache": false,
+      "persistent": false,
+      "env": ["SUPABASE_SERVICE_KEY", "DATABASE_URL"]
+    },
+    "db:types": {
+      "dependsOn": ["^build"],
+      "outputs": ["packages/database/src/types/supabase-generated.ts"],
+      "cache": true,
+      "persistent": false,
+      "env": ["SUPABASE_PROJECT_ID"]
+    },
+    "db:reset": {
+      "cache": false,
+      "persistent": false,
+      "env": ["DATABASE_URL"]
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": false
     }
   },
   "remoteCache": {
     "enabled": true
+  },
+  "daemon": false,
+  "pipeline": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
   }
 }

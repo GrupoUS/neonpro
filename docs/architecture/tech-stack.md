@@ -1,611 +1,122 @@
----
-title: "NeonPro Technology Stack"
-**last_updated**: 2025-09-22
-form: reference
-tags: [technology, stack, decisions, rationale]
-related:
-  - ./architecture.md
-  - ./source-tree.md
-  - ../AGENTS.md
----
-
-# NeonPro Technology Stack
-
-This document details **WHICH** technologies NeonPro uses and **WHY** they were chosen, including framework selections, tool configurations, version management, and implementation rationale.
-
-## Technology Selection Philosophy
-
-**Decision Criteria**: Performance, type safety, compliance readiness, developer experience, scalability
-
-**Stack Overview**:
-
-- **Frontend**: TanStack Router + TanStack Query + Vite + React 19 + Shadcn + TypeScript 5.9.2
-- **Backend**: tRPC v11 + Prisma + Supabase + PostgreSQL 15+
-- **AI**: OpenAI GPT-5-mini + Gemini Flash 2.5 via Vercel AI SDK + Copilotkit + AG-UI
-- **Infrastructure**: Vercel (São Paulo) + Turborepo monorepo
-- **Quality**: Vitest + Playwright + Oxlint + TypeScript strict
-
-## Core Technology Stack
-
-### Monorepo & Build System
-
-**Turborepo v2.5.6** - Monorepo Build Orchestration
-
-- **Why**: 80% faster builds via intelligent caching, parallel execution, TypeScript support
-- **Benefits**: Zero-config caching, dependency-aware builds, Vercel integration
-- **Performance**: ~35s cold build, ~3s incremental with cache
-
-**Bun (Latest)** - Primary Package Manager & Development Scripts
-
-- **Why**: 3-5x faster than npm, excellent TypeScript support, built-in bundler
-- **Usage**: Primary package manager, test runner, development scripts, package auditing
-- **Performance**: ~12s test suite execution vs ~30s with Jest
-- **Workspace Support**: Full monorepo workspace management with `bun-workspace.json`
-- **Fallback Strategy**: Automatic fallback to PNPM/NPM for compatibility
-
-**PNPM v8.15.0** - Secondary Package Manager
-
-- **Why**: Workspace protocol support, efficient disk usage, strict dependency resolution
-- **Usage**: Fallback when Bun compatibility issues arise, workspace management
-- **Benefits**: Mature ecosystem, symlinked node_modules, security advantages
-- **Integration**: Seamless fallback via automated scripts
-
-**NPM v11.6.0+** - Tertiary Package Manager
-
-- **Why**: Universal compatibility, largest package registry
-- **Usage**: Final fallback option, legacy dependencies
-- **Benefits**: Industry standard, maximum compatibility
-- **Integration**: Available as final fallback in automated scripts
-
-**TypeScript v5.9.2** - Type Safety & Developer Experience
-
-- **Why**: Latest features (decorators, satisfies), strict mode for data safety
-- **Benefits**: Compile-time error detection, excellent IDE support, data validation
-- **Config**: Strict mode, path mapping, monorepo type definitions
-
-### Frontend Technology Stack
-
-**TanStack Router (Latest)** - Type-Safe Routing
-
-- **Why**: Full type safety, file-based routing, automatic route generation
-- **Benefits**: Type-safe data loading, search param validation, performance
-- **Migration**: From Next.js App Router for better type safety
-- **Performance**: 40% faster development builds
-
-**Vite v5.2.0** - Build Tool & Development Server
-
-- **Why**: Lightning-fast HMR (<100ms), optimized builds, plugin ecosystem
-- **Benefits**: Native ES modules, fast cold starts, tree shaking, CSS splitting
-- **Performance**: <2s dev server startup, <100ms hot reload
-
-**React v19.1.1** - UI Library
-
-- **Why**: Latest features (concurrent rendering, batching), ecosystem, TypeScript support
-- **Features**: Suspense, concurrent rendering, automatic batching
-- **Performance**: Improved rendering performance with concurrent features
-
-**Tailwind CSS v3.3.0** - Utility-First Styling
-
-- **Why**: Rapid development, design system consistency, responsive design
-- **Benefits**: Utility classes, dark mode support, accessibility focus
-- **Config**: Custom Brazilian aesthetic clinic color palette, responsive breakpoints
-
-**shadcn/ui v4** - Component Library
-
-- **Why**: WCAG 2.1 AA compliance, Radix primitives, copy-paste approach
-- **Benefits**: Accessibility built-in, TypeScript support, customizable components
-- **Features**: 40+ components, Brazilian Portuguese localization
-
-**Supporting Frontend Libraries**:
-
-- **React Hook Form v7.62.0**: Performance-focused forms, minimal re-renders
-- **Valibot v1.1.0**: Primary runtime schema validation (75% smaller than Zod)
-- **Zod v4.1.11**: Fallback validation library when Valibot doesn't have specific features
-- **Zustand v4.4.0**: Lightweight state management, TypeScript-first
-- **TanStack Query v5.62.0**: Server state management, **real-time data synchronization**, background updates
-
-### Backend Technology Stack
-
-**Hono v4.9.7** - Edge-Optimized Web Framework
-
-- **Why**: Lightweight, edge-compatible, fast, excellent TypeScript support, healthcare compliance
-- **Features**: Type-safe routing, middleware composition, healthcare validation, edge runtime optimization
-- **Performance**: <100ms API responses, 50x faster than Express, edge-native
-- **Migration**: From Express for enhanced performance and edge compatibility
-- **Healthcare Features**: Built-in LGPD compliance, audit logging, Brazilian identity validation
-
-**tRPC v11.0.0** - Type-Safe API Layer
-
-- **Why**: Full TypeScript type safety, automatic client generation, healthcare compliance
-- **Features**: Type-safe procedures, middleware composition, real-time subscriptions, Valibot validation
-- **Performance**: Zero runtime overhead, edge-compatible, <100ms healthcare API responses
-- **Real-time Integration**: Seamless integration with Supabase Realtime for automatic query invalidation
-- **Usage**: Layered on top of Hono for enhanced type safety and developer experience
-
-**Node.js 20+** - Runtime Environment
-
-- **Why**: LTS stability, Vercel Functions compatibility, mature ecosystem
-- **Benefits**: Vercel optimization, npm compatibility, security updates
-- **Config**: ES modules, strict mode, serverless optimized
-
-- **Why**: PostgreSQL foundation, **real-time capabilities**, built-in auth, Brazilian data centers
-- **Features**: PostgreSQL 15+, **real-time subscriptions with TanStack Query integration**, storage, edge functions
-- **Benefits**: Reduced backend complexity, compliance features, **automatic query invalidation**
-- **Real-time Configuration**: 10 events/second rate limiting for healthcare compliance
-
-**Supabase v2.45.1** - Backend-as-a-Service Platform
-
-- **Why**: PostgreSQL foundation, **real-time capabilities**, built-in auth, Brazilian data centers
-- **Features**: PostgreSQL 15+, **real-time subscriptions with TanStack Query integration**, storage, edge functions
-- **Benefits**: Reduced backend complexity, compliance features, **automatic query invalidation**
-- **Real-time Configuration**: 10 events/second rate limiting for healthcare compliance
-
-- **Why**: ACID compliance, JSON support, excellent performance, mature ecosystem
-- **Benefits**: Data integrity, complex queries, JSON/JSONB support, full-text search
-- **Config**: Optimized workloads, proper indexing, connection pooling
-
-**PostgreSQL 15+** - Primary Database
-
-- **Why**: ACID compliance, JSON support, excellent performance, mature ecosystem
-- **Benefits**: Data integrity, complex queries, JSON/JSONB support, full-text search
-- **Config**: Optimized workloads, proper indexing, connection pooling
-
-- **Why**: Type-safe database access, Brazilian aesthetic clinic compliance, multi-schema support
-- **Features**: Auto-generated types, migration system, connection pooling, edge compatibility
-- **Benefits**: LGPD compliance, audit logging, Brazilian identity validation (CPF, CNS)
-- **Performance**: <50ms database queries, optimized for aesthetic clinic workflows
-
-**Prisma v5.7.0** - Next-Generation ORM
-
-- **Why**: Type-safe database access, Brazilian healthcare compliance, multi-schema support
-- **Features**: Auto-generated types, migration system, connection pooling, edge compatibility
-- **Benefits**: LGPD compliance, audit logging, Brazilian identity validation (CPF, CNS)
-- **Performance**: <50ms database queries, optimized for healthcare workflows
-
-- **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
-- **Features**: Brazilian aesthetic clinic validation (CPF, TUSS codes), streaming validation, composable schemas
-- **Benefits**: Edge function compatibility, aesthetic clinic compliance, performance optimization
-- **Usage**: Primary validation library for all new development, tRPC input validation, aesthetic clinic data schemas
-- **Fallback Strategy**: Use Zod v4.1.11 when specific Valibot features are not available
-
-**Valibot v1.1.0** - Primary Runtime Schema Validation
-
-- **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
-- **Features**: Brazilian healthcare validation (CPF, medical codes), streaming validation, composable schemas
-- **Benefits**: Edge function compatibility, healthcare compliance, performance optimization
-- **Usage**: Primary validation library for all new development, tRPC input validation, healthcare data schemas
-- **Fallback Strategy**: Use Zod v4.1.11 when specific Valibot features are not available
-
-- **Why**: Mature ecosystem, extensive feature set, backward compatibility
-- **Features**: Comprehensive schema definitions, transformer functions, error handling
-- **Benefits**: Extensive documentation, community support, integrations
-- **Usage**: Fallback when Valibot lacks specific features, legacy code maintenance
-
-### Authentication & Security Stack
-
-**Supabase Auth v2.38.5** - Primary Authentication Provider
-
-- **Why**: LGPD-compliant, built-in MFA, social providers, Brazilian data residency
-- **Features**: Email/password, magic links, OAuth, MFA, session management
-- **Compliance**: LGPD data protection, audit trails
-
-**JOSE Library** - JWT Token Handling
-
-- **Why**: Lightweight, secure JWT implementation, TypeScript support, Web Crypto API
-- **Benefits**: Web standards compliance, edge runtime compatibility
-- **Usage**: Token validation, signature verification, claims extraction
-
-**WebAuthn (@simplewebauthn/server)** - Biometric Authentication
-
-- **Why**: Passwordless authentication, FIDO2 compliance, enhanced security
-- **Benefits**: Phishing resistance, device-bound credentials, improved UX
-- **Implementation**: Fingerprint, Face ID, hardware keys
-
-**bcryptjs v2.4.3** - Password Hashing (Legacy Support)
-
-- **Why**: Industry standard, wide compatibility, gradual migration path
-- **Migration**: Moving to Argon2id for new passwords, bcrypt for legacy
-- **Config**: Cost factor 12+, serverless optimized, timing attack protection
-
-### AI & Machine Learning Stack
-
-**Vercel AI SDK v5.0.23** - Unified AI Framework
-
-- **Why**: Provider-agnostic interface, streaming support, React integration, edge compatibility
-- **Features**: Streaming chat, function calling, provider switching, error handling
-- **Benefits**: Unified API across providers, excellent TypeScript support
-
-**OpenAI GPT-5-mini** - Primary Conversational AI
-
-- **Why**: Best Portuguese language support, function calling, reliability
-- **Benefits**: Excellent Portuguese understanding, fast responses, stable API
-- **Config**: Temperature 0.7, max tokens 2048, system prompts
-- **Performance**: <2s response time for typical queries
-
-**Gemini Flash 2.5** - Secondary AI Provider
-
-- **Why**: Excellent reasoning capabilities, speed, cost-effectiveness
-- **Benefits**: Strong reasoning, fast responses, cost optimization
-- **Usage**: Backup provider, complex reasoning, safety-critical operations
-
-**CopilotKit v1.10.4** - AI Assistant Integration
-
-- **Why**: Comprehensive AI agent framework, aesthetic clinic compliance, Brazilian Portuguese support
-- **Features**: Context-aware conversations, multi-agent coordination, audit logging
-- **Benefits**: Enhanced client experience, automated scheduling, treatment decision support
-- **Implementation**: 9.2/10 rating, excellent integration with existing systems
-
-**AG-UI Protocol** - AI User Interface Framework
-
-- **Why**: Specialized for aesthetic clinic interfaces, accessibility compliance, Brazilian aesthetic clinic standards
-- **Features**: WCAG 2.1 AA+ compliance, aesthetic workflow optimization, responsive design
-- **Benefits**: Improved user experience, regulatory compliance, mobile-first approach
-- **Implementation**: Excellent (9.2/10) rating with comprehensive aesthetic clinic features
-
-**Enhanced Aesthetic Scheduling System** - Multi-Session Treatment Management
-
-- **Why**: Specialized for aesthetic clinic workflows, multi-session treatments, recovery planning
-- **Features**: Professional certification validation, treatment package scheduling, resource optimization
-- **Benefits**: Reduced scheduling conflicts, improved resource utilization, enhanced client experience
-- **Implementation**: Comprehensive system with Brazilian aesthetic clinic compliance
-
-**AI Treatment Decision Support System** - Treatment Intelligence & Safety
-
-- **Why**: Evidence-based treatment recommendations, contraindication analysis, outcome prediction
-- **Features**: Treatment recommendation engine, contraindication analysis, progress monitoring
-- **Benefits**: Enhanced client safety, improved aesthetic outcomes, reduced complications
-- **Implementation**: Advanced AI system with comprehensive Brazilian aesthetic clinic compliance
-
-**TensorFlow.js (Latest)** - Client-Side Machine Learning
-
-- **Why**: Browser-native ML, privacy-preserving, offline capabilities
-- **Benefits**: Client-side inference, privacy protection, offline support
-- **Use Cases**: Anti-No-Show prediction, client-side validation, offline analytics, aesthetic procedure outcome prediction
-
-**AI Governance**:
-
-- **Data Retention**: 7-day log retention
-- **PII Protection**: Automatic redaction
-- **Failover**: OpenAI → Anthropic with exponential backoff
-- **Rate Limiting**: Provider-specific limits with graceful degradation
-- **Aesthetic Safety**: Multi-layer validation for treatment recommendations
-- **Audit Trail**: Complete logging for all AI interactions with client data
-
-### Testing & Quality Assurance Stack
-
-**Vitest v3.2.0** - Unit & Integration Testing
-
-- **Why**: Vite-powered speed, Jest compatibility, TypeScript support
-- **Benefits**: Fast execution, hot module replacement, snapshot testing, coverage reports
-- **Performance**: 3-5x faster than Jest, ~12s test suite execution
-- **Healthcare Features**: LGPD compliance testing, healthcare scenario testing
-
-**Playwright v1.40.0** - End-to-End Testing
-
-- **Why**: Cross-browser testing, reliable automation, excellent debugging
-- **Benefits**: Multi-browser support, network interception, visual testing, mobile testing
-- **Config**: Brazilian Portuguese locale, healthcare-specific test scenarios
-- **Healthcare Features**: Accessibility testing, LGPD compliance validation
-
-**React Testing Library v16.3.0** - Component Testing
-
-- **Why**: User-centric testing approach, accessibility focus, React integration
-- **Benefits**: Accessibility testing, user behavior simulation, maintainable tests
-- **Healthcare Features**: WCAG 2.1 AA compliance testing, healthcare component validation
-
-**MSW v2.10.5** - API Mocking
-
-- **Why**: Service Worker-based mocking, realistic network behavior, cross-platform support
-- **Benefits**: Realistic API responses, network error simulation, development server mocking
-- **Healthcare Features**: Healthcare API mocking, compliance scenario testing
-
-**Healthcare Testing Framework** - Comprehensive Testing Suite
-
-- **Why**: Healthcare-specific testing requirements, compliance validation
-- **Features**: LGPD compliance testing, ANVISA validation, healthcare scenario testing
-- **Benefits**: Comprehensive test coverage, compliance automation, healthcare workflow validation
-- **Implementation**: Custom healthcare testing framework with ≥95% coverage targets
-
-**Zod v4.1.11** - Secondary Runtime Schema Validation
-
-- **Why**: Mature ecosystem, extensive feature set, backward compatibility
-- **Features**: Comprehensive schema definitions, transformer functions, error handling
-- **Benefits**: Extensive documentation, community support, integrations
-- **Usage**: Fallback when Valibot lacks specific features, legacy code maintenance
-
-**Quality Tools**:
-
-- **Oxlint v1.13.0**: Rust-powered linting, 50x faster than ESLint
-- **dprint v0.50.0**: Fast code formatting, consistent style
-- **TypeScript Strict Mode**: Maximum type safety for data integrity
-
-### Deployment & Infrastructure Stack
-
-**Vercel Platform** - Hosting & Edge Functions
-
-- **Why**: Brazilian edge locations (São Paulo), React support, edge functions, global CDN
-- **Benefits**: São Paulo region (gru1), automatic HTTPS, preview deployments
-- **Config**: Node.js 20 runtime, edge function optimization
-- **Performance**: <1.5s First Contentful Paint, <2.5s Largest Contentful Paint
-
-**GitHub Actions** - CI/CD Pipeline
-
-- **Why**: Native GitHub integration, extensive marketplace, security features
-- **Benefits**: Workflow automation, security scanning, deployment automation
-- **Security**: Pinned action versions, secret management, supply chain security
-
-### Monitoring & Analytics Stack
-
-**Vercel Analytics v1.2.2** - Performance Monitoring
-
-- **Why**: Built-in Vercel integration, Core Web Vitals tracking, privacy-first approach
-- **Features**: Core Web Vitals, user experience metrics, performance optimization insights
-- **Compliance**: LGPD-compliant analytics, no personal data collection
-
-**Custom Audit Logging** - Compliance Tracking
-
-- **Why**: Audit trail requirements, data access tracking, custom compliance needs
-- **Benefits**: Complete audit trail, compliance support, data sovereignty
-- **Implementation**: Supabase-based logging, encrypted storage, retention policies
-
-## Major Technology Decisions & Rationale
-
-### Frontend Framework: TanStack Router + Vite
-
-**Decision**: TanStack Router + Vite + React 19
-**Key Factors**:
-
-- **Type Safety**: Full type-safe routing vs Next.js partial type safety
-- **Performance**: Vite HMR (<100ms) vs Next.js slower builds
-- **Flexibility**: Greater build control vs opinionated structure
-- **Bundle Size**: Smaller bundles with better tree shaking
-
-**Impact**: 40% faster development builds, improved type safety, ~180KB gzipped bundle
-
-### API Framework: tRPC vs REST/GraphQL
-
-**Decision**: tRPC v11.0.0
-**Key Factors**:
-
-- **Type Safety**: End-to-end TypeScript vs manual type definitions
-- **Developer Experience**: Automatic client generation vs manual API integration
-- **Performance**: Zero runtime overhead vs GraphQL complexity
-- **Aesthetic Clinic Compliance**: Brazilian LGPD/Professional Council compliance built-in
-
-**Impact**: 90% reduction in API bugs, 60% faster development, full aesthetic clinic compliance
-
-### ORM: Prisma vs TypeORM/Drizzle
-
-**Decision**: Prisma v5.7.0
-**Key Factors**:
-
-- **Type Safety**: Auto-generated types vs manual definitions
-- **Aesthetic Clinic Features**: Multi-schema support for LGPD compliance
-- **Performance**: Connection pooling and edge runtime optimization
-- **Brazilian Compliance**: Built-in audit logging and data governance
-
-**Impact**: Aesthetic clinic-compliant database layer, 50% faster development, audit-ready
-
-### Database: Supabase vs Traditional PostgreSQL/MySQL
-
-**Decision**: Supabase PostgreSQL
-**Key Factors**:
-
-- **Real-time**: Built-in subscriptions essential for clinic operations, **integrated with TanStack Query**
-- **Authentication**: Compliant auth system vs custom implementation
-- **Row Level Security**: Database-level isolation for multi-tenant
-- **Developer Experience**: Reduced backend complexity
-- **Real-time Integration**: Automatic query invalidation and optimistic updates
-
-**Impact**: 60% reduction in backend code, built-in compliance features, **seamless real-time data synchronization**
-
-### AI Provider: Multi-Provider vs Single Provider
-
-**Decision**: OpenAI GPT-5-mini + Gemini Flash 2.5 + CopilotKit + AG-UI
-**Key Factors**:
-
-- **Reliability**: Multi-provider failover capability vs single point of failure
-- **Cost Optimization**: Provider switching based on usage patterns and complexity
-- **Feature Diversity**: GPT-5 for Portuguese, Gemini for reasoning, CopilotKit for aesthetic clinic workflows
-- **Vendor Independence**: Reduced lock-in risk, comprehensive AI ecosystem
-- **Aesthetic Clinic Compliance**: Built-in LGPD, ANVISA, and professional regulation compliance
-
-**Impact**: 99.9% AI service uptime, cost optimization, comprehensive aesthetic clinic workflows
-
-## Version Management & Upgrade Strategy
-
-### Current Version Status
-
-**Core Technologies**:
-
-- **React**: 19.1.1 (latest stable) - Concurrent features
-- **TypeScript**: 5.9.2 (latest stable) - Latest language features
-- **Node.js**: 20+ (LTS) - Long-term support
-- **Vite**: 7.1.5 (latest stable) - Modern build tooling
-
-**Framework Versions**:
-
-- **TanStack Router**: Latest (stable) - Type-safe routing
-- **Hono.dev**: 4.9.7 (stable) - Edge-compatible framework (Security patched)
-- **Supabase**: 2.45.1 (stable) - Backend-as-a-service
-- **Vercel AI SDK**: 5.0.23 (stable) - Multi-provider AI
-
-### Upgrade Philosophy
-
-**LTS Strategy**: Prefer Long-Term Support versions for stability
-
-- Node.js: Always LTS (currently 20.x)
-- React: Stable releases only, avoid pre-release
-- TypeScript: Latest stable for new features
-
-**Update Frequency**:
-
-- **Security Patches**: Immediate (within 24 hours)
-- **Minor Updates**: Monthly review and application
-- **Major Updates**: Quarterly evaluation with testing
-- **Breaking Changes**: Planned migration with rollback
-
-**Dependency Management**:
-
-- **Pinned Versions**: Critical dependencies pinned
-- **Range Updates**: Non-critical use semantic versioning
-- **Security Scanning**: Automated with Dependabot
-- **Update Testing**: Comprehensive before production
-
-### Performance Metrics & Benchmarks
-
-**Build Performance**:
-
-- **Cold Build**: ~35s (7 packages + 2 apps)
-- **Incremental Build**: ~3s (Turborepo cache)
-- **Type Check**: ~8s (strict mode)
-- **Test Suite**: ~12s (Vitest)
-- **Dev Server**: ~2s (Vite startup)
-
-**Runtime Performance**:
-
-- **First Contentful Paint**: <1.5s
-- **Largest Contentful Paint**: <2.5s
-- **Cumulative Layout Shift**: <0.1
-- **Time to Interactive**: <3s
-- **Bundle Size**: ~180KB gzipped
-
-**Database Performance**:
-
-- **Query Response**: <100ms (95th percentile)
-- **Real-time Updates**: <50ms latency
-- **Connection Pool**: Serverless optimized
-- **Index Performance**: Sub-millisecond lookups
-
-## Security & Compliance Technologies
-
-### Data Protection Stack
-
-**Encryption**:
-
-- **At Rest**: AES-256 (Supabase native)
-- **In Transit**: TLS 1.3 for all communications
-- **JWT Handling**: JOSE library with Web Crypto API
-- **Key Management**: Separate encryption keys per clinic
-
-**Authentication**:
-
-- **Primary**: Supabase Auth with MFA support
-- **Biometric**: WebAuthn for passwordless authentication
-- **Password Hashing**: bcryptjs (cost 12+) with Argon2id migration
-- **Session Management**: Secure JWT with refresh tokens
-
-**PII Protection**:
-
-- **Automatic Redaction**: AI conversation sanitization
-- **Data Masking**: Sensitive data display protection
-- **Access Logging**: Complete audit trail for all data access
-
-### Compliance Technologies
-
-**LGPD Compliance**:
-
-- **Consent Management**: Granular consent tracking with versioning
-- **Data Export**: Automated data portability functionality
-- **Data Deletion**: Secure erasure with compliance verification
-- **Audit Trails**: Complete data access logging with retention policies
-
-**ANVISA Compliance**:
-
-- **Device Validation**: Real-time cosmetic device registration checking
-- **Compliance Monitoring**: Continuous device compliance status tracking
-- **Audit Logging**: Immutable records for regulatory reporting
-
-**Standards Compliance**:
-
-- **Cosmetic Device Software**: SaMD Class I compliance framework
-- **Professional Regulation**: Professional Council standards adherence
-- **Data Residency**: Brazilian data center requirements
-
-### Deployment & Infrastructure Stack
-
-**Vercel Platform** - Hosting & Edge Functions
-
-- **Why**: Brazilian edge locations (São Paulo), React support, edge functions, global CDN
-- **Benefits**: São Paulo region (gru1), automatic HTTPS, preview deployments
-- **Config**: Node.js 20 runtime, edge function optimization
-- **Performance**: <1.5s First Contentful Paint, <2.5s Largest Contentful Paint
-
-**GitHub Actions** - CI/CD Pipeline
-
-- **Why**: Native GitHub integration, extensive marketplace, security features
-- **Benefits**: Workflow automation, security scanning, deployment automation
-- **Security**: Pinned action versions, secret management, supply chain security
-
-**Docker v24.0.7** - Containerization
-
-- **Why**: Consistent environments, reproducible builds, industry standard
-- **Benefits**: Environment consistency, dependency isolation, scalability
-- **Usage**: Development environments, testing isolation, production consistency
-
-**📋 Deployment Documentation**: See comprehensive deployment guide at [`../features/deploy-vercel.md`](../features/deploy-vercel.md) for implementation details, checklist, and production readiness validation.
-
-## Technology Roadmap & Future Considerations
-
-### Short-term Improvements (Q1 2025)
-
-**Performance Optimizations**:
-
-- **Advanced Code Splitting**: Route-based and component-based splitting
-- **CDN Optimization**: Enhanced edge caching strategies
-- **Database Query Optimization**: Materialized views and advanced indexing
-- **AI Response Caching**: Intelligent caching for common queries
-
-**Developer Experience**:
-
-- **Faster Hot Reload**: Sub-50ms reload times
-- **Improved Type Generation**: Faster database type generation
-- **Enhanced Testing**: Visual regression testing integration
-- **Interactive API Documentation**: Auto-generated API docs with examples
-
-### Long-term Evolution (2025-2026)
-
-**Technology Upgrades**:
-
-- **React 20**: When stable, for improved performance features
-- **TypeScript 6**: Latest language features and performance improvements
-- **Supabase v3**: Enhanced real-time capabilities and performance
-- **Edge Runtime Expansion**: Broader edge function capabilities
-
-**New Capabilities**:
-
-- **Offline Support**: Progressive Web App with offline functionality
-- **Mobile Applications**: React Native apps for iOS and Android
-- **Custom AI Models**: Fine-tuned models for Brazilian aesthetic clinic
-- **Multi-Region Expansion**: Additional Brazilian data centers
-
-**Infrastructure Evolution**:
-
-- **Kubernetes Migration**: For complex multi-service deployments
-- **Microservices Architecture**: Service extraction for scale
-- **Advanced Monitoring**: Comprehensive observability stack
-- **Multi-Cloud Strategy**: Vendor diversification for resilience
-
-## Summary
-
-The NeonPro technology stack represents a curated selection of modern, performant technologies chosen for type safety, performance, developer experience, and compliance readiness.
-
-**Key Technology Strengths**:
-
-- **Type Safety**: End-to-end TypeScript with strict mode for data integrity
-- **Performance**: Sub-second response times with edge optimization
-- **Developer Experience**: Modern tooling with excellent debugging workflows
-- **Scalability**: Architecture ready for multi-clinic expansion
-- **Compliance**: Built-in LGPD and ANVISA compliance features
-
-**Technology Philosophy**: Choose proven, well-supported technologies with strong communities, clear documentation, and upgrade paths. Prioritize developer productivity while maintaining high standards for data security and compliance.
-
-**Decision Framework**: Every technology choice evaluated against performance, type safety, compliance readiness, developer experience, and long-term maintainability criteria.
+# NeonPro Technology Stack (Updated)
+**Last Updated**: 2025-09-29
+**Status**: ✅ Simplified & Realtime-Ready
+
+This document specifies **WHICH technologies NeonPro uses and WHY**, after the simplification plan. It replaces Prisma with **Supabase clients + SQL/Policies**, keeps **CopilotKit** and **AG‑UI Protocol**, and optimizes for **Edge-first** performance.
 
 ---
 
-**Document Status**: ✅ Optimized - Technology Decisions and Rationale
-**Focus**: WHICH technologies and WHY they were chosen
-**Target Length**: 250-300 lines (Current: ~290 lines)
-**Last Updated**: 2025-09-18 (tRPC Migration Complete)
-**Next Review**: 2025-12-18
+## Technology Selection Principles
+- **KISS**: simplest viable components
+- **Type Safety**: end‑to‑end TypeScript
+- **Edge‑first**: low latency reads at the edge; Node runtime only when strictly needed
+- **Realtime by Design**: Supabase Postgres Changes + TanStack Query cache patching
+- **Single Source of Truth**: Zod for runtime validation; shared types from Supabase
+
+---
+
+## Stack Overview
+
+### Monorepo & Tooling
+- **Turborepo** — task orchestration & caching
+- **Bun (primary)** + **PNPM (fallback)** — fast installs & scripts
+- **TypeScript (strict)** — shared types across apps/packages
+
+### Frontend - APPS/WEB
+- **Vite + React 19**
+- **TanStack Router (file‑based)** — type‑safe routes, loaders
+- **TanStack Query v5** — server state + realtime cache updates
+- **Tailwind + shadcn/ui** — accessible, consistent UI
+- **CopilotKit** — chatbot provider/actions in the browser
+- **AG‑UI Protocol** — structured Agent↔UI event stream
+
+### Backend - APPS/API
+- **Hono** (Edge‑first) hosting **tRPC v11** procedures
+  - **Edge runtime** for read‑heavy, side‑effect‑free endpoints
+  - **Node runtime** only for sensitive operations (service_role, webhooks, cron)
+
+### Data
+- **Supabase (Postgres + Auth + Realtime + RLS)**
+  - Postgres Changes → client subscriptions
+  - Auth JWT carries `clinic_id` & `role` for RLS
+  - SQL migrations, policies, functions via Supabase CLI
+  - Direct `@supabase/supabase-js` clients
+
+### Validation & Types
+- **Zod** as the single runtime validation layer (DTOs/contracts)
+- **Generated DB types** via `supabase gen types` published to `@neonpro/types`
+
+### Testing & Quality
+- **Vitest** (unit/integration), **Playwright** (smoke/E2E)
+- **Oxlint** + **dprint**
+- **Sentry** (optional), **Vercel Analytics**
+
+### Deployment
+- **Vercel**
+  - Edge Functions for reads
+  - Node Functions for service_role endpoints
+  - Region: **gru1 (São Paulo)** preferred
+
+---
+
+## Key Decisions & Rationale
+
+### 1) Supabase over Prisma
+- **Why**: Realtime + Auth + RLS out‑of‑the‑box; simpler mental model; Edge‑friendly
+- **How**: SQL migrations & policies; use `supabase-js` clients; types generated to `@neonpro/types`
+
+### 2) Hono + tRPC v11 (Edge)
+- **Why**: ultra‑fast, fetch‑native; tRPC gives E2E type safety without GraphQL overhead
+- **Pattern**: CRUD reads can be direct Supabase; business rules/side‑effects via tRPC
+
+### 3) Realtime = First‑class
+- **Supabase Postgres Changes** channels subscribed in the web app
+- On events → **`queryClient.setQueryData`** or **`invalidateQueries`** (TanStack Query v5)
+- Optimistic updates with rollback on mutation error
+
+### 4) CopilotKit + AG‑UI kept as First‑Class
+- **CopilotKit** in `apps/web` (provider + actions + tool calls)
+- **AG‑UI Protocol** messages wired in `apps/api` (Hono/tRPC) for tool execution & UI patches
+
+---
+
+## Versions (target)
+- React **19.x**
+- TanStack Router **latest stable**
+- TanStack Query **v5.x**
+- Vite **7.x**
+- Hono **4.x**
+- tRPC **11.x**
+- Supabase JS **2.x**
+- TypeScript **5.9+**
+- Zod **4.x**
+- Vitest **3.x**, Playwright **1.4x**
+
+---
+
+## Performance & SLOs
+- **Edge read TTFB** < 150ms (P95)
+- **Realtime UI patch** < 1.5s (P95) across two clients
+- **Cold dev start** < 2s (Vite)
+
+---
+
+## Security & Compliance
+- RLS policies enforce **tenant isolation** by `clinic_id`
+- **service_role** key used **only** in Node runtime endpoints
+- LGPD audit events on sensitive mutations (tRPC middleware)
+
+---
+
+## Migration Notes
+- Freeze Prisma usage; replace gradually with Supabase helpers
+- Generate types → publish to `@neonpro/types`
+- Turn on Realtime for `appointments`, `messages`, `leads`
+- Introduce Zod DTOs for tRPC inputs; remove Valibot in green paths
+
+---
+
+## References
+- Apps: `apps/web`, `apps/api`
+- Packages: `@neonpro/ui`, `@neonpro/types`, `@neonpro/agents`, `@neonpro/config`, `@neonpro/database`
+- Realtime helpers live in `apps/web/src/hooks/realtime/` (see Source Tree document)

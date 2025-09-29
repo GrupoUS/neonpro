@@ -28,12 +28,34 @@
     }
   },
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "clean": "rm -rf dist"
+    "build": "node ../../scripts/tsc-wrapper.cjs",
+    "dev": "node ../../scripts/tsc-wrapper.cjs --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "types:generate": "supabase gen types typescript --local > src/generated/database.ts",
+    "dev:bun": "vite dev --force",
+    "build:bun": "node ../../scripts/tsc-wrapper.cjs --build --declaration",
+    "build:analyze": "vite build --mode analyze",
+    "test:bun": "vitest run --reporter=dot",
+    "test:watch:bun": "vitest watch --reporter=dot",
+    "type-check:bun": "node ../../scripts/tsc-wrapper.cjs --noEmit",
+    "clean:bun": "rm -rf dist node_modules/.cache",
+    "format:bun": "biome format . --write",
+    "lint:bun": "oxlint . --fix",
+    "perf:test": "vitest run --reporter=verbose --isolate",
+    "setup:test": "bun install && bun run build",
+    "build:watch": "node ../../scripts/tsc-wrapper.cjs --build --declaration --watch",
+    "validate:types": "node ../../scripts/tsc-wrapper.cjs --noEmit --strict",
+    "generate:docs": "typedoc src/index.ts",
+    "test:types": "vitest run --reporter=verbose",
+    "format:types": "biome format --write src/",
+    "check:duplicates": "bun run src/check-duplicate-types.ts"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4",
+    "zod": "^3.22.0"
   },
   "files": [
     "dist"
@@ -45,5 +67,8 @@
     "typescript"
   ],
   "author": "NeonPro Team",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
+  }
 }

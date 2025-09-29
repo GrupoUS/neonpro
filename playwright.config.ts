@@ -65,13 +65,13 @@ export default defineConfig({
 
   webServer: [
     {
-      command: 'cd apps/web && pnpm dev',
+      command: 'cd apps/web && bun dev',
       url: 'http://localhost:3000',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,
     },
     {
-      command: 'cd apps/api && pnpm dev',
+      command: 'cd apps/api && bun dev',
       url: 'http://localhost:3001/api',
       reuseExistingServer: !process.env.CI,
       timeout: 120 * 1000,

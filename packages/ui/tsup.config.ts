@@ -11,7 +11,6 @@ export default defineConfig({
     'react-dom',
     'framer-motion',
     '@radix-ui/react-slot',
-    '@neonpro/utils',
     'lucide-react',
     'class-variance-authority',
     'clsx',

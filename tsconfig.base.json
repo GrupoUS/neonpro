@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "Node16",
-    "moduleResolution": "node16",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "useDefineForClassFields": true,
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "allowJs": true,
     "checkJs": false,
     "jsx": "react-jsx",
-    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -39,7 +38,6 @@
     "sourceMap": true,
     "removeComments": false,
     "incremental": true,
-    // "tsBuildInfoFile": "./.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -48,19 +46,15 @@
       "@neonpro/shared/*": ["./packages/shared/src/*"],
       "@neonpro/types": ["./packages/types/src"],
       "@neonpro/types/*": ["./packages/types/src/*"],
-      // Core 6-package architecture paths
+      // Core packages that exist based on git status
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
-      "@neonpro/ai-services": ["./packages/ai-services/src"],
-      "@neonpro/ai-services/*": ["./packages/ai-services/src/*"],
-      "@neonpro/healthcare-core": ["./packages/healthcare-core/src"],
-      "@neonpro/healthcare-core/*": ["./packages/healthcare-core/src/*"],
-      "@neonpro/security": ["./packages/security/src"],
-      "@neonpro/security/*": ["./packages/security/src/*"],
       "@neonpro/ui": ["./packages/ui/src"],
       "@neonpro/ui/*": ["./packages/ui/src/*"],
-      "@neonpro/utils": ["./packages/utils/src"],
-      "@neonpro/utils/*": ["./packages/utils/src/*"],
+      "@neonpro/config": ["./packages/config/src"],
+      "@neonpro/config/*": ["./packages/config/src/*"],
+      "@neonpro/core": ["./packages/core/src"],
+      "@neonpro/core/*": ["./packages/core/src/*"],
       // Legacy package paths (for backward compatibility)
       "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"]
@@ -76,13 +70,11 @@
     // Critical packages first
     { "path": "./packages/types" },
     { "path": "./packages/shared" },
-    // Core 6-package architecture
+    // Existing packages based on current project structure
     { "path": "./packages/database" },
-    { "path": "./packages/ai-services" },
-    { "path": "./packages/healthcare-core" },
-    { "path": "./packages/security" },
     { "path": "./packages/ui" },
-    { "path": "./packages/utils" },
+    { "path": "./packages/config" },
+    { "path": "./packages/core" },
     // Applications
     { "path": "./apps/api" },
     { "path": "./apps/web" }

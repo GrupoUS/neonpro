@@ -429,3 +429,19 @@ vision_stack:
 - Packages directory installation for shared consumption
 - Light/dark mode support with professional aesthetic clinic colors
 - Mobile-first Brazilian aesthetic clinic experience
+
+## 🚀 HYBRID ARCHITECTURE MIGRATION STATUS
+
+**Current**: Node.js + Vercel Edge + Supabase Functions (A- grade, 9.2/10)
+**Target**: Bun + Vercel Edge + Supabase Functions (optimization focus)
+**Timeline**: 6-8 weeks
+**Research**: Complete ✅
+**Validation**: Complete ✅
+**Ready**: Phase 2 Task Generation
+
+**Key Technologies**:
+- **Bun**: Package manager/runtime (3-5x performance improvement)
+- **Vercel Edge**: Read operations (TTFB ≤ 150ms)
+- **Supabase Functions**: Write operations with RLS
+- **Healthcare Compliance**: LGPD, ANVISA, CFM built-in
+- **Performance Targets**: All SLOs met or exceeded

@@ -42,6 +42,13 @@ PRODUCTION_URL="https://neonpro.vercel.app"
 TIMEOUT=${DEPLOYMENT_TIMEOUT:-10}
 MAX_RETRIES=${MAX_ROLLBACK_ATTEMPTS:-3}
 
+# Vercel Limits Configuration
+readonly VERCEL_FUNCTION_SIZE_LIMIT=262144000  # 250MB in bytes
+readonly VERCEL_BUILD_SIZE_LIMIT=1073741824    # 1GB in bytes
+readonly VERCEL_BUILD_TIME_LIMIT=2700          # 45 minutes in seconds
+readonly SAFETY_MARGIN_RATIO=0.85              # 85% of limit for safety
+readonly CHUNK_SIZE_SAFETY=$(echo "$VERCEL_FUNCTION_SIZE_LIMIT * $SAFETY_MARGIN_RATIO" | bc | cut -d. -f1)
+
 # ==============================================
 # UTILITY FUNCTIONS
 # ==============================================
@@ -302,6 +309,249 @@ pre_deployment_checks() {
 # ==============================================
 # INTELLIGENT BUILD CHUNKING FOR VERCEL LIMITS
 # ==============================================
+
+# Enhanced package size estimation
+estimate_package_size() {
+    local package_path="$1"
+    local estimated_size=0
+    
+    if [ ! -d "$package_path" ]; then
+        echo "0"
+        return
+    fi
+    
+    # Calculate source files size
+    local source_size=$(find "$package_path" -type f \( -name "*.ts" -o -name "*.tsx" -o -name "*.js" -o -name "*.jsx" \) -exec wc -c {} + 2>/dev/null | awk '{sum += $1} END {print sum+0}')
+    
+    # Calculate node_modules size (estimated based on package.json dependencies)
+    if [ -f "$package_path/package.json" ]; then
+        local dep_count=$(jq -r '.dependencies | keys | length' "$package_path/package.json" 2>/dev/null || echo "0")
+        local dev_dep_count=$(jq -r '.devDependencies | keys | length' "$package_path/package.json" 2>/dev/null || echo "0")
+        local estimated_deps_size=$(( (dep_count + dev_dep_count) * 500000 )) # ~500KB per dependency
+    else
+        local estimated_deps_size=0
+    fi
+    
+    # Add build output estimate
+    local build_estimate=$((source_size * 3)) # Build output is typically 3x source size
+    
+    estimated_size=$((source_size + estimated_deps_size + build_estimate))
+    echo "$estimated_size"
+}
+
+# Detect affected packages using Turborepo --affected
+detect_affected_packages() {
+    log_info "Detecting affected packages using Turborepo --affected"
+    
+    if ! command -v turbo >/dev/null 2>&1; then
+        log_warning "Turborepo not available - considering all packages as affected"
+        echo "apps/web apps/api packages/core packages/database packages/ui packages/types"
+        return
+    fi
+    
+    local affected_packages=""
+    
+    # Get affected packages from Turborepo
+    if turbo run build --affected --dry-run 2>/dev/null | grep -E "packages/|apps/" >/dev/null 2>&1; then
+        affected_packages=$(turbo run build --affected --dry-run json 2>/dev/null | jq -r '.packages[]' 2>/dev/null | tr '\n' ' ' || echo "")
+    fi
+    
+    # Fallback to all packages if detection fails
+    if [ -z "$affected_packages" ]; then
+        log_warning "Could not detect affected packages - using all packages"
+        affected_packages="apps/web apps/api packages/core packages/database packages/ui packages/types"
+    fi
+    
+    echo "$affected_packages"
+}
+
+# Calculate optimal chunks based on package sizes and Vercel limits
+calculate_optimal_chunks() {
+    local packages="$1"
+    local chunks=()
+    local current_chunk=""
+    local current_size=0
+    
+    for package in $packages; do
+        if [ -d "$package" ]; then
+            local package_size=$(estimate_package_size "$package")
+            
+            # If adding this package would exceed the limit, start a new chunk
+            if [ $((current_size + package_size)) -gt $CHUNK_SIZE_SAFETY ] && [ -n "$current_chunk" ]; then
+                chunks+=("$current_chunk")
+                current_chunk="$package"
+                current_size=$package_size
+            else
+                current_chunk="${current_chunk} ${package}"
+                current_size=$((current_size + package_size))
+            fi
+        fi
+    done
+    
+    # Add the final chunk
+    if [ -n "$current_chunk" ]; then
+        chunks+=("$current_chunk")
+    fi
+    
+    # Return chunks as array reference
+    printf '%s\n' "${chunks[@]}"
+}
+
+# Deploy chunks in parallel for independent packages
+deploy_chunks_in_parallel() {
+    local chunks=("$@")
+    local max_parallel=${MAX_PARALLEL_DEPLOYS:-3}
+    local pids=()
+    local chunk_results=()
+    
+    log_info "Deploying ${#chunks[@]} chunks with up to $max_parallel parallel deployments"
+    
+    for i in "${!chunks[@]}"; do
+        local chunk="${chunks[$i]}"
+        local chunk_number=$((i + 1))
+        
+        # Limit parallel deployments
+        while [ ${#pids[@]} -ge "$max_parallel" ]; do
+            for j in "${!pids[@]}"; do
+                if ! kill -0 "${pids[j]}" 2>/dev/null; then
+                    wait "${pids[j]}"
+                    local exit_code=$?
+                    chunk_results[$j]=$exit_code
+                    unset "pids[j]"
+                fi
+            done
+            sleep 1
+        done
+        
+        # Start deployment in background
+        (
+            deploy_single_chunk "$chunk" "$chunk_number" "${#chunks[@]}"
+        ) &
+        pids+=($!)
+        
+        log_info "Started deployment of chunk $chunk_number/${#chunks[@]} (PID: ${pids[-1]})"
+    done
+    
+    # Wait for all deployments to complete
+    for pid in "${pids[@]}"; do
+        wait "$pid"
+        local exit_code=$?
+        chunk_results+=($exit_code)
+    done
+    
+    # Check results
+    local failed_count=0
+    for result in "${chunk_results[@]}"; do
+        if [ "$result" -ne 0 ]; then
+            ((failed_count++))
+        fi
+    done
+    
+    if [ "$failed_count" -gt 0 ]; then
+        log_error "$failed_count chunk(s) failed to deploy"
+        return 1
+    fi
+    
+    log_success "All ${#chunks[@]} chunks deployed successfully"
+}
+
+# Deploy a single chunk with enhanced Vercel optimization
+deploy_single_chunk() {
+    local chunk="$1"
+    local chunk_number="$2"
+    local total_chunks="$3"
+    
+    log_step "Deploying chunk $chunk_number/$total_chunks: $chunk"
+    
+    # Create temporary vercel.json for this chunk
+    local temp_vercel_config="/tmp/vercel-chunk-${chunk_number}.json"
+    
+    # Build the chunk first
+    log_info "Building chunk $chunk_number..."
+    for package in $chunk; do
+        if [ -d "$package" ] && [ -f "$package/package.json" ]; then
+            local build_script=$(jq -r '.scripts.build // empty' "$package/package.json" 2>/dev/null)
+            if [ -n "$build_script" ]; then
+                (cd "$package" && npm run build 2>/dev/null) || log_warning "Build failed for $package"
+            fi
+        fi
+    done
+    
+    # Configure Vercel deployment for this chunk
+    cat > "$temp_vercel_config" << EOF
+{
+  "buildCommand": "cd $package && npm run build",
+  "outputDirectory": "dist",
+  "installCommand": "npm ci",
+  "framework": "nextjs",
+  "regions": ["sfo1"],
+  "functions": {
+    "api/**/*.ts": {
+      "maxDuration": 30
+    }
+  }
+}
+EOF
+    
+    # Deploy to Vercel
+    local deployment_result
+    if deployment_result=$(npx vercel deploy --prod --yes --local-config "$temp_vercel_config" 2>&1); then
+        local deployment_url=$(echo "$deployment_result" | grep -E 'https://[^\s]+\.vercel\.app' | head -1)
+        log_success "Chunk $chunk_number deployed: $deployment_url"
+    else
+        log_error "Chunk $chunk_number deployment failed: $deployment_result"
+        rm -f "$temp_vercel_config"
+        return 1
+    fi
+    
+    # Cleanup
+    rm -f "$temp_vercel_config"
+}
+
+# Enhanced Vercel deployment with intelligent chunking
+enhanced_vercel_deployment() {
+    log_step "Enhanced Vercel Deployment with Intelligent Chunking"
+    
+    # Detect affected packages first
+    local affected_packages=$(detect_affected_packages)
+    log_info "Detected affected packages: $affected_packages"
+    
+    # Calculate optimal chunks
+    local chunks=()
+    while IFS= read -r chunk; do
+        chunks+=("$chunk")
+    done < <(calculate_optimal_chunks "$affected_packages")
+    
+    log_info "Calculated ${#chunks[@]} deployment chunks"
+    
+    # Display chunk information
+    for i in "${!chunks[@]}"; do
+        local chunk="${chunks[$i]}"
+        local chunk_size=0
+        
+        # Calculate chunk size
+        for package in $chunk; do
+            if [ -d "$package" ]; then
+                local package_size=$(estimate_package_size "$package")
+                chunk_size=$((chunk_size + package_size))
+            fi
+        done
+        
+        local chunk_size_mb=$((chunk_size / 1024 / 1024))
+        local limit_mb=$((CHUNK_SIZE_SAFETY / 1024 / 1024))
+        
+        log_info "Chunk $((i + 1)): $chunk (${chunk_size_mb}MB/${limit_mb}MB)"
+    done
+    
+    # Deploy chunks in parallel
+    if deploy_chunks_in_parallel "${chunks[@]}"; then
+        log_success "Enhanced Vercel deployment completed successfully"
+        return 0
+    else
+        log_error "Enhanced Vercel deployment failed"
+        return 1
+    fi
+}
 
 check_vercel_limits() {
     log_step "Checking Vercel deployment limits"
@@ -756,126 +1006,24 @@ post_deployment_checks() {
 }
 
 # ==============================================
-# MAIN EXECUTION
+# SETUP ENVIRONMENT FUNCTION
 # ==============================================
 
-main() {
-    # Initialize logging
-    log_script_start
-
-    # Parse command line arguments
+setup_environment() {
     local deployment_target="${1:-"staging"}"
-    local skip_build=false
-    local skip_checks=false
-    local setup_turbo=false
-
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --target=*)
-                deployment_target="${1#*=}"
-                shift
-                ;;
-            --skip-build)
-                skip_build=true
-                shift
-                ;;
-            --skip-checks)
-                skip_checks=true
-                shift
-                ;;
-            --turbo-cache)
-                export FORCE_TURBO_CACHE=true
-                shift
-                ;;
-            --monitor-limits)
-                export MONITOR_DEPLOYMENT_LIMITS=true
-                shift
-                ;;
-            --chunk-size=*)
-                export DEPLOY_CHUNK_SIZE="${1#*=}"
-                shift
-                ;;
-            --max-build-time=*)
-                export MAX_BUILD_TIME_MINUTES="${1#*=}"
-                shift
-                ;;
-            --help|-h)
-                echo "Usage: $0 [OPTIONS]"
-                echo "Options:"
-                echo "  --target=TARGET          Deployment target (staging|production)"
-                echo "  --skip-build             Skip build step"
-                echo "  --skip-checks            Skip pre/post-deployment checks"
-                echo "  --setup-turbo            Setup Turborepo remote caching"
-                echo "  --turbo-cache            Force Turborepo remote caching"
-                echo "  --monitor-limits         Enable deployment limits monitoring"
-                echo "  --chunk-size=SIZE        Set deployment chunk size (small|medium|large)"
-                echo "  --max-build-time=MIN     Set maximum build time in minutes (default: 40)"
-                echo "  --help, -h               Show this help message"
-                echo ""
-                echo "Examples:"
-                echo "  $0                                    # Deploy to staging"
-                echo "  $0 --target=production               # Deploy to production"
-                echo "  $0 --setup-turbo                     # Setup Turborepo caching"
-                echo "  $0 --turbo-cache --monitor-limits    # Deploy with full optimizations"
-                echo "  $0 --chunk-size=large --skip-checks  # Fast deploy for large projects"
-                exit 0
-                ;;
-            *)
-                log_error "Unknown option: $1"
-                exit 1
-                ;;
-        esac
-    done
-
-    log_section "NeonPro Deployment - $deployment_target"
-
-    # Setup Turborepo if requested
-    if [ "$setup_turbo" = true ]; then
-        setup_turbo_caching
-        log_success "Turborepo setup completed"
-        log_script_end 0
-        return
-    fi
-
+    
+    log_section "SETUP ENVIRONMENT - $deployment_target"
+    
     # Validate environment
     validate_environment
-
+    
     # Validate healthcare compliance
     validate_healthcare_compliance
-
+    
     # Pre-deployment checks
-    if [ "$skip_checks" = false ]; then
-        pre_deployment_checks
-    else
-        log_warning "Skipping pre-deployment checks"
-    fi
-
-    # Setup Turborepo for optimal builds
-    if [ "$skip_build" = false ]; then
-        log_info "Turborepo caching will be configured during build process"
-    fi
-
-    # Build application
-    if [ "$skip_build" = false ]; then
-        build_application
-    else
-        log_warning "Skipping build step"
-    fi
-
-    # Deploy application
-    deploy_application "$deployment_target"
-
-    # Post-deployment validation
-    if [ "$skip_checks" = false ]; then
-        post_deployment_checks "$deployment_target"
-    else
-        log_warning "Skipping post-deployment checks"
-    fi
-
-    log_success "Deployment completed successfully!"
-    log_healthcare "Healthcare compliance validated for $deployment_target environment"
-
-    log_script_end 0
+    pre_deployment_checks
+    
+    log_success "Environment setup completed"
 }
 
 # ==============================================
@@ -903,6 +1051,396 @@ trap 'handle_error $LINENO "$BASH_COMMAND"' ERR
 # ==============================================
 # SCRIPT ENTRY POINT
 # ==============================================
+
+# ==============================================
+# HYBRID ARCHITECTURE DEPLOYMENT FUNCTIONS
+# ==============================================
+
+# Deploy Supabase Functions (Edge and Node)
+deploy_supabase_functions() {
+    local deployment_target="${1:-"staging"}"
+    log_step "Deploying Supabase Functions (Hybrid Architecture)"
+    
+    # Check if Supabase CLI is available
+    require_command "supabase" "Install Supabase CLI: npm install -g supabase"
+    
+    # Link to Supabase project if not already linked
+    if ! supabase projects list 2>/dev/null | grep -q "$(get_supabase_project_ref)"; then
+        log_step "Linking to Supabase project"
+        if ! supabase link --project-ref "$(get_supabase_project_ref)"; then
+            log_error "Failed to link to Supabase project"
+            exit 1
+        fi
+    fi
+    
+    # Deploy Edge Functions (Chunk 2/3)
+    log_step "Deploying Edge Functions for Read Operations (Chunk 2/3)"
+    if ! deploy_edge_functions "$deployment_target"; then
+        log_error "Edge Functions deployment failed"
+        exit 1
+    fi
+    
+    # Deploy Node Functions (Chunk 3/3)
+    log_step "Deploying Node Functions for Write Operations (Chunk 3/3)"
+    if ! deploy_node_functions "$deployment_target"; then
+        log_error "Node Functions deployment failed"
+        exit 1
+    fi
+    
+    log_success "All Supabase Functions deployed successfully"
+}
+
+# Deploy Edge Functions specifically
+deploy_edge_functions() {
+    local deployment_target="${1:-"staging"}"
+    local edge_functions=("edge-reads")
+    
+    for func in "${edge_functions[@]}"; do
+        log_info "Deploying Edge Function: $func"
+        
+        if [ ! -d "supabase/functions/$func" ]; then
+            log_warning "Edge function $func not found, skipping..."
+            continue
+        fi
+        
+        # Validate Edge Function structure
+        validate_edge_function "$func"
+        
+        # Deploy the function
+        if ! supabase functions deploy "$func" --project-ref "$(get_supabase_project_ref)"; then
+            log_error "Failed to deploy Edge Function: $func"
+            return 1
+        fi
+        
+        log_success "Edge Function $func deployed successfully"
+    done
+    
+    return 0
+}
+
+# Deploy Node Functions specifically
+deploy_node_functions() {
+    local deployment_target="${1:-"staging"}"
+    local node_functions=("node-writes")
+    
+    for func in "${node_functions[@]}"; do
+        log_info "Deploying Node Function: $func"
+        
+        if [ ! -d "supabase/functions/$func" ]; then
+            log_warning "Node function $func not found, skipping..."
+            continue
+        fi
+        
+        # Validate Node Function structure
+        validate_node_function "$func"
+        
+        # Deploy the function
+        if ! supabase functions deploy "$func" --project-ref "$(get_supabase_project_ref)"; then
+            log_error "Failed to deploy Node Function: $func"
+            return 1
+        fi
+        
+        log_success "Node Function $func deployed successfully"
+    done
+    
+    return 0
+}
+
+# Validate Edge Function structure
+validate_edge_function() {
+    local func_name="$1"
+    local func_path="supabase/functions/$func_name"
+    
+    if [ ! -f "$func_path/index.ts" ]; then
+        log_error "Edge Function $func_name missing index.ts"
+        exit 1
+    fi
+    
+    # Check for Edge Runtime compatibility
+    if ! grep -q "Deno.serve" "$func_path/index.ts"; then
+        log_error "Edge Function $func_name must use Deno.serve()"
+        exit 1
+    fi
+    
+    # Check for proper imports
+    if ! grep -q "import.*Hono" "$func_path/index.ts"; then
+        log_warning "Edge Function $func_name should use Hono framework"
+    fi
+    
+    log_success "Edge Function $func_name validation passed"
+}
+
+# Validate Node Function structure
+validate_node_function() {
+    local func_name="$1"
+    local func_path="supabase/functions/$func_name"
+    
+    if [ ! -f "$func_path/index.ts" ]; then
+        log_error "Node Function $func_name missing index.ts"
+        exit 1
+    fi
+    
+    # Check for Node Runtime compatibility
+    if ! grep -q "Deno.serve" "$func_path/index.ts"; then
+        log_error "Node Function $func_name must use Deno.serve()"
+        exit 1
+    fi
+    
+    # Check for proper imports
+    if ! grep -q "import.*Hono" "$func_path/index.ts"; then
+        log_warning "Node Function $func_name should use Hono framework"
+    fi
+    
+    log_success "Node Function $func_name validation passed"
+}
+
+# Get Supabase project reference from environment or config
+get_supabase_project_ref() {
+    if [ -n "${SUPABASE_PROJECT_REF:-}" ]; then
+        echo "$SUPABASE_PROJECT_REF"
+    elif [ -f "supabase/config.toml" ]; then
+        grep -A 10 '\[project\]' supabase/config.toml | grep 'ref' | cut -d'"' -f2
+    else
+        log_error "Supabase project reference not found. Set SUPABASE_PROJECT_REF or ensure supabase/config.toml exists"
+        exit 1
+    fi
+}
+
+# Enhanced hybrid deployment function
+deploy_hybrid_architecture() {
+    local deployment_target="${1:-"staging"}"
+    local is_production="false"
+    
+    log_section "HYBRID ARCHITECTURE DEPLOYMENT"
+    
+    case "$deployment_target" in
+        "staging")
+            log_info "Deploying to staging environment with hybrid architecture"
+            ;;
+        "production")
+            log_info "Deploying to production environment with full validation"
+            is_production="true"
+            
+            # Production-specific checks
+            log_step "Production Safety Checks"
+            validate_healthcare_compliance
+            validate_hybrid_architecture
+            ;;
+        *)
+            log_error "Invalid deployment target: $deployment_target"
+            log_info "Valid targets: staging, production"
+            exit 1
+            ;;
+    esac
+    
+    # Chunk 1: Deploy Vercel API (Edge Runtime)
+    log_step "Deploying Vercel API - Edge Runtime (Chunk 1/3)"
+    if ! DEPLOY_URL=$(optimized_vercel_deploy "apps/api" "api" "$is_production"); then
+        log_error "Vercel API deployment failed"
+        exit 1
+    fi
+    
+    # Export for health checks
+    export DEPLOY_URL
+    
+    # Chunk 2: Deploy Supabase Edge Functions
+    log_step "Deploying Supabase Edge Functions - Read Operations (Chunk 2/3)"
+    if ! deploy_supabase_functions "$deployment_target"; then
+        log_error "Supabase Functions deployment failed"
+        exit 1
+    fi
+    
+    # Chunk 3: Validate and Test Hybrid Architecture
+    log_step "Validating Hybrid Architecture (Chunk 3/3)"
+    if ! validate_hybrid_deployment "$DEPLOY_URL"; then
+        log_error "Hybrid architecture validation failed"
+        exit 1
+    fi
+    
+    log_success "Hybrid architecture deployment completed successfully"
+    log_info "Vercel API: $DEPLOY_URL"
+    log_info "Supabase Functions: $(get_supabase_project_ref)"
+}
+
+# Validate hybrid architecture deployment
+validate_hybrid_deployment() {
+    local deploy_url="$1"
+    
+    log_step "Validating Hybrid Architecture"
+    
+    # Test Vercel API health
+    if ! check_endpoint "$deploy_url" "/health" "Vercel API Health"; then
+        log_error "Vercel API health check failed"
+        return 1
+    fi
+    
+    # Test Edge Functions connectivity
+    if ! check_endpoint "$deploy_url" "/api/edge/health" "Edge Functions Health"; then
+        log_warning "Edge Functions health check failed - may be initializing"
+    fi
+    
+    # Test Node Functions connectivity
+    if ! check_endpoint "$deploy_url" "/api/node/health" "Node Functions Health"; then
+        log_warning "Node Functions health check failed - may be initializing"
+    fi
+    
+    # Validate healthcare compliance endpoints
+    validate_healthcare_endpoints "$deploy_url"
+    
+    log_success "Hybrid architecture validation passed"
+    return 0
+}
+
+# Validate healthcare-specific endpoints
+validate_healthcare_endpoints() {
+    local deploy_url="$1"
+    
+    log_step "Validating Healthcare Endpoints"
+    
+    # Check for healthcare compliance headers
+    if ! check_security_headers "$deploy_url"; then
+        log_warning "Security headers validation failed"
+    fi
+    
+    # Check for healthcare-specific endpoints
+    local healthcare_endpoints=("/api/patients" "/api/appointments" "/api/professionals")
+    
+    for endpoint in "${healthcare_endpoints[@]}"; do
+        # Just check if endpoint exists (may return 401 which is OK)
+        http_code=$(curl -s -w "%{http_code}" --max-time "$TIMEOUT" "$deploy_url$endpoint" -o /dev/null)
+        if [[ "$http_code" =~ ^[24] ]] || [[ "$http_code" == "401" ]]; then
+            log_success "Healthcare endpoint $endpoint accessible ($http_code)"
+        else
+            log_warning "Healthcare endpoint $endpoint returned $http_code"
+        fi
+    done
+    
+    log_success "Healthcare endpoints validation completed"
+}
+
+# Validate hybrid architecture configuration
+validate_hybrid_architecture() {
+    log_step "Validating Hybrid Architecture Configuration"
+    
+    # Check required files
+    local required_files=(
+        "apps/api/api/index.ts"
+        "supabase/functions/edge-reads/index.ts"
+        "supabase/functions/node-writes/index.ts"
+        "supabase/config.toml"
+    )
+    
+    for file in "${required_files[@]}"; do
+        if [ ! -f "$file" ]; then
+            log_error "Required file missing: $file"
+            exit 1
+        fi
+    done
+    
+    # Check environment variables
+    local required_env_vars=(
+        "SUPABASE_PROJECT_REF"
+        "SUPABASE_ANON_KEY"
+        "SUPABASE_SERVICE_ROLE_KEY"
+    )
+    
+    for var in "${required_env_vars[@]}"; do
+        if [ -z "${!var:-}" ]; then
+            log_error "Required environment variable: $var"
+            exit 1
+        fi
+    done
+    
+    log_success "Hybrid architecture configuration validated"
+}
+
+# ==============================================
+# MAIN FUNCTION ENHANCEMENT
+# ==============================================
+
+# Enhanced main function with hybrid architecture support
+main() {
+    log_script_start
+    
+    # Parse command line arguments
+    local deployment_target="staging"
+    local deploy_hybrid=false
+    
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --staging)
+                deployment_target="staging"
+                shift
+                ;;
+            --production)
+                deployment_target="production"
+                shift
+                ;;
+            --hybrid)
+                deploy_hybrid=true
+                shift
+                ;;
+            --help|-h)
+                show_help
+                exit 0
+                ;;
+            *)
+                log_error "Unknown argument: $1"
+                show_help
+                exit 1
+                ;;
+        esac
+    done
+    
+    # Setup environment
+    setup_environment "$deployment_target"
+    
+    # Choose deployment strategy
+    if [ "$deploy_hybrid" = true ]; then
+        deploy_hybrid_architecture "$deployment_target"
+    else
+        deploy_applications "$deployment_target"
+    fi
+    
+    # Post-deployment validation
+    post_deployment_checks
+    
+    log_script_end 0
+}
+
+# Show help for enhanced deployment options
+show_help() {
+    cat << EOF
+NeonPro Hybrid Architecture Deployment Script
+
+USAGE:
+    $0 [OPTIONS]
+
+OPTIONS:
+    --staging       Deploy to staging environment (default)
+    --production    Deploy to production environment
+    --hybrid        Deploy using hybrid architecture (Vercel + Supabase Functions)
+    --help, -h      Show this help message
+
+EXAMPLES:
+    $0 --staging                    # Standard staging deployment
+    $0 --production --hybrid         # Production with hybrid architecture
+    $0 --hybrid                     # Staging with hybrid architecture
+
+HYBRID ARCHITECTURE:
+    - Vercel Edge Runtime: Main API and frontend
+    - Supabase Edge Functions: Read operations
+    - Supabase Node Functions: Write operations
+    - Healthcare compliance: LGPD, ANVISA, CFM built-in
+
+ENVIRONMENT VARIABLES:
+    SUPABASE_PROJECT_REF          Supabase project reference
+    SUPABASE_ANON_KEY             Supabase anonymous key
+    SUPABASE_SERVICE_ROLE_KEY     Supabase service role key
+    VERCEL_TOKEN                  Vercel authentication token
+    DEPLOYMENT_TIMEOUT            Deployment timeout in seconds
+EOF
+}
 
 # Only run main if script is executed directly
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then

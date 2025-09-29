@@ -21,16 +21,16 @@
       "@/services/*": ["./src/services/*"],
       "@/types/*": ["./src/types/*"],
       "@/utils/*": ["./src/utils/*"],
-      "@neonpro/security": ["../../packages/security/src"],
-      "@neonpro/security/*": ["../../packages/security/src/*"],
-      "@neonpro/shared": ["../../packages/shared/src"],
-      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/core": ["../../packages/core/src"],
+      "@neonpro/core/*": ["../../packages/core/src/*"],
       "@neonpro/database": ["../../packages/database/dist"],
       "@neonpro/database/*": ["../../packages/database/dist/*"],
       "@neonpro/types": ["../../packages/types/src"],
       "@neonpro/types/*": ["../../packages/types/src/*"],
-      "@neonpro/utils": ["../../packages/utils/src"],
-      "@neonpro/utils/*": ["../../packages/utils/src/*"]
+      "@neonpro/config": ["../../packages/config/src"],
+      "@neonpro/config/*": ["../../packages/config/src/*"],
+      "@neonpro/ui": ["../../packages/ui/src"],
+      "@neonpro/ui/*": ["../../packages/ui/src/*"]
     },
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
@@ -47,10 +47,10 @@
     "**/*.spec.tsx"
   ],
   "references": [
-    { "path": "../../packages/utils" },
+    { "path": "../../packages/core" },
     { "path": "../../packages/database" },
-    { "path": "../../packages/security" },
-    { "path": "../../packages/shared" },
-    { "path": "../../packages/types" }
+    { "path": "../../packages/types" },
+    { "path": "../../packages/config" },
+    { "path": "../../packages/ui" }
   ]
 }

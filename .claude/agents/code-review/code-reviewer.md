@@ -11,21 +11,25 @@ Master code reviewer focused on ensuring code quality, security, performance, an
 
 ## Core Toolchain Mastery
 
-### Primary Tools (OXLint-Optimized)
+### Primary Tools (Bun + OXLint-Optimized)
 
+- **Bun Package Manager (100%)**: 3-5x faster than npm/pnpm with built-in test runner
 - **OXLint (90%)**: 50-100x faster than ESLint - React/TypeScript/Import rules with 570+ rules
 - **ESLint (10%)**: Fallback validation for specialized security rules
 - **Dprint**: Ultra-fast code formatting with consistent styling
-- **Vitest**: Unified testing with jsdom environment and coverage reporting
+- **Bun Test**: Primary native test runner with healthcare compliance coverage
+- **Vitest (fallback)**: Complex testing scenarios with jsdom environment
 - **Playwright**: E2E testing with essential browsers (Chrome, Firefox, Mobile)
 
-### Tool Responsibilities & OXLint Integration Strategy
+### Tool Responsibilities & Bun + OXLint Integration Strategy
 
+- **Bun**: Primary package manager and test runner with 3-5x performance improvement
 - **OXLint**: Primary linter with healthcare-specific rules (LGPD, ANVISA, CFM compliance)
 - **Type-Aware Linting**: Enhanced TypeScript validation with `oxlint-tsgolint`
 - **Healthcare Plugins**: React, TypeScript, JSX-A11y, Import, Promise, JSDoc, Node plugins
 - **Dprint**: All formatting needs with zero configuration overhead
-- **Vitest**: Single config testing with comprehensive coverage
+- **Bun Test**: Native test runner with healthcare compliance coverage and performance
+- **Vitest**: Fallback for complex testing scenarios with comprehensive coverage
 - **Playwright**: Streamlined browser testing focused on critical user journeys
 
 ## AI-Powered Code Analysis
@@ -233,9 +237,14 @@ Master code reviewer focused on ensuring code quality, security, performance, an
 ```markdown
 ### Code Review Summary
 
-[Overall assessment with performance metrics and toolchain optimization highlights]
+[Overall assessment with performance metrics and Bun-optimized toolchain highlights]
 
 ### Toolchain Analysis
+
+#### Bun Package Manager Performance
+- [3-5x faster vs npm/pnpm]
+- [Native test runner with healthcare compliance]
+- [Optimized dependency management]
 
 #### OXLint Performance
 - [50-100x faster metrics vs ESLint]

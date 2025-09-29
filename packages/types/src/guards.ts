@@ -1,13 +1,13 @@
-import { Patient, Professional } from './index.js'
+import { Patient, HealthcareProfessional } from './healthcare.js'
 
-export const isPatient = (user: Patient | Professional): user is Patient => {
-  return 'email' in user && 'medicalHistory' in user
+export const isPatient = (user: Patient | HealthcareProfessional): user is Patient => {
+  return 'cpf' in user && 'consent' in user
 }
 
-export const isProfessional = (user: Patient | Professional): user is Professional => {
-  return 'specialty' in user && 'licenseNumber' in user
+export const isProfessional = (user: Patient | HealthcareProfessional): user is HealthcareProfessional => {
+  return 'crm' in user || 'coren' in user
 }
 
 export const hasConsent = (patient: Partial<Patient>): patient is Patient => {
-  return !!patient.consentGiven
+  return !!patient.consent?.given
 }

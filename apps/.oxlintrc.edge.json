@@ -1,0 +1,23 @@
+{
+  "extends": ["../.oxlintrc.json"],
+  "rules": {
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "Literal[value='service_role']",
+        "message": "`service_role` usage is forbidden inside apps/**; use Supabase Functions."
+      }
+    ],
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["fs", "fs/*", "path", "path/*", "crypto", "crypto/*", "buffer", "buffer/*"],
+            "message": "Node built-ins are not allowed in Edge bundles."
+          }
+        ]
+      }
+    ]
+  }
+}

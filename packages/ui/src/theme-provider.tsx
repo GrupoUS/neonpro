@@ -64,9 +64,9 @@ export function ThemeProvider({
     return defaultTheme;
   });
 
-  const [accessibilityMode, setAccessibilityMode] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [accessibilityMode] = useState(false);
+  const [highContrast] = useState(false);
+  const [reducedMotion] = useState(false);
 
   // Resolve theme (system -> actual theme)
   const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");

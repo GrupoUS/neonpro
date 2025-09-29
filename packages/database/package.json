@@ -3,49 +3,65 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "dist/src/index.js",
-  "module": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js",
-      "require": "./dist/src/index.js"
-    },
-    "./services/*": {
-      "types": "./dist/services/*.d.ts",
-      "import": "./dist/services/*.js",
-      "require": "./dist/services/*.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "bunx prisma generate && tsc -p tsconfig-isolado.json",
-    "dev": "tsc -w -p tsconfig.json",
-    "type-check": "tsc -p tsconfig.json --noEmit",
+    "build": "node /home/vibecode/neonpro/node_modules/.bin/tsc -p tsconfig.json",
+    "dev": "node /home/vibecode/neonpro/node_modules/.bin/tsc -w -p tsconfig.json",
+    "type-check": "node /home/vibecode/neonpro/node_modules/.bin/tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",
-    "test": "bun test run",
-    "test:watch": "bun test --watch",
+    "test": "vitest run",
+    "test:bun": "vitest --config vitest.config.bun.ts run",
+    "test:bun:fast": "vitest --config vitest.config.bun.ts run --reporter=dot",
+    "test:watch": "vitest",
+    "test:bun:watch": "vitest --config vitest.config.bun.ts watch",
     "test:compliance": "tsx tests/test-runner.ts",
+    "test:bun:compliance": "bun test tests/test-runner.ts",
     "test:health": "tsx tests/test-runner.ts | head -20",
+    "test:bun:health": "bun test tests/test-runner.ts | head -20",
     "test:ci": "tsx tests/test-runner.ts && npm run test:coverage",
+    "test:bun:ci": "bun test tests/test-runner.ts && bun run test:bun:coverage",
     "test:coverage": "bun test --coverage",
+    "test:bun:coverage": "vitest --config vitest.config.bun.ts --coverage",
     "lint": "echo 'lint placeholder'",
     "prepare": "echo 'prepare script disabled for workspace install'",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio",
-    "sync-types": "tsx scripts/sync-types.ts",
-    "validate-schema": "npm run prisma:generate && npm run sync-types",
-    "supabase:types": "supabase gen types typescript --local > src/types/supabase-auto.ts || echo 'Supabase not running locally, using manual sync'",
-    "sync": "npm run validate-schema && npm run build"
+    "db:types": "supabase gen types typescript --project-id ownkoxryswokcdanrdgj > src/types/supabase-generated.ts",
+    "db:push": "prisma db push",
+    "db:diff": "supabase db diff",
+    "db:reset": "supabase db reset",
+    "db:studio": "prisma studio",
+    "sync": "bun run db:types && bun run build",
+    "dev:bun": "vite dev --force",
+    "build:bun": "prisma generate && node /home/vibecode/neonpro/node_modules/.bin/tsc --noEmit",
+    "build:analyze": "vite build --mode analyze",
+    "test:watch:bun": "vitest watch --reporter=dot",
+    "type-check:bun": "node /home/vibecode/neonpro/node_modules/.bin/tsc --noEmit",
+    "clean:bun": "rm -rf dist node_modules/.cache",
+    "format:bun": "biome format . --write",
+    "lint:bun": "oxlint . --fix",
+    "perf:test": "vitest run --reporter=verbose --isolate",
+    "setup:test": "bun install && bun run build",
+    "build:edge": "prisma generate && tsc --noEmit --outDir dist-edge",
+    "test:integration:bun": "vitest run --config vitest.integration.config.ts",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "generate:client": "prisma generate",
+    "db:seed": "bun run src/seed.ts",
+    "validate:schema": "prisma validate",
+    "format:prisma": "prisma format",
+    "perf:query": "bun run src/benchmark-queries.ts"
   },
   "dependencies": {
-    "@neonpro/utils": "workspace:*",
-    "@prisma/adapter-pg": "^6.16.1",
-    "@prisma/client": "^5.22.0",
-    "@supabase/supabase-js": "2.58.0",
-    "prisma": "^5.22.0"
+    "@neonpro/types": "workspace:*",
+    "@supabase/supabase-js": "2.58.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.13",
@@ -54,5 +70,8 @@
   },
   "publishConfig": {
     "access": "restricted"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
   }
 }

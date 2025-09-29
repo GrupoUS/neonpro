@@ -23,26 +23,22 @@
       "@neonpro/*": ["../../packages/*/src"],
       "@neonpro/database": ["../../packages/database/src"],
       "@neonpro/database/*": ["../../packages/database/src/*"],
-
-      "@neonpro/healthcare-core": ["../../packages/healthcare-core/src"],
-      "@neonpro/healthcare-core/*": ["../../packages/healthcare-core/src/*"],
-
+      "@neonpro/core": ["../../packages/core/src"],
+      "@neonpro/core/*": ["../../packages/core/src/*"],
       "@neonpro/ui": ["../../packages/ui/src"],
       "@neonpro/ui/*": ["../../packages/ui/src/*"],
-      "@neonpro/utils": ["../../packages/utils/src"],
-      "@neonpro/utils/*": ["../../packages/utils/src/*"],
-      "@neonpro/security": ["../../packages/security/src"],
-      "@neonpro/security/*": ["../../packages/security/src/*"]
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/config": ["../../packages/config/src"],
+      "@neonpro/config/*": ["../../packages/config/src/*"]
     }
   },
   "references": [
-    { "path": "../../packages/ai-services" },
+    { "path": "../../packages/core" },
     { "path": "../../packages/database" },
-    { "path": "../../packages/healthcare-core" },
-    { "path": "../../packages/security" },
-    { "path": "../../packages/shared" },
     { "path": "../../packages/types" },
-    { "path": "../../packages/ui" }
+    { "path": "../../packages/ui" },
+    { "path": "../../packages/config" }
   ],
   "include": ["src/**/*", "vite-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"],
   "exclude": [

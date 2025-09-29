@@ -1,4 +1,4 @@
-import { Appointment, Patient } from './index.js'
+import { Appointment, Patient } from './healthcare.js'
 
 // TypeScript-only validation helpers (no runtime validation library)
 export const isValidEmail = (email: string): boolean => {
@@ -15,11 +15,12 @@ export const validatePatient = (patient: Partial<Patient>): patient is Patient =
   return !!(
     patient.id &&
     patient.name &&
+    patient.cpf &&
     patient.email &&
     isValidEmail(patient.email) &&
     patient.phone &&
     isValidPhone(patient.phone) &&
-    typeof patient.consentGiven === 'boolean' &&
+    typeof patient.consent?.given === 'boolean' &&
     patient.createdAt
   )
 }
@@ -27,14 +28,14 @@ export const validatePatient = (patient: Partial<Patient>): patient is Patient =
 export const validateAppointment = (
   appointment: Partial<Appointment>
 ): appointment is Appointment => {
-  const validTypes = ['consultation', 'treatment', 'follow-up']
-  const validStatuses = ['scheduled', 'completed', 'cancelled']
+  const validTypes = ['consultation', 'exam', 'procedure', 'follow_up', 'emergency']
+  const validStatuses = ['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']
 
   return !!(
     appointment.id &&
     appointment.patientId &&
     appointment.professionalId &&
-    appointment.date &&
+    appointment.datetime &&
     appointment.type &&
     validTypes.includes(appointment.type) &&
     appointment.status &&

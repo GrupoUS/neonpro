@@ -1,0 +1,17 @@
+{
+  "name": "@neonpro/config",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "node /home/vibecode/neonpro/node_modules/.bin/tsc",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

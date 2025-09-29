@@ -1,115 +1,57 @@
-/**
- * Enhanced database exports for monorepo sharing
- * Includes comprehensive services and utilities for healthcare applications
- */
+// Main exports for @neonpro/database package
 
-// Core database clients - factory functions
-export { createClient, createServiceClient } from './client-full.js'
+// Database client and utilities
+export * from './lib/simple-client.js';
+export * from './lib/migrations.js';
 
-// Prisma client instance and types
-export { prisma } from './client-full.js'
-export type { PrismaClient } from '@prisma/client'
+// Version info
+export const version = '0.1.0';
 
-// Re-export all Prisma types
-export type {
-  Patient,
-  Appointment,
-  Professional,
-  Clinic,
-  User,
-  ConsentRecord,
-  AuditTrail,
-  AuditLog,
-  ServiceType,
-  ServiceCategory,
-  AppointmentTemplate,
-  TelemedicineSession,
-  RiskAssessment,
-  ComplianceStatus,
-} from '@prisma/client'
+// Package metadata
+export const metadata = {
+  name: '@neonpro/database',
+  version,
+  description: 'Database utilities and types for NeonPro healthcare platform',
+  author: 'NeonPro Team',
+  license: 'MIT',
+  repository: 'https://github.com/neonpro/neonpro',
+  homepage: 'https://neonpro.vercel.app'
+};
 
-// Health check utilities
-export { checkDatabaseHealth, closeDatabaseConnections } from './client-full.js'
+// Import client utilities
+import { db } from './lib/simple-client.js';
 
-// Database types
-export type { Database } from './types/supabase.js'
-
-// Minimal BaseService implementation for API routes
-export class BaseService {
-  protected logger: any
-
-  constructor() {
-    this.logger = console
-  }
-
-  async connect() {
-    return true
-  }
-
-  async disconnect() {
-    return true
-  }
-
-  async healthCheck() {
-    return { status: 'healthy' }
-  }
-}
-
-// Direct supabase client export for chat route compatibility
-import { createClient as createSupabaseClient } from './client-full.js'
-export const supabase = createSupabaseClient()
-
-// Placeholder WebRTC session service for telemedicine
-export class WebRTCSessionService {
-  constructor() {
-    console.log('Placeholder WebRTC service - will be replaced with actual implementation');
-  }
-
-  async createSession(sessionData: any) {
-    return { 
-      sessionId: 'placeholder-session-id', 
-      status: 'created', 
-      createdAt: new Date().toISOString() 
-    };
-  }
-
-  async getSession(sessionId: string) {
-    return { 
-      sessionId, 
-      status: 'mock', 
-      participants: [], 
-      createdAt: new Date().toISOString() 
-    };
-  }
-
-  async endSession(sessionId: string) {
-    return { success: true, sessionId };
-  }
-}
-
-// AI data sanitization utilities
-// Simple implementation to bypass complex logger dependencies
-export function sanitizeForAI<T extends Record<string, any>>(data: T): T {
-  const sensitiveFields = [
-    'cpf',
-    'rg',
-    'email',
-    'phone',
-    'address',
-    'medicalRecordNumber',
-    'insuranceNumber',
-    'creditCard',
-    'password',
-    'secret',
-  ]
-
-  const sanitized = { ...data }
-
-  for (const field of sensitiveFields) {
-    if (field in sanitized) {
-      delete sanitized[field]
+// Health check function
+export async function healthCheck(): Promise<{
+  healthy: boolean;
+  version: string;
+  timestamp: string;
+  error?: string;
+}> {
+  try {
+    // Test basic database connectivity
+    const { data, error } = await db.from('clinics').select('count').limit(1);
+    
+    if (error) {
+      return {
+        healthy: false,
+        version,
+        timestamp: new Date().toISOString(),
+        error: error.message
+      };
     }
-  }
 
-  return sanitized
+    return {
+      healthy: true,
+      version,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    return {
+      healthy: false,
+      version,
+      timestamp: new Date().toISOString(),
+      error: error instanceof Error ? error.message : 'Unknown error'
+    };
+  }
 }

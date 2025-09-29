@@ -8,24 +8,26 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { HealthcareSecurityLogger } from '@neonpro/security'
+import { dirname } from 'node:path'
+// Import removed - @neonpro/security package no longer exists
+// import { HealthcareSecurityLogger } from '@neonpro/security'
 
-// Global healthcare security logger instance
-let healthcareLogger: HealthcareSecurityLogger | null = null
+// Global healthcare security logger instance - disabled due to package removal
+// let healthcareLogger: HealthcareSecurityLogger | null = null
 
-function getHealthcareLogger(): HealthcareSecurityLogger {
-  if (!healthcareLogger) {
-    healthcareLogger = new HealthcareSecurityLogger({
-      enableConsoleLogging: true,
-      enableDatabaseLogging: false,
-      enableFileLogging: false,
-      enableAuditLogging: true,
-      logLevel: 'info',
-      sanitizeSensitiveData: true,
-      complianceLevel: 'standard',
-    })
+// Simple console logger fallback
+function getHealthcareLogger() {
+  return {
+    info: (message: string, data?: any) => {
+      console.log(`[INFO] ${message}`, data || '')
+    },
+    warn: (message: string, data?: any) => {
+      console.warn(`[WARN] ${message}`, data || '')
+    },
+    error: (message: string, data?: any) => {
+      console.error(`[ERROR] ${message}`, data || '')
+    }
   }
-  return healthcareLogger
 }
 
 // ES module equivalents for __dirname
