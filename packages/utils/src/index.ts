@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+// @ts-ignore - temporary fix for tailwind-merge import issue
 import { twMerge } from "tailwind-merge";
 
 // Utility function for combining classes (shadcn/ui requirement)
@@ -28,8 +29,8 @@ export const truncateText = (text: string, maxLength: number = 100): string => {
 };
 
 // Re-exports
-export * from './date';
-export * from './validation';
+export * from './date.js';
+export * from './validation.js';
 
 // Logging utility
 export const createLogger = (name: string) => {

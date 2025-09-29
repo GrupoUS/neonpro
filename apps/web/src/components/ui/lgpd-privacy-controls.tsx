@@ -1,10 +1,10 @@
 import * as React from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '../card'
-import { Badge } from '../badge'
-import { Button } from '../button'
-import { Alert, AlertDescription } from '../alert'
-import { MobileHealthcareButton } from '../mobile-healthcare-button'
-import { AccessibilityInput } from '../accessibility-input'
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui'
+import { Badge } from '@neonpro/ui'
+import { Button } from '@neonpro/ui'
+import { Alert, AlertDescription } from '@neonpro/ui'
+import { MobileHealthcareButton } from '@neonpro/ui'
+import { AccessibilityInput } from '@neonpro/ui'
 import { cn } from '@/lib/utils'
 
 export interface LGPDPrivacyControlProps {
@@ -113,8 +113,8 @@ const LGPDPrivacyControls: React.FC<LGPDPrivacyControlProps> = ({
   ]
 
   const handleConsentToggle = (consentId: string, granted: boolean) => {
-    setConsents(prev => prev.map(consent => 
-      consent.id === consentId 
+    setConsents(prev => prev.map(consent =>
+      consent.id === consentId
         ? { ...consent, granted, lastUpdated: new Date().toISOString().split('T')[0] }
         : consent
     ))
@@ -123,10 +123,10 @@ const LGPDPrivacyControls: React.FC<LGPDPrivacyControlProps> = ({
 
   const handleDataRequest = async (type: 'access' | 'deletion' | 'export' | 'correction') => {
     setIsProcessing(true)
-    
+
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     onDataRequest?.(type)
     setIsProcessing(false)
 
@@ -136,17 +136,17 @@ const LGPDPrivacyControls: React.FC<LGPDPrivacyControlProps> = ({
     announcement.setAttribute('aria-live', 'polite')
     announcement.setAttribute('aria-atomic', 'true')
     announcement.className = 'sr-only'
-    
+
     const messages = {
       access: 'Solicitação de acesso aos dados enviada com sucesso',
       deletion: 'Solicitação de exclusão de dados enviada com sucesso',
       export: 'Solicitação de exportação de dados enviada com sucesso',
       correction: 'Solicitação de correção de dados enviada com sucesso'
     }
-    
+
     announcement.textContent = messages[type]
     document.body.appendChild(announcement)
-    
+
     setTimeout(() => {
       document.body.removeChild(announcement)
     }, 3000)
@@ -214,7 +214,7 @@ const LGPDPrivacyControls: React.FC<LGPDPrivacyControlProps> = ({
           <div className="space-y-4" role="tabpanel">
             <Alert className="border-blue-200 bg-blue-50">
               <AlertDescription className="text-blue-900">
-                <strong>Seus Direitos LGPD:</strong> Você tem direito de acessar, corrigir, excluir e portabilizar seus dados pessoais, 
+                <strong>Seus Direitos LGPD:</strong> Você tem direito de acessar, corrigir, excluir e portabilizar seus dados pessoais,
                 além de poder revogar consentimentos a qualquer momento.
               </AlertDescription>
             </Alert>
@@ -353,7 +353,7 @@ const LGPDPrivacyControls: React.FC<LGPDPrivacyControlProps> = ({
                   <CardContent className="pt-6">
                     <div className="space-y-3">
                       <h3 className="font-semibold text-lg">{activity.purpose}</h3>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                         <div>
                           <span className="font-medium text-gray-700">Base Legal:</span>

@@ -16,11 +16,11 @@ export interface IngestionEvent {
   eventType: string
   source: string
   timestamp?: string
-  data: Record<string, any>
+  data: Record<string, unknown>
   metadata?: {
     patientId?: string
     sessionId?: string
-    [key: string]: any
+    [key: string]: unknown
   }
 }
 
@@ -393,7 +393,7 @@ export class EventCollector {
   /**
    * Audit logging for compliance
    */
-  private auditLog(action: string, data: any): void {
+  private auditLog(action: string, data: unknown): void {
     // Implementation would typically integrate with proper audit logging system
     const auditEntry = {
       timestamp: new Date().toISOString(),

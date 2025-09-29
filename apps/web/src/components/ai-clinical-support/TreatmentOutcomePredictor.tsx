@@ -1,3 +1,56 @@
+/**
+ * Treatment Outcome Predictor Component
+ * 
+ * AI-powered treatment outcome prediction system for aesthetic medicine with Brazilian
+ * healthcare compliance. This component provides evidence-based predictions of treatment
+ * results, timelines, and patient satisfaction using machine learning models trained
+ * on clinical data while adhering to CFM and ANVISA regulations.
+ * 
+ * @component
+ * @example
+ * // Usage in treatment planning workflow
+ * <TreatmentOutcomePredictor 
+ *   patientId="patient-123"
+ *   treatmentPlanId="plan-456"
+ *   procedureIds={['proc-789', 'proc-790']}
+ *   onPredictionUpdate={handlePredictionUpdate}
+ * />
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant for healthcare provider accessibility
+ * - Brazilian medical ethics compliance (CFM Resolution 2.227/2018)
+ * - AI predictions with confidence intervals and clinical validation
+ * - Integration with patient history and treatment databases
+ * - Portuguese language interface optimized for Brazilian healthcare professionals
+ * - Mobile-responsive for clinical consultation support
+ * 
+ * @security
+ * - Encrypted AI model communication and patient data processing
+ * - Anonymized data processing for model training and predictions
+ * - Audit logging of prediction requests and clinical usage
+ * - Compliance with LGPD for AI-processed health data
+ * - Clinical oversight requirements for prediction interpretation
+ * 
+ * @accessibility
+ * - High contrast display for clinical environments
+ * - Screen reader optimized for complex prediction data
+ * - Clear confidence indicators and risk communication
+ * - Keyboard navigation support for clinical workflows
+ * 
+ * @compliance
+ * CFM Resolution 2.227/2018 - Telemedicine and AI in clinical practice
+ * ANVISA RDC 15/2012 - Medical device and treatment safety
+ * LGPD Lei 13.709/2018 - AI data processing and patient rights
+ * ISO 13485 - Medical device quality management for AI systems
+ * 
+ * @aiEthics
+ * - Human oversight requirement for all AI predictions
+ * - Explainable AI with clinical reasoning transparency
+ * - Risk mitigation and safety communication protocols
+ * - Continuous monitoring of prediction accuracy and safety
+ * - Clear communication of prediction limitations and uncertainties
+ */
+
 'use client'
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
@@ -34,6 +87,52 @@ import {
 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
+/**
+ * Props interface for TreatmentOutcomePredictor component
+ * 
+ * Defines the configuration and callback handlers for AI-powered treatment
+ * outcome prediction system with Brazilian healthcare compliance requirements.
+ * 
+ * @interface TreatmentOutcomePredictorProps
+ * 
+ * @property {string} patientId - Unique patient identifier
+ *   Used for fetching patient data and personalizing AI predictions
+ *   Must be a valid patient record from the electronic health system
+ * @property {string} [treatmentPlanId] - Optional treatment plan identifier
+ *   Links predictions to specific treatment plans and protocols
+ *   Provides context for comprehensive outcome analysis
+ * @property {string[]} [procedureIds] - Optional array of procedure identifiers
+ *   Specific aesthetic procedures for outcome prediction
+ *   Allows for detailed analysis of individual treatment components
+ * @property {Function} [onPredictionUpdate] - Optional callback for prediction updates
+ *   @param {TreatmentOutcomePrediction} prediction - AI-generated outcome prediction
+ *   @returns {void}
+ *   Called when prediction models generate new or updated forecasts
+ * 
+ * @example
+ * const props: TreatmentOutcomePredictorProps = {
+ *   patientId: 'patient-123',
+ *   treatmentPlanId: 'plan-456',
+ *   procedureIds: ['botox', 'filler'],
+ *   onPredictionUpdate: (prediction) => {
+ *     treatmentService.updateOutcomePrediction(patientId, prediction);
+ *   }
+ * };
+ * 
+ * @security
+ * Patient identifiers must be validated and authorized according to
+ * healthcare data access regulations and CFM standards.
+ * 
+ * @compliance
+ * All AI predictions must be reviewed and interpreted by licensed
+ * healthcare professionals before clinical decision-making, as required by
+ * CFM Resolution 2.227/2018 for AI-assisted clinical predictions.
+ * 
+ * @clinicalUsage
+ * Predictions are for informational and planning purposes only.
+ * Final treatment decisions must consider patient-specific factors
+ * and professional clinical judgment.
+ */
 interface TreatmentOutcomePredictorProps {
   patientId: string
   treatmentPlanId?: string

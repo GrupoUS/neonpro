@@ -1,14 +1,130 @@
+/**
+ * Healthcare Error Boundary Component
+ * 
+ * Brazilian healthcare compliant error boundary for aesthetic clinic applications.
+ * This component provides graceful error handling for healthcare applications while
+ * maintaining patient safety, data integrity, and regulatory compliance.
+ * 
+ * @component
+ * @example
+ * // Usage in healthcare application root
+ * <HealthcareErrorBoundary 
+ *   onError={(error, errorInfo) => loggingService.logError(error, errorInfo)}
+ *   fallback={{ title: 'Erro no Sistema', message: 'Ocorreu um erro inesperado' }}
+ * >
+ *   <App />
+ * </HealthcareErrorBoundary>
+ * 
+ * @remarks
+ * - WCAG 2.1 AA+ compliant error messaging and recovery
+ * - Brazilian healthcare error handling standards compliance
+ * - Patient safety prioritization in error scenarios
+ * - Data integrity protection during system failures
+ * - Portuguese language error messages for Brazilian users
+ * - Mobile-responsive error recovery interface
+ * 
+ * @security
+ * - Secure error logging without sensitive patient data exposure
+ * - Data sanitization before error reporting
+ * - Audit logging for compliance and troubleshooting
+ * - Graceful degradation to maintain essential functions
+ * - Compliance with CFM error reporting requirements
+ * 
+ * @accessibility
+ * - High contrast error displays for visibility
+ * - Screen reader optimized error announcements
+ * - Keyboard navigation for error recovery
+ * - Clear error messaging with recovery guidance
+ * 
+ * @compliance
+ * CFM Resolution 2.217/2018 - Healthcare system error handling
+ * ANVISA RDC 15/2012 - Medical device safety requirements
+ * LGPD Lei 13.709/2018 - Data protection during errors
+ * ISO 13485 - Medical device quality management
+ * 
+ * @patientSafety
+ * Prioritizes patient safety by preventing data corruption
+ * and ensuring critical healthcare functions remain available
+ * even during system errors or failures.
+ */
+
 import * as React from 'react'
 import { useTranslation } from '@/lib/i18n/use-translation'
 import { Button } from './accessibility-button'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
+/**
+ * Props interface for HealthcareErrorBoundary component
+ * 
+ * Defines the configuration and error handling callbacks for healthcare
+ * application error boundaries with Brazilian compliance requirements.
+ * 
+ * @interface HealthcareErrorBoundaryProps
+ * 
+ * @property {React.ReactNode} children - Child components to be wrapped by error boundary
+ *   All healthcare application components should be wrapped
+ *   Provides error protection for entire application subtree
+ * @property {React.ComponentProps<typeof ErrorFallback>} [fallback] - Optional fallback UI configuration
+ *   Custom error display component properties
+ *   Should provide clear guidance for error recovery
+ * @property {Function} [onError] - Optional callback for error handling
+ *   @param {Error} error - The JavaScript error that was caught
+ *   @param {React.ErrorInfo} errorInfo - React error information with component stack
+ *   @returns {void}
+ *   Called when errors occur in wrapped components
+ *   Should implement secure logging and alerting
+ * 
+ * @example
+ * const props: HealthcareErrorBoundaryProps = {
+ *   children: <HealthcareApp />,
+ *   fallback: {
+ *     title: 'Erro no Sistema de Saúde',
+ *     message: 'O sistema encontrou um problema. Por favor, contate o suporte técnico.',
+ *     showReset: true
+ *   },
+ *   onError: (error, errorInfo) => {
+ *     // Sanitize error data before logging
+ *     const sanitizedError = sanitizeErrorForLogging(error);
+ *     loggingService.logHealthcareError(sanitizedError, errorInfo);
+ *     alertingService.notifyTechnicalTeam(sanitizedError);
+ *   }
+ * };
+ * 
+ * @security
+ * Error handling must sanitize sensitive patient data before logging
+ * or reporting to comply with LGPD and healthcare privacy regulations.
+ * 
+ * @compliance
+ * Error logging and reporting must comply with Brazilian healthcare
+ * regulations for incident reporting and system management.
+ */
 interface HealthcareErrorBoundaryProps {
   children: React.ReactNode
   fallback?: React.ComponentProps<typeof ErrorFallback>
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void
 }
 
+/**
+ * Internal error state management interface
+ * 
+ * Manages the current error state within the healthcare error boundary.
+ * 
+ * @interface ErrorState
+ * 
+ * @property {boolean} hasError - Whether an error has occurred
+ *   True when error boundary has caught an error
+ *   Triggers fallback UI display
+ * @property {Error | null} error - The caught error object
+ *   Contains error details for logging and debugging
+ *   Sanitized before external reporting
+ * @property {React.ErrorInfo | null} errorInfo - React error information
+ *   Contains component stack trace and error location
+ *   Useful for debugging and troubleshooting
+ * 
+ * @internal
+ * This interface is for internal component state management
+ * and should not be used externally.
+ */
 interface ErrorState {
   hasError: boolean
   error: Error | null

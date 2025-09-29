@@ -1,0 +1,167 @@
+/**
+ * NEONPRO Global Styles with Constitutional Compliance
+ * 
+ * Includes NEONPRO brand colors, fonts, and Brazilian optimization
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Lora:ital,wght@0,400..700;1,400..700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+
+    /* NEONPRO Brand Colors - oklch format for better accessibility */
+    --neonpro-primary: 0.437 0.368 66.8;     /* #AC9469 - Golden Primary */
+    --neonpro-deep-blue: 0.243 0.489 12.2;   /* #112031 - Professional Trust */
+    --neonpro-accent: 0.564 0.286 90.8;      /* #E8D5B7 - Premium Services */
+    --neonpro-neutral: 0.961 0 0;            /* #F5F5F5 - Calming Neutral */
+    --neonpro-background: 1 0 0;             /* #FFFFFF - Clean Background */
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 84% 4.9%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 94.1%;
+
+    /* NEONPRO Dark Mode Adjustments */
+    --neonpro-primary: 0.437 0.421 72.5;     /* Slightly lighter for dark mode */
+    --neonpro-deep-blue: 0.243 0.523 15.8;   /* Slightly lighter for dark mode */
+    --neonpro-accent: 0.564 0.248 88.2;      /* Slightly muted for dark mode */
+    --neonpro-neutral: 0.15 0 0;             /* Dark neutral */
+    --neonpro-background: 0.09 0 0;          /* Dark background */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Brazilian mobile-first optimizations */
+  @media (max-width: 640px) {
+    body {
+      font-size: 16px; /* Better readability on mobile */
+    }
+  }
+
+  /* Constitutional compliance indicators */
+  [data-brazilian-optimized="true"] {
+    --font-primary: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-secondary: 'Lora', Georgia, serif;
+    --font-mono: 'Libre Baskerville', Times, serif;
+  }
+
+  [data-aesthetic-clinic="true"] {
+    --clinic-primary: oklch(var(--neonpro-primary));
+    --clinic-accent: oklch(var(--neonpro-accent));
+    --clinic-trust: oklch(var(--neonpro-deep-blue));
+  }
+
+  [data-lgpd-compliant="true"] {
+    /* LGPD compliance visual indicators */
+    --privacy-indicator: oklch(var(--neonpro-primary));
+  }
+}
+
+@layer components {
+  /* NEONPRO themed component base styles */
+  .neonpro-card {
+    @apply bg-card border-border rounded-lg shadow-sm transition-all duration-200;
+    background: oklch(var(--neonpro-background));
+    border-color: oklch(var(--neonpro-accent));
+  }
+
+  .neonpro-button {
+    @apply rounded-md px-4 py-2 font-medium transition-colors focus:outline-none focus:ring-2;
+    background: oklch(var(--neonpro-primary));
+    color: oklch(var(--neonpro-background));
+    border: 1px solid oklch(var(--neonpro-primary));
+  }
+
+  .neonpro-button:hover {
+    background: oklch(calc(var(--neonpro-primary) - 0.05));
+  }
+
+  .neonpro-button:focus {
+    ring-color: oklch(var(--neonpro-accent));
+  }
+
+  /* Accessibility improvements */
+  .focus-visible {
+    @apply outline-none ring-2 ring-offset-2;
+    ring-color: oklch(var(--neonpro-primary));
+  }
+
+  .reduced-motion * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* High contrast mode support */
+  .high-contrast {
+    --neonpro-primary: 0.2 0 0;
+    --neonpro-background: 1 0 0;
+    --neonpro-accent: 0.3 0 0;
+  }
+
+  /* Brazilian aesthetic clinic specific styles */
+  .clinic-header {
+    background: oklch(var(--neonpro-deep-blue));
+    color: oklch(var(--neonpro-background));
+  }
+
+  .clinic-primary {
+    background: oklch(var(--neonpro-primary));
+    color: oklch(var(--neonpro-background));
+  }
+
+  .clinic-accent {
+    background: oklch(var(--neonpro-accent));
+    color: oklch(var(--neonpro-deep-blue));
+  }
+}

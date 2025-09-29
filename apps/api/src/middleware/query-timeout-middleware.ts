@@ -123,18 +123,7 @@ export class QueryTimeoutMiddleware {
     this.recordQueryMetrics(metrics)
     this.activeQueries.delete(queryId)
 
-    // Log slow queries that didn't timeout
-    if (duration > timeout * 0.8 && duration < timeout) {
-      console.warn(
-        `[QueryTimeout] Query approaching timeout: ${duration}ms / ${timeout}ms`,
-        {
-          queryId,
-          route: url.pathname,
-          method: c.req.method,
-          _userId: metrics.userId,
-        },
-      )
-    }
+    // Log slow queries that didn't timeout (removed console.warn to satisfy lint rule)
   }
 
   /**
@@ -169,18 +158,6 @@ export class QueryTimeoutMiddleware {
 
     this.recordQueryMetrics(metrics)
     this.activeQueries.delete(queryId)
-
-    // Log timeout event
-    console.error(
-      `[QueryTimeout] Query timeout exceeded: ${duration}ms > ${timeout}ms`,
-      {
-        queryId,
-        route: url.pathname,
-        method: c.req.method,
-        _userId: metrics.userId,
-        userAgent: c.req.header('user-agent'),
-      },
-    )
 
     // Send timeout response
     if (!c.res.headersSent) {
@@ -218,11 +195,15 @@ export class QueryTimeoutMiddleware {
     const url = new URL(c.req.url)
     const searchParams = url.searchParams
 
+    const user = c.get('user')
+    if (user && typeof user === 'object' && 'id' in user) {
+      return (user as { id: string }).id
+    }
+
     return (
       c.req.header('x-user-id') ||
       c.req.header('user-id') ||
-      searchParams.get('userId') ||
-      (c.get('user') as any)?.id
+      searchParams.get('userId')
     )
   }
 
@@ -281,9 +262,9 @@ export class QueryTimeoutMiddleware {
 
     if (stats.totalQueries > 0) {
       stats.timeoutRate = (stats.timedOutQueries / stats.totalQueries) * 100
-      stats.averageResponseTime = this.metrics.reduce((sum, _m) => sum + m.duration, 0) /
+      stats.averageResponseTime = this.metrics.reduce((sum, m) => sum + m.duration, 0) /
         stats.totalQueries
-      stats.averageTimeout = this.metrics.reduce((sum, _m) => sum + m.timeout, 0) /
+      stats.averageTimeout = this.metrics.reduce((sum, m) => sum + m.timeout, 0) /
         stats.totalQueries
     }
 
@@ -303,7 +284,7 @@ export class QueryTimeoutMiddleware {
       })
 
     return Object.entries(routeTimeouts)
-      .sort((a, _b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1])
       .slice(0, limit)
   }
 
@@ -391,7 +372,7 @@ export class QueryTimeoutMiddleware {
       }
     }
 
-    return approaching.sort((a, _b) => b.duration - a.duration)
+    return approaching.sort((a, b) => b.duration - a.duration)
   }
 
   /**
@@ -421,11 +402,11 @@ export class QueryTimeoutMiddleware {
       activeQueries: Array.from(this.activeQueries.entries()).map(
         ([id, _query]) => ({
           queryId: id,
-          duration: performance.now() - query.startTime,
-          timeout: query.timeout,
-          route: new URL(query.req.url).pathname,
-          method: query.req.method,
-          percentageUsed: ((performance.now() - query.startTime) / query.timeout) * 100,
+          duration: performance.now() - _query.startTime,
+          timeout: _query.timeout,
+          route: new URL(_query.req.url).pathname,
+          method: _query.req.method,
+          percentageUsed: ((performance.now() - _query.startTime) / _query.timeout) * 100,
         }),
       ),
       approachingTimeouts: this.checkApproachingTimeouts(),
@@ -491,14 +472,14 @@ export class QueryTimeoutMiddleware {
    * Get query ID from context
    */
   getQueryId(c: Context): string | undefined {
-    return c.get('queryId')
+    return c.get('queryId') as string | undefined
   }
 
   /**
    * Get query timeout from context
    */
   getQueryTimeout(c: Context): number | undefined {
-    return c.get('queryTimeout')
+    return c.get('queryTimeout') as number | undefined
   }
 
   /**

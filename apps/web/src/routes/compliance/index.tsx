@@ -78,6 +78,7 @@ function ComplianceDashboard() {
 
   const menuItems = [
     { icon: TrendingUp, label: 'Dashboard', href: '/compliance' },
+    { icon: Shield, label: 'LGPD Compliance', href: '/compliance/lgpd' },
     { icon: Shield, label: 'Avaliações', href: '/compliance/assessments' },
     { icon: FileText, label: 'Consentimentos', href: '/compliance/consents' },
     { icon: Users, label: 'Solicitações LGPD', href: '/compliance/subject-requests' },

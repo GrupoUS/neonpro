@@ -20,21 +20,20 @@ import { appRouter } from './trpc/router.js'
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
 import { initializeSentry, sentryMiddleware } from './lib/sentry.js'
+import { themeMiddleware } from './middleware/theme-middleware.js'
 import { errorTracker } from './services/error-tracking-bridge.js'
 import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init.js'
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator.js'
 import { cspViolationHandler } from './lib/security/csp.js'
 import {
-  errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
-  globalErrorHandler,
+    globalErrorHandler,
+    errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
 } from './middleware/error-tracking.js'
 import { rateLimitMiddleware } from './middleware/rate-limiting.js'
 import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer.js' // Extract middleware functions from security package
- // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
-
-// Initialize monitoring and telemetry
-;(async () => {
+    
+(async () => {
   try {
     await Promise.all([
       // Initialize Sentry first for early error capture
@@ -131,6 +130,9 @@ app.use('*', errorHandler)
 
 // Healthcare-compliant error tracking middleware
 app.use('*', healthcareErrorTrackingMiddleware())
+
+// Theme middleware for consistent branding and accessibility
+app.use('*', themeMiddleware())
 
 // Enhanced security headers with HSTS and healthcare compliance
 // app.use('*', httpsRedirectMiddleware())

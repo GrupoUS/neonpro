@@ -1,0 +1,18 @@
+{
+  "downloadDate": "2025-09-29T16:04:04.228Z",
+  "neonproVersion": "1.0.0",
+  "fonts": [
+    "inter",
+    "lora",
+    "libre-baskerville"
+  ],
+  "downloadedFiles": [],
+  "totalSize": 0,
+  "constitutionalCompliance": {
+    "lgpd": true,
+    "anvisa": true,
+    "wcag21AA": true,
+    "mobileFirst": true,
+    "privacyByDesign": true
+  }
+}

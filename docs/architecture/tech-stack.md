@@ -99,8 +99,8 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 **Supporting Frontend Libraries**:
 
 - **React Hook Form v7.62.0**: Performance-focused forms, minimal re-renders
-- **Valibot v0.30.0**: Primary runtime schema validation (75% smaller than Zod)
-- **Zod v4.22.0**: Fallback validation library when Valibot doesn't have specific features
+- **Valibot v1.1.0**: Primary runtime schema validation (75% smaller than Zod)
+- **Zod v4.1.11**: Fallback validation library when Valibot doesn't have specific features
 - **Zustand v4.4.0**: Lightweight state management, TypeScript-first
 - **TanStack Query v5.62.0**: Server state management, **real-time data synchronization**, background updates
 
@@ -166,15 +166,15 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Features**: Brazilian aesthetic clinic validation (CPF, TUSS codes), streaming validation, composable schemas
 - **Benefits**: Edge function compatibility, aesthetic clinic compliance, performance optimization
 - **Usage**: Primary validation library for all new development, tRPC input validation, aesthetic clinic data schemas
-- **Fallback Strategy**: Use Zod v4.22.0 when specific Valibot features are not available
+- **Fallback Strategy**: Use Zod v4.1.11 when specific Valibot features are not available
 
-**Valibot v0.30.0** - Primary Runtime Schema Validation
+**Valibot v1.1.0** - Primary Runtime Schema Validation
 
 - **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
 - **Features**: Brazilian healthcare validation (CPF, medical codes), streaming validation, composable schemas
 - **Benefits**: Edge function compatibility, healthcare compliance, performance optimization
 - **Usage**: Primary validation library for all new development, tRPC input validation, healthcare data schemas
-- **Fallback Strategy**: Use Zod v4.22.0 when specific Valibot features are not available
+- **Fallback Strategy**: Use Zod v4.1.11 when specific Valibot features are not available
 
 - **Why**: Mature ecosystem, extensive feature set, backward compatibility
 - **Features**: Comprehensive schema definitions, transformer functions, error handling
@@ -306,7 +306,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Benefits**: Comprehensive test coverage, compliance automation, healthcare workflow validation
 - **Implementation**: Custom healthcare testing framework with ≥95% coverage targets
 
-**Zod v4.22.0** - Secondary Runtime Schema Validation
+**Zod v4.1.11** - Secondary Runtime Schema Validation
 
 - **Why**: Mature ecosystem, extensive feature set, backward compatibility
 - **Features**: Comprehensive schema definitions, transformer functions, error handling

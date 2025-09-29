@@ -11,29 +11,7 @@ try {
   // Supabase not available - database logging will be disabled
 }
 
-// Local interface to avoid external type dependencies
-interface LocalDatabase {
-  public: {
-    Tables: {
-      audit_logs: {
-        Insert: {
-          id?: string
-          user_id?: string
-          action: string
-          resource_type: string
-          resource_id?: string
-          new_values?: any
-          details?: any
-          ip_address?: string | null
-          user_agent?: string
-          lgpd_basis?: string | null
-          created_at?: string
-          [key: string]: any
-        }
-      }
-    }
-  }
-}
+// Type definitions for audit log entries
 
 export interface AuditLogEntry {
   id?: string
@@ -86,7 +64,7 @@ export interface AuditLoggerOptions {
 
 export class AuditLogger {
   private options: AuditLoggerOptions
-  private supabase?: ReturnType<typeof createClient<LocalDatabase>>
+  private supabase?: ReturnType<typeof createClient>
 
   constructor(options: AuditLoggerOptions = {}) {
     this.options = {

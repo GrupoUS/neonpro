@@ -6,20 +6,15 @@ import {
   Citation,
   ConversationContextData,
   Entity,
-  Intent,
   MessageMetadata,
   RAGAgentResponse,
-  ToolCall,
 } from '../types/common'
 import {
   ErrorContext,
-  getErrorMessage,
-  logErrorWithContext,
   withErrorHandling,
 } from '../utils/error-handling'
 import {
   ConversationValidationParams,
-  ValidationResult,
   ValidationService,
 } from '../utils/validation-helpers'
 import {

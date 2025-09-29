@@ -1,4 +1,16 @@
-import { PatientData, FormFieldError, FormValidationResult, HealthcareValidationLevel, BrazilianState } from './healthcare.js'
+export interface FormFieldError {
+  field: string;
+  message: string;
+  severity: 'error' | 'warning';
+}
+
+export interface FormValidationResult {
+  isValid: boolean;
+  errors: FormFieldError[];
+  warnings: FormFieldError[];
+}
+
+import { PatientData, HealthcareValidationLevel, BrazilianState } from './healthcare.js'
 
 // Type-safe form validation
 export class HealthcareFormValidator {
@@ -13,7 +25,7 @@ export class HealthcareFormValidator {
 
     // Remove formatting
     const cleanCPF = cpf.replace(/[^\d]/g, '')
-    
+
     if (cleanCPF.length !== 11) {
       return {
         field: 'cpf',
@@ -252,8 +264,8 @@ export class HealthcareFormValidator {
 
   private isValidBrazilianState(state: string): state is BrazilianState {
     const validStates: BrazilianState[] = [
-      'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 
-      'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 
+      'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO',
+      'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI',
       'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
     ]
     return validStates.includes(state as BrazilianState)
@@ -320,7 +332,7 @@ export function useHealthcareForm<T extends Record<string, any>>(
   const handleChange: FormFieldChangeHandler<T> = (field, value) => {
     setData(prev => ({ ...prev, [field]: value }))
     setTouched(prev => ({ ...prev, [field]: true }))
-    
+
     // Clear error when field is updated
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }))
@@ -329,7 +341,7 @@ export function useHealthcareForm<T extends Record<string, any>>(
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     let isValid = true
     let validationErrors: FormFieldError[] = []
 

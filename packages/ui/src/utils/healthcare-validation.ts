@@ -176,7 +176,7 @@ export const healthcareValidationSchemas = {
       .min(2, 'Alérgeno deve ter pelo menos 2 caracteres')
       .max(100, 'Alérgeno deve ter no máximo 100 caracteres'),
     severity: z.enum(['leve', 'moderada', 'grave'], {
-      errorMap: () => ({ message: 'Selecione uma severidade válida' }),
+      message: 'Selecione uma severidade válida',
     }),
     notes: z
       .string()
@@ -284,7 +284,7 @@ export const lgpdConsentSchema = z.object({
   analyticsConsent: z.boolean(),
   consentTimestamp: z.string().datetime(),
   consentVersion: z.string().min(1),
-  ipAddress: z.string().ip().optional(),
+  ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
 })
 

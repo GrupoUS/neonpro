@@ -110,7 +110,7 @@ export class ConversationContextManager {
       }
 
       // Store in database
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('ai_conversation_contexts')
         .insert({
           id: conversationId,

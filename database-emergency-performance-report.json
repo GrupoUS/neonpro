@@ -1,0 +1,197 @@
+{
+  "testMetadata": {
+    "timestamp": "2025-09-27T19:36:10.679Z",
+    "framework": "NeonPro Database Emergency Performance Testing",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "thresholds": {
+    "PATIENT_EMERGENCY_LOOKUP": 300,
+    "CRITICAL_LAB_RESULTS": 200,
+    "MEDICATION_HISTORY": 250,
+    "ALLERGY_DATA": 150,
+    "EMERGENCY_CONTACTS": 100,
+    "PROFESSIONAL_CREDENTIALS": 200,
+    "FACILITY_PROTOCOLS": 150,
+    "AUDIT_LOGGING": 50,
+    "NOTIFICATION_BROADCAST": 100,
+    "TOTAL_EMERGENCY_RESPONSE": 500
+  },
+  "metrics": {
+    "totalQueries": 13,
+    "passedQueries": 13,
+    "failedQueries": 0,
+    "averageQueryTime": 115.3095356923077,
+    "maxQueryTime": 266.33165699999995,
+    "minQueryTime": 56.10238800000002,
+    "slowestQuery": {
+      "queryName": "recent-appointments",
+      "patternName": "Patient Emergency Data Retrieval",
+      "time": 266.33165699999995
+    },
+    "fastestQuery": {
+      "queryName": "emergency-contacts",
+      "patternName": "Patient Emergency Data Retrieval",
+      "time": 56.10238800000002
+    }
+  },
+  "results": [
+    {
+      "patternId": "patient-emergency-data",
+      "patternName": "Patient Emergency Data Retrieval",
+      "critical": true,
+      "queries": [
+        {
+          "queryName": "patient-demographics",
+          "tableName": "patients",
+          "executionTime": 120.349167,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "emergency-contacts",
+          "tableName": "patients",
+          "executionTime": 56.10238800000002,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "medical-history",
+          "tableName": "patients",
+          "executionTime": 120.17789599999998,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "recent-appointments",
+          "tableName": "appointments",
+          "executionTime": 266.33165699999995,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 563.146359,
+      "passed": false,
+      "timestamp": "2025-09-27T19:36:08.600Z"
+    },
+    {
+      "patternId": "professional-emergency-verification",
+      "patternName": "Professional Emergency Verification",
+      "critical": true,
+      "queries": [
+        {
+          "queryName": "professional-license",
+          "tableName": "professionals",
+          "executionTime": 94.31077699999992,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "specialty-validation",
+          "tableName": "professional_specialties",
+          "executionTime": 123.23703499999999,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "current-schedule",
+          "tableName": "appointments",
+          "executionTime": 85.25393699999995,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 302.856128,
+      "passed": true,
+      "timestamp": "2025-09-27T19:36:09.164Z"
+    },
+    {
+      "patternId": "facility-emergency-status",
+      "patternName": "Facility Emergency Status",
+      "critical": true,
+      "queries": [
+        {
+          "queryName": "active-alerts",
+          "tableName": "emergency_alerts",
+          "executionTime": 117.23944399999993,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "facility-capacity",
+          "tableName": "clinic_capacity",
+          "executionTime": 61.276046000000065,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "staff-availability",
+          "tableName": "professionals",
+          "executionTime": 139.20346400000017,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 317.79604300000005,
+      "passed": true,
+      "timestamp": "2025-09-27T19:36:09.467Z"
+    },
+    {
+      "patternId": "treatment-emergency-data",
+      "patternName": "Treatment Emergency Data",
+      "critical": true,
+      "queries": [
+        {
+          "queryName": "active-treatments",
+          "tableName": "treatment_plans",
+          "executionTime": 116.17031600000018,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "recent-sessions",
+          "tableName": "aesthetic_sessions",
+          "executionTime": 97.19589799999994,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "queryName": "treatment-history",
+          "tableName": "treatment_catalogs",
+          "executionTime": 102.17593899999997,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 315.6085079999998,
+      "passed": true,
+      "timestamp": "2025-09-27T19:36:09.785Z"
+    }
+  ],
+  "compliance": {
+    "meets500msRequirement": true,
+    "criticalPatternsPass": false,
+    "overallPassRate": 1
+  },
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "pattern": "Patient Emergency Data Retrieval",
+      "issue": "Database pattern exceeding 500ms threshold",
+      "recommendation": "Optimize database indexes, query tuning, or consider caching strategies"
+    }
+  ]
+}

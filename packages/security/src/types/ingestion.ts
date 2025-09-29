@@ -416,15 +416,25 @@ export interface IngestionMonitoringMetrics {
  * Check if an object is a valid IngestionEvent
  */
 export function isIngestionEvent(obj: unknown): obj is IngestionEvent {
-  return (
+  return !!(
     obj &&
     typeof obj === 'object' &&
+    'eventType' in obj &&
     typeof obj.eventType === 'string' &&
+    'source' in obj &&
     obj.source &&
+    typeof obj.source === 'object' &&
+    'sourceId' in obj.source &&
     typeof obj.source.sourceId === 'string' &&
+    'processing' in obj &&
     obj.processing &&
+    typeof obj.processing === 'object' &&
+    'status' in obj.processing &&
     typeof obj.processing.status === 'string' &&
+    'quality' in obj &&
     obj.quality &&
+    typeof obj.quality === 'object' &&
+    'validRecords' in obj.quality &&
     typeof obj.quality.validRecords === 'number'
   )
 }
@@ -433,14 +443,22 @@ export function isIngestionEvent(obj: unknown): obj is IngestionEvent {
  * Check if an object is a valid IngestionConfig
  */
 export function isIngestionConfig(obj: unknown): obj is IngestionConfig {
-  return (
+  return !!(
     obj &&
     typeof obj === 'object' &&
+    'sourceId' in obj &&
     typeof obj.sourceId === 'string' &&
+    'sourceType' in obj &&
     typeof obj.sourceType === 'string' &&
+    'processing' in obj &&
     obj.processing &&
+    typeof obj.processing === 'object' &&
+    'batchSize' in obj.processing &&
     typeof obj.processing.batchSize === 'number' &&
+    'security' in obj &&
     obj.security &&
+    typeof obj.security === 'object' &&
+    'encryption' in obj.security &&
     typeof obj.security.encryption === 'boolean'
   )
 }
@@ -449,12 +467,16 @@ export function isIngestionConfig(obj: unknown): obj is IngestionConfig {
  * Check if an object is a valid ValidationRule
  */
 export function isValidationRule(obj: unknown): obj is ValidationRule {
-  return (
+  return !!(
     obj &&
     typeof obj === 'object' &&
+    'ruleId' in obj &&
     typeof obj.ruleId === 'string' &&
+    'field' in obj &&
     typeof obj.field === 'string' &&
+    'type' in obj &&
     typeof obj.type === 'string' &&
+    'onError' in obj &&
     typeof obj.onError === 'string'
   )
 }

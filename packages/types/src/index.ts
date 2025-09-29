@@ -1,46 +1,67 @@
 export interface Patient {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  medicalHistory: string;
-  consentGiven: boolean;
-  createdAt: Date;
+  id: string
+  name: string
+  email: string
+  phone: string
+  medicalHistory: string
+  consentGiven: boolean
+  createdAt: Date
 }
 
 export interface Appointment {
-  id: string;
-  patientId: string;
-  professionalId: string;
-  date: Date;
-  type: 'consultation' | 'treatment' | 'follow-up';
-  status: 'scheduled' | 'completed' | 'cancelled';
-  notes: string;
+  id: string
+  patientId: string
+  professionalId: string
+  date: Date
+  type: 'consultation' | 'treatment' | 'follow-up'
+  status: 'scheduled' | 'completed' | 'cancelled'
+  notes: string
 }
 
 export interface Professional {
-  id: string;
-  name: string;
-  specialty: string;
-  licenseNumber: string;
-  availability: Date[];
+  id: string
+  name: string
+  specialty: string
+  licenseNumber: string
+  availability: Date[]
 }
 
 export interface Treatment {
-  id: string;
-  name: string;
-  description: string;
-  duration: number; // in minutes
-  price: number;
-  category: 'aesthetic' | 'medical' | 'wellness';
+  id: string
+  name: string
+  description: string
+  duration: number // in minutes
+  price: number
+  category: 'aesthetic' | 'medical' | 'wellness'
 }
 
-export type HealthcareUser = Patient | Professional;
+export type HealthcareUser = Patient | Professional
 
-export * from './common.js';
-export * from './database.js';
-export * from './healthcare.js';
-export * from './api.js';
-export * from './guards.js';
-export * from './validation.js';
-export * from './auth.js';
+export type Database = {
+  public: {
+    Tables: {
+      patients: {
+        Row: Patient;
+        Insert: Omit<Patient, 'id' | 'createdAt'>;
+        Update: Partial<Patient>;
+      };
+      appointments: {
+        Row: Appointment;
+        Insert: Omit<Appointment, 'id'>;
+        Update: Partial<Appointment>;
+      };
+      // Add other tables as needed based on schema
+    };
+    Views: Record<string, unknown>;
+    Functions: Record<string, unknown>;
+    Enums: Record<string, unknown>;
+  };
+};
+
+export * from './common.js'
+export * from './database.js'
+export * from './healthcare.js'
+export * from './api.js'
+export * from './guards.js'
+export * from './validation.js'
+export * from './auth.js'

@@ -1,0 +1,276 @@
+{
+  "testMetadata": {
+    "timestamp": "2025-09-27T19:36:02.880Z",
+    "framework": "NeonPro Emergency Performance Testing",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "thresholds": {
+    "TOTAL_RESPONSE_TIME": 2000,
+    "WARNING_TIME": 1000,
+    "DATABASE_QUERY": 500,
+    "API_RESPONSE": 1000,
+    "UI_RENDERING": 500,
+    "NETWORK_LATENCY": 200
+  },
+  "metrics": {
+    "totalTests": 5,
+    "passedTests": 4,
+    "failedTests": 1,
+    "averageResponseTime": 1176.0462427999998,
+    "maxResponseTime": 2179.885168,
+    "minResponseTime": 617.741812
+  },
+  "results": [
+    {
+      "workflowId": "emergency-alert-creation",
+      "workflowName": "Emergency Alert Creation",
+      "critical": true,
+      "steps": [
+        {
+          "stepName": "ui-form-rendering",
+          "executionTime": 102.422337,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "form-validation",
+          "executionTime": 48.175866,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "alert-creation-api",
+          "executionTime": 240.34230399999998,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "broadcast-notification",
+          "executionTime": 169.34037599999994,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "response-logging",
+          "executionTime": 57.250504999999976,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 617.741812,
+      "passed": true,
+      "timestamp": "2025-09-27T19:35:56.287Z"
+    },
+    {
+      "workflowId": "patient-emergency-access",
+      "workflowName": "Patient Emergency Records Access",
+      "critical": true,
+      "steps": [
+        {
+          "stepName": "authentication",
+          "executionTime": 198.288909,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "patient-lookup",
+          "executionTime": 283.44205,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "emergency-data-query",
+          "executionTime": 460.52968899999996,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "records-rendering",
+          "executionTime": 169.400627,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "access-logging",
+          "executionTime": 94.197989,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 1205.954419,
+      "passed": true,
+      "timestamp": "2025-09-27T19:35:56.905Z"
+    },
+    {
+      "workflowId": "professional-verification",
+      "workflowName": "Professional Credential Verification",
+      "critical": true,
+      "steps": [
+        {
+          "stepName": "credential-lookup",
+          "executionTime": 299.2536479999999,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "license-validation",
+          "executionTime": 158.1750989999996,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "specialty-verification",
+          "executionTime": 172.1676849999999,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "status-check",
+          "executionTime": 106.1072449999997,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "audit-logging",
+          "executionTime": 79.1546800000001,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 814.9851779999999,
+      "passed": true,
+      "timestamp": "2025-09-27T19:35:58.111Z"
+    },
+    {
+      "workflowId": "treatment-recommendation",
+      "workflowName": "AI Emergency Treatment Recommendation",
+      "critical": true,
+      "steps": [
+        {
+          "stepName": "symptom-analysis",
+          "executionTime": 355.339199,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "medical-history-retrieval",
+          "executionTime": 586.3398090000001,
+          "status": "completed",
+          "error": null,
+          "passed": false
+        },
+        {
+          "stepName": "contraindication-check",
+          "executionTime": 261.1007169999998,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "recommendation-generation",
+          "executionTime": 661.6887860000002,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "safety-validation",
+          "executionTime": 315.3486299999995,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 2179.885168,
+      "passed": false,
+      "timestamp": "2025-09-27T19:35:58.926Z"
+    },
+    {
+      "workflowId": "evacuation-coordination",
+      "workflowName": "Emergency Evacuation Coordination",
+      "critical": true,
+      "steps": [
+        {
+          "stepName": "evacuation-trigger",
+          "executionTime": 120.77210800000012,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "area-assessment",
+          "executionTime": 127.21202799999992,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "patient-accounting",
+          "executionTime": 299.10006200000043,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "staff-coordination",
+          "executionTime": 288.3622869999999,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        },
+        {
+          "stepName": "external-services-notification",
+          "executionTime": 226.15134800000033,
+          "status": "completed",
+          "error": null,
+          "passed": true
+        }
+      ],
+      "totalTime": 1061.6646369999999,
+      "passed": true,
+      "timestamp": "2025-09-27T19:36:01.106Z"
+    }
+  ],
+  "compliance": {
+    "meets2sRequirement": true,
+    "criticalWorkflowsPass": false,
+    "overallPassRate": 0.8
+  },
+  "recommendations": [
+    {
+      "priority": "CRITICAL",
+      "workflow": "AI Emergency Treatment Recommendation",
+      "issue": "Emergency workflow exceeding 2000ms threshold",
+      "recommendation": "Optimize critical path, consider caching, database optimization, or infrastructure upgrade"
+    },
+    {
+      "priority": "HIGH",
+      "issue": "Multiple performance bottlenecks detected",
+      "details": [
+        {
+          "workflow": "AI Emergency Treatment Recommendation",
+          "step": "medical-history-retrieval",
+          "time": 586.3398090000001
+        }
+      ],
+      "recommendation": "Implement performance monitoring and optimize slowest steps"
+    }
+  ]
+}

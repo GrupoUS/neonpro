@@ -37,7 +37,7 @@
       "@neonpro/observability": ["./packages/observability/src"],
       "@neonpro/observability/*": ["./packages/observability/src/*"],
       "@neonpro/ui": ["./packages/ui/src"],
-      "@neonpro/ui/*": ["./packages/ui/src*"],
+      "@neonpro/ui/*": ["./packages/ui/src/*"],
       // Legacy package paths (for backward compatibility)
       "@neonpro/*": ["./packages/*/src"],
       "@apps/*": ["./apps/*/src"],

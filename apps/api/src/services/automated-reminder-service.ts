@@ -12,7 +12,7 @@
 
 import { prisma } from '../lib/prisma.js'
 import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol'
-import { AIAppointmentSchedulingService } from './ai-appointment-scheduling-service'
+import { AIAppointmentSchedulingService } from '@neonpro/healthcare-core'
 
 export interface ReminderConfig {
   id: string

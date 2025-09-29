@@ -14,8 +14,8 @@
 
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client'
 import { TRPCError } from '@trpc/server'
-import * as v from 'valibot'
-// Removed unused AppointmentReminderValibot import per linter
+import { z } from 'zod'
+// Removed unused AppointmentReminderZod import per linter
 
 import { weatherService } from '../../services/weather-service'
 import {
@@ -23,7 +23,7 @@ import {
   GetAppointmentSchema,
   ListAppointmentsSchema,
   UpdateAppointmentSchema,
-} from '../schemas'
+} from '../schemas.zod'
 import { healthcareProcedure, protectedProcedure, router } from '../trpc'
 
 // =====================================

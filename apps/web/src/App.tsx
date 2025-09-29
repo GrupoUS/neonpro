@@ -7,6 +7,10 @@ import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator.js'
 import { router } from './router.js'
 import './styles/healthcare-colors.css'
 import './styles/healthcare-mobile.css'
+import './styles/ui-theme.css'
+import { ThemeProvider } from './theme-provider.tsx'
+import { TRPCProvider } from './components/providers/TRPCProvider.tsx'
+import { AuthProvider } from './contexts/AuthContext.tsx'
 
 // Add typed definitions for PWA event and app cleanup to avoid `any` usage
 type AppEventHandler = (this: Window, ev: Event) => any
@@ -156,16 +160,28 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AccessibilityProvider>
-        <div className='min-h-screen healthcare-bg-primary'>
-          {/* PWA Components */}
-          <PWAInstallPrompt className='fixed bottom-4 right-4 z-50' />
-          <PWAOfflineIndicator className='fixed top-4 right-4 z-50' />
+      <ThemeProvider
+        brazilianOptimization={true}
+        aestheticClinicMode={true}
+        lgpdCompliance={true}
+        defaultTheme="system"
+        enableSystem
+      >
+        <AuthProvider>
+          <TRPCProvider>
+            <AccessibilityProvider>
+              <div className='min-h-screen healthcare-bg-primary'>
+                {/* PWA Components */}
+                <PWAInstallPrompt className='fixed bottom-4 right-4 z-50' />
+                <PWAOfflineIndicator className='fixed top-4 right-4 z-50' />
 
-          {/* Main Application Router */}
-          <RouterProvider router={router} />
-        </div>
-      </AccessibilityProvider>
+                {/* Main Application Router */}
+                <RouterProvider router={router} />
+              </div>
+            </AccessibilityProvider>
+          </TRPCProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

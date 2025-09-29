@@ -5,11 +5,11 @@
  * with compliance-aware design (LGPD/ANVISA/CFM) and extensible architecture.
  */
 
-// import type { RiskLevel, ComplianceFramework } from "../../audit/types";
+import type { RiskLevel as AuditRiskLevel, ComplianceFramework as AuditComplianceFramework } from "../audit/types"
 
 // Local type definitions to avoid circular dependencies
-type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
-type ComplianceFramework = 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR'
+type RiskLevel = AuditRiskLevel
+type ComplianceFramework = AuditComplianceFramework
 
 /**
  * Analytics event interface for tracking user interactions and system events
@@ -99,7 +99,10 @@ export type MetricStatus =
   | 'calculating'
 
 // Re-export types from audit module to avoid conflicts
-export type { ComplianceFramework, RiskLevel } from '../../audit/types'
+export type { ComplianceFramework as AuditComplianceFramework, RiskLevel as AuditRiskLevel } from '../audit/types'
+
+// Export local type aliases for compatibility
+export type { RiskLevel, ComplianceFramework }
 
 /**
  * Base metric interface - foundation for all analytics metrics
@@ -389,7 +392,7 @@ function extractRegion(metadata?: Record<string, unknown>): string | undefined {
     return `${location.city}, ${location.state}`
   }
 
-  return location?.state || location?.region
+  return (location?.state as string) || (location?.region as string)
 }
 
 /**
@@ -540,20 +543,21 @@ export function aggregateMetrics(
       return Math.max(...values)
 
     case 'median':
-      const sorted = values.sort((a, _b) => a - _b)
+      const sorted = values.filter(v => v !== undefined).sort((a, b) => (a || 0) - (b || 0))
       const mid = Math.floor(sorted.length / 2)
-      return sorted.length % 2 === 0
-        ? (sorted[mid - 1] + sorted[mid]) / 2
-        : sorted[mid]
+      const midValue = sorted.length % 2 === 0
+        ? ((sorted[mid - 1] || 0) + (sorted[mid] || 0)) / 2
+        : (sorted[mid] || 0)
+      return midValue
 
     case 'percentile':
       // Default to 95th percentile
-      const sortedValues = values.sort((a, _b) => a - _b)
+      const sortedValues = values.filter(v => v !== undefined).sort((a, b) => (a || 0) - (b || 0))
       const index = Math.ceil(0.95 * sortedValues.length) - 1
-      return sortedValues[index]
+      return sortedValues[index] || 0
 
     case 'last_value':
-      return values[values.length - 1]
+      return values[values.length - 1] || 0
 
     default:
       return values.reduce((sum, _val) => sum + _val, 0) / values.length

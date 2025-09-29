@@ -28,7 +28,7 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
     <Dialog {...props}>
       <DialogContent className='overflow-hidden p-0 shadow-lg'>
         <Command className='[&[cmdk-group-heading]]:px-2 [&[cmdk-group-heading]]:font-medium [&[cmdk-group-heading]]:text-muted-foreground [&[cmdk-group]:not([hidden])~[cmdk-group]]:pt-0 [&[cmdk-group]]:px-2 [&[cmdk-input-wrapper]svg]:h-5 [&[cmdk-input-wrapper]svg]:w-5 [&[cmdk-input]]:h-12 [&[cmdk-item]]:px-2 [&[cmdk-item]]:py-3 [&[cmdk-item]svg]:h-5 [&[cmdk-item]svg]:w-5'>
-          {children}
+          {children as any}
         </Command>
       </DialogContent>
     </Dialog>
@@ -37,8 +37,8 @@ const CommandDialog = ({ children, ...props }: DialogProps) => {
 
 const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
-  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input> & { ariaLabel?: string }
+>(({ className, ariaLabel = 'Search command', ...props }, ref) => (
   <div className='flex items-center border-b px-3' data-cmdk-input-wrapper=''>
     <Search className='mr-2 h-4 w-4 shrink-0 opacity-50' />
     <CommandPrimitive.Input
@@ -47,6 +47,7 @@ const CommandInput = React.forwardRef<
         'flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
         className,
       )}
+      aria-label={ariaLabel}
       {...props}
     />
   </div>
@@ -149,5 +150,6 @@ export {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
+  CommandShortcut
 }
+

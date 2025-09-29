@@ -61,3 +61,19 @@ process.on('unhandledRejection', (reason, _promise) => {
 })
 
 startServer()
+
+export { AppRouter } from './trpc/router'
+
+export {
+  createAdminClient,
+  createServerClient,
+  createUserClient,
+  getSupabaseAnonKey,
+  getSupabaseServiceKey,
+  getSupabaseUrl,
+  HealthcareAdminClient,
+  HealthcareServerClient,
+  HealthcareUserClient,
+  supabaseAdmin,
+  supabaseClient,
+} from './clients/supabase'
