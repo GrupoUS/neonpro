@@ -31,10 +31,14 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "types:generate": "supabase gen types typescript --local > src/generated/database.ts"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4",
+    "zod": "^3.22.0"
   },
   "files": [
     "dist"

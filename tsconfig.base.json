@@ -8,7 +8,6 @@
     "allowJs": true,
     "checkJs": false,
     "jsx": "react-jsx",
-    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,

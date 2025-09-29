@@ -11,6 +11,9 @@ vi.mock('@supabase/supabase-js', () => ({
   }))
 }));
 
+// Import the mocked function
+import { createClient } from '@supabase/supabase-js';
+
 describe('Database Client', () => {
   const mockConfig = {
     supabaseUrl: 'https://test.supabase.co',
@@ -25,7 +28,8 @@ describe('Database Client', () => {
     });
 
     it('should include healthcare application headers', () => {
-      const { createClient } = require('@supabase/supabase-js');
+      // Clear any previous calls
+      vi.mocked(createClient).mockClear();
       
       createSupabaseClient(mockConfig);
       

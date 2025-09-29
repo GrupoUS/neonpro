@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { authenticate, verifyJWT, extractClinicId } from '../auth/index.js';
+import { authenticate, extractClinicId } from '../auth/index.js';
 
 describe('Authentication Core', () => {
   describe('authenticate', () => {

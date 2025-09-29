@@ -45,9 +45,9 @@
     "@hono/zod-openapi": "^0.18.4",
     "@hono/zod-validator": "^0.2.2",
     "@neonpro/database": "workspace:*",
-    "@neonpro/healthcare-core": "workspace:*",
-    "@neonpro/security": "workspace:*",
-    "@neonpro/utils": "workspace:*",
+    // Removed: @neonpro/healthcare-core - package no longer exists
+  // Removed: @neonpro/security - package no longer exists
+  // Removed: @neonpro/utils - package no longer exists
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "^0.64.1",
     "@opentelemetry/exporter-prometheus": "^0.205.0",
