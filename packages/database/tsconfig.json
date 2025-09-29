@@ -27,22 +27,13 @@
     "baseUrl": ".",
     "tsBuildInfoFile": "./.tsbuildinfo-database",
     "paths": {
-      "@neonpro/healthcare-core": ["../healthcare-core/src"],
-      "@neonpro/healthcare-core/*": ["../healthcare-core/src/*"],
-      "@neonpro/utils": ["../utils/src"],
-      "@neonpro/utils/*": ["../utils/src/*"],
       "@neonpro/types": ["../types/src"],
-      "@neonpro/types/*": ["../types/src/*"],
-      "@neonpro/shared": ["../shared/src"],
-      "@neonpro/shared/*": ["../shared/src/*"]
+      "@neonpro/types/*": ["../types/src/*"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"],
   "references": [
-    { "path": "../types" },
-    { "path": "../shared" },
-    { "path": "../utils" },
-    { "path": "../healthcare-core" }
+    { "path": "../types" }
   ]
 }

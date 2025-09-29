@@ -1,5 +1,3 @@
-import { jwt, verify } from 'hono/jwt';
-
 export interface JWTPayload {
   sub: string;           // User ID
   clinic_id: string;     // Current clinic context
@@ -35,7 +33,12 @@ export const verifyJWT = async (token: string): Promise<JWTPayload> => {
   // In production, this would verify against Supabase's public key
   // For now, we'll use a simple decode (replace with proper verification)
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid JWT format');
+    }
+    
+    const payload = JSON.parse(atob(parts[1]!));
     return payload as JWTPayload;
   } catch (error) {
     throw new Error('Invalid JWT format');
@@ -44,7 +47,12 @@ export const verifyJWT = async (token: string): Promise<JWTPayload> => {
 
 export const extractClinicId = (token: string): string | null => {
   try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      return null;
+    }
+    
+    const payload = JSON.parse(atob(parts[1]!));
     return payload.clinic_id || null;
   } catch {
     return null;

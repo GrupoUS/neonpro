@@ -34,7 +34,7 @@
     "sync": "npm run db:types && npm run build"
   },
   "dependencies": {
-    "@neonpro/utils": "workspace:*",
+    "@neonpro/types": "workspace:*",
     "@supabase/supabase-js": "2.58.0"
   },
   "devDependencies": {

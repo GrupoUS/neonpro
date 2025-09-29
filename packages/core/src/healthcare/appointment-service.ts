@@ -1,5 +1,4 @@
-import { createEdgeClient, createServiceClient } from '@neonpro/database';
-import { Database } from '@neonpro/types';
+import { createSupabaseClient, createSupabaseAdminClient, type DatabaseConfig } from '@neonpro/database';
 import { z } from 'zod';
 
 const AppointmentSchema = z.object({
@@ -18,15 +17,14 @@ export type CreateAppointment = z.infer<typeof AppointmentSchema>;
 
 export class AppointmentService {
   constructor(
-    private supabaseUrl: string,
-    private supabaseKey: string,
+    private config: DatabaseConfig,
     private useServiceRole = false
   ) {}
 
   private getClient() {
     return this.useServiceRole
-      ? createServiceClient(this.supabaseUrl, this.supabaseKey)
-      : createEdgeClient(this.supabaseUrl, this.supabaseKey);
+      ? createSupabaseAdminClient(this.config)
+      : createSupabaseClient(this.config);
   }
 
   async list(clinicId: string) {
