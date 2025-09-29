@@ -1,4 +1,3 @@
-import * as v from 'valibot'
 import { z } from 'zod'
 
 // Type guards for common patterns
@@ -59,18 +58,6 @@ export const safeParse = <T>(
   try {
     const result = schema.safeParse(value)
     return result.success ? result.data : null
-  } catch {
-    return null
-  }
-}
-
-export const safeParseValibot = <T>(
-  schema: v.GenericSchema,
-  value: unknown,
-): T | null => {
-  try {
-    const result = v.safeParse(schema, value)
-    return result.success ? (result.output as T) : null
   } catch {
     return null
   }

@@ -9,7 +9,8 @@ import { Button } from '@/components/ui/button.js'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
 import { Progress } from '@/components/ui/progress.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { trpc } from '@/lib/trpc.js'
+import { trpc } from '@/components/providers/TRPCProvider.js'
+import { useHealthcareQuery, useHealthcareMutation } from '@/hooks/useTRPCHealthcare.js'
 import {
   type TreatmentPackage,
   type TreatmentPackageResponse,
@@ -41,26 +42,29 @@ export function TreatmentPackageScheduler(
   const [startDate, setStartDate] = useState<string>('')
   const [preferences, setPreferences] = useState<Record<string, any>>({})
 
-  // Fetch treatment packages
-  const { data: packagesData, isLoading: packagesLoading } = (trpc as any).aestheticScheduling
-    .getTreatmentPackages.useQuery(
-      { limit: 100, offset: 0 },
-      {
-        select: (data: any) => data.packages,
-      },
-    )
+  // Fetch treatment packages with healthcare compliance
+  const { data: packagesData, isLoading: packagesLoading, complianceError } = useHealthcareQuery(
+    'aestheticScheduling.getTreatmentPackages',
+    { limit: 100, offset: 0 },
+    {
+      select: (data: any) => data.packages,
+    }
+  )
 
-  // Schedule treatment package mutation
-  const scheduleMutation = (trpc as any).aestheticScheduling.scheduleTreatmentPackage.useMutation({
-    onSuccess: (data: any) => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] })
-      queryClient.invalidateQueries({ queryKey: ['patients', patientId] })
-      onSuccess?.(data)
-    },
-    onError: (error: any) => {
-      onError?.(error as Error)
-    },
-  })
+  // Schedule treatment package mutation with healthcare compliance
+  const scheduleMutation = useHealthcareMutation(
+    'aestheticScheduling.scheduleTreatmentPackage',
+    {
+      onSuccess: (data: any) => {
+        queryClient.invalidateQueries({ queryKey: ['appointments'] })
+        queryClient.invalidateQueries({ queryKey: ['patients', patientId] })
+        onSuccess?.(data)
+      },
+      onError: (error: any) => {
+        onError?.(error as Error)
+      },
+    }
+  )
 
   const handlePackageSelect = (pkg: any) => {
     setSelectedPackage(pkg)
@@ -84,6 +88,21 @@ export function TreatmentPackageScheduler(
   }
 
   const isSubmitting = scheduleMutation.isLoading
+
+  // Show compliance error if present
+  if (complianceError) {
+    return (
+      <div className='max-w-6xl mx-auto p-6'>
+        <Alert variant="destructive">
+          <XCircle className="h-4 w-4" />
+          <AlertTitle>Erro de Conformidade</AlertTitle>
+          <AlertDescription>
+            {complianceError}
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
 
   if (packagesLoading) {
     return (

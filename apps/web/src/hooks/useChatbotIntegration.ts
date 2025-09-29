@@ -1,12 +1,13 @@
 /**
  * Chatbot Integration Hook
- * 
+ *
  * Main integration hook for chatbot agents to access all data with real-time capabilities
  * Combines all chatbot data access patterns into a single, easy-to-use interface
  */
 
 import { useEffect, useState, useCallback } from 'react'
 import { ChatbotAgentDataAccess, type ChatbotAgentContext, type AgentDataResponse } from '../services/chatbot-agent-data'
+import useCopilotChat from '@copilotkit/react-core';
 import {
   useChatbotNotifications,
   useChatbotServiceCategories,
@@ -17,289 +18,70 @@ import {
   useScheduleNotification,
 } from './realtime/useChatbotRealtime'
 
-export interface ChatbotIntegrationOptions {
-  context: ChatbotAgentContext
-  enableRealtime?: boolean
-  autoRefresh?: boolean
-  refreshInterval?: number
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
 }
 
-export interface ChatbotDataState {
-  notifications: any[]
-  serviceCategories: any[]
-  appointmentTemplates: any[]
-  serviceTemplates: any[]
-  professionalServices: any[]
-  dashboard: any
-  isLoading: boolean
-  error: string | null
+interface Options {
+  initialMessages?: ChatMessage[];
+  context?: ChatbotAgentContext;
+  enableRealtime?: boolean;
+  autoRefresh?: boolean;
+  refreshInterval?: number;
 }
 
-/**
- * Main integration hook for chatbot agents
- * 
- * @example
- * ```typescript
- * const {
- *   data,
- *   agent,
- *   actions,
- *   isConnected
- * } = useChatbotIntegration({
- *   context: {
- *     clinicId: 'clinic-123',
- *     sessionId: 'session-456',
- *     userRole: 'patient'
- *   },
- *   enableRealtime: true
- * })
- * 
- * // Agent can now access all data
- * const notifications = await agent.getUpcomingNotifications()
- * const services = await agent.getServiceCategories()
- * 
- * // Or use real-time hooks
- * const { data: realtimeNotifications } = data.notifications
- * ```
- */
-export function useChatbotIntegration(options: ChatbotIntegrationOptions) {
-  const { context, enableRealtime = true, autoRefresh = true, refreshInterval = 30000 } = options
+export function useChatbotIntegration(options: Options = {}) {
+  const { initialMessages = [], context, enableRealtime = true, autoRefresh = true, refreshInterval = 30000 } = options;
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
+  const copilotChat = useCopilotChat({
+    initialMessages: initialMessages.map(msg => ({ role: msg.role, content: msg.content })),
+  });
+  const { messages: copilotMessages, append, ...copilot } = copilotChat;
 
-  // Initialize agent data access
-  const [agent] = useState(() => new ChatbotAgentDataAccess(context))
-  
-  // Real-time hooks (only enabled if enableRealtime is true)
-  const notificationsQuery = useChatbotNotifications(
-    enableRealtime ? { status: 'scheduled', limit: 20 } : undefined
-  )
-  
-  const serviceCategoriesQuery = useChatbotServiceCategories(
-    context.clinicId,
-    enableRealtime ? { includeStats: true } : undefined
-  )
-  
-  const appointmentTemplatesQuery = useChatbotAppointmentTemplates(
-    context.clinicId,
-    enableRealtime ? { isActive: true } : undefined
-  )
-  
-  const serviceTemplatesQuery = useChatbotServiceTemplates(
-    context.clinicId,
-    enableRealtime ? { isActive: true } : undefined
-  )
-  
-  const professionalServicesQuery = useChatbotProfessionalServices(
-    enableRealtime ? { clinicId: context.clinicId, isActive: true } : undefined
-  )
-  
-  const dashboardQuery = useChatbotDashboard(context.clinicId)
-  
-  const scheduleNotificationMutation = useScheduleNotification()
+  // Call realtime hooks unconditionally with correct params
+  const clinicId = context?.clinicId || 'default-clinic';
+  const notifications = useChatbotNotifications({ clinicId, type: 'confirmation', limit: 10 });
+  const serviceCategories = useChatbotServiceCategories(clinicId);
+  const appointmentTemplates = useChatbotAppointmentTemplates(clinicId);
+  const serviceTemplates = useChatbotServiceTemplates(clinicId);
+  const professionalServices = useChatbotProfessionalServices({ clinicId });
+  const dashboard = useChatbotDashboard(clinicId);
+  const scheduleNotification = useScheduleNotification();
 
-  // Connection status
-  const isConnected = enableRealtime ? 
-    !notificationsQuery.isError && 
-    !serviceCategoriesQuery.isError && 
-    !dashboardQuery.isError : 
-    true
-
-  // Aggregate loading state
-  const isLoading = enableRealtime ? (
-    notificationsQuery.isLoading ||
-    serviceCategoriesQuery.isLoading ||
-    appointmentTemplatesQuery.isLoading ||
-    serviceTemplatesQuery.isLoading ||
-    professionalServicesQuery.isLoading ||
-    dashboardQuery.isLoading
-  ) : false
-
-  // Aggregate error state
-  const error = enableRealtime ? (
-    notificationsQuery.error?.message ||
-    serviceCategoriesQuery.error?.message ||
-    appointmentTemplatesQuery.error?.message ||
-    serviceTemplatesQuery.error?.message ||
-    professionalServicesQuery.error?.message ||
-    dashboardQuery.error?.message ||
-    null
-  ) : null
-
-  // Data state
-  const data: ChatbotDataState = {
-    notifications: notificationsQuery.data || [],
-    serviceCategories: serviceCategoriesQuery.data || [],
-    appointmentTemplates: appointmentTemplatesQuery.data || [],
-    serviceTemplates: serviceTemplatesQuery.data || [],
-    professionalServices: professionalServicesQuery.data || [],
-    dashboard: dashboardQuery.data || {},
-    isLoading,
-    error,
-  }
-
-  // Actions for the chatbot
-  const actions = {
-    /**
-     * Schedule notification via agent
-     */
-    scheduleNotification: useCallback(async (notification: {
-      type: 'reminder_24h' | 'reminder_1h' | 'confirmation' | 'followup'
-      recipientEmail?: string
-      recipientPhone?: string
-      title: string
-      message: string
-      scheduledFor: Date
-      metadata?: Record<string, any>
-    }): Promise<AgentDataResponse> => {
-      try {
-        if (enableRealtime) {
-          const result = await scheduleNotificationMutation.mutateAsync({
-            notificationType: notification.type,
-            recipientEmail: notification.recipientEmail,
-            recipientPhone: notification.recipientPhone,
-            title: notification.title,
-            message: notification.message,
-            scheduledFor: notification.scheduledFor,
-            metadata: notification.metadata,
-          })
-          return {
-            data: result,
-            success: true,
-            message: 'Notificação agendada com sucesso!',
-            context: {
-              source: 'realtime_mutation',
-              timestamp: new Date().toISOString(),
-              compliance: { lgpd: true, anvisa: true, cfm: true }
-            }
-          }
-        } else {
-          return await agent.scheduleNotification(notification)
-        }
-      } catch (error: any) {
-        return {
-          data: null,
-          success: false,
-          message: error.message || 'Erro ao agendar notificação',
-          context: {
-            source: 'error',
-            timestamp: new Date().toISOString(),
-            compliance: { lgpd: true, anvisa: true, cfm: true }
-          }
-        }
-      }
-    }, [agent, scheduleNotificationMutation, enableRealtime]),
-
-    /**
-     * Get fresh data (bypasses cache)
-     */
-    refreshData: useCallback(async () => {
-      if (enableRealtime) {
-        await Promise.all([
-          notificationsQuery.refetch(),
-          serviceCategoriesQuery.refetch(),
-          appointmentTemplatesQuery.refetch(),
-          serviceTemplatesQuery.refetch(),
-          professionalServicesQuery.refetch(),
-          dashboardQuery.refetch(),
-        ])
-      }
-    }, [
-      enableRealtime,
-      notificationsQuery,
-      serviceCategoriesQuery,
-      appointmentTemplatesQuery,
-      serviceTemplatesQuery,
-      professionalServicesQuery,
-      dashboardQuery
-    ]),
-
-    /**
-     * Search across all data
-     */
-    searchData: useCallback(async (query: string, options?: {
-      entityTypes?: ('notifications' | 'categories' | 'templates' | 'professionals')[]
-      limit?: number
-    }): Promise<AgentDataResponse> => {
-      return await agent.searchData(query, options)
-    }, [agent]),
-
-    /**
-     * Get contextual help based on current conversation
-     */
-    getContextualHelp: useCallback((intent?: string): string[] => {
-      const suggestions: string[] = []
-      
-      if (data.notifications.length > 0) {
-        suggestions.push(`Há ${data.notifications.length} notificações agendadas`)
-      }
-      
-      if (data.serviceCategories.length > 0) {
-        suggestions.push(`A clínica oferece ${data.serviceCategories.length} categorias de serviços`)
-      }
-      
-      if (data.appointmentTemplates.length > 0) {
-        suggestions.push(`Há ${data.appointmentTemplates.length} tipos de agendamento disponíveis`)
-      }
-
-      if (intent === 'scheduling') {
-        suggestions.push('Posso ajudar com agendamentos, reagendamentos ou cancelamentos')
-      }
-
-      if (intent === 'information') {
-        suggestions.push('Posso fornecer informações sobre serviços, profissionais e horários')
-      }
-
-      return suggestions
-    }, [data])
-  }
-
-  // Auto-refresh mechanism
+  // Use effect for side effects
   useEffect(() => {
-    if (autoRefresh && enableRealtime && refreshInterval > 0) {
-      const interval = setInterval(() => {
-        actions.refreshData()
-      }, refreshInterval)
-
-      return () => clearInterval(interval)
+    if (context && enableRealtime && notifications.data) {
+      console.log('Realtime notifications updated', notifications.data);
     }
-  }, [autoRefresh, enableRealtime, refreshInterval, actions.refreshData])
+  }, [context, enableRealtime, notifications.data]);
 
-  // Log connection status changes
-  useEffect(() => {
-    console.log('[CHATBOT-INTEGRATION] Connection status changed:', {
-      isConnected,
-      isLoading,
-      hasError: !!error,
-      clinicId: context.clinicId,
-      sessionId: context.sessionId,
-    })
-  }, [isConnected, isLoading, error, context.clinicId, context.sessionId])
+  const sendMessage = async (content: string) => {
+    const userMessage: ChatMessage = { role: 'user', content };
+    setMessages(prev => [...prev, userMessage]);
+    append([{ role: 'user', content }]);
+  };
+
+  const clearChat = () => {
+    setMessages([]);
+    // Reset CopilotChat if needed
+  };
 
   return {
-    // Data access
-    data,
-    agent,
-    actions,
-    
-    // Status
-    isConnected,
-    isLoading,
-    error,
-    
-    // Real-time queries (for advanced usage)
-    queries: enableRealtime ? {
-      notifications: notificationsQuery,
-      serviceCategories: serviceCategoriesQuery,
-      appointmentTemplates: appointmentTemplatesQuery,
-      serviceTemplates: serviceTemplatesQuery,
-      professionalServices: professionalServicesQuery,
-      dashboard: dashboardQuery,
-    } : null,
-    
-    // Mutations
-    mutations: {
-      scheduleNotification: scheduleNotificationMutation,
-    }
-  }
+    messages,
+    sendMessage,
+    clearChat,
+    isLoading: copilot.isLoading,
+    context,
+    notifications,
+    serviceCategories,
+    appointmentTemplates,
+    serviceTemplates,
+    professionalServices,
+    dashboard,
+    scheduleNotification,
+    ...copilot,
+  };
 }
 
 // Export convenience hook for basic chatbot usage

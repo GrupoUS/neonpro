@@ -47,7 +47,7 @@ export function FontProvider({
   })
   
   const [loadingProgress, setLoadingProgress] = useState(0)
-  const { optimization, shouldPreload } = useFontOptimization()
+  const { optimization } = useFontOptimization()
 
   // Inject CSS font-face rules
   useEffect(() => {
@@ -131,20 +131,20 @@ export function FontProvider({
   }, [])
 
   // Handle font loading errors gracefully
-  const handleFontError = (error: Error) => {
-    console.error('Font loading error:', error)
-    
-    // Apply fallback strategies
-    document.documentElement.classList.add('font-fallback')
-    
-    // Log error for debugging (without PII)
-    if (enableAnalytics && constitutionalCompliance.lgpdMode) {
-      console.log('Font fallback activated', {
-        errorType: error.name,
-        timestamp: new Date().toISOString()
-      })
-    }
-  }
+  // const handleFontError = (error: Error) => {
+  //   console.error('Font loading error:', error)
+  //   
+  //   // Apply fallback strategies
+  //   document.documentElement.classList.add('font-fallback')
+  //   
+  //   // Log error for debugging (without PII)
+  //   if (enableAnalytics && constitutionalCompliance.lgpdMode) {
+  //     console.log('Font fallback activated', {
+  //       errorType: error.name,
+  //       timestamp: new Date().toISOString()
+  //     })
+  //   }
+  // }
 
   // Get loading strategy for current network conditions
   const getLoadingStrategy = () => {
@@ -160,7 +160,7 @@ export function FontProvider({
     }
   }
 
-  const loadingStrategy = getLoadingStrategy()
+  // const loadingStrategy = getLoadingStrategy()
 
   return (
     <div className="font-provider" data-font-status={fontStatus.valid ? 'loaded' : 'loading'}>
@@ -189,7 +189,7 @@ export function FontProvider({
       {constitutionalCompliance.emergencyMode && (
         <div className="emergency-font-optimization">
           {/* High contrast fonts for emergency situations */}
-          <style jsx>{`
+          <style>{`
             .emergency-font-optimization * {
               font-weight: 600 !important;
               letter-spacing: 0.02em !important;
@@ -204,7 +204,7 @@ export function FontProvider({
       {/* Fallback handling */}
       {!fontStatus.valid && fontStatus.errors.length > 0 && (
         <div className="font-fallback-notice">
-          <style jsx>{`
+          <style>{`
             .font-fallback-notice {
               position: fixed;
               top: 20px;

@@ -84,7 +84,8 @@
       "mcp__chrome-devtools__select_page",
       "mcp__chrome-devtools__wait_for",
       "mcp__chrome-devtools__performance_start_trace",
-      "mcp__chrome-devtools__performance_analyze_insight"
+      "mcp__chrome-devtools__performance_analyze_insight",
+      "mcp__chrome-devtools__resize_page"
     ],
     "deny": [
       "Edit",

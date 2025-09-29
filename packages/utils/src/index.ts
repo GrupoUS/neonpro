@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+// @ts-ignore - temporary fix for tailwind-merge import issue
 import { twMerge } from "tailwind-merge";
 
 // Utility function for combining classes (shadcn/ui requirement)

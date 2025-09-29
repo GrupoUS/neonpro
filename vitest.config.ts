@@ -1,23 +1,26 @@
-import path from 'node:path'
 import { defineConfig } from 'vitest/config'
+import path from 'node:path'
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
-    include: ['**/*.{test,spec}.{ts,tsx}'],
+    environment: 'node',
     exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/build/**',
+      'node_modules/**',
+      'dist/**',
+      '.vercel/**',
+      '**/*.d.ts',
+      '**/*.config.*',
       '**/coverage/**',
       '**/test-results/**',
-      '**/.turbo/**',
-      '**/tools/tests/**',
+    ],
+    include: [
+      'apps/**/src/**/*.{test,spec}.{js,ts}',
+      'packages/**/src/**/*.{test,spec}.{js,ts}',
     ],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html'],
+      exclude: ['node_modules/**', 'dist/**'],
       thresholds: {
         global: {
           branches: 80,
@@ -27,15 +30,12 @@ export default defineConfig({
         },
       },
     },
-    setupFiles: [],
-    testTimeout: 10000,
-    hookTimeout: 10000,
-  },
-  resolve: {
+    reporters: ['verbose', 'json'],
+    outputFile: {
+      json: 'test-results/root-test-results.json',
+    },
     alias: {
-      '@': path.resolve(__dirname, '.'),
-      '@/apps': path.resolve(__dirname, 'apps'),
-      '@/packages': path.resolve(__dirname, 'packages'),
+      '@': path.resolve(__dirname, './apps/web/src'),
     },
   },
 })

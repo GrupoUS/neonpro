@@ -32,3 +32,6 @@ export * from './services/analytics'
 
 // Analytics Schemas
 export * from './schemas/analytics'
+
+// LGPD Compliance (Zod v4)
+export * from './lgpd.zod'

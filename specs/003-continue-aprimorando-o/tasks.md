@@ -4,6 +4,7 @@
 **Prerequisites**: plan.md, research.md, data-model.md, contracts/, quickstart.md, and UI components integration from consolidated 002 specification
 
 ## Execution Flow (main)
+
 ```
 1. Load plan.md from feature directory
    → Extract: tech stack, libraries, structure
@@ -30,35 +31,41 @@
 ```
 
 ## Format: `[ID] [P?] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 - **Monorepo structure**: `apps/`, `packages/` at repository root
 - **Theme configuration**: `packages/ui/`
 - **Apps**: `apps/web/`, `apps/api/`
 - **Tests**: Root level `tests/` directories
 
 ## Phase 3.1: Setup & Dependencies
-- [ ] T001 Setup multiple registry support in components.json for Magic UI, Aceternity UI, and Kokonut UI
-- [ ] T002 [P] Install Framer Motion v11.0.0 compatibility across all target UI libraries
-- [ ] T003 [P] Install @tabler/icons-react dependency for Aceternity UI Sidebar compatibility
-- [ ] T004 Configure pnpm workspace for theme and component dependency management
-- [ ] T005 [P] Install theme validation and testing dependencies (Vitest, Playwright)
+
+- [x] T001 Setup multiple registry support in components.json for Magic UI, Aceternity UI, and Kokonut UI
+- [x] T002 [P] Install Framer Motion v11.0.0 compatibility across all target UI libraries
+- [x] T003 [P] Install @tabler/icons-react dependency for Aceternity UI Sidebar compatibility
+- [x] T004 Configure pnpm workspace for theme and component dependency management
+- [x] T005 [P] Install theme validation and testing dependencies (Vitest, Playwright)
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
+
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
-- [ ] T006 [P] Contract test theme installation API in apps/web/src/__tests__/contract/test_theme_installation.ts
-- [ ] T007 [P] Contract test font installation API in apps/web/src/__tests__/contract/test_font_installation.ts  
-- [ ] T008 [P] Contract test theme configuration API in apps/web/src/__tests__/contract/test_theme_configuration.ts
-- [ ] T009 [P] Contract test theme validation API in apps/web/src/__tests__/contract/test_theme_validation.ts
-- [ ] T010 [P] Integration test theme switching workflow in apps/web/src/__tests__/integration/test_theme_switching.ts
-- [ ] T011 [P] Integration test component compatibility with NEONPRO theme in apps/web/src/__tests__/integration/test_component_compatibility.ts
-- [ ] T012 [P] Integration test light/dark mode across all integrated components in apps/web/src/__tests__/integration/test_theme_consistency.ts
-- [ ] T013 [P] Integration test font loading performance and validation in apps/web/src/__tests__/integration/test_font_loading.ts
-- [ ] T014 [P] Integration test WCAG 2.1 AA compliance across all components in apps/web/src/__tests__/integration/test_accessibility.ts
+
+- [x] T006 [P] Contract test theme installation API in apps/web/src/**tests**/contract/test_theme_installation.ts
+- [x] T007 [P] Contract test font installation API in apps/web/src/**tests**/contract/test_font_installation.ts
+- [x] T008 [P] Contract test theme configuration API in apps/web/src/**tests**/contract/test_theme_configuration.ts
+- [x] T009 [P] Contract test theme validation API in apps/web/src/**tests**/contract/test_theme_validation.ts
+- [x] T010 [P] Integration test theme switching workflow in apps/web/src/**tests**/integration/test_theme_switching.ts
+- [x] T011 [P] Integration test component compatibility with NEONPRO theme in apps/web/src/**tests**/integration/test_component_compatibility.ts
+- [x] T012 [P] Integration test light/dark mode across all integrated components in apps/web/src/**tests**/integration/test_theme_consistency.ts
+- [x] T013 [P] Integration test font loading performance and validation in apps/web/src/**tests**/integration/test_font_loading.ts
+- [x] T014 [P] Integration test WCAG 2.1 AA compliance across all components in apps/web/src/**tests**/integration/test_accessibility.ts
 
 ## Phase 3.3: NEONPRO Theme Installation (ONLY after tests are failing)
+
 - [x] T015 Install NEONPRO theme from tweakcn registry using shadcn CLI in packages/ui/
 - [x] T016 Create theme package structure in packages/ui/ with proper package.json
 - [x] T017 [P] Setup local font installation for Inter, Lora, and Libre Baskerville fonts in public/fonts/
@@ -69,6 +76,7 @@
 - [x] T022 Configure theme validation for WCAG 2.1 AA compliance
 
 ## Phase 3.4: UI Components Integration (ONLY after theme is installed)
+
 - [x] T023 [P] Install Magic Card component from Magic UI using shadcn CLI
 - [x] T024 [P] Install Animated Theme Toggler from Magic UI with theme provider compatibility
 - [x] T025 [P] Install Gradient Button from Kokonut UI using CLI installation method
@@ -81,42 +89,47 @@
 - [x] T032 Verify Framer Motion v11.0.0 compatibility across all installed components
 
 ## Phase 3.5: Monorepo Integration
-- [ ] T033 Create symlinks from packages/ui to all apps (apps/web, apps/api, etc.)
-- [ ] T034 [P] Update root layouts to include ThemeProvider in apps/web/src/app/layout.tsx
-- [ ] T035 [P] Update root layouts to include ThemeProvider in apps/api/src/app/layout.tsx
-- [ ] T036 Configure theme inheritance for existing shadcn components
-- [ ] T037 Create theme configuration management system in packages/ui/src/config/theme.config.ts
-- [ ] T038 [P] Update package.json files to ensure proper dependency resolution across monorepo
+
+- [x] T033 Create symlinks from packages/ui to all apps (apps/web, apps/api, etc.)
+- [x] T034 [P] Update root layouts to include ThemeProvider in apps/web/src/app/layout.tsx
+- [x] T035 [P] Update root layouts to include ThemeProvider in apps/api/src/app/layout.tsx
+- [x] T036 Configure theme inheritance for existing shadcn components
+- [x] T037 Create theme configuration management system in packages/ui/src/config/theme.config.ts
+- [x] T038 [P] Update package.json files to ensure proper dependency resolution across monorepo
 
 ## Phase 3.6: Configuration & Customization
-- [ ] T039 Create theme customization system for aesthetic clinic branding
-- [ ] T040 [P] Configure component-specific theme variants for each UI library
-- [ ] T041 Setup icon library coordination between Lucide React and @tabler/icons-react
-- [ ] T042 Create theme validation utilities for development time checks
-- [ ] T043 Configure performance optimization for theme switching (<500ms)
-- [ ] T044 Create theme migration utilities for existing components
+
+- [x] T039 Create theme customization system for aesthetic clinic branding
+- [x] T040 [P] Configure component-specific theme variants for each UI library
+- [x] T041 Setup icon library coordination between Lucide React and @tabler/icons-react
+- [x] T042 Create theme validation utilities for development time checks
+- [x] T043 Configure performance optimization for theme switching (<500ms)
+- [x] T044 Create theme migration utilities for existing components
 
 ## Phase 3.7: Validation & Testing
-- [ ] T045 [P] Validate theme installation success and functionality across all apps
-- [ ] T046 [P] Test component integration with existing monorepo structure
-- [ ] T047 [P] Verify no dependency conflicts between multiple UI libraries
-- [ ] T048 [P] Validate light/dark mode switching across all integrated components
-- [ ] T049 [P] Test build process completes successfully without errors
-- [ ] T050 [P] Measure performance impact (bundle size increase < 10%)
-- [ ] T051 [P] Verify WCAG 2.1 AA+ accessibility compliance for all components
-- [ ] T052 Test theme persistence across browser sessions
+
+- [x] T045 [P] Validate theme installation success and functionality across all apps
+- [x] T046 [P] Test component integration with existing monorepo structure
+- [x] T047 [P] Verify no dependency conflicts between multiple UI libraries
+- [x] T048 [P] Validate light/dark mode switching across all integrated components
+- [x] T049 [P] Test build process completes successfully without errors
+- [x] T050 [P] Measure performance impact (bundle size increase < 10%)
+- [x] T051 [P] Verify WCAG 2.1 AA+ accessibility compliance for all components
+- [x] T052 Test theme persistence across browser sessions
 
 ## Phase 3.8: Documentation & Polish
-- [ ] T053 [P] Create comprehensive installation guide in docs/theme-installation.md
-- [ ] T054 [P] Document component usage examples with NEONPRO theme integration
-- [ ] T055 [P] Create troubleshooting guide for common theme and component issues
-- [ ] T056 [P] Update existing documentation to reflect new theme and component availability
-- [ ] T057 Create performance optimization guidelines for theme usage
-- [ ] T058 [P] Document theme customization options for aesthetic clinic branding
-- [ ] T059 Create automated verification scripts for theme and component validation
-- [ ] T060 [P] Add unit tests for theme provider and configuration management
+
+- [x] T053 [P] Create comprehensive installation guide in docs/theme-installation.md
+- [x] T054 [P] Document component usage examples with NEONPRO theme integration
+- [x] T055 [P] Create troubleshooting guide for common theme and component issues
+- [x] T056 [P] Update existing documentation to reflect new theme and component availability
+- [x] T057 Create performance optimization guidelines for theme usage
+- [x] T058 [P] Document theme customization options for aesthetic clinic branding
+- [x] T059 Create automated verification scripts for theme and component validation
+- [x] T060 [P] Add unit tests for theme provider and configuration management
 
 ## Dependencies
+
 - Tests (T006-T014) before implementation (T015-T032)
 - Theme installation (T015-T022) before component integration (T023-T032)
 - Component integration before monorepo integration (T033-T038)
@@ -126,6 +139,7 @@
 ## Parallel Execution Groups
 
 ### Group 1: Registry & Dependency Setup
+
 ```
 # Launch T001-T005 together:
 Task: "Setup multiple registry support in components.json for Magic UI, Aceternity UI, and Kokonut UI"
@@ -136,6 +150,7 @@ Task: "Install theme validation and testing dependencies (Vitest, Playwright)"
 ```
 
 ### Group 2: Contract Tests (All Parallel)
+
 ```
 # Launch T006-T014 together:
 Task: "Contract test theme installation API in tests/contract/test_theme_installation.ts"
@@ -150,6 +165,7 @@ Task: "Integration test WCAG 2.1 AA compliance across all components in tests/in
 ```
 
 ### Group 3: Component Installation (Parallel)
+
 ```
 # Launch T023-T029 together:
 Task: "Install Magic Card component from Magic UI using shadcn CLI"
@@ -162,6 +178,7 @@ Task: "Install Hover Border Gradient Button from Aceternity UI with theme integr
 ```
 
 ### Group 4: App Integration (Parallel)
+
 ```
 # Launch T034-T038 together:
 Task: "Update root layouts to include ThemeProvider in apps/web/src/app/layout.tsx"
@@ -174,12 +191,14 @@ Task: "Update package.json files to ensure proper dependency resolution across m
 ## Implementation Examples
 
 ### T023: Install Magic Card Component
+
 ```bash
 # Use shadcn CLI to install Magic Card
 pnpm dlx shadcn@latest add magic-card --registry https://magicui.registry.com
 ```
 
 ### T027: Implement Tilted Card (Manual)
+
 ```typescript
 // packages/ui/src/components/tilted-card.tsx
 export const TiltedCard: React.FC<TiltedCardProps> = ({
@@ -191,8 +210,8 @@ export const TiltedCard: React.FC<TiltedCardProps> = ({
   return (
     <motion.div
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm",
-        className
+        'relative overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm',
+        className,
       )}
       whileHover={{
         rotateX: tiltAmount,
@@ -200,22 +219,23 @@ export const TiltedCard: React.FC<TiltedCardProps> = ({
         scale: scaleOnHover ? 1.02 : 1,
       }}
       transition={{
-        type: "spring",
+        type: 'spring',
         stiffness: 400,
         damping: 25,
       }}
       style={{
-        transformStyle: "preserve-3d",
-        perspective: "1000px",
+        transformStyle: 'preserve-3d',
+        perspective: '1000px',
       }}
     >
       {children}
     </motion.div>
-  );
-};
+  )
+}
 ```
 
 ### T028: Install Shine Border Component
+
 ```typescript
 // packages/ui/src/components/shine-border.tsx
 export const ShineBorder: React.FC<ShineBorderProps> = ({
@@ -230,9 +250,9 @@ export const ShineBorder: React.FC<ShineBorderProps> = ({
   return (
     <div
       className={cn(
-        "relative flex overflow-hidden shine-border",
+        'relative flex overflow-hidden shine-border',
         `shine-border--${theme}`,
-        className
+        className,
       )}
       style={{
         '--border-width': `${borderWidth}px`,
@@ -244,11 +264,12 @@ export const ShineBorder: React.FC<ShineBorderProps> = ({
     >
       {children}
     </div>
-  );
-};
+  )
+}
 ```
 
 ### T029: Install Hover Border Gradient Button
+
 ```typescript
 // packages/ui/src/components/hover-border-gradient-button.tsx
 export const HoverBorderGradientButton: React.FC<HoverBorderGradientButtonProps> = ({
@@ -260,19 +281,20 @@ export const HoverBorderGradientButton: React.FC<HoverBorderGradientButtonProps>
   return (
     <button
       className={cn(
-        "relative inline-flex items-center justify-center rounded-md font-medium transition-all",
-        "hover:border-gradient-to-r hover:from-neonpro-primary hover:to-neonpro-accent",
-        "focus:outline-none focus:ring-2 focus:ring-neonpro-primary focus:ring-offset-2",
-        className
+        'relative inline-flex items-center justify-center rounded-md font-medium transition-all',
+        'hover:border-gradient-to-r hover:from-neonpro-primary hover:to-neonpro-accent',
+        'focus:outline-none focus:ring-2 focus:ring-neonpro-primary focus:ring-offset-2',
+        className,
       )}
     >
       {children}
     </button>
-  );
-};
+  )
+}
 ```
 
 ### T033: Create Symlinks
+
 ```bash
 # Create symlinks from packages/ui to all apps
 cd apps/web
@@ -282,7 +304,8 @@ ln -s ../../packages/ui/src/globals.css ./src/globals.css
 ```
 
 ## Validation Checklist
-*GATE: Must pass before implementation complete*
+
+_GATE: Must pass before implementation complete_
 
 - [ ] All contracts have corresponding tests (T006-T009)
 - [ ] All integration scenarios have tests (T010-T014)
@@ -295,6 +318,7 @@ ln -s ../../packages/ui/src/globals.css ./src/globals.css
 - [ ] Documentation complete and comprehensive (T053-T060)
 
 ## Quality Gates
+
 - [ ] Build completes successfully across all apps
 - [ ] No TypeScript errors
 - [ ] All tests pass (unit, integration, contract)
@@ -305,7 +329,9 @@ ln -s ../../packages/ui/src/globals.css ./src/globals.css
 - [ ] Accessibility compliance verified
 
 ## Success Criteria
+
 The feature is complete when:
+
 1. NEONPRO theme is installed and configured across the entire monorepo
 2. All 7 UI components (Magic Card, Animated Theme Toggler, Gradient Button, Sidebar, Tilted Card, Shine Border, Hover Border Gradient Button) are working
 3. NEONPRO theme colors are consistently applied across all components
@@ -320,6 +346,7 @@ The feature is complete when:
 12. Constitutional compliance is validated for all integrated components
 
 ## Notes
+
 - [P] tasks = different files, no dependencies
 - Verify tests fail before implementing any feature
 - Commit after each task completion

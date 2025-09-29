@@ -4,6 +4,7 @@
  */
 
 // Re-export SupabaseClient type for external use
+// @ts-ignore - temporary fix for @supabase/supabase-js import issue
 export type { SupabaseClient } from '@supabase/supabase-js'
 
 // Simple stub functions

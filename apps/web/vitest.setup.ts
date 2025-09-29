@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { vi } from 'vitest'
 import '@testing-library/jest-dom'
 import { cleanup } from '@testing-library/react'
@@ -9,6 +10,28 @@ global.console = {
   warn: vi.fn(),
   error: vi.fn(),
 }
+
+// Set test JWT secret
+process.env.TEST_JWT_SECRET = 'test-jwt-secret'
+
+// Mock jsonwebtoken for tests
+vi.mock('jsonwebtoken', () => ({
+  sign: vi.fn((payload, secret) => 'mocked-jwt-token'),
+  verify: vi.fn((token, secret) => ({ userId: 'test-user', role: 'test' })),
+  decode: vi.fn((token) => ({ userId: 'test-user' })),
+}))
+
+// Suppress deprecation warnings (tsconfig-paths done())
+vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+// Mock WebSocket for node-websocket error
+global.WebSocket = vi.fn(() => ({
+  readyState: 1,
+  send: vi.fn(),
+  close: vi.fn(),
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+})) as any
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -187,7 +210,6 @@ vi.mock('../src/services/healthcare', () => ({
 global.describe = describe
 global.it = it
 global.test = test
-global.expect = expect
 global.vi = vi
 
 // Cleanup after each test

@@ -5,7 +5,7 @@
  * Integrated with NEONPRO theme for aesthetic clinic branding
  */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 

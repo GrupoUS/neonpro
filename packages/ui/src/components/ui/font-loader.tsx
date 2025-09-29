@@ -168,19 +168,18 @@ export function FontLoader({
       const style = document.createElement('style')
       style.textContent = `
         .mobile-fonts {
+          font-display: swap;
+          text-rendering: optimizeSpeed;
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
-          text-rendering: optimizeLegibility;
         }
         
         .mobile-fonts body {
-          font-size: 16px; /* Better readability on mobile */
-          line-height: 1.6;
+          font-feature-settings: "kern" 1, "liga" 1;
         }
         
-        /* Portuguese text optimization */
         .mobile-fonts [lang="pt-BR"] {
-          font-family: 'Inter', system-ui, -apple-system, sans-serif;
+          font-variant-numeric: oldstyle-nums;
         }
       `
       document.head.appendChild(style)
@@ -195,7 +194,7 @@ export function FontLoader({
   if (showProgress && !fontState.allLoaded) {
     return (
       <div className="font-loading-container">
-        <style jsx>{`
+        <style>{`
           .font-loading-container {
             position: fixed;
             top: 0;

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from './button'
-import { Phone, Heart } from 'lucide-react'
+import { Heart } from 'lucide-react'
 
 interface MobileHealthcareButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'destructive'
@@ -19,7 +19,7 @@ export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
 }) => {
   return (
     <Button
-      variant={variant}
+      variant={variant === "primary" ? "default" : variant}
       size={size}
       className={`flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow duration-200 ${className || ''}`}
       {...props}

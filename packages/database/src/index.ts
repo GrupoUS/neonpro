@@ -6,8 +6,27 @@
 // Core database clients - factory functions
 export { createClient, createServiceClient } from './client-full.js'
 
-// Prisma client instance
+// Prisma client instance and types
 export { prisma } from './client-full.js'
+export type { PrismaClient } from '@prisma/client'
+
+// Re-export all Prisma types
+export type {
+  Patient,
+  Appointment,
+  Professional,
+  Clinic,
+  User,
+  ConsentRecord,
+  AuditTrail,
+  AuditLog,
+  ServiceType,
+  ServiceCategory,
+  AppointmentTemplate,
+  TelemedicineSession,
+  RiskAssessment,
+  ComplianceStatus,
+} from '@prisma/client'
 
 // Health check utilities
 export { checkDatabaseHealth, closeDatabaseConnections } from './client-full.js'

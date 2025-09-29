@@ -31,6 +31,9 @@ export function GradientButton({
   disabled,
   ...props
 }: GradientButtonProps) {
+  // Separate form props from other props to avoid TypeScript conflicts
+  const { formAction, form, formEncType, formMethod, formNoValidate, formTarget, ...otherProps } = props;
+  
   const baseClasses = "relative inline-flex items-center justify-center rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neonpro-primary disabled:opacity-50 disabled:cursor-not-allowed";
 
   const sizeClasses = {
@@ -144,4 +147,4 @@ export function GradientButton({
   );
 }
 
-export default GradientButton;
+export default GradientButton;n;

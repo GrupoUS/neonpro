@@ -78,6 +78,12 @@ importers:
       framer-motion:
         specifier: ^11.0.0
         version: 11.0.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      i18next:
+        specifier: 25.5.2
+        version: 25.5.2(typescript@5.9.2)
+      i18next-browser-languagedetector:
+        specifier: 8.2.0
+        version: 8.2.0
       ioredis:
         specifier: 5.8.0
         version: 5.8.0
@@ -90,6 +96,9 @@ importers:
       lovable-tagger:
         specifier: 1.1.10
         version: 1.1.10(vite@7.1.7(@types/node@24.5.2)(jiti@2.6.0)(lightningcss@1.30.1)(tsx@4.20.6)(yaml@2.8.1))
+      react-i18next:
+        specifier: 16.0.0
+        version: 16.0.0(i18next@25.5.2(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2)
       tailwind-merge:
         specifier: 3.3.1
         version: 3.3.1
@@ -196,9 +205,6 @@ importers:
       msw:
         specifier: 2.11.3
         version: 2.11.3(@types/node@24.5.2)(typescript@5.9.2)
-      oxlint:
-        specifier: 1.18.0
-        version: 1.18.0(oxlint-tsgolint@0.2.0)
       oxlint-tsgolint:
         specifier: 0.2.0
         version: 0.2.0
@@ -258,13 +264,13 @@ importers:
         version: 0.0.34
       '@ai-sdk/anthropic':
         specifier: ^2.0.15
-        version: 2.0.20(zod@3.25.76)
+        version: 2.0.20(zod@4.1.11)
       '@ai-sdk/google':
         specifier: ^2.0.13
-        version: 2.0.17(zod@3.25.76)
+        version: 2.0.17(zod@4.1.11)
       '@ai-sdk/openai':
         specifier: ^2.0.13
-        version: 2.0.38(zod@3.25.76)
+        version: 2.0.38(zod@4.1.11)
       '@hono/node-server':
         specifier: ^1.19.2
         version: 1.19.4(hono@4.9.9)
@@ -276,10 +282,10 @@ importers:
         version: 0.4.0(@trpc/server@11.6.0(typescript@5.9.2))(hono@4.9.9)
       '@hono/zod-openapi':
         specifier: ^0.18.4
-        version: 0.18.4(hono@4.9.9)(zod@3.25.76)
+        version: 0.18.4(hono@4.9.9)(zod@4.1.11)
       '@hono/zod-validator':
         specifier: ^0.2.2
-        version: 0.2.2(hono@4.9.9)(zod@3.25.76)
+        version: 0.2.2(hono@4.9.9)(zod@4.1.11)
       '@neonpro/database':
         specifier: workspace:*
         version: link:../../packages/database
@@ -336,7 +342,7 @@ importers:
         version: 11.6.0(typescript@5.9.2)
       ai:
         specifier: ^5.0.54
-        version: 5.0.54(zod@3.25.76)
+        version: 5.0.54(zod@4.1.11)
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.2
@@ -389,8 +395,8 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(typescript@5.9.2)
       zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+        specifier: ^4.1.11
+        version: 4.1.11
     devDependencies:
       '@types/node':
         specifier: ^20.0.0
@@ -690,7 +696,7 @@ importers:
         specifier: ^5.22.0
         version: 5.22.0(prisma@5.22.0)
       '@supabase/supabase-js':
-        specifier: ^2.57.4
+        specifier: 2.58.0
         version: 2.58.0
       prisma:
         specifier: ^5.22.0
@@ -825,6 +831,9 @@ importers:
       '@radix-ui/react-toast':
         specifier: 1.2.15
         version: 1.2.15(@types/react-dom@19.1.9(@types/react@19.1.14))(@types/react@19.1.14)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@tabler/icons-react':
+        specifier: 3.35.0
+        version: 3.35.0(react@19.1.1)
       '@tanstack/react-table':
         specifier: ^8.20.5
         version: 8.21.3(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -901,9 +910,15 @@ importers:
       '@neonpro/types':
         specifier: workspace:*
         version: link:../types
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
+      tailwind-merge:
+        specifier: 3.3.1
+        version: 3.3.1
     devDependencies:
       typescript:
         specifier: ^5.0.0
@@ -2978,18 +2993,8 @@ packages:
     cpu: [arm64]
     os: [darwin]
 
-  '@oxlint/darwin-arm64@1.18.0':
-    resolution: {integrity: sha512-z/4/ClV0sZYDNk/xsOZHr5BHFbAXI7LU+i3P8d/L2ejy7zF8e4WA8szd70OqVm7Gcsa81TSeeQygViR63WCQ1A==}
-    cpu: [arm64]
-    os: [darwin]
-
   '@oxlint/darwin-x64@0.2.18':
     resolution: {integrity: sha512-hdnPhG/nxF2F8YI9lg3uYMH1ZYxSKiDPu2srey1Xvo2LZChNnvbvxXNS5UYAxG9f/U6VbH4WYfUcqbNZW5Tnzw==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@oxlint/darwin-x64@1.18.0':
-    resolution: {integrity: sha512-cQP5UtmfxZKLVyISh/BeaaK5z70AGOtQkf1wm7ZaEb0eT81PkLUdzkPwTjwyQq/TeT09uw2paVy3l2SEAO+JQA==}
     cpu: [x64]
     os: [darwin]
 
@@ -2998,18 +3003,8 @@ packages:
     cpu: [arm64]
     os: [linux]
 
-  '@oxlint/linux-arm64-gnu@1.18.0':
-    resolution: {integrity: sha512-JsobGeuKwpQFKSgK398QHfZ4kN9XXWJ0xvI8kofoefO/LLmj1ox3+Yln3kx425AaooruRMqBhh1JFXqEKeDxOw==}
-    cpu: [arm64]
-    os: [linux]
-
   '@oxlint/linux-arm64-musl@0.2.18':
     resolution: {integrity: sha512-TbZONlryL36xWLUCNRhYZ0m92io6hiN0Ho8ez4T5BoTWwaKwyTdAvpbH7vFDlVDAsp33GB81DXsFSAjPq8PIng==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@oxlint/linux-arm64-musl@1.18.0':
-    resolution: {integrity: sha512-Sds76cCqGylhywWrJcJ++4JQ45MxQKDDm7iW6Gx6C9nH+DyCPnYOjZAMYDkQiiZ3MlWCIW87SggsHkMaGO45ew==}
     cpu: [arm64]
     os: [linux]
 
@@ -3018,18 +3013,8 @@ packages:
     cpu: [x64]
     os: [linux]
 
-  '@oxlint/linux-x64-gnu@1.18.0':
-    resolution: {integrity: sha512-pvBDpuf7SE3iMfwgmI3m8gandsdjs8CpIgiv/tiUhxCsKeK7gRVpiIr1XcewFrYwLn/km/EhjjFr/Kb7/CsHOA==}
-    cpu: [x64]
-    os: [linux]
-
   '@oxlint/linux-x64-musl@0.2.18':
     resolution: {integrity: sha512-THG4LZ8KeCy87E4tHqC765acRW0dyXdgzqERi3idjSupCH8juTpk9UfZVcpxcqEicXnEuZDkBQpO8nboyFng3Q==}
-    cpu: [x64]
-    os: [linux]
-
-  '@oxlint/linux-x64-musl@1.18.0':
-    resolution: {integrity: sha512-9G0km2Rt4MAoGOVndD/7+U947dnxQkWtLX9en5Gkh3lC7HBDvVpYLopXddguWE+qbqEQKp67PiuITeyYQ4uESA==}
     cpu: [x64]
     os: [linux]
 
@@ -3038,18 +3023,8 @@ packages:
     cpu: [arm64]
     os: [win32]
 
-  '@oxlint/win32-arm64@1.18.0':
-    resolution: {integrity: sha512-Px9436ey0xIuU3/PuXw8EwxJSWPIxiZ9pi7FiryOMisY0dNHQP9XlGvk1MNqzyFctNmas93ZG5zyyctzLTtiUg==}
-    cpu: [arm64]
-    os: [win32]
-
   '@oxlint/win32-x64@0.2.18':
     resolution: {integrity: sha512-LmwDhDaZYd20WKmHPeITYNazGVUBFvs7D9+WJ+ecx+bX/6euFp8j+e/4sUzxR5gk6pecqyA6WEld52Gy6W92jg==}
-    cpu: [x64]
-    os: [win32]
-
-  '@oxlint/win32-x64@1.18.0':
-    resolution: {integrity: sha512-6yG6xADwy3SJsBuV2TZXfDMWDAzDBpTx3Ja/shdHbhP+YiVT87rRESjT5dKmASqrzQViycgnZ71UXiTf/nxqTA==}
     cpu: [x64]
     os: [win32]
 
@@ -6084,6 +6059,9 @@ packages:
   html-escaper@2.0.2:
     resolution: {integrity: sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==}
 
+  html-parse-stringify@3.0.1:
+    resolution: {integrity: sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==}
+
   html-url-attributes@3.0.1:
     resolution: {integrity: sha512-ol6UPyBWqsrO6EJySPz2O7ZSr856WDrEzM5zMqp+FJJLGMW35cLYmmZnl0vztAZxRUoNZJFTCohfjuIJ8I4QBQ==}
 
@@ -6112,6 +6090,17 @@ packages:
     resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
+
+  i18next-browser-languagedetector@8.2.0:
+    resolution: {integrity: sha512-P+3zEKLnOF0qmiesW383vsLdtQVyKtCNA9cjSoKCppTKPQVfKd2W8hbVo5ZhNJKDqeM7BOcvNoKJOjpHh4Js9g==}
+
+  i18next@25.5.2:
+    resolution: {integrity: sha512-lW8Zeh37i/o0zVr+NoCHfNnfvVw+M6FQbRp36ZZ/NyHDJ3NJVpp2HhAUyU9WafL5AssymNoOjMRB48mmx2P6Hw==}
+    peerDependencies:
+      typescript: ^5
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   iconv-lite@0.6.3:
     resolution: {integrity: sha512-4fCk79wshMdzMp2rH06qWrJE4iolqLhCUH+OiuIgU++RB0+94NlDL81atO7GX55uUKueo0txHNtvEyI6D7WdMw==}
@@ -7378,16 +7367,6 @@ packages:
     engines: {node: '>=14.*'}
     hasBin: true
 
-  oxlint@1.18.0:
-    resolution: {integrity: sha512-bR/XSaWwrRyt87IGdJtCIf3KLspkY4Ni7FfkOdERWihfyazs40NUMCyYICZo5ojU/8zIq+EWpa/gEf7wsoBOug==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      oxlint-tsgolint: '>=0.2.0'
-    peerDependenciesMeta:
-      oxlint-tsgolint:
-        optional: true
-
   p-limit@2.3.0:
     resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
     engines: {node: '>=6'}
@@ -7763,6 +7742,22 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
+
+  react-i18next@16.0.0:
+    resolution: {integrity: sha512-JQ+dFfLnFSKJQt7W01lJHWRC0SX7eDPobI+MSTJ3/gP39xH2g33AuTE7iddAfXYHamJdAeMGM0VFboPaD3G68Q==}
+    peerDependencies:
+      i18next: '>= 25.5.2'
+      react: '>= 16.8.0'
+      react-dom: '*'
+      react-native: '*'
+      typescript: ^5
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+      typescript:
+        optional: true
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -8943,6 +8938,10 @@ packages:
   vm-browserify@1.1.2:
     resolution: {integrity: sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==}
 
+  void-elements@3.1.0:
+    resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
+    engines: {node: '>=0.10.0'}
+
   w3c-xmlserializer@5.0.0:
     resolution: {integrity: sha512-o8qghlI8NZHU1lLPrpi2+Uq7abh4GGPpYANlalzWxyWteJOCsr/P+oPBA49TOLu5FTZO4d3F9MnWJfiMo4BkmA==}
     engines: {node: '>=18'}
@@ -9210,17 +9209,11 @@ snapshots:
       '@ag-ui/core': 0.0.28
       '@bufbuild/protobuf': 2.9.0
 
-  '@ai-sdk/anthropic@2.0.20(zod@3.25.76)':
+  '@ai-sdk/anthropic@2.0.20(zod@4.1.11)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.10(zod@3.25.76)
-      zod: 3.25.76
-
-  '@ai-sdk/gateway@1.0.30(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.10(zod@3.25.76)
-      zod: 3.25.76
+      '@ai-sdk/provider-utils': 3.0.10(zod@4.1.11)
+      zod: 4.1.11
 
   '@ai-sdk/gateway@1.0.30(zod@4.1.11)':
     dependencies:
@@ -9228,24 +9221,17 @@ snapshots:
       '@ai-sdk/provider-utils': 3.0.10(zod@4.1.11)
       zod: 4.1.11
 
-  '@ai-sdk/google@2.0.17(zod@3.25.76)':
+  '@ai-sdk/google@2.0.17(zod@4.1.11)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.10(zod@3.25.76)
-      zod: 3.25.76
+      '@ai-sdk/provider-utils': 3.0.10(zod@4.1.11)
+      zod: 4.1.11
 
-  '@ai-sdk/openai@2.0.38(zod@3.25.76)':
+  '@ai-sdk/openai@2.0.38(zod@4.1.11)':
     dependencies:
       '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.10(zod@3.25.76)
-      zod: 3.25.76
-
-  '@ai-sdk/provider-utils@3.0.10(zod@3.25.76)':
-    dependencies:
-      '@ai-sdk/provider': 2.0.0
-      '@standard-schema/spec': 1.0.0
-      eventsource-parser: 3.0.6
-      zod: 3.25.76
+      '@ai-sdk/provider-utils': 3.0.10(zod@4.1.11)
+      zod: 4.1.11
 
   '@ai-sdk/provider-utils@3.0.10(zod@4.1.11)':
     dependencies:
@@ -9289,10 +9275,10 @@ snapshots:
 
   '@asamuzakjp/nwsapi@2.3.9': {}
 
-  '@asteasolutions/zod-to-openapi@7.3.4(zod@3.25.76)':
+  '@asteasolutions/zod-to-openapi@7.3.4(zod@4.1.11)':
     dependencies:
       openapi3-ts: 4.5.0
-      zod: 3.25.76
+      zod: 4.1.11
 
   '@axe-core/playwright@4.10.2(playwright-core@1.55.1)':
     dependencies:
@@ -9939,22 +9925,22 @@ snapshots:
       '@trpc/server': 11.6.0(typescript@5.9.2)
       hono: 4.9.9
 
-  '@hono/zod-openapi@0.18.4(hono@4.9.9)(zod@3.25.76)':
+  '@hono/zod-openapi@0.18.4(hono@4.9.9)(zod@4.1.11)':
     dependencies:
-      '@asteasolutions/zod-to-openapi': 7.3.4(zod@3.25.76)
-      '@hono/zod-validator': 0.4.3(hono@4.9.9)(zod@3.25.76)
+      '@asteasolutions/zod-to-openapi': 7.3.4(zod@4.1.11)
+      '@hono/zod-validator': 0.4.3(hono@4.9.9)(zod@4.1.11)
       hono: 4.9.9
-      zod: 3.25.76
+      zod: 4.1.11
 
-  '@hono/zod-validator@0.2.2(hono@4.9.9)(zod@3.25.76)':
+  '@hono/zod-validator@0.2.2(hono@4.9.9)(zod@4.1.11)':
     dependencies:
       hono: 4.9.9
-      zod: 3.25.76
+      zod: 4.1.11
 
-  '@hono/zod-validator@0.4.3(hono@4.9.9)(zod@3.25.76)':
+  '@hono/zod-validator@0.4.3(hono@4.9.9)(zod@4.1.11)':
     dependencies:
       hono: 4.9.9
-      zod: 3.25.76
+      zod: 4.1.11
 
   '@hookform/resolvers@5.2.2(react-hook-form@7.63.0(react@19.1.1))':
     dependencies:
@@ -10287,7 +10273,9 @@ snapshots:
     dependencies:
       '@neonpro/shared': link:packages/shared
       '@neonpro/types': link:packages/types
+      clsx: 2.1.1
       date-fns: 3.6.0
+      tailwind-merge: 3.3.1
 
   '@next/env@14.2.33': {}
 
@@ -11615,49 +11603,25 @@ snapshots:
   '@oxlint/darwin-arm64@0.2.18':
     optional: true
 
-  '@oxlint/darwin-arm64@1.18.0':
-    optional: true
-
   '@oxlint/darwin-x64@0.2.18':
-    optional: true
-
-  '@oxlint/darwin-x64@1.18.0':
     optional: true
 
   '@oxlint/linux-arm64-gnu@0.2.18':
     optional: true
 
-  '@oxlint/linux-arm64-gnu@1.18.0':
-    optional: true
-
   '@oxlint/linux-arm64-musl@0.2.18':
-    optional: true
-
-  '@oxlint/linux-arm64-musl@1.18.0':
     optional: true
 
   '@oxlint/linux-x64-gnu@0.2.18':
     optional: true
 
-  '@oxlint/linux-x64-gnu@1.18.0':
-    optional: true
-
   '@oxlint/linux-x64-musl@0.2.18':
-    optional: true
-
-  '@oxlint/linux-x64-musl@1.18.0':
     optional: true
 
   '@oxlint/win32-arm64@0.2.18':
     optional: true
 
-  '@oxlint/win32-arm64@1.18.0':
-    optional: true
-
   '@oxlint/win32-x64@0.2.18':
-    optional: true
-
-  '@oxlint/win32-x64@1.18.0':
     optional: true
 
   '@paralleldrive/cuid2@2.2.2':
@@ -13485,14 +13449,6 @@ snapshots:
     dependencies:
       humanize-ms: 1.2.1
 
-  ai@5.0.54(zod@3.25.76):
-    dependencies:
-      '@ai-sdk/gateway': 1.0.30(zod@3.25.76)
-      '@ai-sdk/provider': 2.0.0
-      '@ai-sdk/provider-utils': 3.0.10(zod@3.25.76)
-      '@opentelemetry/api': 1.9.0
-      zod: 3.25.76
-
   ai@5.0.54(zod@4.1.11):
     dependencies:
       '@ai-sdk/gateway': 1.0.30(zod@4.1.11)
@@ -15189,6 +15145,10 @@ snapshots:
 
   html-escaper@2.0.2: {}
 
+  html-parse-stringify@3.0.1:
+    dependencies:
+      void-elements: 3.1.0
+
   html-url-attributes@3.0.1: {}
 
   html-void-elements@3.0.0: {}
@@ -15216,6 +15176,16 @@ snapshots:
       ms: 2.1.3
 
   husky@9.1.7: {}
+
+  i18next-browser-languagedetector@8.2.0:
+    dependencies:
+      '@babel/runtime': 7.28.4
+
+  i18next@25.5.2(typescript@5.9.2):
+    dependencies:
+      '@babel/runtime': 7.28.4
+    optionalDependencies:
+      typescript: 5.9.2
 
   iconv-lite@0.6.3:
     dependencies:
@@ -17099,18 +17069,6 @@ snapshots:
       '@oxlint/win32-arm64': 0.2.18
       '@oxlint/win32-x64': 0.2.18
 
-  oxlint@1.18.0(oxlint-tsgolint@0.2.0):
-    optionalDependencies:
-      '@oxlint/darwin-arm64': 1.18.0
-      '@oxlint/darwin-x64': 1.18.0
-      '@oxlint/linux-arm64-gnu': 1.18.0
-      '@oxlint/linux-arm64-musl': 1.18.0
-      '@oxlint/linux-x64-gnu': 1.18.0
-      '@oxlint/linux-x64-musl': 1.18.0
-      '@oxlint/win32-arm64': 1.18.0
-      '@oxlint/win32-x64': 1.18.0
-      oxlint-tsgolint: 0.2.0
-
   p-limit@2.3.0:
     dependencies:
       p-try: 2.2.0
@@ -17470,6 +17428,16 @@ snapshots:
   react-hook-form@7.63.0(react@19.1.1):
     dependencies:
       react: 19.1.1
+
+  react-i18next@16.0.0(i18next@25.5.2(typescript@5.9.2))(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(typescript@5.9.2):
+    dependencies:
+      '@babel/runtime': 7.28.4
+      html-parse-stringify: 3.0.1
+      i18next: 25.5.2(typescript@5.9.2)
+      react: 19.1.1
+    optionalDependencies:
+      react-dom: 19.1.1(react@19.1.1)
+      typescript: 5.9.2
 
   react-is@16.13.1: {}
 
@@ -18954,6 +18922,8 @@ snapshots:
       - terser
 
   vm-browserify@1.1.2: {}
+
+  void-elements@3.1.0: {}
 
   w3c-xmlserializer@5.0.0:
     dependencies:

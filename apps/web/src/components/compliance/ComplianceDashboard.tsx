@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Shield, 
-  FileText, 
-  AlertTriangle, 
-  CheckCircle, 
-  Clock, 
+import {
+  Shield,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
   Users,
   TrendingUp,
   Download,
   RefreshCw
 } from 'lucide-react';
 import { ComplianceMetrics, ComplianceReport, ConsentStats } from '@/types/compliance';
+import { useHealthcareQuery, useHealthcareMutation } from '@/hooks/useTRPCHealthcare';
 
 interface ComplianceDashboardProps {
   clinicId: string;
@@ -27,60 +28,22 @@ const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
   clinicId,
   onRefresh
 }) => {
-  const [metrics, setMetrics] = useState<ComplianceMetrics | null>(null);
-  const [consentStats, setConsentStats] = useState<ConsentStats | null>(null);
-  const [report, setReport] = useState<ComplianceReport | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
+  // Use tRPC queries for compliance data with healthcare compliance
+  const { data: metrics, isLoading: metricsLoading, complianceError: metricsError } = useHealthcareQuery(
+    'compliance.getMetrics',
+    { clinicId }
+  );
 
-  useEffect(() => {
-    loadComplianceData();
-  }, [clinicId]);
+  const { data: consentStats, isLoading: statsLoading, complianceError: statsError } = useHealthcareQuery(
+    'compliance.getConsentStats',
+    { clinicId }
+  );
 
-  const loadComplianceData = async () => {
-    setLoading(true);
-    try {
-      const [metricsResponse, statsResponse] = await Promise.all([
-        fetch(`/api/consent/compliance/${clinicId}`),
-        fetch(`/api/consent/stats/${clinicId}`)
-      ]);
-
-      if (metricsResponse.ok) {
-        const metricsData = await metricsResponse.json();
-        setMetrics(metricsData);
-      }
-
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setConsentStats(statsData);
-      }
-
-      setLastUpdated(new Date());
-    } catch (error) {
-      console.error('Erro ao carregar dados de compliance:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const generateReport = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/consent/report/${clinicId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          format: 'pdf',
-          includeAudit: true,
-          includeMetrics: true,
-          period: 'monthly'
-        })
-      });
-
-      if (response.ok) {
-        const reportData = await response.json();
-        setReport(reportData);
-        
+  // Use tRPC mutation for report generation
+  const { mutate: generateReport, isLoading: reportLoading, complianceError: reportError } = useHealthcareMutation(
+    'compliance.generateReport',
+    {
+      onSuccess: (reportData: any) => {
         // Download report
         const blob = new Blob([reportData.content], { type: 'application/pdf' });
         const url = URL.createObjectURL(blob);
@@ -90,12 +53,34 @@ const ComplianceDashboard: React.FC<ComplianceDashboardProps> = ({
         a.click();
         URL.revokeObjectURL(url);
       }
-    } catch (error) {
-      console.error('Erro ao gerar relatório:', error);
-    } finally {
-      setLoading(false);
     }
+  );
+
+  const loading = metricsLoading || statsLoading || reportLoading;
+  const lastUpdated = new Date();
+
+  const handleReportGeneration = () => {
+    generateReport({
+      clinicId,
+      format: 'pdf',
+      includeAudit: true,
+      includeMetrics: true,
+      period: 'monthly'
+    });
   };
+
+  // Show compliance errors
+  const complianceErrors = [metricsError, statsError, reportError].filter(Boolean);
+  if (complianceErrors.length > 0) {
+    return (
+      <Alert variant="destructive" className="mb-6">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          {complianceErrors[0]}
+        </AlertDescription>
+      </Alert>
+    );
+  }
 
   const getComplianceStatus = (score: number) => {
     if (score >= 95) return { status: 'Excelente', color: 'bg-green-500', icon: CheckCircle };

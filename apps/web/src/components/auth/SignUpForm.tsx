@@ -74,18 +74,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
   const [formErrors, setFormErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // Refs for focus management
-  const firstNameRef = useRef<HTMLInputElement>(null)
-  const lastNameRef = useRef<HTMLInputElement>(null)
-  const emailRef = useRef<HTMLInputElement>(null)
-  const professionRef = useRef<HTMLButtonElement>(null)
-  const licenseRef = useRef<HTMLInputElement>(null)
-  const passwordRef = useRef<HTMLInputElement>(null)
-  const confirmPasswordRef = useRef<HTMLInputElement>(null)
-  const lgpdRef = useRef<HTMLInputElement>(null)
-  const termsRef = useRef<HTMLInputElement>(null)
-  const submitRef = useRef<HTMLButtonElement>(null)
-
   // Auto-focus first field on mount
   useEffect(() => {
     firstNameRef.current?.focus()
@@ -168,11 +156,20 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
     else if (formErrors.terms) termsRef.current?.focus()
   }
 
-  // Keyboard navigation support with type safety
-  const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLInputElement | HTMLButtonElement>) => {
-    if (e.key === 'Enter' && nextRef?.current) {
+  // Keyboard navigation support with type safety and trap prevention
+  const handleKeyDown = (e: React.KeyboardEvent, nextRef?: React.RefObject<HTMLElement | null>) => {
+    if (e.key === 'Enter' && nextRef?.current && !e.shiftKey) {
       e.preventDefault()
-      ;(nextRef.current as HTMLElement).focus()
+      if (nextRef.current) {
+        nextRef.current.focus()
+      }
+    } else if (e.key === 'Tab' && e.shiftKey) {
+      // Allow shift+tab for backward navigation
+      return
+    } else if (e.key === 'Escape') {
+      // Escape to cancel or close if applicable
+      setError(null)
+      setFormErrors({})
     }
   }
 
@@ -246,14 +243,15 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
     return `${fieldId}-description`
   }
 
-  // Generate accessible field props
+  // Generate accessible field props - conditional aria-describedby to avoid duplication
   const getAccessibleFieldProps = ({ id, label, description, required, error }: AccessibleFieldProps) => {
     const descriptionId = description ? getFieldDescription(id, description) : undefined
     const errorId = error ? `${id}-error` : undefined
+    const descIds = [descriptionId, errorId].filter(Boolean).join(' ')
 
     return {
       'aria-label': label,
-      'aria-describedby': [descriptionId, errorId].filter(Boolean).join(' ') || undefined,
+      ...(descIds && { 'aria-describedby': descIds }), // Only add if IDs exist
       'aria-required': required,
       'aria-invalid': !!error,
       ...(error && { 'aria-errormessage': errorId }),
@@ -314,6 +312,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 onKeyDown={(e) => handleKeyDown(e, lastNameRef)}
                 placeholder="João"
                 disabled={isLoading || isSubmitting}
+                className="min-h-[44px] px-4 py-2" // Ensure 44px touch target
                 {...getAccessibleFieldProps({
                   id: 'firstName',
                   label: 'Nome completo',
@@ -321,9 +320,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                   required: true,
                   error: formErrors.firstName,
                 })}
-                className={cn(
-                  formErrors.firstName && 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                )}
               />
               {formErrors.firstName && (
                 <p
@@ -358,6 +354,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 onKeyDown={(e) => handleKeyDown(e, emailRef)}
                 placeholder="Silva"
                 disabled={isLoading || isSubmitting}
+                className="min-h-[44px] px-4 py-2" // Ensure 44px touch target
                 {...getAccessibleFieldProps({
                   id: 'lastName',
                   label: 'Sobrenome',
@@ -365,9 +362,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                   required: true,
                   error: formErrors.lastName,
                 })}
-                className={cn(
-                  formErrors.lastName && 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                )}
               />
               {formErrors.lastName && (
                 <p
@@ -404,6 +398,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               onKeyDown={(e) => handleKeyDown(e, professionRef)}
               placeholder="seu@clinica.com.br"
               disabled={isLoading || isSubmitting}
+              className="min-h-[44px] px-4 py-2" // Ensure 44px touch target
               {...getAccessibleFieldProps({
                 id: 'email',
                 label: 'Email profissional',
@@ -411,9 +406,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 required: true,
                 error: formErrors.email,
               })}
-              className={cn(
-                formErrors.email && 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              )}
             />
             {formErrors.email && (
               <p
@@ -462,7 +454,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 error: formErrors.profession,
               })}
             >
-              <SelectTrigger ref={professionRef}>
+              <SelectTrigger ref={professionRef} className="min-h-[44px] px-4 py-2">
                 <SelectValue placeholder="Selecione sua profissão" />
               </SelectTrigger>
               <SelectContent>
@@ -512,6 +504,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               onKeyDown={(e) => handleKeyDown(e, passwordRef)}
               placeholder={formData.profession === 'medico' ? 'CRM 12345/SP' : formData.profession === 'dentista' ? 'CRO 12345/SP' : 'Registro profissional'}
               disabled={isLoading || isSubmitting}
+              className="min-h-[44px] px-4 py-2" // Ensure 44px touch target
               {...getAccessibleFieldProps({
                 id: 'license',
                 label: 'Registro profissional',
@@ -519,9 +512,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 required: formData.profession && formData.profession !== 'admin' && formData.profession !== 'recepcionista',
                 error: formErrors.license,
               })}
-              className={cn(
-                formErrors.license && 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              )}
             />
             {formErrors.license && (
               <p
@@ -560,6 +550,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               onKeyDown={(e) => handleKeyDown(e, confirmPasswordRef)}
               placeholder="••••••••"
               disabled={isLoading || isSubmitting}
+              className="min-h-[44px] px-4 py-2" // Ensure 44px touch target
               {...getAccessibleFieldProps({
                 id: 'password',
                 label: 'Senha de acesso ao sistema',
@@ -567,9 +558,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 required: true,
                 error: formErrors.password,
               })}
-              className={cn(
-                formErrors.password && 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              )}
             />
             {formErrors.password && (
               <p
@@ -604,6 +592,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               onKeyDown={(e) => handleKeyDown(e, lgpdRef)}
               placeholder="••••••••"
               disabled={isLoading || isSubmitting}
+              className="min-h-[44px] px-4 py-2" // Ensure 44px touch target
               {...getAccessibleFieldProps({
                 id: 'confirmPassword',
                 label: 'Confirmação de senha',
@@ -611,9 +600,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 required: true,
                 error: formErrors.confirmPassword,
               })}
-              className={cn(
-                formErrors.confirmPassword && 'border-red-500 focus:border-red-500 focus:ring-red-500'
-              )}
             />
             {formErrors.confirmPassword && (
               <p
@@ -637,19 +623,16 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
             <div className="space-y-3">
               <label className="flex items-start group">
                 <Checkbox
-                  ref={lgpdRef}
                   id="lgpd-agreement"
                   checked={agreements.lgpd}
                   onCheckedChange={(checked) => handleCheckboxChange('lgpd', checked as boolean)}
                   disabled={isLoading || isSubmitting}
-                  className="mt-0.5"
-                  {...getAccessibleFieldProps({
-                    id: 'lgpd-agreement',
-                    label: 'Concordo com a Lei Geral de Proteção de Dados',
-                    description: 'Autorizo o tratamento de dados conforme a LGPD',
-                    required: true,
-                    error: formErrors.lgpd,
-                  })}
+                  className="mt-0.5 h-5 w-5" // 44px equivalent via explicit size for touch target
+                  aria-describedby="lgpd-description lgpd-agreement-error" // Set directly in JSX
+                  aria-label="Concordo com a Lei Geral de Proteção de Dados" // Direct aria-label
+                  aria-required={true}
+                  aria-invalid={!!formErrors.lgpd}
+                  {...(formErrors.lgpd && { 'aria-errormessage': 'lgpd-agreement-error' })}
                 />
                 <span className="ml-2 text-sm text-gray-600">
                   <span className="font-medium">Li e concordo</span> com o tratamento dos meus dados pessoais de acordo com a{' '}
@@ -670,28 +653,31 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                   id="lgpd-agreement-error"
                   className="text-sm text-red-600 ml-6"
                   role="alert"
+                  aria-live="assertive"
                 >
                   {formErrors.lgpd}
                 </p>
               )}
+              <p
+                id="lgpd-description"
+                className="text-xs text-gray-500 mt-1 ml-6"
+              >
+                Autorizo o tratamento de dados conforme a LGPD
+              </p>
             </div>
 
             <div className="space-y-3">
               <label className="flex items-start group">
                 <Checkbox
-                  ref={termsRef}
                   id="terms-agreement"
                   checked={agreements.terms}
                   onCheckedChange={(checked) => handleCheckboxChange('terms', checked as boolean)}
                   disabled={isLoading || isSubmitting}
-                  className="mt-0.5"
-                  {...getAccessibleFieldProps({
-                    id: 'terms-agreement',
-                    label: 'Aceito os termos de uso e política de privacidade',
-                    description: 'Concordo com os termos do serviço',
-                    required: true,
-                    error: formErrors.terms,
-                  })}
+                  className="mt-0.5 h-5 w-5" // 44px equivalent via explicit size for touch target
+                  aria-label="Aceito os termos de uso e política de privacidade" // Direct aria-label
+                  aria-required={true}
+                  aria-invalid={!!formErrors.terms}
+                  {...(formErrors.terms && { 'aria-errormessage': 'terms-agreement-error' })}
                 />
                 <span className="ml-2 text-sm text-gray-600">
                   <span className="font-medium">Li e aceito</span> os{' '}
@@ -722,6 +708,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                   id="terms-agreement-error"
                   className="text-sm text-red-600 ml-6"
                   role="alert"
+                  aria-live="assertive"
                 >
                   {formErrors.terms}
                 </p>
@@ -743,7 +730,14 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
             disabled={isLoading || isSubmitting}
             aria-disabled={isLoading || isSubmitting}
             aria-busy={isSubmitting}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            className="w-full flex justify-center min-h-[44px] px-4 py-3" // Ensure 44px touch target
+            {...getAccessibleFieldProps({
+              id: 'submit-signup',
+              label: 'Criar conta profissional',
+              description: 'Submeter o formulário de cadastro',
+              required: true,
+              error: undefined,
+            })}
           >
             {isSubmitting ? (
               <div className="flex items-center justify-center">
@@ -776,7 +770,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
               variant="link"
               onClick={onSignIn}
               disabled={isLoading || isSubmitting}
-              className="p-0 h-auto text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded font-medium text-sm"
+              className="p-0 h-auto min-h-[44px] text-blue-600 hover:text-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded font-medium text-sm px-4" // Ensure 44px touch target
               aria-label="Fazer login na conta existente"
             >
               Faça login

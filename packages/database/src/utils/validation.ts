@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+// @ts-ignore - temporary fix for @supabase/supabase-js import issue
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 /**

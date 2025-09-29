@@ -6,33 +6,26 @@
  */
 
 // Core Theme Components
-export { ThemeProvider } from './theme-provider';
+export { ThemeProvider } from '../theme-provider';
 
 // Existing shadcn/ui components (enhanced with NEONPRO theme)
-export { Button } from './components/ui/button';
+export { Button } from './ui/button';
 
 // NEONPRO Custom Components
-export { default as MagicCard } from './components/ui/magic-card/magic-card';
-export { default as AnimatedThemeToggler } from './components/ui/theme-toggler/animated-theme-toggler';
-export { default as GradientButton } from './components/ui/gradient-button/gradient-button';
-export { default as Sidebar } from './components/ui/sidebar/sidebar';
-export { default as TiltedCard } from './components/ui/tilted-card/tilted-card';
-export { default as ShineBorder } from './components/ui/shine-border/shine-border';
-export { default as HoverBorderGradientButton } from './components/ui/hover-border-gradient-button/hover-border-gradient-button';
+export { default as MagicCard } from './ui/magic-card/magic-card';
+export { default as AnimatedThemeToggler } from './ui/theme-toggler/animated-theme-toggler';
+export { default as GradientButton } from './ui/gradient-button/gradient-button';
+export { default as Sidebar } from './ui/sidebar/sidebar';
+export { default as TiltedCard } from './ui/tilted-card/tilted-card';
+export { default as ShineBorder } from './ui/shine-border/shine-border';
+export { default as HoverBorderGradientButton } from './ui/hover-border-gradient-button/hover-border-gradient-button';
 
 // Theme and Accessibility Utilities
-export * from './types/theme';
-export * from './lib/theme/accessibility';
-export * from './lib/theme/installation';
+export * from '../lib/theme/accessibility';
+export * from '../lib/theme/installation';
 
-// Re-export utility functions
-export { cn } from './lib/utils';
-
-// Type exports for component props
+// Explicit theme type exports to avoid ambiguity
 export type { 
-  AccessibilityValidationResult,
-  AccessibilityViolation,
-  ContrastRatio,
   ThemeInstallationRequest,
   ThemeInstallationResponse,
   ThemeConfigurationRequest,
@@ -40,4 +33,21 @@ export type {
   ColorPalette,
   FontConfiguration,
   FontDefinition 
-} from './types/theme';
+} from '../types/theme';
+
+// Re-export utility functions
+export { cn } from '../lib/utils';
+
+// Type exports for component props (temporarily commented for deploy)
+// export type { 
+//   AccessibilityValidationResult,
+//   AccessibilityViolation,
+//   ContrastRatio,
+//   ThemeInstallationRequest,
+//   ThemeInstallationResponse,
+//   ThemeConfigurationRequest,
+//   ColorScheme,
+//   ColorPalette,
+//   FontConfiguration,
+//   FontDefinition 
+// } from '../types/theme';

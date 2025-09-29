@@ -506,8 +506,8 @@ export class AIAppointmentSchedulingService {
     let confidence = 0.5 // Base confidence
 
     // Increase confidence with more data points
-    if (patient.totalAppointments > 10) confidence += 0.2
-    if (patient.totalAppointments > 50) confidence += 0.1
+    if (patient.totalAppointments !== null && patient.totalAppointments > 10) confidence += 0.2
+    if (patient.totalAppointments !== null && patient.totalAppointments > 50) confidence += 0.1
 
     // Increase confidence with complete feature set
     if (features.patientAge) confidence += 0.05
@@ -552,7 +552,7 @@ export class AIAppointmentSchedulingService {
     professionals: any[],
     existingAppointments: any[],
     rooms: any[],
-    dateRange: { start: Date; end: Date },
+    _dateRange: { start: Date; end: Date },
   ): Promise<any[]> {
     const slots: any[] = []
 
@@ -648,15 +648,15 @@ export class AIAppointmentSchedulingService {
   }
 
   private identifyBottlenecks(
-    professionals: any[],
-    rooms: any[],
-    appointments: any[],
+    _professionals: any[],
+    _rooms: any[],
+    _appointments: any[],
   ): string[] {
     const bottlenecks: string[] = []
 
     // Check professional utilization
     const professionalLoad = new Map<string, number>()
-    appointments.forEach(apt => {
+    _appointments.forEach((apt: any) => {
       const current = professionalLoad.get(apt.professionalId) || 0
       professionalLoad.set(apt.professionalId, current + 1)
     })
@@ -669,7 +669,7 @@ export class AIAppointmentSchedulingService {
 
     // Check room utilization
     const roomLoad = new Map<string, number>()
-    appointments.forEach(apt => {
+    _appointments.forEach((apt: any) => {
       if (apt.roomId) {
         const current = roomLoad.get(apt.roomId) || 0
         roomLoad.set(apt.roomId, current + 1)
@@ -721,14 +721,14 @@ export class AIAppointmentSchedulingService {
     return []
   }
 
-  private detectConflicts(appointments: any[]): any[] {
+  private detectConflicts(_appointments: any[]): any[] {
     const conflicts: any[] = []
 
     // Detect overlapping appointments
-    for (let i = 0; i < appointments.length; i++) {
-      for (let j = i + 1; j < appointments.length; j++) {
-        const apt1 = appointments[i]
-        const apt2 = appointments[j]
+    for (let i = 0; i < _appointments.length; i++) {
+      for (let j = i + 1; j < _appointments.length; j++) {
+        const apt1 = _appointments[i]
+        const apt2 = _appointments[j]
 
         if (
           apt1.professionalId === apt2.professionalId &&
@@ -772,3 +772,4 @@ export class AIAppointmentSchedulingService {
     return messages[type]
   }
 }
+
