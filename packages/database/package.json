@@ -42,7 +42,6 @@
     "dev:bun": "vite dev --force",
     "build:bun": "prisma generate && node /home/vibecode/neonpro/node_modules/.bin/tsc --noEmit",
     "build:analyze": "vite build --mode analyze",
-    "test:bun": "vitest run --reporter=dot",
     "test:watch:bun": "vitest watch --reporter=dot",
     "type-check:bun": "node /home/vibecode/neonpro/node_modules/.bin/tsc --noEmit",
     "clean:bun": "rm -rf dist node_modules/.cache",

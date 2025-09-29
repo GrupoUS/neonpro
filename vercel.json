@@ -8,6 +8,19 @@
   "regions": ["gru1"],
   "framework": "vite",
 
+  "functions": {
+    "api/edge/**/*.ts": {
+      "runtime": "edge",
+      "memory": 256,
+      "maxDuration": 30
+    },
+    "api/node/**/*.ts": {
+      "runtime": "nodejs20.x",
+      "memory": 1024,
+      "maxDuration": 900
+    }
+  },
+
   "rewrites": [
     {
       "source": "/api/(.*)",

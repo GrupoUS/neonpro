@@ -32,12 +32,12 @@
     "@neonpro/database": "workspace:*",
     "zod": "^3.22.0",
     "hono": "^4.0.0",
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "2.58.0"
   },
   "devDependencies": {
+    "@vitest/ui": "^3.2.4",
     "typescript": "^5.0.0",
-    "vitest": "^3.2.4",
-    "@vitest/ui": "^3.2.4"
+    "vitest": "3.2.4"
   },
   "engines": {
     "bun": ">=1.0.0"
