@@ -1,350 +1,104 @@
 /**
  * Migration State Model
- *
- * This model defines the migration state for the NeonPro platform,
- * specifically tracking Bun migration phases with healthcare compliance.
- *
- * Key features:
- * - Phase tracking for migration
- * - Healthcare compliance validation
- * - Rollback capabilities
- * - Progress monitoring
- * - Audit trail
+ * Hybrid Architecture: Bun + Vercel Edge + Supabase Functions
+ * Healthcare Compliance: LGPD, ANVISA, CFM
  */
 
 import { z } from 'zod'
 
-// Migration phase enumeration
-export const MigrationPhase = z.enum([
+// Migration Phase Schema
+export const MigrationPhaseSchema = z.enum([
   'planning',
   'setup',
   'configuration',
   'migration',
   'validation',
-  'rollback',
-  'completed',
-  'failed'
-])
-
-export type MigrationPhaseType = z.infer<typeof MigrationPhase>
-
-// Migration status enumeration
-export const MigrationStatus = z.enum([
-  'pending',
-  'in_progress',
   'completed',
   'failed',
-  'rolled_back',
-  'paused'
+  'rollback',
 ])
 
-export type MigrationStatusType = z.infer<typeof MigrationStatus>
+// Migration Status Schema
+export const MigrationStatusSchema = z.enum([
+  'pending',
+  'in_progress',
+  'paused',
+  'failed',
+  'completed',
+  'rolled_back',
+])
 
-// Base migration state schema
-export const MigrationStateSchema = z.object({
-  // Basic configuration
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  description: z.string().optional(),
-  version: z.string().min(1),
-  environment: z.enum(['development', 'staging', 'production']),
-
-  // Migration tracking
-  migration: z.object({
-    phase: MigrationPhase,
-    status: MigrationStatus,
-    progress: z.number().min(0).max(100), // percentage
-    started_at: z.string().datetime(),
-    completed_at: z.string().datetime().optional(),
-    estimated_duration: z.number().min(0), // minutes
-    actual_duration: z.number().min(0).optional(), // minutes
-    retry_count: z.number().min(0).default(0),
-    max_retries: z.number().min(0).default(3)
-  }),
-
-  // Phase details
-  phases: z.array(z.object({
-    name: z.string(),
-    phase: MigrationPhase,
-    status: MigrationStatus,
-    started_at: z.string().datetime().optional(),
-    completed_at: z.string().datetime().optional(),
-    duration: z.number().min(0).optional(), // minutes
-    progress: z.number().min(0).max(100),
-    tasks_completed: z.number().min(0),
-    total_tasks: z.number().min(0),
-    errors: z.array(z.string()).default([]),
-    warnings: z.array(z.string()).default([])
-  })),
-
-  // Rollback configuration
-  rollback: z.object({
-    enabled: z.boolean(),
-    automatic: z.boolean(),
-    trigger_conditions: z.array(z.enum([
-      'error_rate',
-      'performance_degradation',
-      'compliance_failure',
-      'timeout',
-      'manual'
-    ])),
-    rollback_point: z.string().optional(),
-    rollback_data: z.record(z.unknown()).optional(),
-    rollback_reason: z.string().optional()
-  }),
-
-  // Healthcare compliance
-  healthcare: z.object({
-    compliance: z.object({
-      lgpd: z.object({
-        enabled: z.boolean(),
-        data_backup: z.boolean(),
-        audit_trail: z.boolean(),
-        data_integrity: z.boolean(),
-        consent_required: z.boolean(),
-        data_subject_notification: z.boolean()
-      }),
-      anvisa: z.object({
-        enabled: z.boolean(),
-        validation_required: z.boolean(),
-        documentation: z.boolean(),
-        quality_assurance: z.boolean(),
-        risk_assessment: z.boolean()
-      }),
-      cfm: z.object({
-        enabled: z.boolean(),
-        medical_records_protection: z.boolean(),
-        patient_safety: z.boolean(),
-        professional_standards: z.boolean(),
-        ethical_compliance: z.boolean()
-      })
-    }),
-    data_protection: z.object({
-      encryption_enabled: z.boolean(),
-      backup_verified: z.boolean(),
-      access_controls: z.boolean(),
-      audit_logging: z.boolean(),
-      data_classification: z.boolean()
-    })
-  }),
-
-  // Performance metrics
-  performance: z.object({
-    baseline_metrics: z.object({
-      build_time: z.number().min(0), // seconds
-      install_time: z.number().min(0), // seconds
-      test_time: z.number().min(0), // seconds
-      memory_usage: z.number().min(0), // MB
-      cpu_usage: z.number().min(0).max(100), // percentage
-      disk_usage: z.number().min(0) // MB
-    }),
-    current_metrics: z.object({
-      build_time: z.number().min(0), // seconds
-      install_time: z.number().min(0), // seconds
-      test_time: z.number().min(0), // seconds
-      memory_usage: z.number().min(0), // MB
-      cpu_usage: z.number().min(0).max(100), // percentage
-      disk_usage: z.number().min(0) // MB
-    }),
-    targets: z.object({
-      build_time_improvement: z.number().min(0), // percentage
-      memory_usage_reduction: z.number().min(0), // percentage
-      performance_improvement: z.number().min(0) // percentage
-    })
-  }),
-
-  // Validation results
-  validation: z.object({
-    pre_migration: z.object({
-      passed: z.boolean(),
-      checks: z.array(z.string()),
-      failures: z.array(z.string()),
-      warnings: z.array(z.string())
-    }),
-    post_migration: z.object({
-      passed: z.boolean().optional(),
-      checks: z.array(z.string()).default([]),
-      failures: z.array(z.string()).default([]),
-      warnings: z.array(z.string()).default([])
-    }),
-    compliance: z.object({
-      passed: z.boolean().optional(),
-      lgpd_compliant: z.boolean().optional(),
-      anvisa_compliant: z.boolean().optional(),
-      cfm_compliant: z.boolean().optional(),
-      issues: z.array(z.string()).default([])
-    })
-  }),
-
-  // Error handling
-  errors: z.array(z.object({
-    id: z.string(),
-    phase: MigrationPhase,
-    timestamp: z.string().datetime(),
-    error_type: z.string(),
-    message: z.string(),
-    stack_trace: z.string().optional(),
-    context: z.record(z.unknown()).optional(),
-    resolved: z.boolean().default(false),
-    resolution: z.string().optional()
-  })),
-
-  // Metadata
-  metadata: z.object({
-    created_at: z.string().datetime(),
-    updated_at: z.string().datetime(),
-    created_by: z.string(),
-    updated_by: z.string().optional(),
-    tags: z.array(z.string()),
-    notes: z.string().optional()
-  })
+// Migration Progress Schema
+export const MigrationProgressSchema = z.object({
+  currentStep: z.string(),
+  totalSteps: z.number().min(1, 'Total steps must be at least 1'),
+  completedSteps: z.number().min(0, 'Completed steps must be non-negative'),
+  percentage: z.number().min(0).max(100, 'Percentage must be between 0 and 100'),
+  estimatedTimeRemaining: z.number().min(0, 'Estimated time remaining must be non-negative').optional(),
+  lastUpdated: z.date(),
 })
 
-// Export types
-export type MigrationState = z.infer<typeof MigrationStateSchema>
+// Migration Details Schema
+export const MigrationDetailsSchema = z.object({
+  phase: MigrationPhaseSchema,
+  status: MigrationStatusSchema,
+  progress: MigrationProgressSchema,
+  startedAt: z.date(),
+  estimatedDuration: z.number().min(0, 'Estimated duration must be non-negative').optional(),
+  actualDuration: z.number().min(0, 'Actual duration must be non-negative').optional(),
+  completedAt: z.date().optional(),
+  error: z.string().optional(),
+  rollbackData: z.record(z.string(), z.unknown()).optional(),
+})
 
-// Default configuration values
-export const DEFAULT_MIGRATION_STATE: Partial<MigrationState> = {
-  environment: 'development',
-  migration: {
-    phase: 'planning',
-    status: 'pending',
-    progress: 0,
-    started_at: new Date().toISOString(),
-    estimated_duration: 120, // 2 hours
-    retry_count: 0,
-    max_retries: 3
-  },
-  phases: [
-    {
-      name: 'Planning Phase',
-      phase: 'planning',
-      status: 'pending',
-      progress: 0,
-      tasks_completed: 0,
-      total_tasks: 5,
-      errors: [],
-      warnings: []
-    },
-    {
-      name: 'Setup Phase',
-      phase: 'setup',
-      status: 'pending',
-      progress: 0,
-      tasks_completed: 0,
-      total_tasks: 10,
-      errors: [],
-      warnings: []
-    },
-    {
-      name: 'Configuration Phase',
-      phase: 'configuration',
-      status: 'pending',
-      progress: 0,
-      tasks_completed: 0,
-      total_tasks: 15,
-      errors: [],
-      warnings: []
-    },
-    {
-      name: 'Migration Phase',
-      phase: 'migration',
-      status: 'pending',
-      progress: 0,
-      tasks_completed: 0,
-      total_tasks: 20,
-      errors: [],
-      warnings: []
-    },
-    {
-      name: 'Validation Phase',
-      phase: 'validation',
-      status: 'pending',
-      progress: 0,
-      tasks_completed: 0,
-      total_tasks: 10,
-      errors: [],
-      warnings: []
-    }
-  ],
-  rollback: {
-    enabled: true,
-    automatic: false,
-    trigger_conditions: ['error_rate', 'compliance_failure', 'timeout']
-  },
-  healthcare: {
-    compliance: {
-      lgpd: {
-        enabled: true,
-        data_backup: true,
-        audit_trail: true,
-        data_integrity: true,
-        consent_required: true,
-        data_subject_notification: true
-      },
-      anvisa: {
-        enabled: true,
-        validation_required: true,
-        documentation: true,
-        quality_assurance: true,
-        risk_assessment: true
-      },
-      cfm: {
-        enabled: true,
-        medical_records_protection: true,
-        patient_safety: true,
-        professional_standards: true,
-        ethical_compliance: true
-      }
-    },
-    data_protection: {
-      encryption_enabled: true,
-      backup_verified: true,
-      access_controls: true,
-      audit_logging: true,
-      data_classification: true
-    }
-  },
-  performance: {
-    baseline_metrics: {
-      build_time: 120, // 2 minutes
-      install_time: 180, // 3 minutes
-      test_time: 300, // 5 minutes
-      memory_usage: 1024, // 1GB
-      cpu_usage: 50, // 50%
-      disk_usage: 500 // 500MB
-    },
-    current_metrics: {
-      build_time: 0,
-      install_time: 0,
-      test_time: 0,
-      memory_usage: 0,
-      cpu_usage: 0,
-      disk_usage: 0
-    },
-    targets: {
-      build_time_improvement: 66.7, // 3-5x improvement target
-      memory_usage_reduction: 20,
-      performance_improvement: 300
-    }
-  },
-  validation: {
-    pre_migration: {
-      passed: false,
-      checks: [],
-      failures: [],
-      warnings: []
-    },
-    post_migration: {
-      checks: [],
-      failures: [],
-      warnings: []
-    },
-    compliance: {
-      issues: []
-    }
-  },
-  errors: []
+// Migration State Schema
+export const MigrationStateSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1, 'Name is required'),
+  version: z.string().min(1, 'Version is required'),
+  environment: z.enum(['development', 'staging', 'production']),
+  migration: MigrationDetailsSchema,
+  description: z.string().optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+// Migration State Update Schema
+export const MigrationStateUpdateSchema = z.object({
+  name: z.string().min(1, 'Name is required').optional(),
+  version: z.string().min(1, 'Version is required').optional(),
+  migration: MigrationDetailsSchema.optional(),
+  description: z.string().optional(),
+})
+
+// Types
+export type MigrationPhase = z.infer<typeof MigrationPhaseSchema>
+export type MigrationStatus = z.infer<typeof MigrationStatusSchema>
+export type MigrationProgress = z.infer<typeof MigrationProgressSchema>
+export type MigrationDetails = z.infer<typeof MigrationDetailsSchema>
+export type MigrationState = z.infer<typeof MigrationStateSchema>
+export type MigrationStateUpdate = z.infer<typeof MigrationStateUpdateSchema>
+
+// Default values
+export const defaultMigrationProgress: MigrationProgress = {
+  currentStep: 'Initializing',
+  totalSteps: 1,
+  completedSteps: 0,
+  percentage: 0,
+  lastUpdated: new Date(),
+}
+
+export const defaultMigrationDetails: MigrationDetails = {
+  phase: 'planning',
+  status: 'pending',
+  progress: defaultMigrationProgress,
+  startedAt: new Date(),
+  estimatedDuration: 0,
+}
+
+export const defaultMigrationState: Omit<MigrationState, 'id' | 'name' | 'version' | 'environment' | 'createdAt' | 'updatedAt'> = {
+  migration: defaultMigrationDetails,
+  description: 'No description provided',
 }
 
 // Validation functions
@@ -352,204 +106,414 @@ export const validateMigrationState = (state: unknown): MigrationState => {
   return MigrationStateSchema.parse(state)
 }
 
-export const isValidMigrationState = (state: unknown): boolean => {
-  return MigrationStateSchema.safeParse(state).success
+export const validateMigrationStateUpdate = (update: unknown): MigrationStateUpdate => {
+  return MigrationStateUpdateSchema.parse(update)
 }
 
-// Utility functions
-export const createMigrationState = (overrides: Partial<MigrationState> = {}): MigrationState => {
-  const now = new Date().toISOString()
+export const validateMigrationDetails = (details: unknown): MigrationDetails => {
+  return MigrationDetailsSchema.parse(details)
+}
 
-  return validateMigrationState({
-    id: crypto.randomUUID(),
-    name: 'NeonPro Bun Migration',
-    description: 'NeonPro platform migration from Node/PNPM to Bun runtime',
-    version: '1.0.0',
-    environment: 'development',
-    ...DEFAULT_MIGRATION_STATE,
-    ...overrides,
-    metadata: {
-      created_at: now,
-      updated_at: now,
-      created_by: 'system',
-      tags: ['bun', 'migration', 'healthcare', 'lgpd', 'anvisa', 'cfm'],
-      ...overrides.metadata
-    }
+export const validateMigrationProgress = (progress: unknown): MigrationProgress => {
+  return MigrationProgressSchema.parse(progress)
+}
+
+// Migration state validation
+export const isValidMigrationState = (state: MigrationState): boolean => {
+  // Check if the migration state is valid
+  return (
+    state.migration.phase !== 'failed' ||
+    state.migration.error !== undefined
+  )
+}
+
+// Migration progress calculation
+export const calculateMigrationProgress = (progress: MigrationProgress): number => {
+  return Math.round((progress.completedSteps / progress.totalSteps) * 100)
+}
+
+// Update migration progress
+export const updateMigrationProgress = (
+  progress: MigrationProgress,
+  completedSteps: number,
+  currentStep?: string,
+  estimatedTimeRemaining?: number
+): MigrationProgress => {
+  const percentage = calculateMigrationProgress({
+    ...progress,
+    completedSteps,
   })
+
+  return {
+    ...progress,
+    completedSteps,
+    percentage,
+    currentStep: currentStep || progress.currentStep,
+    estimatedTimeRemaining,
+    lastUpdated: new Date(),
+  }
 }
 
-export const updateMigrationState = (
-  state: MigrationState,
-  updates: Partial<MigrationState>
-): MigrationState => {
-  // Ensure we get a fresh timestamp that's always different
+// Check if migration can be rolled back
+export const canRollback = (state: MigrationState): boolean => {
+  return (
+    state.migration.phase === 'completed' ||
+    state.migration.phase === 'failed' ||
+    state.migration.phase === 'validation'
+  ) && state.migration.rollbackData !== undefined
+}
+
+// Get rollback plan
+export const getRollbackPlan = (state: MigrationState): string[] => {
+  if (!canRollback(state)) {
+    return []
+  }
+
+  const rollbackSteps: string[] = []
+
+  // Add rollback steps based on migration phase
+  switch (state.migration.phase) {
+    case 'completed':
+    case 'validation':
+      rollbackSteps.push('Restore previous package manager configuration')
+      rollbackSteps.push('Restore previous build configuration')
+      rollbackSteps.push('Restore previous runtime configuration')
+      break
+    case 'failed':
+      rollbackSteps.push('Clean up partial migration')
+      rollbackSteps.push('Restore previous configuration')
+      break
+  }
+
+  return rollbackSteps
+}
+
+// Database operations
+export const createMigrationState = async (
+  supabase: any,
+  state: Omit<MigrationState, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<MigrationState> => {
   const now = new Date()
-  // Add milliseconds to ensure uniqueness if timestamps are the same
-  now.setMilliseconds(now.getMilliseconds() + 1)
-
-  return validateMigrationState({
+  const newState = {
     ...state,
-    ...updates,
-    metadata: {
-      ...state.metadata,
-      updated_at: now.toISOString(),
-      updated_by: updates.metadata?.updated_by || state.metadata.updated_by,
-      ...updates.metadata
-    }
-  })
-}
-
-// Phase management
-export const advancePhase = (
-  state: MigrationState,
-  newPhase: MigrationPhaseType,
-  options: {
-    status?: MigrationStatusType
-    progress?: number
-    errors?: string[]
-    warnings?: string[]
-  } = {}
-): MigrationState => {
-  const now = new Date().toISOString()
-
-  // Update current phase
-  const updatedPhases = state.phases.map(phase => {
-    if (phase.phase === newPhase) {
-      return {
-        ...phase,
-        status: options.status || 'in_progress',
-        started_at: phase.started_at || now,
-        completed_at: options.status === 'completed' ? now : phase.completed_at,
-        progress: options.progress || phase.progress,
-        errors: options.errors || phase.errors,
-        warnings: options.warnings || phase.warnings
-      }
-    }
-    return phase
-  })
-
-  return updateMigrationState(state, {
-    migration: {
-      ...state.migration,
-      phase: newPhase,
-      status: options.status || 'in_progress',
-      progress: options.progress || state.migration.progress
-    },
-    phases: updatedPhases
-  })
-}
-
-// Error management
-export const addError = (
-  state: MigrationState,
-  error: {
-    phase: MigrationPhaseType
-    error_type: string
-    message: string
-    stack_trace?: string
-    context?: Record<string, unknown>
-  }
-): MigrationState => {
-  const errorEntry = {
     id: crypto.randomUUID(),
-    timestamp: new Date().toISOString(),
-    resolved: false,
-    ...error
+    createdAt: now,
+    updatedAt: now,
   }
 
-  return updateMigrationState(state, {
-    errors: [...state.errors, errorEntry]
-  })
+  const { data, error } = await supabase
+    .from('migration_states')
+    .insert(newState)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to create migration state: ${error.message}`)
+  }
+
+  return validateMigrationState(data)
 }
 
-export const resolveError = (
-  state: MigrationState,
-  errorId: string,
-  resolution: string
-): MigrationState => {
-  const updatedErrors = state.errors.map(error => {
-    if (error.id === errorId) {
-      return {
-        ...error,
-        resolved: true,
-        resolution
-      }
+export const getMigrationState = async (
+  supabase: any,
+  environment: string
+): Promise<MigrationState | null> => {
+  const { data, error } = await supabase
+    .from('migration_states')
+    .select('*')
+    .eq('environment', environment)
+    .order('createdAt', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null // Not found
     }
-    return error
+    throw new Error(`Failed to get migration state: ${error.message}`)
+  }
+
+  return validateMigrationState(data)
+}
+
+export const updateMigrationState = async (
+  supabase: any,
+  id: string,
+  update: MigrationStateUpdate
+): Promise<MigrationState> => {
+  const now = new Date()
+  const updatedState = {
+    ...update,
+    updatedAt: now,
+  }
+
+  const { data, error } = await supabase
+    .from('migration_states')
+    .update(updatedState)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to update migration state: ${error.message}`)
+  }
+
+  return validateMigrationState(data)
+}
+
+export const deleteMigrationState = async (
+  supabase: any,
+  id: string
+): Promise<void> => {
+  const { error } = await supabase
+    .from('migration_states')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    throw new Error(`Failed to delete migration state: ${error.message}`)
+  }
+}
+
+// Migration operations
+export const startMigration = async (
+  supabase: any,
+  id: string,
+  estimatedDuration?: number
+): Promise<MigrationState> => {
+  const now = new Date()
+
+  const updatedMigration: MigrationDetails = {
+    phase: 'migration',
+    status: 'in_progress',
+    progress: {
+      currentStep: 'Starting migration',
+      totalSteps: 10, // Default number of steps
+      completedSteps: 0,
+      percentage: 0,
+      lastUpdated: now,
+    },
+    startedAt: now,
+    estimatedDuration,
+  }
+
+  return updateMigrationState(supabase, id, {
+    migration: updatedMigration,
   })
+}
 
-  return updateMigrationState(state, {
-    errors: updatedErrors
+export const completeMigration = async (
+  supabase: any,
+  id: string
+): Promise<MigrationState> => {
+  const now = new Date()
+
+  // Get current migration state
+  const currentState = await getMigrationState(supabase, 'development') // Simplified for now
+  if (!currentState || currentState.id !== id) {
+    throw new Error('Migration state not found')
+  }
+
+  const actualDuration = now.getTime() - currentState.migration.startedAt.getTime()
+
+  const updatedMigration: MigrationDetails = {
+    ...currentState.migration,
+    phase: 'completed',
+    status: 'completed',
+    progress: {
+      ...currentState.migration.progress,
+      completedSteps: currentState.migration.progress.totalSteps,
+      percentage: 100,
+      currentStep: 'Migration completed',
+      lastUpdated: now,
+    },
+    completedAt: now,
+    actualDuration,
+  }
+
+  return updateMigrationState(supabase, id, {
+    migration: updatedMigration,
   })
 }
 
-// Healthcare compliance validation
-export const validateHealthcareCompliance = (state: MigrationState): boolean => {
-  const { healthcare } = state
+export const failMigration = async (
+  supabase: any,
+  id: string,
+  error: string
+): Promise<MigrationState> => {
+  const now = new Date()
 
-  // Check LGPD compliance
-  if (!healthcare.compliance.lgpd.enabled) return false
-  if (!healthcare.compliance.lgpd.data_backup) return false
-  if (!healthcare.compliance.lgpd.audit_trail) return false
-  if (!healthcare.compliance.lgpd.data_integrity) return false
+  // Get current migration state
+  const currentState = await getMigrationState(supabase, 'development') // Simplified for now
+  if (!currentState || currentState.id !== id) {
+    throw new Error('Migration state not found')
+  }
 
-  // Check ANVISA compliance
-  if (!healthcare.compliance.anvisa.enabled) return false
-  if (!healthcare.compliance.anvisa.validation_required) return false
-  if (!healthcare.compliance.anvisa.documentation) return false
+  const actualDuration = now.getTime() - currentState.migration.startedAt.getTime()
 
-  // Check CFM compliance
-  if (!healthcare.compliance.cfm.enabled) return false
-  if (!healthcare.compliance.cfm.medical_records_protection) return false
-  if (!healthcare.compliance.cfm.patient_safety) return false
+  const updatedMigration: MigrationDetails = {
+    ...currentState.migration,
+    phase: 'failed',
+    status: 'failed',
+    progress: {
+      ...currentState.migration.progress,
+      lastUpdated: now,
+    },
+    completedAt: now,
+    actualDuration,
+    error,
+  }
 
-  // Check data protection
-  if (!healthcare.data_protection.encryption_enabled) return false
-  if (!healthcare.data_protection.backup_verified) return false
-  if (!healthcare.data_protection.access_controls) return false
-
-  return true
+  return updateMigrationState(supabase, id, {
+    migration: updatedMigration,
+  })
 }
 
-// Performance validation
-export const validatePerformanceTargets = (state: MigrationState): boolean => {
-  const { performance } = state
+export const rollbackMigration = async (
+  supabase: any,
+  id: string
+): Promise<MigrationState> => {
+  const now = new Date()
 
-  // Check if targets are met
-  const buildTimeImprovement = ((performance.baseline_metrics.build_time - performance.current_metrics.build_time) / performance.baseline_metrics.build_time) * 100
-  if (buildTimeImprovement < performance.targets.build_time_improvement) return false
+  // Get current migration state
+  const currentState = await getMigrationState(supabase, 'development') // Simplified for now
+  if (!currentState || currentState.id !== id) {
+    throw new Error('Migration state not found')
+  }
 
-  const memoryUsageReduction = ((performance.baseline_metrics.memory_usage - performance.current_metrics.memory_usage) / performance.baseline_metrics.memory_usage) * 100
-  if (memoryUsageReduction < performance.targets.memory_usage_reduction) return false
+  if (!canRollback(currentState)) {
+    throw new Error('Migration cannot be rolled back')
+  }
 
-  return true
+  const updatedMigration: MigrationDetails = {
+    ...currentState.migration,
+    phase: 'rollback',
+    status: 'in_progress',
+    progress: {
+      currentStep: 'Starting rollback',
+      totalSteps: 5, // Default number of rollback steps
+      completedSteps: 0,
+      percentage: 0,
+      lastUpdated: now,
+    },
+  }
+
+  return updateMigrationState(supabase, id, {
+    migration: updatedMigration,
+  })
 }
 
-// Migration completion check
-export const isMigrationComplete = (state: MigrationState): boolean => {
-  return state.migration.phase === 'completed' &&
-         state.migration.status === 'completed' &&
-         state.migration.progress === 100
+// Get migration progress
+export const getMigrationProgress = async (
+  supabase: any,
+  id: string
+): Promise<MigrationProgress> => {
+  const state = await getMigrationState(supabase, 'development') // Simplified for now
+
+  if (!state || state.id !== id) {
+    throw new Error('Migration state not found')
+  }
+
+  return state.migration.progress
 }
 
-// Rollback check
-export const shouldRollback = (state: MigrationState): boolean => {
-  if (!state.rollback.enabled) return false
+// Get migration health
+export const getMigrationHealth = async (
+  supabase: any,
+  id: string
+): Promise<{
+  status: 'healthy' | 'warning' | 'error'
+  message: string
+  details: Record<string, any>
+}> => {
+  const state = await getMigrationState(supabase, 'development') // Simplified for now
 
-  // Check error rate
-  const errorRate = state.errors.filter(e => !e.resolved).length / state.errors.length
-  if (errorRate > 0.1 && state.rollback.trigger_conditions.includes('error_rate')) return true
+  if (!state || state.id !== id) {
+    return {
+      status: 'error',
+      message: 'Migration state not found',
+      details: {},
+    }
+  }
 
-  // Check compliance failures
-  if (!validateHealthcareCompliance(state) && state.rollback.trigger_conditions.includes('compliance_failure')) return true
+  const { migration } = state
 
-  return false
-}
+  // Check migration health
+  if (migration.phase === 'failed') {
+    return {
+      status: 'error',
+      message: `Migration failed: ${migration.error || 'Unknown error'}`,
+      details: {
+        phase: migration.phase,
+        status: migration.status,
+        error: migration.error,
+      },
+    }
+  }
 
-// Progress calculation
-export const calculateProgress = (state: MigrationState): number => {
-  const totalTasks = state.phases.reduce((sum, phase) => sum + phase.total_tasks, 0)
-  const completedTasks = state.phases.reduce((sum, phase) => sum + phase.tasks_completed, 0)
+  if (migration.phase === 'rollback') {
+    return {
+      status: 'warning',
+      message: 'Migration is being rolled back',
+      details: {
+        phase: migration.phase,
+        status: migration.status,
+        progress: migration.progress.percentage,
+      },
+    }
+  }
 
-  return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  if (migration.status === 'paused') {
+    return {
+      status: 'warning',
+      message: 'Migration is paused',
+      details: {
+        phase: migration.phase,
+        status: migration.status,
+        progress: migration.progress.percentage,
+      },
+    }
+  }
+
+  if (migration.phase === 'completed') {
+    return {
+      status: 'healthy',
+      message: 'Migration completed successfully',
+      details: {
+        phase: migration.phase,
+        status: migration.status,
+        duration: migration.actualDuration,
+      },
+    }
+  }
+
+  // Migration is in progress
+  const now = new Date()
+  const elapsed = now.getTime() - migration.startedAt.getTime()
+
+  if (migration.estimatedDuration && elapsed > migration.estimatedDuration * 1.5) {
+    return {
+      status: 'warning',
+      message: 'Migration is taking longer than expected',
+      details: {
+        phase: migration.phase,
+        status: migration.status,
+        progress: migration.progress.percentage,
+        elapsed,
+        estimatedDuration: migration.estimatedDuration,
+      },
+    }
+  }
+
+  return {
+    status: 'healthy',
+    message: `Migration is in progress (${migration.progress.percentage}%)`,
+    details: {
+      phase: migration.phase,
+      status: migration.status,
+      progress: migration.progress.percentage,
+      elapsed,
+      estimatedDuration: migration.estimatedDuration,
+    },
+  }
 }

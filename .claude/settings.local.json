@@ -86,7 +86,8 @@
       "mcp__chrome-devtools__performance_start_trace",
       "mcp__chrome-devtools__performance_analyze_insight",
       "mcp__chrome-devtools__resize_page",
-      "SlashCommand(/constitution)"
+      "SlashCommand(/constitution)",
+      "SlashCommand(/implement)"
     ],
     "deny": [
       "Edit",
