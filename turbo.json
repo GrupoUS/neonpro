@@ -1,6 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json"],
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json", "bun.lock"],
   "globalEnv": [
     "NODE_ENV",
     "VERCEL",
@@ -41,23 +41,47 @@
     "//#lint:fix": {
       "cache": false
     },
+    "build:deps": {
+      "dependsOn": [],
+      "outputs": ["dist/**/*.d.ts"],
+      "cache": true,
+      "persistent": false,
+      "inputs": ["src/**/*.ts", "tsconfig*.json"],
+      "passThroughEnv": ["HEALTHCARE_COMPLIANCE", "LGPD_MODE"]
+    },
+    "build:types": {
+      "dependsOn": ["build:deps"],
+      "outputs": ["dist/**/*.d.ts", "**/.tsbuildinfo/**"],
+      "cache": true,
+      "persistent": false,
+      "inputs": ["src/**/*.ts", "src/**/*.tsx", "tsconfig*.json", "package.json"],
+      "passThroughEnv": ["HEALTHCARE_COMPLIANCE", "DATA_RESIDENCY", "AUDIT_LOGGING"]
+    },
+    "build:lib": {
+      "dependsOn": ["build:types"],
+      "outputs": ["dist/**/*.js", "dist/**/*.css"],
+      "cache": true,
+      "persistent": false,
+      "inputs": ["src/**/*", "package.json", "vite.config.ts"],
+      "passThroughEnv": ["HEALTHCARE_COMPLIANCE", "DATA_RESIDENCY", "CLIENT_DATA_PROTECTION"]
+    },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build:lib"],
       "outputs": ["dist/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false,
-      "env": ["NODE_ENV", "CI", "VERCEL_ENV"],
-      "inputs": ["tsconfig*.json", "package.json", "vercel.json"]
+      "env": ["NODE_ENV", "CI", "VERCEL_ENV", "HEALTHCARE_COMPLIANCE"],
+      "inputs": ["tsconfig*.json", "package.json", "vercel.json", "bun.lock"]
     },
     "build:vercel": {
-      "dependsOn": ["^build", "build:core"],
+      "dependsOn": ["build"],
       "outputs": ["dist/**"],
       "cache": true,
       "persistent": false,
       "env": ["VERCEL_ENV", "NODE_ENV", "TURBO_REMOTE_CACHE_SIGNATURE"]
     },
     "build:lgpd": {
-      "dependsOn": ["build", "build:core"],
+      "dependsOn": ["build"],
       "outputs": ["dist/**", "compliance-reports/**"],
       "cache": true,
       "persistent": false,
@@ -82,7 +106,7 @@
       "passThroughEnv": ["NODE_ENV", "CI", "VERCEL_ENV"]
     },
     "test": {
-      "dependsOn": ["build"],
+      "dependsOn": ["build:types"],
       "outputs": ["coverage/**"],
       "cache": true,
       "persistent": false
@@ -93,7 +117,7 @@
       "persistent": false
     },
     "type-check": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build:deps"],
       "outputs": [],
       "cache": true,
       "persistent": false
@@ -133,7 +157,7 @@
       "env": ["SUPABASE_SERVICE_KEY", "DATABASE_URL"]
     },
     "db:types": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["build:deps"],
       "outputs": ["packages/database/src/types/supabase-generated.ts"],
       "cache": true,
       "persistent": false,

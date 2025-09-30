@@ -211,7 +211,7 @@ class PerformanceBenchmark {
     }
     
     this.results.benchmarks.packageManager.install = await this.measureCommand(
-      'pnpm install',
+      'bun install',
       'Fresh install',
       false
     );

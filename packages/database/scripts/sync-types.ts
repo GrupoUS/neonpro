@@ -55,7 +55,7 @@ function generateSupabaseTypes() {
 
   const generatedTypes = `
 // Auto-generated Supabase types from Prisma schema
-// DO NOT EDIT MANUALLY - Run 'npm run sync-types' to regenerate
+// DO NOT EDIT MANUALLY - Run 'bun run sync-types' to regenerate
 
 export type Json =
   | string

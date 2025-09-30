@@ -1,10 +1,10 @@
 /**
- * Emergency Integration Component
+ * Aesthetic Treatment Coordination Component
  * 
- * Sistema de integração de emergência para clínicas estéticas brasileiras
- * Protocolos de resposta rápida, notificação de equipe e conformidade regulatória
+ * Sistema de coordenação de tratamentos estéticos para clínicas brasileiras
+ * Protocolos de atendimento profissional, notificação de equipe e conformidade regulatória
  * 
- * @component EmergencyIntegration
+ * @component AestheticTreatmentCoordination
  */
 
 'use client'
@@ -32,27 +32,27 @@ import {
 
 import { HealthcareContext } from '@/types/healthcare'
 
-interface EmergencyIntegrationProps extends ClinicalWorkflowComponentProps {
+interface AestheticTreatmentCoordinationProps extends ClinicalWorkflowComponentProps {
   activeAlerts?: EmergencyAlert[]
-  emergencyProtocols?: EmergencyProtocol[]
+  treatmentProtocols?: EmergencyProtocol[]
   onCreateAlert?: (alert: Omit<EmergencyAlert, 'id' | 'reportedAt'>) => Promise<void>
   onUpdateAlert?: (alertId: string, alert: Partial<EmergencyAlert>) => Promise<void>
   onActivateProtocol?: (protocolId: string, alertId: string) => Promise<void>
-  onEmergencyCall?: (type: 'samu' | 'bombeiros' | 'polícia', location: string) => void
+  onContactSupport?: (type: 'specialist' | 'technical' | 'clinic', location: string) => void
 }
 
-const EMERGENCY_TYPES = [
-  { value: 'medical_emergency', label: 'Emergência Médica', severity: 'critical', color: 'red' },
-  { value: 'severe_reaction', label: 'Reação Adversa Grave', severity: 'high', color: 'orange' },
-  { value: 'equipment_failure', label: 'Falha de Equipamento', severity: 'medium', color: 'yellow' },
-  { value: 'security_incident', label: 'Incidente de Segurança', severity: 'high', color: 'red' }
+const TREATMENT_TYPES = [
+  { value: 'consultation_request', label: 'Solicitação de Consulta', severity: 'medium', color: 'blue' },
+  { value: 'adverse_reaction', label: 'Reação Adversa Leve', severity: 'high', color: 'orange' },
+  { value: 'equipment_support', label: 'Suporte de Equipamento', severity: 'medium', color: 'green' },
+  { value: 'client_support', label: 'Suporte ao Cliente', severity: 'medium', color: 'purple' }
 ]
 
-const EMERGENCY_SEVERITY = [
+const TREATMENT_PRIORITY = [
   { value: 'low', label: 'Baixa', color: 'blue', responseTime: 30 },
-  { value: 'medium', label: 'Média', color: 'yellow', responseTime: 15 },
+  { value: 'medium', label: 'Média', color: 'green', responseTime: 15 },
   { value: 'high', label: 'Alta', color: 'orange', responseTime: 5 },
-  { value: 'critical', label: 'Crítica', color: 'red', responseTime: 2 }
+  { value: 'critical', label: 'VIP', color: 'purple', responseTime: 2 }
 ]
 
 const STAFF_ROLES: StaffRole[] = [
@@ -61,150 +61,150 @@ const STAFF_ROLES: StaffRole[] = [
 
 const DEFAULT_PROTOCOLS: EmergencyProtocol[] = [
   {
-    id: 'cardiac_arrest',
-    name: 'Parada Cardiorrespiratória',
-    description: 'Protocolo de atendimento a parada cardiorrespiratória',
-    triggers: ['parada cardíaca', 'ausência de pulso', 'inconsciência'],
+    id: 'consultation_coordination',
+    name: 'Coordenação de Consulta',
+    description: 'Protocolo de coordenação para consultas estéticas',
+    triggers: ['solicitação de consulta', 'avaliação de tratamento', 'dúvida de cliente'],
     steps: [
       {
         order: 1,
-        title: 'Verificar Responsividade',
-        description: 'Verificar se a pessoa está consciente e respirando',
-        assignedRole: 'medico',
-        estimatedDuration: 1,
-        critical: true
-      },
-      {
-        order: 2,
-        title: 'Chamar Ajuda',
-        description: 'Acionar equipe de emergência e SAMU (192)',
+        title: 'Verificar Disponibilidade',
+        description: 'Verificar disponibilidade do especialista e sala',
         assignedRole: 'recepcao',
         estimatedDuration: 2,
         critical: true
       },
       {
-        order: 3,
-        title: 'Iniciar RCP',
-        description: 'Iniciar reanimação cardiopulmonar',
-        assignedRole: 'medico',
+        order: 2,
+        title: 'Preparar Ambiente',
+        description: 'Preparar sala de consulta e materiais necessários',
+        assignedRole: 'esteticista',
         estimatedDuration: 5,
         critical: true
       },
       {
-        order: 4,
-        title: 'Preparar DEA',
-        description: 'Preparar desfibrilador externo automático',
-        assignedRole: 'enfermeiro',
+        order: 3,
+        title: 'Receber Cliente',
+        description: 'Receber cliente e explicar procedimento',
+        assignedRole: 'coordenador_clinico',
         estimatedDuration: 3,
+        critical: true
+      },
+      {
+        order: 4,
+        title: 'Iniciar Consulta',
+        description: 'Iniciar consulta estética especializada',
+        assignedRole: 'medico',
+        estimatedDuration: 15,
         critical: true
       }
     ],
-    requiredRoles: ['medico', 'enfermeiro', 'recepcao'],
-    estimatedResponseTime: 2,
+    requiredRoles: ['medico', 'coordenador_clinico', 'recepcao'],
+    estimatedResponseTime: 5,
     lastUpdated: new Date().toISOString(),
     version: '1.0'
   },
   {
-    id: 'anaphylactic_shock',
-    name: 'Choque Anafilático',
-    description: 'Protocolo de atendimento a reações alérgicas graves',
-    triggers: ['dificuldade respiratória', 'inchaço', 'urticária', 'hipotensão'],
+    id: 'mild_reaction_care',
+    name: 'Cuidado de Reação Leve',
+    description: 'Protocolo de atendimento a reações leves em tratamentos estéticos',
+    triggers: ['vermelhidão leve', 'desconforto', 'irritação menor', 'inchaço leve'],
     steps: [
       {
         order: 1,
-        title: 'Avaliar Sinais Vitais',
-        description: 'Verificar pressão arterial, frequência cardíaca e respiratória',
+        title: 'Avaliar Sintomas',
+        description: 'Avaliar grau e extensão da reação',
         assignedRole: 'enfermeiro',
-        estimatedDuration: 2,
-        critical: true
-      },
-      {
-        order: 2,
-        title: 'Administrar Adrenalina',
-        description: 'Administrar adrenalina intramuscular',
-        assignedRole: 'medico',
         estimatedDuration: 3,
         critical: true
       },
       {
-        order: 3,
-        title: 'Posicionar Paciente',
-        description: 'Posicionar paciente com pernas elevadas',
-        assignedRole: 'tecnico_enfermagem',
-        estimatedDuration: 1,
-        critical: false
+        order: 2,
+        title: 'Aplicar Cuidado Imediato',
+        description: 'Aplicar produtos calmantes ou compressas',
+        assignedRole: 'enfermeiro',
+        estimatedDuration: 5,
+        critical: true
       },
       {
-        order: 4,
-        title: 'Monitorar',
-        description: 'Monitorar sinais vitais e preparar para intubação',
-        assignedRole: 'medico',
+        order: 3,
+        title: 'Monitorar Cliente',
+        description: 'Monitorar resposta ao tratamento aplicado',
+        assignedRole: 'tecnico_enfermagem',
         estimatedDuration: 10,
+        critical: false
+      },
+      {
+        order: 4,
+        title: 'Documentar Observações',
+        description: 'Registrar todas as observações e tratamentos realizados',
+        assignedRole: 'enfermeiro',
+        estimatedDuration: 5,
         critical: true
       }
     ],
-    requiredRoles: ['medico', 'enfermeiro', 'tecnico_enfermagem'],
-    estimatedResponseTime: 5,
+    requiredRoles: ['enfermeiro', 'tecnico_enfermagem'],
+    estimatedResponseTime: 8,
     lastUpdated: new Date().toISOString(),
     version: '1.0'
   },
   {
-    id: 'severe_bleeding',
-    name: 'Hemorragia Grave',
-    description: 'Protocolo de controle de hemorragias graves',
-    triggers: ['sangramento excessivo', 'ferida profunda', 'trauma'],
+    id: 'equipment_assistance',
+    name: 'Suporte Técnico',
+    description: 'Protocolo de assistência técnica para equipamentos estéticos',
+    triggers: ['falha de equipamento', 'manutenção necessária', 'ajuste técnico'],
     steps: [
       {
         order: 1,
-        title: 'Aplicar Pressão Direta',
-        description: 'Aplicar pressão direta no local do sangramento',
-        assignedRole: 'enfermeiro',
+        title: 'Identificar Problema',
+        description: 'Identificar natureza do problema com equipamento',
+        assignedRole: 'esteticista',
         estimatedDuration: 2,
         critical: true
       },
       {
         order: 2,
-        title: 'Elevar Membro',
-        description: 'Elevar membro afetado acima do nível do coração',
-        assignedRole: 'tecnico_enfermagem',
-        estimatedDuration: 1,
+        title: 'Tentar Solução Básica',
+        description: 'Tentar solução técnica básica ou reinicialização',
+        assignedRole: 'esteticista',
+        estimatedDuration: 3,
         critical: false
       },
       {
         order: 3,
-        title: 'Verificar Sinais Vitais',
-        description: 'Monitorar pressão arterial e frequência cardíaca',
-        assignedRole: 'enfermeiro',
-        estimatedDuration: 3,
+        title: 'Contactar Suporte',
+        description: 'Contactar suporte técnico especializado',
+        assignedRole: 'coordenador_clinico',
+        estimatedDuration: 5,
         critical: true
       },
       {
         order: 4,
-        title: 'Preparar Fluidos',
-        description: 'Preparar administração de fluidos intravenosos',
-        assignedRole: 'medico',
-        estimatedDuration: 5,
+        title: 'Agendar Manutenção',
+        description: 'Agendar manutenção preventiva ou corretiva',
+        assignedRole: 'administrativo',
+        estimatedDuration: 8,
         critical: true
       }
     ],
-    requiredRoles: ['medico', 'enfermeiro', 'tecnico_enfermagem'],
-    estimatedResponseTime: 5,
+    requiredRoles: ['esteticista', 'coordenador_clinico', 'administrativo'],
+    estimatedResponseTime: 10,
     lastUpdated: new Date().toISOString(),
     version: '1.0'
   }
 ]
 
-export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
+export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordinationProps> = ({
   patientId,
   staffId,
   healthcareContext,
   className,
   activeAlerts = [],
-  emergencyProtocols = DEFAULT_PROTOCOLS,
+  treatmentProtocols = DEFAULT_PROTOCOLS,
   onCreateAlert,
   onUpdateAlert,
   onActivateProtocol,
-  onEmergencyCall
+  onContactSupport
 }) => {
   const [activeTab, setActiveTab] = useState('alerts')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -215,8 +215,8 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
 
   // Form states
   const [newAlert, setNewAlert] = useState({
-    type: 'medical_emergency' as const,
-    severity: 'high' as const,
+    type: 'consultation_request' as const,
+    severity: 'medium' as const,
     location: '',
     description: ''
   })
@@ -235,7 +235,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
     }
   }, [])
 
-  // Countdown timer for critical emergencies
+  // Countdown timer for VIP treatments
   useEffect(() => {
     let interval: NodeJS.Timeout
     
@@ -277,9 +277,9 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
         const createdAlert = await onCreateAlert(alertData)
         setSelectedAlert(createdAlert as EmergencyAlert)
         
-        // Start countdown for critical emergencies
+        // Start countdown for VIP treatments
         if (newAlert.severity === 'critical') {
-          const severityInfo = EMERGENCY_SEVERITY.find(s => s.value === 'critical')
+          const severityInfo = TREATMENT_PRIORITY.find(s => s.value === 'critical')
           if (severityInfo) {
             setCountdownTime(severityInfo.responseTime * 60) // Convert to seconds
             setIsCountingDown(true)
@@ -289,19 +289,19 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
 
       // Reset form
       setNewAlert({
-        type: 'medical_emergency',
-        severity: 'high',
+        type: 'consultation_request',
+        severity: 'medium',
         location: '',
         description: ''
       })
 
       // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Alerta de emergência criado com sucesso')
+      ScreenReaderAnnouncer.announce('Solicitação de tratamento criada com sucesso')
       
       // Switch to alerts tab
       setActiveTab('alerts')
     } catch (error) {
-      console.error('Error creating emergency alert:', error)
+      console.error('Error creating treatment alert:', error)
     } finally {
       setIsSubmitting(false)
     }
@@ -322,7 +322,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
       }
 
       // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Status do alerta atualizado com sucesso')
+      ScreenReaderAnnouncer.announce('Status da solicitação atualizado com sucesso')
     } catch (error) {
       console.error('Error updating alert status:', error)
     } finally {
@@ -339,7 +339,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
       }
 
       // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Protocolo de emergência ativado com sucesso')
+      ScreenReaderAnnouncer.announce('Protocolo de tratamento ativado com sucesso')
     } catch (error) {
       console.error('Error activating protocol:', error)
     } finally {
@@ -347,16 +347,18 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
     }
   }, [onActivateProtocol])
 
-  const handleEmergencyCall = useCallback((type: 'samu' | 'bombeiros' | 'polícia') => {
-    if (onEmergencyCall) {
+  const handleContactSupport = useCallback((type: 'specialist' | 'technical' | 'clinic') => {
+    if (onContactSupport) {
       const location = newAlert.location || 'Clínica Estética'
-      onEmergencyCall(type, location)
+      onContactSupport(type, location)
     }
     
-    // Make actual phone call in mobile environment
-    const phoneNumber = type === 'samu' ? '192' : type === 'bombeiros' ? '193' : '190'
-    window.open(`tel:${phoneNumber}`, '_self')
-  }, [onEmergencyCall, newAlert.location])
+    // Make actual phone call in mobile environment for specialist
+    if (type === 'specialist') {
+      // Would call clinic specialist line instead of emergency services
+      window.open(`tel:+5511999991111`, '_self')
+    }
+  }, [onContactSupport, newAlert.location])
 
   const formatCountdown = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -364,48 +366,48 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const getEmergencyTypeColor = (type: string) => {
-    return EMERGENCY_TYPES.find(t => t.value === type)?.color || 'gray'
+  const getTreatmentTypeColor = (type: string) => {
+    return TREATMENT_TYPES.find(t => t.value === type)?.color || 'gray'
   }
 
-  const getEmergencyTypeLabel = (type: string) => {
-    return EMERGENCY_TYPES.find(t => t.value === type)?.label || type
+  const getTreatmentTypeLabel = (type: string) => {
+    return TREATMENT_TYPES.find(t => t.value === type)?.label || type
   }
 
-  const getSeverityColor = (severity: string) => {
-    return EMERGENCY_SEVERITY.find(s => s.value === severity)?.color || 'gray'
+  const getPriorityColor = (severity: string) => {
+    return TREATMENT_PRIORITY.find(s => s.value === severity)?.color || 'gray'
   }
 
-  const getSeverityLabel = (severity: string) => {
-    return EMERGENCY_SEVERITY.find(s => s.value === severity)?.label || severity
+  const getPriorityLabel = (severity: string) => {
+    return TREATMENT_PRIORITY.find(s => s.value === severity)?.label || severity
   }
 
-  const activeCriticalAlerts = activeAlerts.filter(alert => 
+  const activeVIPAlerts = activeAlerts.filter(alert => 
     alert.status === 'active' && alert.severity === 'critical'
   )
 
   return (
     <AccessibilityProvider>
       <div className={`max-w-6xl mx-auto p-4 ${className}`}>
-        {/* Emergency Header */}
-        <Card className="mb-6 border-red-200 bg-red-50">
+        {/* Treatment Header */}
+        <Card className="mb-6 border-purple-200 bg-purple-50">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-2xl font-bold text-red-800">
-                  Sistema de Emergência
+                <CardTitle className="text-2xl font-bold text-purple-800">
+                  Sistema de Coordenação Estética
                 </CardTitle>
-                <p className="text-red-700 mt-2">
-                  Protocolos de resposta rápida para clínicas estéticas brasileiras
+                <p className="text-purple-700 mt-2">
+                  Protocolos de atendimento profissional para clínicas estéticas brasileiras
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={isOffline ? "destructive" : "secondary"}>
                   {isOffline ? 'Offline' : 'Online'}
                 </Badge>
-                {activeCriticalAlerts.length > 0 && (
-                  <Badge variant="destructive" className="animate-pulse">
-                    {activeCriticalAlerts.length} Emergência(s) Crítica(s)
+                {activeVIPAlerts.length > 0 && (
+                  <Badge variant="default" className="animate-pulse">
+                    {activeVIPAlerts.length} Tratamento(s) VIP Ativo(s)
                   </Badge>
                 )}
               </div>
@@ -413,19 +415,19 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
           </CardHeader>
         </Card>
 
-        {/* Critical Emergency Countdown */}
+        {/* VIP Treatment Countdown */}
         {isCountingDown && (
-          <Card className="mb-6 border-red-500 bg-red-100">
+          <Card className="mb-6 border-purple-500 bg-purple-100">
             <CardContent className="p-6">
               <div className="text-center">
-                <div className="text-4xl font-bold text-red-800 mb-2">
+                <div className="text-4xl font-bold text-purple-800 mb-2">
                   {formatCountdown(countdownTime)}
                 </div>
-                <div className="text-lg text-red-700 font-semibold">
-                  Tempo crítico restante para resposta
+                <div className="text-lg text-purple-700 font-semibold">
+                  Tempo restante para atendimento VIP
                 </div>
-                <div className="text-sm text-red-600 mt-2">
-                  Resposta deve ser iniciada imediatamente
+                <div className="text-sm text-purple-600 mt-2">
+                  Atendimento deve ser iniciado imediatamente
                 </div>
               </div>
             </CardContent>
@@ -435,33 +437,33 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
         {/* Quick Actions */}
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>Ações Rápidas de Emergência</CardTitle>
+            <CardTitle>Ações Rápidas de Suporte</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <MobileHealthcareButton
-                variant="emergency"
+                variant="treatment"
                 size="lg"
-                onClick={() => handleEmergencyCall('samu')}
+                onClick={() => handleContactSupport('specialist')}
                 className="w-full"
               >
-                🚑 SAMU (192)
+                👨‍⚕️ Especialista
               </MobileHealthcareButton>
               <MobileHealthcareButton
-                variant="emergency"
+                variant="treatment"
                 size="lg"
-                onClick={() => handleEmergencyCall('bombeiros')}
+                onClick={() => handleContactSupport('technical')}
                 className="w-full"
               >
-                🚒 Bombeiros (193)
+                🔧 Suporte Técnico
               </MobileHealthcareButton>
               <MobileHealthcareButton
-                variant="emergency"
+                variant="treatment"
                 size="lg"
-                onClick={() => handleEmergencyCall('polícia')}
+                onClick={() => handleContactSupport('clinic')}
                 className="w-full"
               >
-                👮 Polícia (190)
+                🏥 Clínica
               </MobileHealthcareButton>
             </div>
           </CardContent>
@@ -470,8 +472,8 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="alerts">Alertas Ativos</TabsTrigger>
-            <TabsTrigger value="new">Novo Alerta</TabsTrigger>
+            <TabsTrigger value="alerts">Solicitações Ativas</TabsTrigger>
+            <TabsTrigger value="new">Nova Solicitação</TabsTrigger>
             <TabsTrigger value="protocols">Protocolos</TabsTrigger>
             <TabsTrigger value="history">Histórico</TabsTrigger>
           </TabsList>
@@ -479,7 +481,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
           <TabsContent value="alerts" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Alertas de Emergência Ativos</CardTitle>
+                <CardTitle>Solicitações de Tratamento Ativas</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -493,13 +495,13 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
                       onClick={() => setSelectedAlert(alert)}
                       onUpdateStatus={handleUpdateAlertStatus}
                       onActivateProtocol={handleActivateProtocol}
-                      protocols={emergencyProtocols}
+                      protocols={treatmentProtocols}
                       disabled={isSubmitting}
                     />
                   ))}
                   {activeAlerts.filter(alert => alert.status === 'active').length === 0 && (
                     <div className="text-center py-8 text-gray-600">
-                      Nenhum alerta de emergência ativo no momento
+                      Nenhuma solicitação de tratamento ativa no momento
                     </div>
                   )}
                 </div>
@@ -509,7 +511,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
             {selectedAlert && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Detalhes do Alerta</CardTitle>
+                  <CardTitle>Detalhes da Solicitação</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <AlertDetail alert={selectedAlert} />
@@ -521,32 +523,32 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
           <TabsContent value="new" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Criar Novo Alerta de Emergência</CardTitle>
+                <CardTitle>Criar Nova Solicitação de Tratamento</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <HealthcareFormGroup label="Tipo de Emergência" context={healthcareContext}>
+                  <HealthcareFormGroup label="Tipo de Solicitação" context={healthcareContext}>
                     <select
                       value={newAlert.type}
                       onChange={(e) => setNewAlert(prev => ({ ...prev, type: e.target.value as any }))}
                       className="w-full p-2 border rounded-md"
                     >
-                      {EMERGENCY_TYPES.map(type => (
+                      {TREATMENT_TYPES.map(type => (
                         <option key={type.value} value={type.value}>
                           {type.label}
                         </option>
                       ))}
                     </select>
                   </HealthcareFormGroup>
-                  <HealthcareFormGroup label="Severidade" context={healthcareContext}>
+                  <HealthcareFormGroup label="Prioridade" context={healthcareContext}>
                     <select
                       value={newAlert.severity}
                       onChange={(e) => setNewAlert(prev => ({ ...prev, severity: e.target.value as any }))}
                       className="w-full p-2 border rounded-md"
                     >
-                      {EMERGENCY_SEVERITY.map(severity => (
-                        <option key={severity.value} value={severity.value}>
-                          {severity.label}
+                      {TREATMENT_PRIORITY.map(priority => (
+                        <option key={priority.value} value={priority.value}>
+                          {priority.label}
                         </option>
                       ))}
                     </select>
@@ -567,7 +569,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
                     onChange={(e) => setNewAlert(prev => ({ ...prev, description: e.target.value }))}
                     className="w-full p-2 border rounded-md"
                     rows={4}
-                    placeholder="Descreva detalhadamente a situação de emergência..."
+                    placeholder="Descreva detalhadamente a solicitação de tratamento..."
                   />
                 </HealthcareFormGroup>
 
@@ -576,9 +578,9 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
                     onClick={handleCreateAlert}
                     disabled={isSubmitting || !newAlert.location || !newAlert.description}
                     loading={isSubmitting}
-                    variant="destructive"
+                    variant="default"
                   >
-                    Acionar Emergência
+                    Criar Solicitação
                   </Button>
                 </div>
               </CardContent>
@@ -587,7 +589,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
 
           <TabsContent value="protocols" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {emergencyProtocols.map(protocol => (
+              {treatmentProtocols.map(protocol => (
                 <ProtocolCard
                   key={protocol.id}
                   protocol={protocol}
@@ -605,7 +607,7 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
           <TabsContent value="history" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Histórico de Emergências</CardTitle>
+                <CardTitle>Histórico de Tratamentos</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -619,14 +621,14 @@ export const EmergencyIntegration: React.FC<EmergencyIntegrationProps> = ({
                       onClick={() => setSelectedAlert(alert)}
                       onUpdateStatus={handleUpdateAlertStatus}
                       onActivateProtocol={handleActivateProtocol}
-                      protocols={emergencyProtocols}
+                      protocols={treatmentProtocols}
                       disabled={isSubmitting}
                       readonly
                     />
                   ))}
                   {activeAlerts.filter(alert => alert.status !== 'active').length === 0 && (
                     <div className="text-center py-8 text-gray-600">
-                      Nenhum histórico de emergências disponível
+                      Nenhum histórico de tratamentos disponível
                     </div>
                   )}
                 </div>
@@ -650,12 +652,12 @@ const AlertCard: React.FC<{
   disabled: boolean
   readonly?: boolean
 }> = ({ alert, isSelected, onClick, onUpdateStatus, onActivateProtocol, protocols, disabled, readonly }) => {
-  const typeInfo = EMERGENCY_TYPES.find(t => t.value === alert.type)
-  const severityInfo = EMERGENCY_SEVERITY.find(s => s.value === alert.severity)
+  const typeInfo = TREATMENT_TYPES.find(t => t.value === alert.type)
+  const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.severity)
   
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      active: 'red',
+      active: 'purple',
       responding: 'yellow',
       resolved: 'green',
       false_alarm: 'gray'
@@ -668,7 +670,7 @@ const AlertCard: React.FC<{
       active: 'Ativo',
       responding: 'Respondendo',
       resolved: 'Resolvido',
-      false_alarm: 'Falso Alarme'
+      false_alarm: 'Cancelado'
     }
     return labels[status] || status
   }
@@ -676,8 +678,8 @@ const AlertCard: React.FC<{
   return (
     <div
       className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-        isSelected ? 'border-blue-500 bg-blue-50' : 
-        alert.severity === 'critical' ? 'border-red-500 bg-red-50' : 
+        isSelected ? 'border-purple-500 bg-purple-50' : 
+        alert.severity === 'critical' ? 'border-purple-500 bg-purple-50' : 
         'border-gray-200 hover:border-gray-300'
       }`}
       onClick={onClick}
@@ -687,8 +689,8 @@ const AlertCard: React.FC<{
           <Badge variant={typeInfo?.color as any || 'secondary'}>
             {typeInfo?.label || alert.type}
           </Badge>
-          <Badge variant={severityInfo?.color as any || 'secondary'}>
-            {severityInfo?.label || alert.severity}
+          <Badge variant={priorityInfo?.color as any || 'secondary'}>
+            {priorityInfo?.label || alert.severity}
           </Badge>
           <Badge variant={getStatusColor(alert.status) as any}>
             {getStatusLabel(alert.status)}
@@ -702,7 +704,7 @@ const AlertCard: React.FC<{
       <p className="text-sm text-gray-700 mb-2">{alert.description}</p>
       <div className="flex items-center justify-between">
         <span className="text-sm text-gray-600">
-          Reportado por: {alert.reportedBy}
+          Solicitado por: {alert.reportedBy}
         </span>
         {!readonly && alert.status === 'active' && (
           <div className="flex gap-2">
@@ -736,24 +738,24 @@ const AlertCard: React.FC<{
 }
 
 const AlertDetail: React.FC<{ alert: EmergencyAlert }> = ({ alert }) => {
-  const typeInfo = EMERGENCY_TYPES.find(t => t.value === alert.type)
-  const severityInfo = EMERGENCY_SEVERITY.find(s => s.value === alert.severity)
+  const typeInfo = TREATMENT_TYPES.find(t => t.value === alert.type)
+  const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.severity)
   
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <h4 className="font-semibold">Informações do Alerta</h4>
+          <h4 className="font-semibold">Informações da Solicitação</h4>
           <p><strong>Tipo:</strong> {typeInfo?.label || alert.type}</p>
-          <p><strong>Severidade:</strong> {severityInfo?.label || alert.severity}</p>
+          <p><strong>Prioridade:</strong> {priorityInfo?.label || alert.severity}</p>
           <p><strong>Status:</strong> {alert.status}</p>
           <p><strong>Local:</strong> {alert.location}</p>
         </div>
         <div>
-          <h4 className="font-semibold">Informações de Resposta</h4>
-          <p><strong>Reportado por:</strong> {alert.reportedBy}</p>
+          <h4 className="font-semibold">Informações de Atendimento</h4>
+          <p><strong>Solicitado por:</strong> {alert.reportedBy}</p>
           <p><strong>Data/Hora:</strong> {new Date(alert.reportedAt).toLocaleString('pt-BR')}</p>
-          <p><strong>Equipe de Resposta:</strong> {alert.responseTeam.join(', ') || 'Não definida'}</p>
+          <p><strong>Equipe de Atendimento:</strong> {alert.responseTeam.join(', ') || 'Não definida'}</p>
           {alert.resolvedAt && (
             <p><strong>Resolvido em:</strong> {new Date(alert.resolvedAt).toLocaleString('pt-BR')}</p>
           )}
@@ -783,7 +785,7 @@ const ProtocolCard: React.FC<{
   const [isExpanded, setIsExpanded] = useState(false)
   
   return (
-    <Card className={`h-full ${isExpanded ? 'border-blue-500' : ''}`}>
+    <Card className={`h-full ${isExpanded ? 'border-purple-500' : ''}`}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg">{protocol.name}</CardTitle>
@@ -816,7 +818,7 @@ const ProtocolCard: React.FC<{
               <h4 className="font-semibold mb-2">Passos do Protocolo:</h4>
               <div className="space-y-2">
                 {protocol.steps.map(step => (
-                  <div key={step.order} className="border-l-4 border-blue-500 pl-4 py-2">
+                  <div key={step.order} className="border-l-4 border-purple-500 pl-4 py-2">
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-medium">{step.order}. {step.title}</span>
                       <div className="flex items-center gap-2">
@@ -827,8 +829,8 @@ const ProtocolCard: React.FC<{
                           {step.estimatedDuration}min
                         </span>
                         {step.critical && (
-                          <Badge variant="destructive" className="text-xs">
-                            Crítico
+                          <Badge variant="default" className="text-xs">
+                            Essencial
                           </Badge>
                         )}
                       </div>
@@ -855,7 +857,7 @@ const ProtocolCard: React.FC<{
               <Button
                 onClick={() => onActivate(protocol.id)}
                 disabled={disabled}
-                variant="destructive"
+                variant="default"
               >
                 Ativar Protocolo
               </Button>
@@ -867,4 +869,4 @@ const ProtocolCard: React.FC<{
   )
 }
 
-export default EmergencyIntegration
+export default AestheticTreatmentCoordination

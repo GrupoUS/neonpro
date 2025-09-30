@@ -202,7 +202,7 @@ export const AriaLiveRegion: React.FC<AriaLiveRegionProps> = ({
 
 // Hook for using live regions
 export const useLiveRegion = (regionId?: string) => {
-  const regionRef = useRef<React.ElementRef<typeof AriaLiveRegion>>(null)
+  const regionRef = useRef<HTMLDivElement>(null)
 
   const announce = (
     content: ReactNode, 
