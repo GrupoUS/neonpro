@@ -53,6 +53,15 @@
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
+- [ ] T006 [P] Contract test theme installation API in apps/web/src/__tests__/contract/test_theme_installation.ts
+- [ ] T007 [P] Contract test font installation API in apps/web/src/__tests__/contract/test_font_installation.ts
+- [ ] T008 [P] Contract test theme configuration API in apps/web/src/__tests__/contract/test_theme_configuration.ts
+- [ ] T009 [P] Contract test theme validation API in apps/web/src/__tests__/contract/test_theme_validation.ts
+- [ ] T010 [P] Integration test theme switching workflow in apps/web/src/__tests__/integration/test_theme_switching.ts
+- [ ] T011 [P] Integration test component compatibility with NEONPRO theme in apps/web/src/__tests__/integration/test_component_compatibility.ts
+- [ ] T012 [P] Integration test light/dark mode across all integrated components in apps/web/src/__tests__/integration/test_theme_consistency.ts
+- [ ] T013 [P] Integration test font loading performance and validation in apps/web/src/__tests__/integration/test_font_loading.ts
+- [ ] T014 [P] Integration test WCAG 2.1 AA compliance across all components in apps/web/src/__tests__/integration/test_accessibility.ts
 
 - [x] T006 [P] Contract test theme installation API in apps/web/src/**tests**/contract/test_theme_installation.ts
 - [x] T007 [P] Contract test font installation API in apps/web/src/**tests**/contract/test_font_installation.ts
@@ -356,3 +365,4 @@ The feature is complete when:
 - Apply A.P.T.E methodology systematically: Analyze → Plan → Think → Execute
 - Constitutional compliance includes LGPD, ANVISA, and WCAG 2.1 AA+ requirements
 - All 7 UI components must be integrated: Magic Card, Animated Theme Toggler, Gradient Button, Sidebar, Tilted Card, Shine Border, Hover Border Gradient Button
+
