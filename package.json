@@ -196,7 +196,14 @@
     "undici": "7.16.0",
     "vite-plugin-node-polyfills": "0.24.0",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "@jscpd/cli": "^4.0.4",
+    "jscpd": "^4.0.4",
+    "sonarqube-scanner": "^3.3.0",
+    "dependency-cruiser": "^16.2.0",
+    "madge": "^6.1.0",
+    "plato": "^1.7.0",
+    "depcheck": "^1.4.7"
   },
   "main": "create_agent_tables_simple.js",
   "directories": {

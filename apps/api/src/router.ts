@@ -9,6 +9,7 @@ import { initTRPC } from '@trpc/server'
 import { z } from 'zod'
 import { architectureRouter } from './routers/architecture'
 import { migrationRouter } from './routers/migration'
+import { analysisRouter } from './routers/analysis/analysis-router'
 
 // Initialize tRPC
 const t = initTRPC.create()
@@ -171,7 +172,8 @@ export const appRouter = t.router({
   system: systemRouter,
   status: statusRouter,
   architecture: architectureRouter,
-  migration: migrationRouter
+  migration: migrationRouter,
+  analysis: analysisRouter
 })
 
 // Export type for the router

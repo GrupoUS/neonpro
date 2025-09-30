@@ -72,14 +72,32 @@ app.get('/api/info', (c) => {
       architecture: '/trpc/architecture',
       migration: '/trpc/migration',
       system: '/trpc/system',
-      status: '/trpc/status'
+      status: '/trpc/status',
+      analysis: {
+        start: '/trpc/analysis.startAnalysis',
+        status: '/trpc/analysis.getAnalysisStatus',
+        results: '/trpc/analysis.getAnalysisResults',
+        list: '/trpc/analysis.listAnalyses',
+        delete: '/trpc/analysis.deleteAnalysis'
+      }
     },
     features: {
       healthcare_compliance: ['lgpd', 'anvisa', 'cfm'],
       real_time: true,
       edge_optimization: true,
       performance_monitoring: true,
-      audit_trail: true
+      audit_trail: true,
+      code_analysis: {
+        hono_trpc_analysis: true,
+        supabase_integration_analysis: true,
+        architectural_violation_detection: true,
+        healthcare_compliance_validation: true,
+        performance_benchmarking: true,
+        type_safety_analysis: true,
+        edge_optimization_analysis: true,
+        mobile_optimization: true,
+        brazilian_healthcare_focus: true
+      }
     }
   })
 })

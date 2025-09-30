@@ -132,14 +132,22 @@ export const createCacheMiddleware = (options: {
       })
     }
 
+    // Set a flag to indicate this is the first request (not cached)
+    c.set('isFirstRequest', true)
+
     // Continue to next middleware
     await next()
 
-    // Cache successful responses only
+    // Get the response from the context
     const response = c.res
-    if (response && response.status === 200) {
+    if (!response) {
+      return
+    }
+
+    // Cache successful responses only (status 200-299)
+    if (response.status >= 200 && response.status < 300) {
       try {
-        // Get the response data by cloning the response
+        // Clone the response to avoid body already used error
         const responseClone = response.clone()
         const responseData = await responseClone.json()
 
@@ -177,4 +185,10 @@ export const invalidateCacheByPattern = (pattern: string, clinicId?: string): nu
   return deleted
 }
 
+export { EdgeCache }
 export default edgeCache
+
+// Export a function to clear the cache for testing
+export const clearCacheForTesting = () => {
+  edgeCache.clear()
+}

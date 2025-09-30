@@ -1,0 +1,213 @@
+{
+  "$schema": "https://dependency-cruiser.js.org/schema.json",
+  "_description": "Dependency Cruiser Configuration for NeonPro Healthcare Platform - Phase 3.1",
+  
+  "options": {
+    "rules": [
+      {
+        "name": "healthcare-critical-no-circular",
+        "severity": "error",
+        "rule": {
+          "noCircular": true
+        },
+        "comment": "No circular dependencies allowed in healthcare critical modules"
+      },
+      
+      {
+        "name": "healthcare-data-layer-isolation",
+        "severity": "error", 
+        "rule": {
+          "from": {
+            "path": ["packages/database", "packages/types"],
+            "pathNot": ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"]
+          },
+          "to": {
+            "path": ["apps/web/src"],
+            "pathNot": ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"]
+          }
+        },
+        "comment": "Database layer should not directly depend on frontend (LGPD compliance)"
+      },
+      
+      {
+        "name": "no-forbidden-dependencies",
+        "severity": "error",
+        "rule": {
+          "from": {},
+          "to": {
+            "dependencyTypes": [
+              "npm-internal",
+              "npm-dev",
+              "npm",
+              "npm-runtime",
+              "npm-optional",
+              "npm-peer",
+              "npm-bundled",
+              "npm-no-pkg",
+              "npm-unknown",
+              "npm-workspace",
+              "npm-local"
+            ],
+            "pathNot": [
+              "crypto",
+              "child_process",
+              "fs",
+              "path",
+              "os",
+              "cluster"
+            ]
+          }
+        },
+        "comment": "No direct system-level dependencies in healthcare application"
+      },
+      
+      {
+        "name": "healthcare-secure-imports",
+        "severity": "error",
+        "rule": {
+          "from": {
+            "path": ["apps/api/src", "packages/core", "packages/database"]
+          },
+          "to": {
+            "pathNot": [
+              "crypto",
+              "child_process"
+            ]
+          }
+        },
+        "comment": "Healthcare API must not use insecure Node.js modules"
+      },
+      
+      {
+        "name": "clean-architecture-boundaries",
+        "severity": "error",
+        "rule": {
+          "from": {
+            "path": ["apps/*/src/ui/**", "apps/*/src/components/**"]
+          },
+          "to": {
+            "pathNot": [
+              "apps/*/src/**",
+              "packages/ui/**",
+              "packages/core/**",
+              "packages/types/**"
+            ]
+          }
+        },
+        "comment": "UI components must follow clean architecture boundaries"
+      },
+      
+      {
+        "name": "tpc-compliant-structure",
+        "severity": "warn",
+        "rule": {
+          "from": {},
+          "to": {
+            "path": ["packages/**"]
+          }
+        }
+      },
+      
+      {
+        "name": "test-only-dependencies",
+        "severity": "error",
+        "rule": {
+          "from": {
+            "pathNot": ["**/__tests__/**", "**/*.test.*", "**/*.spec.*"]
+          },
+          "to": {
+            "dependencyTypes": ["npm-dev"]
+          }
+        },
+        "comment": "Production code must not depend on development dependencies"
+      },
+      
+      {
+        "name": "no-duplicate-dependencies",
+        "severity": "warn",
+        "rule": {
+          "from": {},
+          "to": {
+            "moreThanOneDependencyType": true
+          }
+        },
+        "comment": "Modules should not have multiple dependency types to the same module"
+      }
+    ],
+    
+    "progress": {
+      "type": "none"
+    },
+    
+    "outputType": "err-long",
+    
+    "doNotFollow": {
+      "dependencyTypes": ["npm", "npm-dev", "npm-peer", "npm-bundled"],
+      "path": ["node_modules", "dist", "build", "coverage"]
+    },
+    
+    "exclude": {
+      "path": [
+        "node_modules",
+        "dist",
+        "build", 
+        "coverage",
+        "test-results",
+        "playwright-report",
+        ".next",
+        ".turbo",
+        ".scannerwork",
+        "**/*.d.ts",
+        "**/generated/**"
+      ]
+    },
+    
+    "enhancedResolveOptions": {
+      "tsConfig": {
+        "fileName": "tsconfig.analysis.json"
+      }
+    },
+    
+    "reporterOptions": {
+      "dot": {
+        "theme": {
+          "name": "neonpro-healthcare",
+          "options": {
+            "colors": [
+              {"name": "healthcare-critical", "fill": "#ff6b6b"},
+              {"name": "healthcare-warning", "fill": "#ffd43b"},
+              {"name": "healthcare-safe", "fill": "#51cf66"},
+              {"name": "healthcare-neutral", "fill": "#868e96"}
+            ]
+          }
+        }
+      },
+      
+      "json": {
+        "outputTo": "analysis/reports/dependency-cruiser-report.json"
+      },
+      
+      "html": {
+        "outputTo": "analysis/reports/dependency-cruiser-report.html"
+      }
+    }
+  },
+  
+  "presets": {
+    "healthcare-compliance": [
+      "healthcare-critical-no-circular",
+      "healthcare-data-layer-isolation", 
+      "healthcare-secure-imports",
+      "clean-architecture-boundaries"
+    ],
+    
+    "development": [
+      "no-forbidden-dependencies",
+      "test-only-dependencies"
+    ],
+    
+    "maintenance": [
+      "no-duplicate-dependencies"
+    ]
+  }
+}

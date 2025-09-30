@@ -21,6 +21,8 @@ import { z } from 'zod'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from '@neonpro/types'
 import { createCacheMiddleware } from './middleware/cache'
+import { ttfbLogger } from './middleware/ttfb-logger'
+import { initializeRealtimeCacheService } from './services/realtime-cache'
 
 // Initialize Supabase client for Edge runtime (anon key only - no secrets)
 const supabaseUrl = process.env.SUPABASE_URL
@@ -30,12 +32,23 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase configuration for Edge runtime')
 }
 
+// Initialize realtime cache service
+let realtimeCacheService: Awaited<ReturnType<typeof initializeRealtimeCacheService>> | null = null
+
+// Initialize realtime service asynchronously
+initializeRealtimeCacheService(supabaseUrl, supabaseAnonKey).then(service => {
+  realtimeCacheService = service
+}).catch(error => {
+  console.error('Failed to initialize realtime cache service:', error)
+})
+
 // Create Hono app for Edge runtime
 const app = new Hono<{
   Variables: {
     startTime: number
     clinicId?: string
     userId?: string
+    isFirstRequest?: boolean
   }
 }>()
 
@@ -46,13 +59,6 @@ app.use('*', cors({
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true
-}))
-
-// Caching middleware for GET requests
-app.use('*', createCacheMiddleware({
-  ttl: 60, // 60 seconds cache
-  skipMethods: ['POST', 'PUT', 'DELETE', 'PATCH'],
-  skipPaths: ['/migration/start']
 }))
 
 // Request timing middleware
@@ -94,11 +100,27 @@ app.use('*', async (c, next) => {
 
     c.set('clinicId', clinicId)
     c.set('userId', user.id)
+
+    // Setup realtime subscriptions for cache invalidation
+    if (realtimeCacheService) {
+      realtimeCacheService.subscribeToClinic(clinicId)
+    }
+
     await next()
   } catch {
     return c.json({ error: 'Authentication failed' }, 401)
   }
 })
+
+// Caching middleware for GET requests (after authentication)
+app.use('*', createCacheMiddleware({
+  ttl: 60, // 60 seconds cache
+  skipMethods: ['POST', 'PUT', 'DELETE', 'PATCH'],
+  skipPaths: ['/migration/start']
+}))
+
+// TTFB logging middleware (final, after all processing)
+app.use('*', ttfbLogger(supabaseUrl, supabaseAnonKey))
 
 // Health check endpoint (Edge optimized)
 app.get('/health', (c) => {
@@ -110,6 +132,27 @@ app.get('/health', (c) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0',
     region: process.env.VERCEL_REGION ?? 'local',
+    responseTime: Date.now() - startTime,
+  })
+})
+
+// Realtime status endpoint
+app.get('/realtime/status', (c) => {
+  const startTime = c.get('startTime')
+
+  if (!realtimeCacheService) {
+    return c.json({
+      status: 'disabled',
+      message: 'Realtime cache service not initialized',
+      responseTime: Date.now() - startTime,
+    }, 503)
+  }
+
+  const status = realtimeCacheService.getSubscriptionStatus()
+
+  return c.json({
+    status: 'active',
+    ...status,
     responseTime: Date.now() - startTime,
   })
 })
@@ -138,11 +181,12 @@ app.get('/architecture/config', async (c) => {
       throw error
     }
 
+    const isFirstRequest = c.get('isFirstRequest') ?? false
     return c.json({
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: false
+      cached: !isFirstRequest
     })
   } catch (error) {
     console.error('Error fetching architecture config:', error)
@@ -172,11 +216,12 @@ app.get('/performance/metrics', async (c) => {
       throw error
     }
 
+    const isFirstRequest = c.get('isFirstRequest') ?? false
     return c.json({
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: false
+      cached: !isFirstRequest
     })
   } catch (error) {
     console.error('Error fetching performance metrics:', error)
@@ -211,11 +256,12 @@ app.get('/compliance/status', async (c) => {
       throw error
     }
 
+    const isFirstRequest = c.get('isFirstRequest') ?? false
     return c.json({
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: false
+      cached: !isFirstRequest
     })
   } catch (error) {
     console.error('Error fetching compliance status:', error)
@@ -252,11 +298,12 @@ app.get('/migration/state', async (c) => {
       throw error
     }
 
+    const isFirstRequest = c.get('isFirstRequest') ?? false
     return c.json({
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: false
+      cached: !isFirstRequest
     })
   } catch (error) {
     console.error('Error fetching migration state:', error)
@@ -291,11 +338,12 @@ app.get('/package-manager/config', async (c) => {
       throw error
     }
 
+    const isFirstRequest = c.get('isFirstRequest') ?? false
     return c.json({
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: false
+      cached: !isFirstRequest
     })
   } catch (error) {
     console.error('Error fetching package manager config:', error)

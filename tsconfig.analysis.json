@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "_description": "TypeScript configuration for comprehensive architectural analysis - Phase 3.1",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    
+    // Enhanced Strict Mode for Architectural Analysis
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    
+    // Analysis-Specific Configuration
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "removeComments": false,
+    "incremental": true,
+    "composite": true,
+    "disableSizeLimit": false,
+    "maxNodeModuleJsDepth": 0,
+    
+    // Enhanced Type Checking for Healthcare Compliance
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "skipLibCheck": false,
+    "checkJs": true,
+    
+    // Analysis Output Configuration
+    "outDir": "./analysis/dist",
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./analysis/.tsbuildinfo",
+    
+    // Path Aliases for Analysis Tools
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@analysis/*": ["./analysis/*"],
+      "@tools/*": ["./tools/*"],
+      "@reports/*": ["./reports/*"],
+      "@metrics/*": ["./metrics/*"],
+      "@diagrams/*": ["./diagrams/*"],
+      "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/database": ["./packages/database/src"],
+      "@neonpro/ui": ["./packages/ui/src"],
+      "@neonpro/config": ["./packages/config/src"],
+      "@neonpro/core": ["./packages/core/src"],
+      "@neonpro/logger": ["./packages/logger/src"],
+      "@apps/web/*": ["./apps/web/src/*"],
+      "@apps/api/*": ["./apps/api/src/*"]
+    },
+    
+    // Advanced Analysis Options
+    "explainFiles": true,
+    "extendedDiagnostics": true,
+    "generateCpuProfile": "./analysis/cpu-profile.cpuprofile",
+    "listEmittedFiles": true,
+    "listFiles": true,
+    "pretty": true,
+    "traceResolution": true
+  },
+  
+  // Enhanced Include Patterns for Analysis
+  "include": [
+    "src/**/*",
+    "apps/*/src/**/*",
+    "packages/*/src/**/*",
+    "tools/**/*",
+    "scripts/**/*",
+    "analysis/**/*",
+    "reports/**/*",
+    "metrics/**/*",
+    "diagrams/**/*",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**/*",
+    "tests/**/*",
+    "**/*.d.ts"
+  ],
+  
+  // Analysis Exclusions
+  "exclude": [
+    "node_modules/**",
+    "dist/**",
+    "build/**",
+    "coverage/**",
+    "test-results/**",
+    "playwright-report/**",
+    ".next/**",
+    ".turbo/**",
+    "**/node_modules/**",
+    "tools/tests/**",
+    ".serena/**",
+    ".specify/**",
+    ".oxlint_cache/**",
+    "*.min.js",
+    "*.log",
+    "*.tmp",
+    "*.cache"
+  ],
+  
+  // TypeScript Project References for Analysis
+  "references": [
+    // Core packages (analysis order)
+    { "path": "./packages/types" },
+    { "path": "./packages/config" },
+    { "path": "./packages/logger" },
+    { "path": "./packages/database" },
+    { "path": "./packages/core" },
+    { "path": "./packages/ui" },
+    // Applications
+    { "path": "./apps/api" },
+    { "path": "./apps/web" },
+    // Analysis modules
+    { "path": "./analysis" }
+  ],
+  
+  // TypeScript Compiler Options for Analysis
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node",
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "ESNext"
+    }
+  },
+  
+  // Watch Options for Development Analysis
+  "watchOptions": {
+    "watchFile": "useFsEvents",
+    "watchDirectory": "useFsEvents",
+    "fallbackPolling": "dynamicPriority",
+    "synchronousWatchDirectory": true,
+    "excludeDirectories": [
+      "**/node_modules",
+      "**/dist",
+      "**/coverage",
+      "**/test-results"
+    ]
+  }
+}
