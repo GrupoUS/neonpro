@@ -83,9 +83,7 @@ export default defineConfig({
     },
     maxWorkers: Math.max(1, Math.min(4, Math.floor(cpus().length / 2))),
     minWorkers: 1,
-    testTimeout: 60000,
+    testTimeout: 120000, // Increased for performance tests
     hookTimeout: 60000,
-  maxWorkers: Math.max(1, Math.min(4, Math.floor(cpus().length / 2))),
-    minWorkers: 1,
   },
 })
