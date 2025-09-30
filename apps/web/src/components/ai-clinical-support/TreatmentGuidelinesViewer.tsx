@@ -1,7 +1,7 @@
 /**
  * Treatment Guidelines Viewer Component
  * Placeholder for future implementation
- * 
+ *
  * TODO: Implement comprehensive treatment guidelines viewer with:
  * - Clinical decision support integration
  * - Interactive treatment protocols
@@ -12,11 +12,21 @@
 
 import React from 'react';
 
+// Define a basic interface for treatment guidelines
+export interface TreatmentGuideline {
+  id: string;
+  title: string;
+  description?: string;
+  category?: string;
+  procedureId?: string;
+  content?: Record<string, unknown>;
+}
+
 export interface TreatmentGuidelinesViewerProps {
   procedureId?: string;
   category?: string;
   searchQuery?: string;
-  onGuidelineSelect?: (guideline: any) => Promise<void>;
+  onGuidelineSelect?: (guideline: TreatmentGuideline) => Promise<void>;
 }
 
 export const TreatmentGuidelinesViewer: React.FC<TreatmentGuidelinesViewerProps> = ({
@@ -36,7 +46,7 @@ export const TreatmentGuidelinesViewer: React.FC<TreatmentGuidelinesViewerProps>
         </p>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-sm text-blue-800">
-            <strong>Coming Soon:</strong> Evidence-based treatment protocols, 
+            <strong>Coming Soon:</strong> Evidence-based treatment protocols,
             clinical decision support, and provider collaboration tools.
           </p>
         </div>

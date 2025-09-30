@@ -668,11 +668,11 @@ Ao final do treinamento, os participantes serão capazes de:
 
 ### Protocolos de Emergência
 
-**Emergência Médica:**
-1. Manter calma e acionar equipe médica
-2. Chamar SAMU (192) se necessário
-3. Isolar área e manter outros pacientes calmos
-4. Prestar primeiros socorros se treinado
+**Situação de Urgência Estética:**
+1. Manter calma e acionar esteticista responsável
+2. Contatar coordenador clínico se necessário
+3. Isolar área e manter outros clientes calmos
+4. Prestar apoio básico se treinado
 5. Documentar o evento completamente
 
 **Falha Técnica:**

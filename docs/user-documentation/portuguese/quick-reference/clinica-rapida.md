@@ -272,11 +272,11 @@
    - Medidas tomadas
    - Resposta ao tratamento
 
-**Contatos de Emergência:**
-- **SAMU**: 192
-- **Bombeiros**: 193
-- **Polícia**: 190
+**Contatos de Suporte:**
 - **Coordenador clínico**: [Número]
+- **Profissional de plantão**: [Número]
+- **WhatsApp clínicas**: [Número]
+- **Linha VIP**: [Número exclusivo]
 - **Suporte NeonPro**: [Número]
 
 ### Emergências Comuns

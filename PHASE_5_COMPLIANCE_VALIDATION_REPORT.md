@@ -136,7 +136,7 @@ enum DataSensitivity {
 - **Date Formats**: DD/MM/YYYY standard
 - **Phone Numbers**: Brazilian format (XX) XXXXX-XXXX
 - **CPF Validation**: Brazilian tax ID validation
-- **Emergency Services**: SAMU (192) integration support
+- **Aesthetic Services**: Premium client consultation support
 
 ## 8. Mobile Responsiveness and Clinical Workflow
 

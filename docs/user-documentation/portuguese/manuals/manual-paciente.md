@@ -1007,18 +1007,18 @@ A Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018) regula o tratame
 - Resultados muito diferentes do esperado
 - Dor persistente além do esperado
 
-### Como Proceder em Emergência
+### Como Proceder em Urgência Estética
 
-**Passo 1: Avalie a Gravidade**
-- Sinais vitais alterados? → Emergência médica (192)
-- Dificuldade respiratória? → Emergência médica (192)
-- Reação alérgica sistêmica? → Emergência médica (192)
-- Complicações localizadas? → Contato com clínica
+**Passo 1: Avalie a Situação**
+- Complicações locais? → Contato imediato com clínica
+- Reação leve na área tratada? → Ligue [número emergência clínica]
+- Desconforto significativo? → Contato com profissional responsável
+- Sinais de infecção? → Contato urgente com clínica
 
 **Passo 2: Contato Imediato**
-- **Emergências médicas**: Ligue 192 (SAMU)
 - **Urgências estéticas**: Ligue [número emergência clínica]
-- **Fora do horário comercial**: [número plantão]
+- **Contato profissional**: [número esteticista plantão]
+- **Fora do horário comercial**: [número plantão 24h]
 
 **Passo 3: Prepare Informações**
 - Seu nome completo e data de nascimento
@@ -1031,10 +1031,9 @@ A Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018) regula o tratame
 
 **Emergência 24h:**
 - **Clínica**: [número plantão 24h]
-- **Profissional responsável**: [número médico plantão]
-- **SAMU**: 192
-- **Bombeiros**: 193
-- **Polícia**: 190
+- **Profissional responsável**: [número esteticista plantão]
+- **Coordenador clínico**: [número coordenador]
+- **Contato VIP**: [número exclusivo VIP]
 
 **Urgências Durante Horário Comercial:**
 - **Recepção**: [número principal]
@@ -1053,7 +1052,7 @@ A Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018) regula o tratame
 **Reação Alérgica:**
 1. Pare imediatamente qualquer tratamento
 2. Tome antialérgico se tiver em casa
-3. Contate a clínica ou SAMU
+3. Contate a clínica ou profissional responsável
 4. Mantenha via aérea desobstruída
 5. Mantenha-se calmo e deitado
 

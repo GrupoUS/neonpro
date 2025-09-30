@@ -27,7 +27,7 @@ try {
   execSync('bun run build:vercel', { stdio: 'inherit' })
 
   console.warn('✅ Build completed successfully!')
-} catch (_error) {
+} catch (error) {
   console.error('❌ Build failed:', String(_error))
   process.exit(1)
 }

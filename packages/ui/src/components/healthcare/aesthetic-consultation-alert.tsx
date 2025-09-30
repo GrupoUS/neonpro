@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert'
 import { Button } from '../ui/button'
-import { EmergencyButton } from '../ui/mobile-healthcare-button'
-import { AlertTriangle, MapPin, Clock, User, Volume2, VolumeX } from 'lucide-react'
+import { AlertTriangle, MapPin, Clock, User, Volume2, VolumeX, Calendar, Sparkles } from 'lucide-react'
 
-interface EmergencyAlertProps {
-  type: 'cardiac' | 'respiratory' | 'allergic' | 'trauma' | 'seizure' | 'other'
-  severity: 'low' | 'medium' | 'high' | 'critical'
-  patientId?: string | undefined
-  patientName?: string | undefined
+interface AestheticConsultationAlertProps {
+  type: 'new_client' | 'consultation_request' | 'follow_up' | 'treatment_reminder' | 'special_offer' | 'appointment_confirmation'
+  priority: 'low' | 'medium' | 'high' | 'vip'
+  clientId?: string | undefined
+  clientName?: string | undefined
   location?: string | undefined
   timestamp?: Date
   autoDismiss?: boolean
@@ -16,23 +15,23 @@ interface EmergencyAlertProps {
   onResolve?: () => void
 }
 
-interface EmergencyAlertData {
+interface AestheticConsultationAlertData {
   id: string
-  type: EmergencyAlertProps['type']
-  severity: EmergencyAlertProps['severity']
-  patientId?: string
-  patientName?: string
+  type: AestheticConsultationAlertProps['type']
+  priority: AestheticConsultationAlertProps['priority']
+  clientId?: string
+  clientName?: string
   location?: string
   timestamp: Date
   acknowledged: boolean
   resolved: boolean
 }
 
-export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
+export const AestheticConsultationAlert: React.FC<AestheticConsultationAlertProps> = ({
   type,
-  severity,
-  patientId,
-  patientName,
+  priority,
+  clientId,
+  clientName,
   location,
   timestamp = new Date(),
   autoDismiss = false,
@@ -44,58 +43,58 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
   const [isResolved, setIsResolved] = useState(false)
   const [timeElapsed, setTimeElapsed] = useState(0)
 
-  // Emergency type configuration
-  const emergencyConfig = {
-    cardiac: {
-      title: 'Cardiac Emergency',
-      color: 'text-red-700',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      sound: 'cardiac-emergency.mp3',
-    },
-    respiratory: {
-      title: 'Respiratory Emergency',
-      color: 'text-blue-700',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      sound: 'respiratory-emergency.mp3',
-    },
-    allergic: {
-      title: 'Allergic Reaction',
-      color: 'text-yellow-700',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      sound: 'allergic-emergency.mp3',
-    },
-    trauma: {
-      title: 'Trauma Emergency',
+  // Aesthetic consultation type configuration
+  const consultationConfig = {
+    new_client: {
+      title: 'Novo Cliente',
       color: 'text-purple-700',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      sound: 'trauma-emergency.mp3',
+      icon: <Sparkles className="h-5 w-5" />,
+      sound: 'new-client.mp3',
     },
-    seizure: {
-      title: 'Seizure Emergency',
-      color: 'text-orange-700',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      sound: 'seizure-emergency.mp3',
+    consultation_request: {
+      title: 'Solicitação de Consulta',
+      color: 'text-blue-700',
+      icon: <Calendar className="h-5 w-5" />,
+      sound: 'consultation-request.mp3',
     },
-    other: {
-      title: 'Emergency Alert',
-      color: 'text-gray-700',
-      icon: <AlertTriangle className="h-5 w-5" />,
-      sound: 'general-emergency.mp3',
+    follow_up: {
+      title: 'Acompanhamento',
+      color: 'text-green-700',
+      icon: <Calendar className="h-5 w-5" />,
+      sound: 'follow-up.mp3',
+    },
+    treatment_reminder: {
+      title: 'Lembrete de Tratamento',
+      color: 'text-yellow-700',
+      icon: <Clock className="h-5 w-5" />,
+      sound: 'treatment-reminder.mp3',
+    },
+    special_offer: {
+      title: 'Oferta Especial',
+      color: 'text-pink-700',
+      icon: <Sparkles className="h-5 w-5" />,
+      sound: 'special-offer.mp3',
+    },
+    appointment_confirmation: {
+      title: 'Confirmação de Agendamento',
+      color: 'text-indigo-700',
+      icon: <Calendar className="h-5 w-5" />,
+      sound: 'appointment-confirmation.mp3',
     },
   }
 
-  // Severity configuration
-  const severityConfig = {
-    low: { pulse: 2000, interval: 5000 },
-    medium: { pulse: 1500, interval: 3000 },
-    high: { pulse: 1000, interval: 2000 },
-    critical: { pulse: 500, interval: 1000 },
+  // Priority configuration
+  const priorityConfig = {
+    low: { pulse: 3000, interval: 10000 },
+    medium: { pulse: 2000, interval: 6000 },
+    high: { pulse: 1500, interval: 4000 },
+    vip: { pulse: 1000, interval: 2000 },
   }
 
-  const config = emergencyConfig[type]
-  const severityCfg = severityConfig[severity]
+  const config = consultationConfig[type]
+  const priorityCfg = priorityConfig[priority]
 
-  // Timer for emergency duration
+  // Timer for consultation duration
   useEffect(() => {
     const interval = setInterval(() => {
       if (!isResolved) {
@@ -106,43 +105,43 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
     return () => clearInterval(interval)
   }, [isResolved])
 
-  // Emergency sound and vibration
+  // Consultation notification sound and gentle vibration
   useEffect(() => {
     if (isResolved || isMuted) return
 
-    const playEmergencySound = () => {
+    const playNotificationSound = () => {
       // In a real implementation, this would play actual audio files
-      console.log(`🔊 Playing emergency sound: ${config.sound}`)
+      console.log(`🔔 Playing notification sound: ${config.sound}`)
     }
 
     const vibratePattern = () => {
       if ('vibrate' in navigator) {
-        const pattern = severity === 'critical' 
-          ? [200, 100, 200, 100, 200]
-          : [300, 200, 300]
+        const pattern = priority === 'vip' 
+          ? [100, 50, 100]
+          : [80, 40, 80]
         navigator.vibrate(pattern)
       }
     }
 
-    // Initial alert
-    playEmergencySound()
+    // Initial notification
+    playNotificationSound()
     vibratePattern()
 
-    // Repeat based on severity
+    // Repeat based on priority
     const soundInterval = setInterval(() => {
-      playEmergencySound()
+      playNotificationSound()
       vibratePattern()
-    }, severityCfg.interval)
+    }, priorityCfg.interval)
 
     return () => clearInterval(soundInterval)
-  }, [severity, isResolved, isMuted, config.sound, severityCfg.interval])
+  }, [priority, isResolved, isMuted, config.sound, priorityCfg.interval])
 
-  // Auto-dismiss for low severity
+  // Auto-dismiss for low priority
   useEffect(() => {
-    if (autoDismiss && severity === 'low' && !isAcknowledged && timeElapsed > 30) {
+    if (autoDismiss && priority === 'low' && !isAcknowledged && timeElapsed > 20) {
       handleAcknowledge()
     }
-  }, [autoDismiss, severity, isAcknowledged, timeElapsed])
+  }, [autoDismiss, priority, isAcknowledged, timeElapsed])
 
   const handleAcknowledge = () => {
     setIsAcknowledged(true)
@@ -174,9 +173,8 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
 
   return (
     <Alert 
-      variant="emergency" 
-      emergency 
-      className="border-4 border-red-600 bg-red-50 animate-pulse"
+      variant="default" 
+      className={`border-2 ${priority === 'vip' ? 'border-purple-600 bg-purple-50' : 'border-blue-200 bg-blue-50'} ${priority === 'vip' ? 'animate-pulse' : ''}`}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-3">
@@ -185,15 +183,15 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
           </div>
           <div className="flex-1">
             <AlertTitle className={config.color}>
-              {config.title} - {severity.toUpperCase()}
+              {config.title} - {priority.toUpperCase()}
             </AlertTitle>
             <AlertDescription className="space-y-2">
               <div className="flex items-center gap-4 text-sm">
-                {patientName && (
+                {clientName && (
                   <div className="flex items-center gap-1">
                     <User className="h-3 w-3" />
-                    <span>{patientName}</span>
-                    {patientId && <span className="text-xs text-gray-500">(ID: {patientId})</span>}
+                    <span>{clientName}</span>
+                    {clientId && <span className="text-xs text-gray-500">(ID: {clientId})</span>}
                   </div>
                 )}
                 {location && (
@@ -208,7 +206,7 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
                 </div>
               </div>
               <div className="text-xs text-gray-600">
-                Alert started at {timestamp.toLocaleTimeString()}
+                Notificação iniciada às {timestamp.toLocaleTimeString('pt-BR')}
               </div>
             </AlertDescription>
           </div>
@@ -220,29 +218,29 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
             size="icon"
             onClick={() => setIsMuted(!isMuted)}
             className="h-8 w-8"
-            aria-label={isMuted ? "Unmute emergency sounds" : "Mute emergency sounds"}
+            aria-label={isMuted ? "Ativar sons" : "Desativar sons"}
           >
             {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
           </Button>
           
           {!isAcknowledged && (
-            <EmergencyButton
+            <Button
               size="sm"
               onClick={handleAcknowledge}
-              className="bg-yellow-600 hover:bg-yellow-700"
+              className="bg-blue-600 hover:bg-blue-700"
             >
-              Acknowledge
-            </EmergencyButton>
+              Visualizar
+            </Button>
           )}
           
           {isAcknowledged && (
-            <EmergencyButton
+            <Button
               size="sm"
               onClick={handleResolve}
               className="bg-green-600 hover:bg-green-700"
             >
-              Resolve
-            </EmergencyButton>
+              Concluído
+            </Button>
           )}
         </div>
       </div>
@@ -250,14 +248,14 @@ export const EmergencyAlert: React.FC<EmergencyAlertProps> = ({
   )
 }
 
-// Emergency alert manager for handling multiple alerts
-export const EmergencyAlertManager: React.FC = () => {
-  const [alerts, setAlerts] = useState<EmergencyAlertData[]>([])
+// Aesthetic consultation alert manager for handling multiple notifications
+export const AestheticConsultationAlertManager: React.FC = () => {
+  const [alerts, setAlerts] = useState<AestheticConsultationAlertData[]>([])
 
-  const addAlert = (alert: Omit<EmergencyAlertData, 'id' | 'timestamp' | 'acknowledged' | 'resolved'>) => {
-    const newAlert: EmergencyAlertData = {
+  const addAlert = (alert: Omit<AestheticConsultationAlertData, 'id' | 'timestamp' | 'acknowledged' | 'resolved'>) => {
+    const newAlert: AestheticConsultationAlertData = {
       ...alert,
-      id: `emergency-${Date.now()}-${Math.random()}`,
+      id: `consultation-${Date.now()}-${Math.random()}`,
       timestamp: new Date(),
       acknowledged: false,
       resolved: false,
@@ -278,36 +276,36 @@ export const EmergencyAlertManager: React.FC = () => {
   // Demo function - remove in production
   const triggerDemoAlert = () => {
     addAlert({
-      type: 'cardiac',
-      severity: 'critical',
-      patientName: 'John Doe',
-      patientId: 'P12345',
-      location: 'Room 101',
+      type: 'new_client',
+      priority: 'vip',
+      clientName: 'Maria Silva',
+      clientId: 'C12345',
+      location: 'Sala de Consulta',
     })
   }
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold">Emergency Alert System</h3>
+        <h3 className="text-lg font-semibold">Sistema de Notificações</h3>
         <Button variant="outline" size="sm" onClick={triggerDemoAlert}>
-          Demo Alert
+          Demo
         </Button>
       </div>
       
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {alerts.length === 0 ? (
           <div className="text-center text-gray-500 py-8">
-            No active emergency alerts
+            Nenhuma notificação ativa
           </div>
         ) : (
           alerts.map(alert => (
-            <EmergencyAlert
+            <AestheticConsultationAlert
               key={alert.id}
               type={alert.type}
-              severity={alert.severity}
-              patientId={alert.patientId || undefined}
-              patientName={alert.patientName || undefined}
+              priority={alert.priority}
+              clientId={alert.clientId || undefined}
+              clientName={alert.clientName || undefined}
               location={alert.location || undefined}
               timestamp={alert.timestamp}
               onAcknowledge={() => acknowledgeAlert(alert.id)}
@@ -320,5 +318,5 @@ export const EmergencyAlertManager: React.FC = () => {
   )
 }
 
-export type { EmergencyAlertProps }
-export default EmergencyAlert
+export type { AestheticConsultationAlertProps }
+export default AestheticConsultationAlert

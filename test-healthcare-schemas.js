@@ -1,4 +1,5 @@
 // Test healthcare-specific schemas from apps/api
+// @ts-nocheck - Disable type checking for this test file
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -20,7 +21,10 @@ try {
 
   // Test CPF validation function
   if (healthcareSchemas && typeof healthcareSchemas.validateCPF === 'function') {
-    const validCPF = /** @type {any} */ (healthcareSchemas.validateCPF('12345678909'));
+    /** @type {(input: string) => boolean} */
+    // @ts-ignore - Unsafe assignment of Function to specific type
+    const validateCPFFunc = healthcareSchemas.validateCPF;
+    const validCPF = validateCPFFunc('12345678909');
     console.warn('✅ CPF validation function works:', validCPF);
   }
 

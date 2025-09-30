@@ -11,8 +11,8 @@ export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
  * Ensures a semantic heading element is rendered and children are present.
  */
 export function Heading({ level = 2, children, className, ...props }: HeadingProps) {
-  // Use a permissive any for the dynamic tag to avoid JSX namespace/type issues in package TS setups
-  const Tag: any = `h${level}`;
+  // Use React.ElementType for the dynamic tag to avoid JSX namespace/type issues in package TS setups
+  const Tag: React.ElementType = `h${level}`;
 
   // Minimal guard to avoid empty headings in tests / lint rules
   const content =
