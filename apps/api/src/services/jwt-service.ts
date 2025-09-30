@@ -4,6 +4,8 @@ export interface JWTPayload {
   userId: string
   sessionId: string
   role: string
+  exp: number // Token expiration timestamp
+  iat?: number // Token issued at timestamp
   emergencyAccess?: boolean
   reason?: string
 }

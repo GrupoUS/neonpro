@@ -19,8 +19,8 @@ const testData = {
 try {
   const result = testSchema.parse(testData);
   console.log('✅ Basic Zod schema validation works:', result);
-} catch (error) {
-  console.error('❌ Zod schema validation failed:', error);
+} catch (_error) {
+  console.error('❌ Zod schema validation failed:', _error);
 }
 
 // Test healthcare-specific schemas ( CPF validation )
@@ -29,8 +29,8 @@ const cpfSchema = z.string().regex(/^\d{11}$/, 'CPF must have 11 digits');
 try {
   const cpfResult = cpfSchema.parse('12345678909');
   console.log('✅ CPF validation works:', cpfResult);
-} catch (error) {
-  console.error('❌ CPF validation failed:', error);
+} catch (_error) {
+  console.error('❌ CPF validation failed:', _error);
 }
 
 // Test transform functionality
@@ -39,8 +39,8 @@ const transformSchema = z.string().transform(val => val.toUpperCase());
 try {
   const transformResult = transformSchema.parse('hello world');
   console.log('✅ Transform functionality works:', transformResult);
-} catch (error) {
-  console.error('❌ Transform functionality failed:', error);
+} catch (_error) {
+  console.error('❌ Transform functionality failed:', _error);
 }
 
 console.log('🎉 Zod functionality test completed successfully!');

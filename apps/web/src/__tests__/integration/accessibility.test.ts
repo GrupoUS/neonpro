@@ -58,9 +58,9 @@ describe('WCAG 2.1 AA Compliance Across All Components', () => {
   test('should pass comprehensive WCAG 2.1 AA accessibility audit', async () => {
     // Act - THIS WILL FAIL until implementation exists
     const { container } = render(
-      <ThemeProvider defaultTheme="light" aestheticClinicMode={true}>
-        <AestheticClinicInterface />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { defaultTheme: 'light', aestheticClinicMode: true },
+        React.createElement(AestheticClinicInterface)
+      )
     );
 
     // Assert - WCAG 2.1 AA compliance

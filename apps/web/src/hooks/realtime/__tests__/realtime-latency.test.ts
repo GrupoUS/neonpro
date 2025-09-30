@@ -28,7 +28,7 @@ vi.mock('../../lib/supabase', () => ({
 }))
 
 const createWrapper = (client: QueryClient) => ({ children }: { children: React.ReactNode }) => (
-  <QueryClientProvider client={client}>{children}</QueryClientProvider>
+  React.createElement(QueryClientProvider, { client: client }, children)
 )
 
 describe('useRealtimeQuery performance', () => {

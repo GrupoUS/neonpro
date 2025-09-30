@@ -1,9 +1,11 @@
 import { defineConfig } from 'vitest/config'
 import path from 'node:path'
+import { cpus } from 'node:os'
 
 export default defineConfig({
   test: {
     globals: true,
+    setupFiles: ['./src/test/setup/bun-test-preload.ts'],
     environment: 'node',
     exclude: [
       'node_modules/**',
@@ -15,8 +17,8 @@ export default defineConfig({
       '**/test-results/**',
     ],
     include: [
-      'apps/**/src/**/*.{test,spec}.{js,ts}',
-      'packages/**/src/**/*.{test,spec}.{js,ts}',
+      '**/*.{test,spec}.{js,ts}', // Changed to exclude node_modules implicitly, but already in exclude
+      '!**/node_modules/**', // Explicit exclusion for safety
     ],
     coverage: {
       provider: 'v8',
@@ -79,7 +81,7 @@ export default defineConfig({
         isolate: false,
       },
     },
-    maxWorkers: Math.max(1, Math.min(4, Math.floor(require('os').cpus().length / 2))),
+    maxWorkers: Math.max(1, Math.min(4, Math.floor(cpus().length / 2))),
     minWorkers: 1,
     testTimeout: 30000,
     hookTimeout: 30000,

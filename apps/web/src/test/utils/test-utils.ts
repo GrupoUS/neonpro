@@ -200,23 +200,21 @@ export const createTestQueryClient = () => {
 export const AllProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = createTestQueryClient()
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <SupabaseProvider>
-          <AuthProvider>
-            <LGPDProvider>
-              <HealthcareProvider>
-                <AuditTrailProvider>
-                  {children}
-                  <Toaster />
-                </AuditTrailProvider>
-              </HealthcareProvider>
-            </LGPDProvider>
-          </AuthProvider>
-        </SupabaseProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+  return React.createElement(QueryClientProvider, { client: queryClient },
+    React.createElement(BrowserRouter, null,
+      React.createElement(SupabaseProvider, null,
+        React.createElement(AuthProvider, null,
+          React.createElement(LGPDProvider, null,
+            React.createElement(HealthcareProvider, null,
+              React.createElement(AuditTrailProvider, null,
+                children,
+                React.createElement(Toaster)
+              )
+            )
+          )
+        )
+      )
+    )
   )
 }
 

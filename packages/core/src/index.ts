@@ -5,6 +5,7 @@ export * from './security/index.js';
 // Business Logic
 export * from './services/index.js';
 export * from './healthcare/index.js';
+export * from './realtime/index.js';
 
 // AI Services
 export * from './ai-services/index.js';

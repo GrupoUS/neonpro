@@ -79,24 +79,24 @@ describe('Theme Switching Workflow Integration Tests', () => {
     // Arrange
     const TestComponent = () => {
       const { theme, setTheme } = useTheme();
-      return (
-        <div>
-          <span data-testid="theme-display">{theme}</span>
-          <button data-testid="toggle-btn" onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-            Toggle
-          </button>
-          <div data-testid="neonpro-element" className="bg-neonpro-primary text-neonpro-background">
-            NEONPRO Themed Element
-          </div>
-        </div>
+      return React.createElement('div', null,
+        React.createElement('span', { 'data-testid': 'theme-display' }, theme),
+        React.createElement('button', { 
+          'data-testid': 'toggle-btn', 
+          onClick: () => setTheme(theme === 'light' ? 'dark' : 'light') 
+        }, 'Toggle'),
+        React.createElement('div', { 
+          'data-testid': 'neonpro-element', 
+          className: 'bg-neonpro-primary text-neonpro-background' 
+        }, 'NEONPRO Themed Element')
       );
     };
 
     // Act - THIS WILL FAIL until implementation exists
     render(
-      <ThemeProvider defaultTheme="light">
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { defaultTheme: 'light' },
+        React.createElement(TestComponent)
+      )
     );
 
     // Assert initial state
@@ -123,18 +123,17 @@ describe('Theme Switching Workflow Integration Tests', () => {
     // Arrange
     const TestComponent = () => {
       const { setTheme } = useTheme();
-      return (
-        <button data-testid="set-dark" onClick={() => setTheme('dark')}>
-          Set Dark Theme
-        </button>
-      );
+      return React.createElement('button', { 
+        'data-testid': 'set-dark', 
+        onClick: () => setTheme('dark') 
+      }, 'Set Dark Theme');
     };
 
     // Act - THIS WILL FAIL until implementation exists
     render(
-      <ThemeProvider storageKey="neonpro-theme" lgpdCompliance={true}>
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { storageKey: "neonpro-theme", lgpdCompliance: true },
+        React.createElement(TestComponent)
+      )
     );
 
     fireEvent.click(screen.getByTestId('set-dark'));
@@ -160,19 +159,17 @@ describe('Theme Switching Workflow Integration Tests', () => {
 
     const TestComponent = () => {
       const { theme, resolvedTheme } = useTheme();
-      return (
-        <div>
-          <span data-testid="theme">{theme}</span>
-          <span data-testid="resolved">{resolvedTheme}</span>
-        </div>
+      return React.createElement('div', null,
+        React.createElement('span', { 'data-testid': 'theme' }, theme),
+        React.createElement('span', { 'data-testid': 'resolved' }, resolvedTheme)
       );
     };
 
     // Act - THIS WILL FAIL until implementation exists
     render(
-      <ThemeProvider defaultTheme="system">
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { defaultTheme: "system" },
+        React.createElement(TestComponent)
+      )
     );
 
     // Assert
@@ -214,14 +211,14 @@ describe('Theme Switching Workflow Integration Tests', () => {
         }, 0);
       };
 
-      return <button data-testid="perf-toggle" onClick={handleSwitch}>Toggle</button>;
+      return React.createElement('button', { 'data-testid': 'perf-toggle', onClick: handleSwitch }, 'Toggle');
     };
 
     // Act - THIS WILL FAIL until implementation exists
     render(
-      <ThemeProvider>
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, null,
+        React.createElement(TestComponent)
+      )
     );
 
     fireEvent.click(screen.getByTestId('perf-toggle'));
@@ -236,28 +233,24 @@ describe('Theme Switching Workflow Integration Tests', () => {
     // Arrange
     const TestComponent = () => {
       const { theme, setTheme } = useTheme();
-      return (
-        <div>
-          <button 
-            data-testid="accessible-toggle"
-            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-            aria-label="Toggle between light and dark theme"
-          >
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
-          <main role="main">
-            <h1>NEONPRO Aesthetic Clinic</h1>
-            <p>Patient management system with constitutional compliance</p>
-          </main>
-        </div>
+      return React.createElement('div', null,
+        React.createElement('button', {
+          'data-testid': 'accessible-toggle',
+          onClick: () => setTheme(theme === 'light' ? 'dark' : 'light'),
+          'aria-label': 'Toggle between light and dark theme'
+        }, theme === 'light' ? '🌙' : '☀️'),
+        React.createElement('main', { role: 'main' },
+          React.createElement('h1', null, 'NEONPRO Aesthetic Clinic'),
+          React.createElement('p', null, 'Patient management system with constitutional compliance')
+        )
       );
     };
 
     // Act - THIS WILL FAIL until implementation exists
     const { container } = render(
-      <ThemeProvider defaultTheme="light">
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { defaultTheme: "light" },
+        React.createElement(TestComponent)
+      )
     );
 
     // Assert - Initial accessibility
@@ -278,19 +271,17 @@ describe('Theme Switching Workflow Integration Tests', () => {
     // Arrange
     const TestComponent = () => {
       const { theme, forcedTheme } = useTheme();
-      return (
-        <div>
-          <span data-testid="theme">{theme}</span>
-          <span data-testid="forced">{forcedTheme}</span>
-        </div>
+      return React.createElement('div', null,
+        React.createElement('span', { 'data-testid': 'theme' }, theme),
+        React.createElement('span', { 'data-testid': 'forced' }, forcedTheme)
       );
     };
 
     // Act - THIS WILL FAIL until implementation exists
     render(
-      <ThemeProvider forcedTheme="light" aestheticClinicMode={true}>
-        <TestComponent />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { forcedTheme: "light", aestheticClinicMode: true },
+        React.createElement(TestComponent)
+      )
     );
 
     // Assert

@@ -53,7 +53,8 @@
     "check:duplicates": "bun run src/check-duplicate-types.ts"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
+    "@types/react": "^19.0.10",
+    "typescript": "5.9.2",
     "vitest": "^3.2.4",
     "zod": "^3.22.0"
   },

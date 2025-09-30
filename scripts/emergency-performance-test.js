@@ -148,7 +148,7 @@ class EmergencyPerformanceMonitor {
     return workflowResults
   }
 
-  async measureStep(stepName, workflowId) {
+  async measureStep(stepName, _workflowId) {
     const stepStartTime = performance.now()
     
     try {

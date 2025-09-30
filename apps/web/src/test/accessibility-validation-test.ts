@@ -10,23 +10,23 @@ import { render, screen, fireEvent } from '@testing-library/react'
 
 // Mock components for testing
 const AccessibilityProvider = ({ children }: { children: React.ReactNode }) => (
-  <div data-accessibility-provider>{children}</div>
+  React.createElement('div', { 'data-accessibility-provider': 'true' }, children)
 )
 
 const EmergencyAlertSystem = ({ children, ...props }: any) => (
-  <div data-emergency-alert-system {...props}>{children}</div>
+  React.createElement('div', { 'data-emergency-alert-system': props }, children)
 )
 
 const MobileHealthcareButton = ({ children, ...props }: any) => (
-  <button data-mobile-healthcare-button {...props}>{children}</button>
+  React.createElement('button', { 'data-mobile-healthcare-button': true, ...props }, children)
 )
 
 const LGPDPrivacyControls = ({ ...props }: any) => (
-  <div data-lgpd-privacy-controls {...props}></div>
+  React.createElement('div', { 'data-lgpd-privacy-controls': true, ...props })
 )
 
 const Alert = ({ children, ...props }: any) => (
-  <div data-alert {...props}>{children}</div>
+  React.createElement('div', { 'data-alert': true, ...props }, children)
 )
 
 // Mock patient data for testing
@@ -75,9 +75,9 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should maintain language declaration when rendering components', () => {
       render(
-        <AccessibilityProvider>
-          <div>Test Component</div>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement('div', null, 'Test Component')
+        )
       )
       expect(document.documentElement.lang).toBe('pt-BR')
     })
@@ -86,16 +86,16 @@ describe('Accessibility Improvements Validation', () => {
   describe('Emergency System Accessibility', () => {
     it('should have high contrast emergency alerts', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <EmergencyAlertSystem
-            patients={mockPatients}
-            activeAlerts={mockAlerts}
-            onCreateAlert={() => {}}
-            onUpdateAlert={() => {}}
-            onResolveAlert={() => {}}
-            onContactEmergency={() => {}}
-          />
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(EmergencyAlertSystem, {
+            patients: mockPatients,
+            activeAlerts: mockAlerts,
+            onCreateAlert: () => {},
+            onUpdateAlert: () => {},
+            onResolveAlert: () => {},
+            onContactEmergency: () => {}
+          })
+        )
       )
 
       // Check for emergency alert with enhanced contrast
@@ -109,16 +109,16 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have proper ARIA labels for emergency alerts', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <EmergencyAlertSystem
-            patients={mockPatients}
-            activeAlerts={mockAlerts}
-            onCreateAlert={() => {}}
-            onUpdateAlert={() => {}}
-            onResolveAlert={() => {}}
-            onContactEmergency={() => {}}
-          />
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(EmergencyAlertSystem, {
+            patients: mockPatients,
+            activeAlerts: mockAlerts,
+            onCreateAlert: () => {},
+            onUpdateAlert: () => {},
+            onResolveAlert: () => {},
+            onContactEmergency: () => {}
+          })
+        )
       )
 
       // Check for proper ARIA attributes
@@ -132,16 +132,16 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should support keyboard navigation for emergency controls', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <EmergencyAlertSystem
-            patients={mockPatients}
-            activeAlerts={mockAlerts}
-            onCreateAlert={() => {}}
-            onUpdateAlert={() => {}}
-            onResolveAlert={() => {}}
-            onContactEmergency={() => {}}
-          />
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(EmergencyAlertSystem, {
+            patients: mockPatients,
+            activeAlerts: mockAlerts,
+            onCreateAlert: () => {},
+            onUpdateAlert: () => {},
+            onResolveAlert: () => {},
+            onContactEmergency: () => {}
+          })
+        )
       )
 
       // Find alert cards and test keyboard navigation
@@ -160,15 +160,13 @@ describe('Accessibility Improvements Validation', () => {
   describe('Mobile Touch Targets', () => {
     it('should have WCAG 2.1 AA+ compliant touch targets', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            variant="medical"
-            size="mobile-lg"
-            healthcareContext="medical"
-          >
-            Test Button
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            variant: "medical",
+            size: "mobile-lg",
+            healthcareContext: "medical"
+          }, 'Test Button')
+        )
       )
 
       const button = container.querySelector('button')
@@ -181,15 +179,13 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have medical glove compatibility sizes', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            variant="emergency"
-            size="emergency"
-            healthcareContext="emergency"
-          >
-            Emergency Button
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            variant: "emergency",
+            size: "emergency",
+            healthcareContext: "emergency"
+          }, 'Emergency Button')
+        )
       )
 
       const button = container.querySelector('button')
@@ -202,14 +198,12 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have touch feedback states', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            variant="medical"
-            size="mobile"
-          >
-            Touch Test
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            variant: "medical",
+            size: "mobile"
+          }, 'Touch Test')
+        )
       )
 
       const button = container.querySelector('button')
@@ -226,12 +220,12 @@ describe('Accessibility Improvements Validation', () => {
       const mockConsentUpdate = vi.fn()
       
       const { container } = render(
-        <AccessibilityProvider>
-          <LGPDPrivacyControls
-            patientId="123.456.789-00"
-            onConsentUpdate={mockConsentUpdate}
-          />
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(LGPDPrivacyControls, {
+            patientId: "123.456.789-00",
+            onConsentUpdate: mockConsentUpdate
+          })
+        )
       )
 
       // Check for consent toggles with proper labels
@@ -247,13 +241,13 @@ describe('Accessibility Improvements Validation', () => {
       const mockDataRequest = vi.fn()
       
       const { container } = render(
-        <AccessibilityProvider>
-          <LGPDPrivacyControls
-            patientId="123.456.789-00"
-            onDataRequest={mockDataRequest}
-            showDetailedControls={true}
-          />
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(LGPDPrivacyControls, {
+            patientId: "123.456.789-00",
+            onDataRequest: mockDataRequest,
+            showDetailedControls: true
+          })
+        )
       )
 
       // Check for LGPD action buttons
@@ -272,12 +266,12 @@ describe('Accessibility Improvements Validation', () => {
       const mockDataRequest = vi.fn()
       
       const { container } = render(
-        <AccessibilityProvider>
-          <LGPDPrivacyControls
-            patientId="123.456.789-00"
-            onDataRequest={mockDataRequest}
-          />
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(LGPDPrivacyControls, {
+            patientId: "123.456.789-00",
+            onDataRequest: mockDataRequest
+          })
+        )
       )
 
       // Check for screen reader support elements
@@ -293,11 +287,11 @@ describe('Accessibility Improvements Validation', () => {
   describe('Alert Component Contrast', () => {
     it('should have WCAG 2.1 AA+ compliant contrast ratios', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <Alert variant="emergency-critical">
-            Critical Emergency Alert
-          </Alert>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(Alert, {
+            variant: "emergency-critical"
+          }, 'Critical Emergency Alert')
+        )
       )
 
       const alert = container.querySelector('[role="alert"]')
@@ -311,11 +305,11 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have enhanced emergency styling', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <Alert variant="emergency">
-            Emergency Alert
-          </Alert>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(Alert, {
+            variant: "emergency"
+          }, 'Emergency Alert')
+        )
       )
 
       const alert = container.querySelector('[role="alert"]')
@@ -329,11 +323,11 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have healthcare-specific variants', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <Alert variant="medical">
-            Medical Alert
-          </Alert>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(Alert, {
+            variant: "medical"
+          }, 'Medical Alert')
+        )
       )
 
       const alert = container.querySelector('[role="alert"]')
@@ -348,11 +342,9 @@ describe('Accessibility Improvements Validation', () => {
   describe('Focus Management', () => {
     it('should have proper focus indicators', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton>
-            Focus Test
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, null, 'Focus Test')
+        )
       )
 
       const button = container.querySelector('button')
@@ -365,11 +357,11 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should manage focus for modal interactions', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton requiresConfirmation={true}>
-            Confirm Test
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            requiresConfirmation: true
+          }, 'Confirm Test')
+        )
       )
 
       const button = container.querySelector('button')
@@ -387,9 +379,9 @@ describe('Accessibility Improvements Validation', () => {
   describe('Screen Reader Compatibility', () => {
     it('should have proper Portuguese language support', () => {
       render(
-        <AccessibilityProvider>
-          <div>Test Content</div>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement('div', null, 'Test Content')
+        )
       )
 
       // Check if language is maintained
@@ -402,14 +394,12 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have descriptive ARIA labels', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            ariaLabel="Botão de emergência médica"
-            healthcareContext="emergency"
-          >
-            Emergency
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            'aria-label': 'Botão de emergência médica',
+            healthcareContext: "emergency"
+          }, 'Emergency')
+        )
       )
 
       const button = container.querySelector('button')
@@ -420,13 +410,11 @@ describe('Accessibility Improvements Validation', () => {
       const mockAnnouncement = vi.fn()
       
       render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            screenReaderAnnouncement="Ação realizada com sucesso"
-          >
-            Announce Test
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            screenReaderAnnouncement: "Ação realizada com sucesso"
+          }, 'Announce Test')
+        )
       )
 
       // The announcement should be set up for screen readers
@@ -438,14 +426,12 @@ describe('Accessibility Improvements Validation', () => {
   describe('Healthcare-Specific Features', () => {
     it('should have medical context handling', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            healthcareContext="medical"
-            variant="medical"
-          >
-            Medical Action
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            healthcareContext: "medical",
+            variant: "medical"
+          }, 'Medical Action')
+        )
       )
 
       const button = container.querySelector('button')
@@ -457,15 +443,13 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have emergency protocol support', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            healthcareContext="emergency"
-            emergencyLevel="critical"
-            variant="emergency"
-          >
-            Critical Emergency
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            healthcareContext: "emergency",
+            emergencyLevel: "critical",
+            variant: "emergency"
+          }, 'Critical Emergency')
+        )
       )
 
       const button = container.querySelector('button')
@@ -478,13 +462,11 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have LGPD compliance indicators', () => {
       const { container } = render(
-        <AccessibilityProvider>
-          <MobileHealthcareButton
-            lgpdAction="data_access"
-          >
-            LGPD Action
-          </MobileHealthcareButton>
-        </AccessibilityProvider>
+        React.createElement(AccessibilityProvider, null,
+          React.createElement(MobileHealthcareButton, {
+            lgpdAction: "data_access"
+          }, 'LGPD Action')
+        )
       )
 
       const button = container.querySelector('button')
@@ -501,7 +483,7 @@ export const accessibilityTestUtils = {
   mockPatients,
   mockAlerts,
   renderWithAccessibility: (component: React.ReactNode) => 
-    render(<AccessibilityProvider>{component}</AccessibilityProvider>),
+    render(React.createElement(AccessibilityProvider, null, component)),
   checkContrastRatio: (element: HTMLElement) => {
     // This would be implemented with actual contrast ratio calculation
     const styles = window.getComputedStyle(element)

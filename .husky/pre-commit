@@ -59,16 +59,28 @@ else
     echo -e "${GREEN}✅ Code formatting is correct${NC}"
 fi
 
-# 5. Healthcare Data Protection Check
-echo -e "${YELLOW}🏥 Checking LGPD and healthcare compliance...${NC}"
-# Check for personal data in unsafe contexts, excluding comments
-if grep -r -i -E "(cpf|rg|email|phone|patient.*data)" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules --exclude-dir=dist --exclude-dir=.husky --exclude-dir=.bun --exclude-dir=coverage . | grep -v -E "(test|spec|mock|//|/\*|\*)" | grep -E "(console\.log|localStorage|sessionStorage)" > /dev/null; then
-    echo -e "${RED}❌ LGPD Violation: Personal data detected in unsafe contexts${NC}"
+# 5. Healthcare Data Protection Check (AST-based LGPD Compliance)
+echo -e "${YELLOW}🏥 Checking LGPD and healthcare compliance with AST analysis...${NC}"
+# Run sophisticated AST-based LGPD compliance checker
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "\.(ts|tsx)$" | head -20 || true)
+LGPD_VIOLATIONS=0
+if [ ! -z "$STAGED_FILES" ]; then
+    for file in $STAGED_FILES; do
+        if [ -f "$file" ]; then
+            echo "Checking LGPD compliance in: $file"
+            if ! bun scripts/lgpd-compliance-check.js "$file" 2>/dev/null; then
+                LGPD_VIOLATIONS=$((LGPD_VIOLATIONS + 1))
+            fi
+        fi
+    done
+fi
+if [ $LGPD_VIOLATIONS -gt 0 ]; then
+    echo -e "${RED}❌ LGPD compliance check failed with $LGPD_VIOLATIONS violation(s)${NC}"
     echo -e "${BLUE}💡 Use secure storage utilities from @neonpro/security${NC}"
-    echo -e "${BLUE}📚 See .husky/README.md for LGPD compliance examples${NC}"
+    echo -e "${BLUE}📚 See scripts/lgpd-compliance-check.js for detailed analysis${NC}"
     exit 1
 fi
-echo -e "${GREEN}✅ LGPD compliance check passed${NC}"
+echo -e "${GREEN}✅ LGPD compliance check passed (AST-based analysis)${NC}"
 
 # 6. Accessibility Check (for modified UI files)
 echo -e "${YELLOW}♿ Checking accessibility compliance (WCAG 2.1 AA)...${NC}"

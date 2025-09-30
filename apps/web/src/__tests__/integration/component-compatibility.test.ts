@@ -41,16 +41,17 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render MagicCard with NEONPRO theme colors', async () => {
     // Act - THIS WILL FAIL until implementation exists
     const { container } = renderWithTheme(
-      <MagicCard 
-        className="w-64 h-32"
-        gradient="linear-gradient(135deg, var(--neonpro-primary), var(--neonpro-accent))"
-        constitutional={{ patientData: true, clinicBranding: true }}
-      >
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-neonpro-deep-blue">Patient Card</h3>
-          <p className="text-sm text-neonpro-neutral">LGPD compliant patient information</p>
-        </div>
-      </MagicCard>
+      React.createElement(MagicCard, 
+        { 
+          className: "w-64 h-32",
+          gradient: "linear-gradient(135deg, var(--neonpro-primary), var(--neonpro-accent))",
+          constitutional: { patientData: true, clinicBranding: true }
+        },
+        React.createElement('div', { className: "p-4" },
+          React.createElement('h3', { className: "text-lg font-semibold text-neonpro-deep-blue" }, "Patient Card"),
+          React.createElement('p', { className: "text-sm text-neonpro-neutral" }, "LGPD compliant patient information")
+        )
+      )
     );
 
     // Assert
@@ -73,13 +74,15 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render AnimatedThemeToggler with NEONPRO branding', async () => {
     // Act - THIS WILL FAIL until implementation exists
     renderWithTheme(
-      <AnimatedThemeToggler
-        size="lg"
-        animation="slide"
-        showLabel={true}
-        themes={['light', 'dark', 'system']}
-        className="neonpro-theme-toggler"
-      />
+      React.createElement(AnimatedThemeToggler,
+        {
+          size: "lg",
+          animation: "slide",
+          showLabel: true,
+          themes: ['light', 'dark', 'system'],
+          className: "neonpro-theme-toggler"
+        }
+      )
     );
 
     // Assert
@@ -95,15 +98,16 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render GradientButton with aesthetic clinic styling', async () => {
     // Act - THIS WILL FAIL until implementation exists
     renderWithTheme(
-      <GradientButton
-        variant="primary"
-        size="lg"
-        gradient="linear-gradient(135deg, var(--neonpro-primary), var(--neonpro-accent))"
-        constitutional={{ patientConsent: true, clinicAction: true }}
-        onClick={vi.fn()}
-      >
-        Schedule Aesthetic Procedure
-      </GradientButton>
+      React.createElement(GradientButton,
+        {
+          variant: "primary",
+          size: "lg",
+          gradient: "linear-gradient(135deg, var(--neonpro-primary), var(--neonpro-accent))",
+          constitutional: { patientConsent: true, clinicAction: true },
+          onClick: vi.fn()
+        },
+        'Schedule Aesthetic Procedure'
+      )
     );
 
     // Assert
@@ -122,21 +126,22 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render TiltedCard with Brazilian mobile optimization', async () => {
     // Act - THIS WILL FAIL until implementation exists
     renderWithTheme(
-      <TiltedCard
-        className="w-64 h-80"
-        tiltAmount={15}
-        scaleOnHover={true}
-        theme="light"
-      >
-        <div className="p-6">
-          <h3 className="text-lg font-semibold text-neonpro-deep-blue">
-            Tratamento Facial
-          </h3>
-          <p className="text-sm text-neonpro-neutral mt-2">
-            Procedimento estético com compliance ANVISA
-          </p>
-        </div>
-      </TiltedCard>
+      React.createElement(TiltedCard,
+        {
+          className: "w-64 h-80",
+          tiltAmount: 15,
+          scaleOnHover: true,
+          theme: "light"
+        },
+        React.createElement('div', { className: "p-6" },
+          React.createElement('h3', { className: "text-lg font-semibold text-neonpro-deep-blue" },
+            "Tratamento Facial"
+          ),
+          React.createElement('p', { className: "text-sm text-neonpro-neutral mt-2" },
+            "Procedimento estético com compliance ANVISA"
+          )
+        )
+      )
     );
 
     // Assert
@@ -151,27 +156,28 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render Sidebar with Tabler icons and NEONPRO styling', async () => {
     // Act - THIS WILL FAIL until implementation exists  
     renderWithTheme(
-      <Sidebar
-        position="left"
-        collapsible={true}
-        defaultCollapsed={false}
-        icons="tabler"
-        constitutional={{ patientNavigation: true, clinicWorkflow: true }}
-      >
-        <nav className="p-4">
-          <h2 className="text-lg font-semibold mb-4 text-neonpro-deep-blue">
-            Navegação da Clínica
-          </h2>
-          <div className="space-y-2">
-            <a href="#" className="flex items-center space-x-2 p-2 rounded hover:bg-neonpro-accent">
-              <span>Pacientes</span>
-            </a>
-            <a href="#" className="flex items-center space-x-2 p-2 rounded hover:bg-neonpro-accent">
-              <span>Agendamentos</span>
-            </a>
-          </div>
-        </nav>
-      </Sidebar>
+      React.createElement(Sidebar,
+        {
+          position: "left",
+          collapsible: true,
+          defaultCollapsed: false,
+          icons: "tabler",
+          constitutional: { patientNavigation: true, clinicWorkflow: true }
+        },
+        React.createElement('nav', { className: "p-4" },
+          React.createElement('h2', { className: "text-lg font-semibold mb-4 text-neonpro-deep-blue" },
+            "Navegação da Clínica"
+          ),
+          React.createElement('div', { className: "space-y-2" },
+            React.createElement('a', { href: "#", className: "flex items-center space-x-2 p-2 rounded hover:bg-neonpro-accent" },
+              React.createElement('span', null, "Pacientes")
+            ),
+            React.createElement('a', { href: "#", className: "flex items-center space-x-2 p-2 rounded hover:bg-neonpro-accent" },
+              React.createElement('span', null, "Agendamentos")
+            )
+          )
+        )
+      )
     );
 
     // Assert
@@ -189,22 +195,23 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render ShineBorder with NEONPRO gold accent', async () => {
     // Act - THIS WILL FAIL until implementation exists
     renderWithTheme(
-      <ShineBorder
-        borderWidth={2}
-        borderRadius={12}
-        duration={14}
-        shineColor="var(--neonpro-primary)"
-        theme="gold"
-      >
-        <div className="p-6 bg-neonpro-background">
-          <h3 className="text-neonpro-deep-blue font-semibold">
-            Premium Aesthetic Service
-          </h3>
-          <p className="text-neonpro-neutral mt-2">
-            Luxury clinic experience with constitutional compliance
-          </p>
-        </div>
-      </ShineBorder>
+      React.createElement(ShineBorder,
+        {
+          borderWidth: 2,
+          borderRadius: 12,
+          duration: 14,
+          shineColor: "var(--neonpro-primary)",
+          theme: "gold"
+        },
+        React.createElement('div', { className: "p-6 bg-neonpro-background" },
+          React.createElement('h3', { className: "text-neonpro-deep-blue font-semibold" },
+            "Premium Aesthetic Service"
+          ),
+          React.createElement('p', { className: "text-neonpro-neutral mt-2" },
+            "Luxury clinic experience with constitutional compliance"
+          )
+        )
+      )
     );
 
     // Assert
@@ -221,13 +228,14 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should render HoverBorderGradientButton with aesthetic branding', async () => {
     // Act - THIS WILL FAIL until implementation exists
     renderWithTheme(
-      <HoverBorderGradientButton
-        variant="primary"
-        size="md"
-        className="neonpro-gradient-btn"
-      >
-        Consulta Estética
-      </HoverBorderGradientButton>
+      React.createElement(HoverBorderGradientButton,
+        {
+          variant: "primary",
+          size: "md",
+          className: "neonpro-gradient-btn"
+        },
+        'Consulta Estética'
+      )
     );
 
     // Assert
@@ -244,15 +252,15 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should maintain component compatibility across light/dark theme switch', async () => {
     // Arrange
     const TestAllComponents = () => (
-      <div>
-        <MagicCard>Light/Dark Test</MagicCard>
-        <GradientButton>Theme Switch Button</GradientButton>
-        <TiltedCard>Responsive Card</TiltedCard>
-      </div>
+      React.createElement('div', null,
+        React.createElement(MagicCard, null, 'Light/Dark Test'),
+        React.createElement(GradientButton, null, 'Theme Switch Button'),
+        React.createElement(TiltedCard, null, 'Responsive Card')
+      )
     );
 
     // Act - Light theme
-    const { rerender } = renderWithTheme(<TestAllComponents />, 'light');
+    const { rerender } = renderWithTheme(React.createElement(TestAllComponents), 'light');
     
     // Assert light theme
     expect(document.documentElement).toHaveClass('light');
@@ -261,9 +269,9 @@ describe('Component Compatibility with NEONPRO Theme', () => {
 
     // Act - Switch to dark theme
     rerender(
-      <ThemeProvider defaultTheme="dark" brazilianOptimization={true}>
-        <TestAllComponents />
-      </ThemeProvider>
+      React.createElement(ThemeProvider, { defaultTheme: "dark", brazilianOptimization: true },
+        React.createElement(TestAllComponents)
+      )
     );
 
     // Assert dark theme
@@ -278,15 +286,15 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should support Framer Motion v11.0.0 compatibility across all components', async () => {
     // Act - THIS WILL FAIL until implementation exists
     renderWithTheme(
-      <div>
-        <TiltedCard tiltAmount={15} scaleOnHover={true}>
-          Framer Motion Test
-        </TiltedCard>
-        <AnimatedThemeToggler animation="slide" />
-        <ShineBorder duration={14}>
-          Animation Test
-        </ShineBorder>
-      </div>
+      React.createElement('div', null,
+        React.createElement(TiltedCard, { tiltAmount: 15, scaleOnHover: true },
+          'Framer Motion Test'
+        ),
+        React.createElement(AnimatedThemeToggler, { animation: "slide" }),
+        React.createElement(ShineBorder, { duration: 14 },
+          'Animation Test'
+        )
+      )
     );
 
     // Assert Framer Motion compatibility
@@ -301,11 +309,11 @@ describe('Component Compatibility with NEONPRO Theme', () => {
   test('should validate constitutional compliance across all components', async () => {
     // Act - THIS WILL FAIL until implementation exists
     const { container } = renderWithTheme(
-      <div data-testid="compliance-container">
-        <MagicCard constitutional={{ patientData: true }}>Patient Data</MagicCard>
-        <GradientButton constitutional={{ clinicAction: true }}>Clinical Action</GradientButton>
-        <Sidebar constitutional={{ patientNavigation: true }}>Navigation</Sidebar>
-      </div>
+      React.createElement('div', { 'data-testid': 'compliance-container' },
+        React.createElement(MagicCard, { constitutional: { patientData: true } }, 'Patient Data'),
+        React.createElement(GradientButton, { constitutional: { clinicAction: true } }, 'Clinical Action'),
+        React.createElement(Sidebar, { constitutional: { patientNavigation: true } }, 'Navigation')
+      )
     );
 
     // Assert constitutional compliance

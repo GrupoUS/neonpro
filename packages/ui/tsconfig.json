@@ -13,6 +13,8 @@
     },
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowJs": false,
+    "checkJs": false,
     "composite": true,
     "noEmit": false,
     "skipLibCheck": true
