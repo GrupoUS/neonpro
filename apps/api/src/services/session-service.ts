@@ -41,8 +41,8 @@ export class SessionService {
   private maxConcurrentSessions: number
 
   constructor() {
-    this.sessionTimeout = parseInt(process.env.SESSION_TIMEOUT || '3600')
-    this.maxConcurrentSessions = parseInt(process.env.MAX_CONCURRENT_SESSIONS || '5')
+    this.sessionTimeout = parseInt(process.env['SESSION_TIMEOUT'] || '3600')
+    this.maxConcurrentSessions = parseInt(process.env['MAX_CONCURRENT_SESSIONS'] || '5')
   }
 
   async getSession(sessionId: string): Promise<SessionResult> {

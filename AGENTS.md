@@ -37,26 +37,25 @@ The project is organized into `apps` and `packages`:
 
 The following commands are available at the root of the monorepo:
 
+**Development**
 *   `bun dev`: Start the development servers for all apps.
 *   `bun build`: Build all apps and packages.
 
-#### Testing
+**Testing (Functional)**
+*   `bun test`: Run unit and integration tests for packages
+*   `bun test:coverage`: Generate code coverage report
+*   `bun test packages/types/src/__tests__/schemas.test.ts`: Test TypeScript schemas
+*   `bun test packages/database/src/models/__tests__/performance-metrics.test.ts`: Test database models
 
-*   `bun test`: Run all tests (unit and integration).
-*   `bun test:watch`: Run all tests in watch mode.
-*   `bun test:coverage`: Run all tests and generate a code coverage report.
-*   `bun test:e2e`: Run all end-to-end tests with Playwright.
-*   `bun test:e2e:ui`: Run all end-to-end tests with the Playwright UI.
+**Quality Assurance**
+*   `bun lint`: Lint codebase with OXLint (50-100x faster than ESLint) ✅
+*   `bun lint:fix`: Auto-fix linting issues
+*   `bun format`: Format codebase with Biome
+*   `bunx biome check`: Alternative code quality validation
 
-#### Linting and Formatting
-
-*   `bun lint`: Lint the entire codebase with OXLint.
-*   `bun lint:fix`: Lint and automatically fix issues with OXLint.
-
-#### Other
-
-*   `bun type-check`: Run TypeScript type checking for the entire project.
-*   `bun format`: Format the entire codebase with Biome.
+**Type Safety**
+*   `bun type-check`: Run TypeScript type checking
+*   `bunx biome check --apply`: Auto-fix code issues
 
 ## Core Principles
 

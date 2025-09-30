@@ -70,7 +70,7 @@ const healthRouter = t.router({
         timestamp: new Date().toISOString(),
         version: '1.0.0',
         uptime: process.uptime(),
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env['NODE_ENV'] || 'development',
         platform: 'node',
         architecture: 'hybrid',
         runtime: 'bun',
@@ -88,7 +88,7 @@ const systemRouter = t.router({
         name: 'NeonPro API',
         description: 'Healthcare platform for aesthetic clinics in Brazil',
         version: '1.0.0',
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env['NODE_ENV'] || 'development',
         platform: {
           runtime: 'bun',
           framework: 'hono',

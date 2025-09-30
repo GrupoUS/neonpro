@@ -1,2 +1,5 @@
 // Treatments hooks
-// TODO: Implement useTreatments hook when needed
+export const useTreatments = () => {
+  // TODO: Implement useTreatments hook when needed
+  return null
+}

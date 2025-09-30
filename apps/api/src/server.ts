@@ -50,9 +50,9 @@ app.get('/health', (c) => {
 	// Add a thin wrapper middleware that forwards to the tRPC adapter.
 	// This keeps types happy (we define a Hono-compatible middleware) while
 	// only casting inside the wrapper where necessary.
-	const trpcMiddleware = async (c: Parameters<typeof app['fetch']>[0], next?: any) => {
+	const trpcMiddleware = async (c: Parameters<typeof app['fetch']>[0], next?: () => Promise<void>) => {
 		// Forward to the trpc handler. adapter may not have precise TS types, so cast locally.
-		return await (trpcHandler as unknown as (arg: any, next?: any) => Promise<Response>)(c, next)
+		return await (trpcHandler as unknown as (arg: typeof c, next?: typeof next) => Promise<Response>)(c, next)
 	}
 
 	// Use the wrapper instead of passing the untyped handler directly.
@@ -983,59 +983,46 @@ app.post('/api/compliance/audit', async (c) => {
 
 // API info endpoint
 app.get('/api/info', (c) => {
+  // Optional: check authentication and return filtered view
+  const isAuthenticated = c.get('user') !== undefined
+  
   return c.json({
     name: 'NeonPro API',
     description: 'Healthcare platform for aesthetic clinics in Brazil',
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development',
-    endpoints: {
-      health: '/health',
-      trpc: '/trpc',
-      architecture: '/trpc/architecture',
-      migration: '/trpc/migration',
-      system: '/trpc/system',
-      status: '/trpc/status',
-      performance: {
-        build: '/api/performance/build',
-        runtime: '/api/performance/runtime',
-        edge: '/api/performance/edge',
-        memory: '/api/performance/memory',
-        benchmarks: '/api/performance/healthcare-benchmarks'
-      },
-      compliance: {
-        lgpd: '/api/compliance/lgpd',
-        anvisa: '/api/compliance/anvisa',
-        cfm: '/api/compliance/cfm',
-        residency: '/api/compliance/data-residency',
-        audit: '/api/compliance/security-audit',
-        protection: '/api/compliance/healthcare-data-protection'
-      },
-      analysis: {
-        start: '/trpc/analysis.startAnalysis',
-        status: '/trpc/analysis.getAnalysisStatus',
-        results: '/trpc/analysis.getAnalysisResults',
-        list: '/trpc/analysis.listAnalyses',
-        delete: '/trpc/analysis.deleteAnalysis'
+    ...(isAuthenticated && {
+      endpoints: {
+        health: '/health',
+        trpc: '/trpc',
+        architecture: '/trpc/architecture',
+        migration: '/trpc/migration',
+        system: '/trpc/system',
+        status: '/trpc/status',
+        performance: {
+          build: '/api/performance/build',
+          runtime: '/api/performance/runtime',
+          edge: '/api/performance/edge',
+          memory: '/api/performance/memory',
+          benchmarks: '/api/performance/healthcare-benchmarks'
+        },
+        compliance: {
+          lgpd: '/api/compliance/lgpd',
+          anvisa: '/api/compliance/anvisa',
+          cfm: '/api/compliance/cfm',
+          residency: '/api/compliance/data-residency',
+          audit: '/api/compliance/security-audit',
+          protection: '/api/compliance/healthcare-data-protection'
+        },
+        analysis: {
+          start: '/trpc/analysis.startAnalysis',
+          status: '/trpc/analysis.getAnalysisStatus',
+          results: '/trpc/analysis.getAnalysisResults',
+          list: '/trpc/analysis.listAnalyses',
+          delete: '/trpc/analysis.deleteAnalysis'
+        }
       }
-    },
-    features: {
-      healthcare_compliance: ['lgpd', 'anvisa', 'cfm'],
-      real_time: true,
-      edge_optimization: true,
-      performance_monitoring: true,
-      audit_trail: true,
-      code_analysis: {
-        hono_trpc_analysis: true,
-        supabase_integration_analysis: true,
-        architectural_violation_detection: true,
-        healthcare_compliance_validation: true,
-        performance_benchmarking: true,
-        type_safety_analysis: true,
-        edge_optimization_analysis: true,
-        mobile_optimization: true,
-        brazilian_healthcare_focus: true
-      }
-    }
+    })
   })
 })
 

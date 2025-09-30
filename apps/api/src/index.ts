@@ -15,7 +15,7 @@ app.use('*', cors({
 app.get('/health', (c) =>
   c.json({
     status: 'ok',
-    region: process.env.VERCEL_REGION ?? 'local',
+    region: process.env['VERCEL_REGION'] ?? 'local',
     timestamp: Date.now(),
   }),
 )

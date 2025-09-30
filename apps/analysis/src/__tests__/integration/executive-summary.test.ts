@@ -377,7 +377,7 @@ describe('T015 - Integration Test: Executive Summary Generation', () => {
           interfaceAdaptation: true,
           workflowAdjustment: true,
           communicationStyle: true,
-          trust-building: true
+          trustBuilding: true
         },
         healthcareUserProfiles: [
           'elderly-patients',

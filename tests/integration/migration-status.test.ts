@@ -9,6 +9,153 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
 
+interface MigrationStatus {
+  id: string
+  name: string
+  version: string
+  environment: string
+  currentPhase: string
+  status: string
+  progress: number
+  startedAt: string
+  estimatedCompletion: string
+  phases: Array<{
+    name: string
+    status: string
+    progress: number
+    startedAt?: string
+    completedAt?: string
+  }>
+  metrics: {
+    buildTimeImprovement: number
+    memoryUsageReduction: number
+    performanceImprovement: number
+  }
+  healthcare: {
+    lgpdCompliance: boolean
+    anvisaCompliance: boolean
+    cfmCompliance: boolean
+    auditTrail: boolean
+    dataBackup: boolean
+    validationRequired: boolean
+  }
+}
+
+interface MigrationConfig {
+  id: string
+  migrationId: string
+  name: string
+  version: string
+  environment: string
+  bunConfiguration: {
+    version: string
+    optimizationLevel: string
+    runtimeTarget: string
+    enabledFeatures: string[]
+  }
+  performanceTargets: {
+    buildTimeImprovement: number
+    memoryUsageReduction: number
+    edgeTTFBTarget: number
+    coldStartTarget: number
+    warmStartTarget: number
+  }
+  healthcareCompliance: {
+    lgpd: {
+      enabled: boolean
+      dataProcessingBasis: string
+      auditTrail: boolean
+      dataRetention: number
+    }
+    anvisa: {
+      enabled: boolean
+      medicalDeviceClass: string
+      validationRequired: boolean
+      documentation: boolean
+    }
+    cfm: {
+      enabled: boolean
+      auditRequired: boolean
+      patientSafety: boolean
+      professionalStandards: boolean
+    }
+  }
+  rollbackConfiguration: {
+    enabled: boolean
+    automatic: boolean
+    backupBeforeRollback: boolean
+    rollbackPoint: string
+  }
+}
+
+interface MigrationMetrics {
+  id: string
+  migrationId: string
+  timestamp: string
+  environment: string
+  phase: string
+  status: string
+  progress: number
+  performanceMetrics: {
+    baseline: {
+      buildTime: number
+      installTime: number
+      testTime: number
+      memoryUsage: number
+      cpuUsage: number
+      diskUsage: number
+    }
+    current: {
+      buildTime: number
+      installTime: number
+      testTime: number
+      memoryUsage: number
+      cpuUsage: number
+      diskUsage: number
+    }
+    targets: {
+      buildTimeImprovement: number
+      memoryUsageReduction: number
+      performanceImprovement: number
+    }
+  }
+  healthcareMetrics: {
+    lgpdCompliance: {
+      dataAccessTime: number
+      auditLogTime: number
+      encryptionOverhead: number
+    }
+    anvisaCompliance: {
+      validationTime: number
+      documentationTime: number
+    }
+    cfmCompliance: {
+      medicalRecordAccessTime: number
+      auditTrailTime: number
+    }
+  }
+  metrics: {
+    lastCheck: string
+    uptime: number
+    activeConnections: number
+  }
+}
+
+interface SystemMetrics {
+  lastCheck: string
+  uptime: number
+  activeConnections: number
+}
+
+interface ProgressUpdate {
+  phase: string
+  status: string
+  progress: number
+  buildTime: number
+  memoryUsage: number
+  errorCount: number
+}
+
 describe('Migration Status API Integration Tests', () => {
   const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
   
@@ -49,9 +196,9 @@ describe('Migration Status API Integration Tests', () => {
       expect(status.phases.find(p => p.name === 'Setup')).toHaveProperty('status', 'completed')
       
       // Verify current phase
-      expect(status.phases.find(p => p.name === 'Configuration')).toHaveProperty('status', 'in_progress')
-      expect(status.phases.find(p => p.name === 'Migration')).toHaveProperty('status', 'pending'))
-      expect(status.phases.find(p => p.name === 'Validation')).toHaveProperty('status', 'pending'))
+      expect(status.phases.find(p => p.name === 'configuration')).toHaveProperty('status', 'in_progress')
+      expect(status.phases.find(p => p.name === 'migration')).toHaveProperty('status', 'pending'))
+      expect(status.phases.find(p => p.name === 'validation')).toHaveProperty('status', 'pending'))
       
       // Verify migration metrics
       expect(status).toHaveProperty('metrics'))
@@ -181,8 +328,8 @@ describe('Migration Status API Integration Tests', () => {
       expect(metrics.performanceMetrics.current).toHaveProperty('cpuUsage', 40))
       
       // Verify targets and improvements
-      expect(metrics.performanceMetrics.targets).toHaveProperty('buildTimeImprovement', 66.7))
-      expect(metrics.performanceMetrics.targets).toHaveProperty('memoryUsageReduction', 22))
+      expect(metrics.performanceMetrics.targets.buildTimeImprovement).toBeCloseTo(66.7, 1)
+      expect(metrics.performanceMetrics.targets.memoryUsageReduction).toBeCloseTo(22, 0))
       expect(metrics.performanceMetrics.targets).toHaveProperty('performanceImprovement', 300))
       
       // Verify healthcare metrics
