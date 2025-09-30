@@ -1,680 +1,369 @@
-# Phase 1: Data Model & Design
+# Data Model: NEONPRO Theme + 7 UI Components
 
-## NEONPRO Theme + UI Components Data Model
+## Overview
+This document defines the entities, relationships, and validation rules for the NEONPRO theme system and 7 UI components integration within the aesthetic clinic platform.
 
-### A.P.T.E Methodology Integration
-This data model implements the A.P.T.E (Analyze → Plan → Think → Execute) methodology with constitutional compliance for Brazilian aesthetic clinics.
+## Core Entities
 
-### Core Entities
+### 1. Theme Configuration
 
-#### ThemeConfiguration
+#### ThemeSettings
 ```typescript
-interface ThemeConfiguration {
-  id: string;
-  name: "NEONPRO";
-  version: string;
-  colors: ColorScheme;
-  fonts: FontConfiguration;
-  spacing: SpacingConfiguration;
-  borderRadius: BorderRadiusConfiguration;
-  shadows: ShadowConfiguration;
-  uiComponents: UIComponentRegistry;
-  constitutionalCompliance: ConstitutionalCompliance;
-  createdAt: Date;
-  updatedAt: Date;
-}
-```
-```typescript
-interface ThemeConfiguration {
-  id: string;
-  name: "NEONPRO";
-  version: string;
-  colors: ColorScheme;
-  fonts: FontConfiguration;
-  spacing: SpacingConfiguration;
-  borderRadius: BorderRadiusConfiguration;
-  shadows: ShadowConfiguration;
-  createdAt: Date;
-  updatedAt: Date;
+interface ThemeSettings {
+  id: string
+  name: 'NEONPRO' | 'default' | 'custom'
+  colorScheme: 'light' | 'dark' | 'system'
+  colors: ThemeColors
+  fonts: ThemeFonts
+  shadows: ThemeShadows
+  spacing: ThemeSpacing
+  borderRadius: ThemeBorderRadius
+  updatedAt: Date
+  updatedBy: string // User ID
 }
 ```
 
-#### ColorScheme
+#### ThemeColors
 ```typescript
-interface ColorScheme {
-  light: LightColorPalette;
-  dark: DarkColorPalette;
-  oklchFormat: boolean;
-  contrastRatios: Record<string, number>; // WCAG compliance validation
-  neonproBrandColors: {
-    primary: string;      // #AC9469
-    deepBlue: string;    // #112031
-    accent: string;      // #E8D5B7
-    neutral: string;     // #F5F5F5
-    background: string;  // #FFFFFF
-  };
+interface ThemeColors {
+  primary: string      // #ac9469 - NeonPro Golden
+  deepBlue: string     // #112031 - Healthcare Professional  
+  accent: string       // #d4af37 - Gold Accent
+  neutral: string      // #B4AC9C - Calming Light Beige
+  background: string   // #D2D0C8 - Soft Gray Background
+  success: string
+  warning: string
+  error: string
+  muted: string
 }
 ```
 
-#### LightColorPalette
+#### ThemeFonts
 ```typescript
-interface LightColorPalette {
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  popover: string;
-  popoverForeground: string;
-  primary: string;
-  primaryForeground: string;
-  secondary: string;
-  secondaryForeground: string;
-  muted: string;
-  mutedForeground: string;
-  accent: string;
-  accentForeground: string;
-  destructive: string;
-  destructiveForeground: string;
-  border: string;
-  input: string;
-  ring: string;
+interface ThemeFonts {
+  sans: 'Inter' | 'System' | 'Custom'
+  serif: 'Lora' | 'Libre Baskerville' | 'System' | 'Custom'
+  mono: 'JetBrains Mono' | 'System' | 'Custom'
+  customFonts?: CustomFont[]
 }
 ```
 
-#### DarkColorPalette
+#### CustomFont
 ```typescript
-interface DarkColorPalette {
-  background: string;
-  foreground: string;
-  card: string;
-  cardForeground: string;
-  popover: string;
-  popoverForeground: string;
-  primary: string;
-  primaryForeground: string;
-  secondary: string;
-  secondaryForeground: string;
-  muted: string;
-  mutedForeground: string;
-  accent: string;
-  accentForeground: string;
-  destructive: string;
-  destructiveForeground: string;
-  border: string;
-  input: string;
-  ring: string;
+interface CustomFont {
+  family: string
+  source: 'local' | 'google' | 'custom'
+  weights: number[]
+  styles: string[]
+  unicodeRange?: string
 }
 ```
 
-#### FontConfiguration
+### 2. Component Registry
+
+#### ComponentLibrary
 ```typescript
-interface FontConfiguration {
-  sans: {
-    family: "Inter";
-    source: "local";
-    weights: number[];
-    fallback: string[];
-  };
-  serif: {
-    family: "Lora";
-    source: "local";
-    weights: number[];
-    fallback: string[];
-  };
-  mono: {
-    family: "Libre Baskerville";
-    source: "local";
-    weights: number[];
-    fallback: string[];
-  };
+interface ComponentLibrary {
+  id: string
+  name: 'Magic UI' | 'Aceternity UI' | 'Kokonut UI' | 'ReactBits' | 'shadcn'
+  registryUrl: string
+  version: string
+  components: ComponentInfo[]
+  isActive: boolean
+  installedAt: Date
+  dependencies: Dependency[]
 }
 ```
 
-#### SpacingConfiguration
+#### ComponentInfo
 ```typescript
-interface SpacingConfiguration {
-  unit: "rem" | "px";
-  scale: number[];
-  breakpoints: Record<string, string>;
+interface ComponentInfo {
+  id: string
+  name: string
+  type: 'atom' | 'molecule' | 'organism'
+  category: 'ui' | 'form' | 'layout' | 'feedback' | 'navigation'
+  path: string // Installation path in monorepo
+  dependencies: string[]
+  customizations: ComponentCustomization[]
+  isInstalled: boolean
 }
 ```
 
-#### BorderRadiusConfiguration
+#### ComponentCustomization
 ```typescript
-interface BorderRadiusConfiguration {
-  none: string;
-  sm: string;
-  md: string;
-  lg: string;
-  xl: string;
-  full: string;
+interface ComponentCustomization {
+  componentId: string
+  themeOverrides: Record<string, string>
+  brandColors: boolean // Apply NEONPRO brand colors
+  accessibility: AccessibilityConfig
+  mobileOptimizations: MobileConfig[]
 }
 ```
 
-#### ShadowConfiguration
+### 3. UI Component Specific Entities
+
+#### MagicCardComponent
 ```typescript
-interface ShadowConfiguration {
-  sm: string;
-  md: string;
-  lg: string;
-  xl: string;
-  colors: {
-    light: string;
-    dark: string;
-  };
+interface MagicCardComponent extends ComponentInfo {
+  gradientColors: string[]
+  borderWidth: number
+  borderRadius: number
+  shadowIntensity: number
+  hoverEffect: boolean
+  animationDuration: string
 }
 ```
 
-### Theme Provider State
-
-#### ThemeContext
+#### GradientButtonComponent
 ```typescript
-interface ThemeContext {
-  theme: "light" | "dark" | "system";
-  setTheme: (theme: "light" | "dark" | "system") => void;
-  resolvedTheme: "light" | "dark";
-  colors: ColorPalette;
-  fonts: FontConfiguration;
+interface GradientButtonComponent extends ComponentInfo {
+  gradientType: 'linear' | 'radial' | 'conic'
+  colors: string[]
+  direction: string
+  hoverColors: string[]
+  disabledColors: string[]
+  size: 'sm' | 'md' | 'lg' | 'xl'
 }
 ```
 
-#### UserPreferences
+#### AnimatedThemeToggler
 ```typescript
-interface UserPreferences {
-  theme: "light" | "dark" | "system";
-  reducedMotion: boolean;
-  highContrast: boolean;
-  fontSize: "sm" | "md" | "lg";
+interface AnimatedThemeToggler extends ComponentInfo {
+  transitionDuration: string
+  animationType: 'slide' | 'rotate' | 'fade' | 'bounce'
+  showLabels: boolean
+  iconOnly?: boolean
+  customIcons: {
+    light: string
+    dark: string
+  }
 }
 ```
 
-## State Transitions
-
-### Theme Installation Process
-1. **Initial State**: No theme configured
-2. **CLI Installation**: Base theme files added via shadcn CLI
-3. **Manual Configuration**: Monorepo-specific adjustments applied
-4. **Font Integration**: Local fonts downloaded and configured
-5. **Theme Provider Setup**: Context API + localStorage implementation
-6. **Symlink Creation**: Shared configuration linked to all apps
-7. **Validation**: All components render with correct styling
-
-### Theme Switching Process
-1. **User Action**: Theme toggle triggered
-2. **Context Update**: Theme state updated in Context API
-3. **LocalStorage**: Preference persisted for future sessions
-4. **CSS Update**: CSS variables updated dynamically
-5. **Component Re-render**: All themed components update
-6. **Validation**: WCAG compliance maintained
-
-## UI Components Integration Model
-
-### UI Component Registry
+#### TiltedCardComponent
 ```typescript
-interface UIComponentRegistry {
-  registries: ComponentRegistry[];
-  components: RegisteredComponent[];
-  dependencyMatrix: DependencyMatrix;
-  versionConflicts: VersionConflict[];
-  constitutionalCompliance: ComponentCompliance;
-}
-
-interface ComponentRegistry {
-  name: "Magic UI" | "Aceternity UI" | "Kokonut UI" | "ReactBits";
-  url: string;
-  enabled: boolean;
-  priority: number;
-  compatibility: {
-    framerMotion: string;
-    react: string;
-    typescript: string;
-  };
-}
-
-interface RegisteredComponent {
-  id: string;
-  name: ComponentName;
-  source: ComponentSource;
-  registry: string;
-  version: string;
-  installMethod: "cli" | "manual" | "registry";
-  dependencies: string[];
-  themeIntegration: ThemeIntegration;
-  accessibility: AccessibilityCompliance;
-  constitutionalValidation: ConstitutionalValidation;
-}
-
-type ComponentName =
-  | "MagicCard"
-  | "AnimatedThemeToggler"
-  | "GradientButton"
-  | "TiltedCard"
-  | "Sidebar"
-  | "ShineBorder"
-  | "HoverBorderGradientButton";
-
-type ComponentSource = "Magic UI" | "Aceternity UI" | "Kokonut UI" | "ReactBits";
-
-interface ThemeIntegration {
-  inheritsColors: boolean;
-  supportsDarkMode: boolean;
-  customCssVariables: Record<string, string>;
-  framerMotionCompatibility: "v11.0.0";
-  iconLibrarySupport: "lucide-react" | "@tabler/icons-react" | "both";
-}
-
-interface DependencyMatrix {
-  sharedDependencies: {
-    framerMotion: {
-      version: "11.0.0";
-      components: string[];
-    };
-    react: {
-      version: "19";
-      components: string[];
-    };
-    tailwindcss: {
-      version: "latest";
-      components: string[];
-    };
-  };
-  conflicts: DependencyConflict[];
-  resolutions: ConflictResolution[];
-}
-
-interface VersionConflict {
-  dependency: string;
-  expectedVersion: string;
-  actualVersion: string;
-  components: string[];
-  severity: "low" | "medium" | "high";
-  resolution: ResolutionStrategy;
-}
-
-type ResolutionStrategy =
-  | "use_expected"
-  | "use_actual"
-  | "upgrade_both"
-  | "manual_resolution";
-
-interface AccessibilityCompliance {
-  wcag21AA: boolean;
-  keyboardNavigation: boolean;
-  screenReader: boolean;
-  colorContrast: {
-    light: Record<string, number>;
-    dark: Record<string, number>;
-  };
-  focusManagement: boolean;
-}
-
-interface ConstitutionalValidation {
-  lgpdCompliant: boolean;    // Brazilian data protection
-  anvisaCompliant: boolean;  // Medical device regulations
-  aestheticClinic: boolean;  // Clinic-specific requirements
-  mobileFirst: boolean;     // Brazilian mobile optimization
-  typeSafe: boolean;        // TypeScript compliance
-  privacyByDesign: boolean;  // Privacy protections
+interface TiltedCardComponent extends ComponentInfo {
+  tiltAngle: number
+  perspective: number
+  transitionDuration: string
+  enableGlow: boolean
+  glareColor: string
+  mobileOptimized: boolean
 }
 ```
 
-### Component-Specific Interfaces
-
-#### Magic Card Component
+#### SidebarComponent
 ```typescript
-interface MagicCardProps {
-  children: React.ReactNode;
-  className?: string;
-  gradient?: string;
-  border?: boolean;
-  shadow?: boolean;
-  theme?: "light" | "dark";
-  constitutional?: {
-    patientData?: boolean;
-    clinicBranding?: boolean;
-  };
-}
-
-interface MagicCardConfig {
-  defaultGradient: string;
-  borderEnabled: boolean;
-  shadowIntensity: "none" | "sm" | "md" | "lg";
-  animationDuration: number;
-  accessibility: {
-    reducedMotion: boolean;
-    highContrast: boolean;
-  };
+interface SidebarComponent extends ComponentInfo {
+  position: 'left' | 'right'
+  width: string
+  collapsible: boolean
+  overlay: boolean
+  items: SidebarItem[]
+  footer?: React.ReactNode
+  logoPlacement: 'top' | 'center' | 'hidden'
 }
 ```
 
-#### Animated Theme Toggler
+#### SidebarItem
 ```typescript
-interface AnimatedThemeTogglerProps {
-  className?: string;
-  size?: "sm" | "md" | "lg";
-  animation?: "slide" | "rotate" | "bounce";
-  showLabel?: boolean;
-  themes: ("light" | "dark" | "system")[];
-  onThemeChange?: (theme: "light" | "dark" | "system") => void;
-}
-
-interface ThemeTogglerConfig {
-  defaultSize: "md";
-  animationType: "slide";
-  transitionDuration: number;
-  persistence: boolean;
-  accessibility: {
-    keyboardShortcuts: boolean;
-    screenReaderLabel: string;
-  };
+interface SidebarItem {
+  id: string
+  label: string
+  icon: string
+  href?: string
+  onClick?: () => void
+  badge?: BadgeConfig
+  submenu?: SidebarItem[]
+  isActive: boolean
 }
 ```
 
-#### Gradient Button
+#### BadgeConfig
 ```typescript
-interface GradientButtonProps {
-  children: React.ReactNode;
-  className?: string;
-  variant?: "primary" | "secondary" | "accent" | "destructive";
-  size?: "sm" | "md" | "lg";
-  gradient?: string;
-  disabled?: boolean;
-  loading?: boolean;
-  onClick?: () => void;
-  constitutional?: {
-    patientConsent?: boolean;
-    clinicAction?: boolean;
-  };
-}
-
-interface GradientButtonConfig {
-  defaultGradient: string;
-  animationEnabled: boolean;
-  loadingSpinner: boolean;
-  accessibility: {
-    role: "button" | "submit" | "reset";
-    ariaLabel: string;
-  };
+interface BadgeConfig {
+  text: string
+  color: string
+  size: 'sm' | 'md' | 'lg'
+  variant: 'solid' | 'outline' | 'ghost'
 }
 ```
 
-#### Tilted Card
-```typescript
-interface TiltedCardProps {
-  children: React.ReactNode;
-  className?: string;
-  tiltAmount?: number;
-  scaleOnHover?: boolean;
-  perspective?: number;
-  transition?: {
-    type: "spring" | "tween";
-    stiffness?: number;
-    damping?: number;
-  };
-  theme?: "light" | "dark";
-}
+### 4. Validation and State Management
 
-interface TiltedCardConfig {
-  defaultTilt: number;
-  scaleEnabled: boolean;
-  perspectiveDepth: number;
-  accessibility: {
-    reducedMotion: boolean;
-    hoverIntent: boolean;
-  };
+#### ThemeValidation
+```typescript
+interface ThemeValidation {
+  contrastRatio: number
+  wcagCompliance: 'AA' | 'AAA' | 'FAIL'
+  colorBlindnessTest: boolean
+  mobileReadability: boolean
+  healthcareCompliance: boolean
 }
 ```
 
-#### Sidebar Component
+#### ComponentInstallationState
 ```typescript
-interface SidebarProps {
-  children: React.ReactNode;
-  className?: string;
-  position?: "left" | "right";
-  collapsible?: boolean;
-  defaultCollapsed?: boolean;
-  width?: string;
-  icons?: "lucide" | "tabler" | "both";
-  theme?: "light" | "dark";
-  constitutional?: {
-    patientNavigation?: boolean;
-    clinicWorkflow?: boolean;
-  };
-}
-
-interface SidebarConfig {
-  defaultPosition: "left";
-  collapsibleEnabled: boolean;
-  defaultWidth: string;
-  iconLibrary: "tabler";
-  accessibility: {
-    keyboardNavigation: boolean;
-    screenReader: boolean;
-    focusTrap: boolean;
-  };
+interface ComponentInstallationState {
+  componentId: string
+  status: 'pending' | 'installing' | 'installed' | 'failed' | 'updating'
+  progress: number
+  error?: string
+  installedAt?: Date
+  version: string
+  conflicts?: ConflictInfo[]
 }
 ```
 
-### Constitutional Compliance Model
+#### ConflictInfo
 ```typescript
-interface ConstitutionalCompliance {
-  aestheticClinic: AestheticClinicCompliance;
-  brazilianRegulations: BrazilianRegulatoryCompliance;
-  technicalStandards: TechnicalCompliance;
-  validationStatus: ComplianceStatus;
-}
-
-interface AestheticClinicCompliance {
-  patientDataProtection: boolean;
-  clinicWorkflowOptimization: boolean;
-  aestheticProcedureStandards: boolean;
-  professionalCompliance: boolean;
-  mobileFirstDesign: boolean;
-  accessibilityCompliance: boolean;
-}
-
-interface BrazilianRegulatoryCompliance {
-  lgpd: LGPDCompliance;
-  anvisa: ANVISACompliance;
-  professionalCouncils: ProfessionalCouncilCompliance;
-}
-
-interface LGPDCompliance {
-  dataProcessing: {
-    patientData: boolean;
-    clinicData: boolean;
-    professionalData: boolean;
-  };
-  consentManagement: {
-    explicitConsent: boolean;
-    granularControl: boolean;
-    withdrawalRights: boolean;
-  };
-  dataRights: {
-    access: boolean;
-    portability: boolean;
-    deletion: boolean;
-    rectification: boolean;
-  };
-}
-
-interface ANVISACompliance {
-  medicalDeviceRegulation: boolean;
-  cosmeticProductStandards: boolean;
-  equipmentDocumentation: boolean;
-  qualityAssurance: boolean;
-}
-
-interface ProfessionalCouncilCompliance {
-  aestheticProcedures: boolean;
-  patientSafety: boolean;
-  professionalStandards: boolean;
-  ethicalGuidelines: boolean;
-}
-
-interface TechnicalCompliance {
-  typeSafety: boolean;
-  performanceStandards: boolean;
-  securityMeasures: boolean;
-  dataIntegrity: boolean;
-  interoperability: boolean;
-}
-
-type ComplianceStatus =
-  | "pending"
-  | "in_progress"
-  | "validated"
-  | "failed"
-  | "exempt";
-```
-
-## Validation Rules
-
-### Color Contrast Validation
-```typescript
-interface ColorValidationRule {
-  minimumContrast: 4.5; // WCAG 2.1 AA
-  validate: (foreground: string, background: string) => boolean;
-  aestheticClinicMode: {
-    minimumContrast: 7; // Higher standard for medical interfaces
-    colorBlindSafe: boolean;
-  };
-}
-```
-
-### Font Loading Validation
-```typescript
-interface FontValidationRule {
-  maximumLoadTime: 2000; // 2 seconds
-  requiredWeights: number[];
-  validate: (fontFamily: string) => Promise<boolean>;
-  brazilianOptimization: {
-    mobileOptimization: boolean;
-    fallbackFonts: string[];
-    loadingStrategy: "async" | "blocking";
-  };
-}
-```
-
-### Theme Configuration Validation
-```typescript
-interface ThemeValidationRule {
-  requiredColors: string[];
-  requiredFonts: string[];
-  validate: (config: ThemeConfiguration) => boolean;
-  constitutionalValidation: {
-    lgpdCompliant: boolean;
-    accessibilityCompliant: boolean;
-    aestheticClinicReady: boolean;
-  };
-}
-```
-
-### Component Integration Validation
-```typescript
-interface ComponentValidationRule {
-  dependencyCompatibility: boolean;
-  themeInheritance: boolean;
-  accessibilityCompliance: boolean;
-  constitutionalAlignment: boolean;
-  validate: (component: RegisteredComponent) => Promise<ValidationResult>;
-}
-
-interface ValidationResult {
-  valid: boolean;
-  issues: ValidationIssue[];
-  warnings: ValidationWarning[];
-  constitutionalScore: number; // 0-100
-}
-
-interface ValidationIssue {
-  severity: "critical" | "major" | "minor";
-  category: "dependency" | "theme" | "accessibility" | "constitutional";
-  description: string;
-  resolution: string;
-}
-
-interface ValidationWarning {
-  category: "performance" | "best_practice" | "maintenance";
-  description: string;
-  recommendation: string;
+interface ConflictInfo {
+  type: 'dependency' | 'naming' | 'version' | 'style'
+  componentA: string
+  componentB: string
+  description: string
+  resolution?: string
+  severity: 'low' | 'medium' | 'high' | 'critical'
 }
 ```
 
 ## Relationships
 
-### Theme to Apps
-- One ThemeConfiguration serves multiple applications
-- Each app can have theme-specific overrides
-- Shared configuration through packages/ui symlinks
-- Constitutional compliance inherited across all apps
+### Primary Relationships
 
-### Theme to Components
-- ThemeConfiguration provides styling for all components
-- Components inherit theme through Context API
-- Individual components can have theme-specific variants
-- NEONPRO brand colors integrated into all components
+```
+ThemeSettings 1--* ComponentLibrary
+ComponentLibrary 1--* ComponentInfo  
+ComponentInfo 1--* ComponentCustomization
+ComponentCustomization *--1 ThemeValidation
+ComponentInstallationState 1--1 ComponentInfo
+ConflictInfo *--2 ComponentInfo
+```
 
-### User to Theme
-- Each user has preferred theme settings
-- User preferences stored in localStorage
-- System preferences respected when no user preference set
-- Brazilian accessibility preferences supported
+### Entity Relationships Description
 
-### Component Dependencies
-- UI Component Registry manages shared dependencies
-- Framer Motion v11.0.0 shared across all components
-- Icon libraries (Lucide + Tabler) coordinated
-- CSS variable namespaced to prevent conflicts
+1. **ThemeSettings to ComponentLibrary**: One theme can support multiple component libraries
+2. **ComponentLibrary to ComponentInfo**: Each library contains multiple components
+3. **ComponentInfo to ComponentCustomization**: Components can have multiple customization configurations
+4. **ComponentCustomization to ThemeValidation**: Customizations must pass validation checks
+5. **ComponentInstallationState to ComponentInfo**: Tracks installation status for each component
+6. **ConflictInfo between ComponentInfo**: Identifies conflicts between different components
 
-### Constitutional Integration
-- All components inherit LGPD compliance requirements
-- ANVISA standards applied to medical interface elements
-- Brazilian mobile-first optimization enforced
-- Type safety maintained across component boundaries
+## Validation Rules
 
-## Data Storage
+### Theme Validation Rules
 
-### Configuration Files
-- **Location**: packages/ui/theme/
-- **Format**: TypeScript + JSON
-- **Version Control**: Tracked in git
-- **Constitutional Documentation**: compliance/
-
-### Runtime State
-- **Theme Context**: React Context API
-- **User Preferences**: localStorage
-- **CSS Variables**: Document root
-- **Component Registry**: components.json
-
-### Generated Files
-- **CSS Variables**: globals.css
-- **Type Definitions**: theme.types.ts, components.types.ts
-- **Configuration Exports**: theme.config.ts, components.config.ts
-- **Compliance Documentation**: constitutional-compliance.md
-- **Installation Guide**: quickstart.md
-
-### Component Installation Data
-- **Registry Configuration**: components.json
-- **Dependency Lock**: pnpm-lock.yaml
-- **Build Artifacts**: dist/
-- **Test Results**: test-results/
-
-### State Management
 ```typescript
-interface InstallationState {
-  phase: "theme" | "components" | "validation" | "complete";
-  progress: number;
-  currentComponent: string | null;
-  issues: InstallationIssue[];
-  constitutionalStatus: ComplianceStatus;
-}
-
-interface InstallationIssue {
-  component: string;
-  severity: "blocking" | "warning" | "info";
-  description: string;
-  resolution: string;
-  constitutionalImpact: boolean;
+const ThemeValidationRules = {
+  // Color contrast ratios for WCAG compliance
+  minContrastRatio: 4.5, // AA compliance
+  enhancedMinContrastRatio: 7.0, // AAA compliance
+  
+  // Brazilian healthcare specific requirements
+  requiresProfessionalAppearance: true,
+  requiresMobileOptimization: true,
+  requiresAccessibilitySupport: true,
+  
+  // Performance constraints
+  maxFontSize: '1.5rem', // Mobile-friendly maximum
+  minTouchTarget: '44px', // WCAG mobile requirements
+  maxAnimationDuration: '0.3s', // Motion safety
 }
 ```
+
+### Component Validation Rules
+
+```typescript
+const ComponentValidationRules = {
+  // Bundle size impact
+  maxComponentSize: '50KB', // Individual component limit
+  maxTotalBundleIncrease: '200KB', // Total allowed increase
+  
+  // Healthcare compliance
+  requiresAuditLogging: true,
+  requiresLGPDCompliance: true,
+  requiresAccessibility: true,
+  
+  // Compatibility requirements
+  requiresReactVersion: '>=19.0.0',
+  requiresTypeScript: true,
+  requiresStrictMode: true,
+}
+```
+
+### State Transition Rules
+
+```typescript
+const InstallationStateTransitions = {
+  pending: ['installing', 'failed'],
+  installing: ['installed', 'failed'],
+  installed: ['updating', 'failed'],
+  updating: ['installed', 'failed'],
+  failed: ['pending', 'installing'],
+}
+```
+
+## Data Flow Patterns
+
+### Theme Application Flow
+1. User selects theme → Validate theme settings
+2. Apply CSS variables → Update component styles
+3. Validate contrast ratios → Confirm accessibility compliance
+4. Log theme change → Audit trail for compliance
+
+### Component Installation Flow
+1. Select component → Check compatibility
+2. Install via CLI/shadcn → Update registry configuration
+3. Apply NEONPRO styling → Validate appearance
+4. Test functionality → Confirm integration success
+
+### Configuration Persistence Flow
+1. User modifies settings → Validate changes
+2. Store in localStorage → Maintain user preferences
+3. Update theme context → Apply changes reactively
+4. Sync across devices → Ensure consistency
+
+## Security and Compliance Considerations
+
+### LGPD Data Protection
+- Theme preferences stored as non-sensitive user data
+- No personal health information in theme configuration
+- Audit trail maintained for theme changes
+- User consent required for theme analytics
+
+### Healthcare Compliance
+- Professional appearance maintained across all themes
+- Color schemes validated for medical environment appropriateness
+- Accessibility features mandatory for healthcare compliance
+- Mobile optimization required for Brazilian clinic workflows
+
+### Performance Compliance
+- Bundle size limits enforced for Brazilian infrastructure
+- Animation constraints for motion sensitivity
+- Loading optimization for unreliable mobile connections
+- Performance budgets maintained for clinic operations
+
+## Implementation Notes
+
+### Monorepo Integration
+- Theme configuration shared across apps via packages/ui
+- Component registry maintained at monorepo level
+- Consistent styling enforced through shared CSS variables
+- Type safety maintained across package boundaries
+
+### Migration Strategy
+- Incremental theme rollout with feature flags
+- Backward compatibility maintained during transition
+- Rollback mechanisms for production safety
+- User preference migration handled gracefully
+
+### Testing Requirements
+- Component rendering across all themes
+- Accessibility compliance validation
+- Performance impact measurement
+- Healthcare compliance verification
+
+---
+*Data Model Version: 1.0*
+*Created: 2025-09-30*
+*Last Updated: 2025-09-30*
