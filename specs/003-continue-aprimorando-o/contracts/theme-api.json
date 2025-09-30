@@ -1,0 +1,499 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NEONPRO Theme API",
+    "description": "API for theme management and UI component integration in NeonPro aesthetic clinic platform",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/theme": {
+      "get": {
+        "summary": "Get current theme configuration",
+        "description": "Retrieve the active theme settings including colors, fonts, and styling preferences",
+        "tags": ["Theme Management"],
+        "responses": {
+          "200": {
+            "description": "Theme configuration retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ThemeSettings" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Update theme configuration",
+        "description": "Update theme settings with new colors, fonts, or styling preferences",
+        "tags": ["Theme Management"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ThemeUpdateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Theme updated successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ThemeSettings" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/theme/preview": {
+      "post": {
+        "summary": "Preview theme changes",
+        "description": "Apply temporary theme preview without persisting changes",
+        "tags": ["Theme Management"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ThemePreviewRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Theme preview applied successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ThemePreviewResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/components": {
+      "get": {
+        "summary": "List installed UI components",
+        "description": "Get a list of all installed UI components with their configuration details",
+        "tags": ["Component Management"],
+        "responses": {
+          "200": {
+            "description": "Components list retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ComponentInfo" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/components/{componentId}": {
+      "get": {
+        "summary": "Get component details",
+        "description": "Retrieve detailed information about a specific UI component",
+        "tags": ["Component Management"],
+        "parameters": [
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Component details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComponentInfo" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Customize component styling",
+        "description": "Apply NEONPRO theme styling and customizations to a component",
+        "tags": ["Component Management"],
+        "parameters": [
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ComponentCustomizationRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Component customized successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComponentInfo" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/components/install": {
+      "post": {
+        "summary": "Install UI component",
+        "description": "Install a new UI component from a supported library",
+        "tags": ["Component Management"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ComponentInstallRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Component installation initiated",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComponentInstallationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/components/{componentId}/install-status": {
+      "get": {
+        "summary": "Get component installation status",
+        "description": "Check the installation progress and status of a component",
+        "tags": ["Component Management"],
+        "parameters": [
+          {
+            "name": "componentId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Installation status retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ComponentInstallationState" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/validate/accessibility": {
+      "post": {
+        "summary": "Validate accessibility compliance",
+        "description": "Check if theme and components meet WCAG 2.1 AA+ accessibility requirements",
+        "tags": ["Compliance"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AccessibilityValidationRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Accessibility validation completed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AccessibilityValidationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/validate/lgpd": {
+      "post": {
+        "summary": "Validate LGPD compliance",
+        "description": "Check if theme and component implementations meet LGPD requirements",
+        "tags": ["Compliance"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LGPDValidationRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "LGPD validation completed",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LGPDValidationResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ThemeSettings": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string", "enum": ["NEONPRO", "default", "custom"] },
+          "colorScheme": { "type": "string", "enum": ["light", "dark", "system"] },
+          "colors": { "$ref": "#/components/schemas/ThemeColors" },
+          "fonts": { "$ref": "#/components/schemas/ThemeFonts" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "updatedBy": { "type": "string" }
+        },
+        "required": ["id", "name", "colorScheme", "colors", "fonts"]
+      },
+      "ThemeColors": {
+        "type": "object",
+        "properties": {
+          "primary": { "type": "string", "example": "#ac9469" },
+          "deepBlue": { "type": "string", "example": "#112031" },
+          "accent": { "type": "string", "example": "#d4af37" },
+          "neutral": { "type": "string", "example": "#B4AC9C" },
+          "background": { "type": "string", "example": "#D2D0C8" },
+          "success": { "type": "string" },
+          "warning": { "type": "string" },
+          "error": { "type": "string" },
+          "muted": { "type": "string" }
+        },
+        "required": ["primary", "deepBlue", "accent", "neutral", "background"]
+      },
+      "ThemeFonts": {
+        "type": "object",
+        "properties": {
+          "sans": { "type": "string", "enum": ["Inter", "System", "Custom"] },
+          "serif": { "type": "string", "enum": ["Lora", "Libre Baskerville", "System", "Custom"] },
+          "mono": { "type": "string", "enum": ["JetBrains Mono", "System", "Custom"] },
+          "customFonts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CustomFont" }
+          }
+        },
+        "required": ["sans", "serif", "mono"]
+      },
+      "CustomFont": {
+        "type": "object",
+        "properties": {
+          "family": { "type": "string" },
+          "source": { "type": "string", "enum": ["local", "google", "custom"] },
+          "weights": { "type": "array", "items": { "type": "number" } },
+          "styles": { "type": "array", "items": { "type": "string" } },
+          "unicodeRange": { "type": "string" }
+        },
+        "required": ["family", "source", "weights", "styles"]
+      },
+      "ThemeUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "enum": ["NEONPRO", "default", "custom"] },
+          "colorScheme": { "type": "string", "enum": ["light", "dark", "system"] },
+          "colors": { "$ref": "#/components/schemas/ThemeColors" },
+          "fonts": { "$ref": "#/components/schemas/ThemeFonts" }
+        }
+      },
+      "ThemePreviewRequest": {
+        "type": "object",
+        "properties": {
+          "colors": { "$ref": "#/components/schemas/ThemeColors" },
+          "colorScheme": { "type": "string", "enum": ["light", "dark", "system"] },
+          "duration": { "type": "number", "description": "Preview duration in seconds" }
+        },
+        "required": ["colors", "colorScheme"]
+      },
+      "ThemePreviewResponse": {
+        "type": "object",
+        "properties": {
+          "previewId": { "type": "string" },
+          "cssVariables": { "type": "object" },
+          "expiresAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["previewId", "cssVariables", "expiresAt"]
+      },
+      "ComponentInfo": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": { "type": "string", "enum": ["atom", "molecule", "organism"] },
+          "category": { "type": "string", "enum": ["ui", "form", "layout", "feedback", "navigation"] },
+          "path": { "type": "string" },
+          "dependencies": { "type": "array", "items": { "type": "string" } },
+          "isInstalled": { "type": "boolean" },
+          "library": { "type": "string" },
+          "customizations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ComponentCustomization" }
+          }
+        },
+        "required": ["id", "name", "type", "category", "path", "isInstalled", "library"]
+      },
+      "ComponentCustomization": {
+        "type": "object",
+        "properties": {
+          "componentId": { "type": "string" },
+          "themeOverrides": { "type": "object" },
+          "brandColors": { "type": "boolean" },
+          "accessibility": { "$ref": "#/components/schemas/AccessibilityConfig" },
+          "mobileOptimizations": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["componentId", "themeOverrides", "brandColors"]
+      },
+      "AccessibilityConfig": {
+        "type": "object",
+        "properties": {
+          "ariaLabels": { "type": "object" },
+          "keyboardNavigation": { "type": "boolean" },
+          "screenReaderSupport": { "type": "boolean" },
+          "contrastValidation": { "type": "boolean" }
+        },
+        "required": ["ariaLabels", "keyboardNavigation", "screenReaderSupport", "contrastValidation"]
+      },
+      "ComponentInstallRequest": {
+        "type": "object",
+        "properties": {
+          "componentName": { "type": "string" },
+          "library": { "type": "string", "enum": ["Magic UI", "Aceternity UI", "Kokonut UI", "ReactBits"] },
+          "version": { "type": "string" },
+          "installPath": { "type": "string" },
+          "applyNEONPROStyling": { "type": "boolean" }
+        },
+        "required": ["componentName", "library", "version", "installPath", "applyNEONPROStyling"]
+      },
+      "ComponentInstallationResponse": {
+        "type": "object",
+        "properties": {
+          "installationId": { "type": "string" },
+          "componentId": { "type": "string" },
+          "status": { "type": "string", "enum": ["initiated", "in_progress", "completed", "failed"] },
+          "estimatedDuration": { "type": "number" },
+          "steps": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        },
+        "required": ["installationId", "componentId", "status", "estimatedDuration"]
+      },
+      "ComponentInstallationState": {
+        "type": "object",
+        "properties": {
+          "componentId": { "type": "string" },
+          "status": { "type": "string", "enum": ["pending", "installing", "installed", "failed", "updating"] },
+          "progress": { "type": "number", "minimum": 0, "maximum": 100 },
+          "error": { "type": "string" },
+          "installedAt": { "type": "string", "format": "date-time" },
+          "version": { "type": "string" },
+          "conflicts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ConflictInfo" }
+          }
+        },
+        "required": ["componentId", "status", "progress", "version"]
+      },
+      "ConflictInfo": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["dependency", "naming", "version", "style"] },
+          "componentA": { "type": "string" },
+          "componentB": { "type": "string" },
+          "description": { "type": "string" },
+          "resolution": { "type": "string" },
+          "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] }
+        },
+        "required": ["type", "componentA", "componentB", "description", "severity"]
+      },
+      "AccessibilityValidationRequest": {
+        "type": "object",
+        "properties": {
+          "themeId": { "type": "string" },
+          "componentIds": { "type": "array", "items": { "type": "string" } },
+          "testType": { "type": "string", "enum": ["full", "contrast", "keyboard", "screen-reader"] },
+          "includeMobile": { "type": "boolean" }
+        },
+        "required": ["themeId", "testType"]
+      },
+      "AccessibilityValidationResponse": {
+        "type": "object",
+        "properties": {
+          "overallScore": { "type": "number", "minimum": 0, "maximum": 100 },
+          "wcagLevel": { "type": "string", "enum": ["AA", "AAA", "FAIL"] },
+          "issues": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AccessibilityIssue" }
+          },
+          "recommendations": { "type": "array", "items": { "type": "string" } },
+          "testedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["overallScore", "wcagLevel", "issues", "testedAt"]
+      },
+      "AccessibilityIssue": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "severity": { "type": "string", "enum": ["error", "warning", "info"] },
+          "component": { "type": "string" },
+          "description": { "type": "string" },
+          "solution": { "type": "string" }
+        },
+        "required": ["type", "severity", "component", "description", "solution"]
+      },
+      "LGPDValidationRequest": {
+        "type": "object",
+        "properties": {
+          "themeId": { "type": "string" },
+          "componentIds": { "type": "array", "items": { "type": "string" } },
+          "dataTypes": { "type": "array", "items": { "type": "string" } },
+          "includeAuditTrail": { "type": "boolean" }
+        },
+        "required": ["themeId"]
+      },
+      "LGPDValidationResponse": {
+        "type": "object",
+        "properties": {
+          "compliant": { "type": "boolean" },
+          "score": { "type": "number", "minimum": 0, "maximum": 100 },
+          "violations": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LGPDViolation" }
+          },
+          "recommendations": { "type": "array", "items": { "type": "string" } },
+          "testedAt": { "type": "string", "format": "date-time" }
+        },
+        "required": ["compliant", "score", "violations", "testedAt"]
+      },
+      "LGPDViolation": {
+        "type": "object",
+        "properties": {
+          "article": { "type": "string" },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "component": { "type": "string" },
+          "description": { "type": "string" },
+          "remediation": { "type": "string" }
+        },
+        "required": ["article", "severity", "component", "description", "remediation"]
+      }
+    }
+  }
+}
