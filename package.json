@@ -6,8 +6,7 @@
   "type": "module",
   "packageManager": "bun@1.2.23",
   "engines": {
-    "node": ">=20.0.0",
-    "bun": ">=1.0.0"
+    "bun": ">=1.1.0"
   },
   "workspaces": [
     "apps/*",
@@ -32,7 +31,6 @@
   "scripts": {
     "build": "scripts/build-simple-bun.sh",
     "build:native": "scripts/build-simple-bun.sh",
-    "build:bun": "scripts/build-simple-bun.sh",
     "build:deps": "scripts/build-native-bun.sh packages/config packages/types --concurrency=20",
     "build:core": "scripts/build-native-bun.sh packages/core packages/database --concurrency=10",
     "build:ui": "scripts/build-native-bun.sh packages/ui --concurrency=15",
@@ -92,20 +90,19 @@
     "lint:bun": "oxlint . --import-plugin --jsx-a11y-plugin --fix",
     "lint:bun:security": "eslint . --fix --max-warnings 0",
     "lint:bun:format": "biome format --write .",
-    "analyze": "turbo build && node scripts/analyze-bundle.js",
-    "analyze:bundle": "node scripts/analyze-bundle.js",
-    "perf:compare": "node scripts/compare-baselines.js",
-    "migrate:scripts": "node scripts/migrate-root-scripts.js",
-    "migrate:deps": "node scripts/migrate-dependencies.js",
+    "analyze": "bun run build && bun scripts/analyze-bundle.js",
+    "analyze:bundle": "bun scripts/analyze-bundle.js",
+    "perf:compare": "bun scripts/compare-baselines.js",
+    "migrate:scripts": "bun scripts/migrate-root-scripts.js",
+    "migrate:deps": "bun scripts/migrate-dependencies.js",
     "setup:dev": "bun install && turbo build",
     "deploy:prepare": "turbo build && vitest && bun run lint",
     "health:check": "turbo type-check && vitest && bun run lint",
     "dev:hot": "turbo dev --concurrency=15 --force",
     "dev:inspect": "turbo dev --concurrency=10",
     "dev:bun": "turbo dev --concurrency=20",
-    "build:bun": "turbo build --force",
-    "perf:baseline": "node scripts/simple-benchmark.js",
-    "perf:measure": "node scripts/benchmark-performance.js"
+    "perf:baseline": "bun scripts/simple-benchmark.js",
+    "perf:measure": "bun scripts/benchmark-performance.js"
   },
   "keywords": [
     "neonpro",

@@ -1,14 +1,15 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env bun
 
 /**
  * Script to sync Supabase types with Prisma schema
- * Run with: npx tsx scripts/sync-types.ts
+ * Optimized for Bun runtime
+ * Run with: bun run scripts/sync-types.ts
  */
 
-import fs from 'node:fs'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 // Import removed - @neonpro/security package no longer exists
 // import { HealthcareSecurityLogger } from '@neonpro/security'
 
@@ -56,6 +57,8 @@ function generateSupabaseTypes() {
   const generatedTypes = `
 // Auto-generated Supabase types from Prisma schema
 // DO NOT EDIT MANUALLY - Run 'bun run sync-types' to regenerate
+// Generated with Bun runtime for optimal performance
+// Healthcare compliance: LGPD/ANVISA/CFM enabled
 
 export type Json =
   | string
@@ -106,7 +109,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       clinics: {
         Row: {
           id: string;
@@ -130,7 +133,7 @@ export interface Database {
           updated_at?: string;
         };
       };
-      
+
       patients: {
         Row: {
           id: string;
@@ -385,7 +388,7 @@ export interface Database {
           photo_url?: string;
         };
       };
-      
+
       appointments: {
         Row: {
           id: string;
@@ -634,10 +637,10 @@ export interface Database {
           version?: number;
         };
       };
-      
+
       // Additional core tables would be defined here...
       // This is a truncated example for brevity
-      
+
     };
     Views: {
       // Views would be defined here

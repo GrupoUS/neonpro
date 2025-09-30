@@ -28,23 +28,23 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun ../../scripts/tsc-wrapper-bun.ts --project tsconfig.typecheck.json",
-    "dev": "bun ../../scripts/tsc-wrapper-bun.ts --watch",
+    "build": "bun run ../../scripts/tsc-wrapper-bun.ts --project tsconfig.typecheck.json",
+    "dev": "bun run ../../scripts/tsc-wrapper-bun.ts --watch",
     "clean": "rm -rf dist",
-    "type-check": "bun ../../scripts/tsc-wrapper-bun.ts --project tsconfig.typecheck.json",
+    "type-check": "bun run ../../scripts/tsc-wrapper-bun.ts --project tsconfig.typecheck.json",
     "dev:bun": "vite dev --force",
-    "build:bun": "vite build --mode production && bun ../../scripts/tsc-wrapper-bun.ts --emitDeclarationOnly",
+    "build:bun": "vite build --mode production && bun run ../../scripts/tsc-wrapper-bun.ts --emitDeclarationOnly",
     "build:analyze": "vite build --mode analyze",
     "test:bun": "vitest run --reporter=dot",
     "test:watch:bun": "vitest watch --reporter=dot",
-    "type-check:bun": "bun ../../scripts/tsc-wrapper-bun.ts --noEmit",
+    "type-check:bun": "bun run ../../scripts/tsc-wrapper-bun.ts --noEmit",
     "clean:bun": "rm -rf dist node_modules/.cache",
     "format:bun": "biome format . --write",
     "lint:bun": "oxlint . --fix",
     "perf:test": "vitest run --reporter=verbose --isolate",
     "setup:test": "bun install && bun run build",
     "build:lib": "tsup",
-    "build:types": "bun ../../scripts/tsc-wrapper-bun.ts --emitDeclarationOnly",
+    "build:types": "bun run ../../scripts/tsc-wrapper-bun.ts --emitDeclarationOnly",
     "dev:storybook": "vite dev --config .storybook/vite.config.ts",
     "build:storybook": "vite build --config .storybook/vite.config.ts",
     "test:visual": "playwright test tests/visual/",
@@ -109,6 +109,6 @@
   "author": "NeonPro Team",
   "license": "MIT",
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.1.0"
   }
 }

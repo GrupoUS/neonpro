@@ -1,8 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json", "bun.lock"],
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json", "bun.lock", "bun.config.js"],
   "globalEnv": [
     "NODE_ENV",
+    "BUN_RUNTIME",
     "VERCEL",
     "VERCEL_ENV",
     "EDGE_RUNTIME",
@@ -17,7 +18,11 @@
     "SUPABASE_SERVICE_KEY",
     "DATABASE_URL",
     "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY"
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "BUN_PERFORMANCE",
+    "HEALTHCARE_COMPLIANCE",
+    "ANVISA_COMPLIANCE",
+    "CFM_COMPLIANCE"
   ],
   "tasks": {
     "//#biome:check": {
@@ -70,8 +75,8 @@
       "outputs": ["dist/**", "**/.tsbuildinfo/**"],
       "cache": true,
       "persistent": false,
-      "env": ["NODE_ENV", "CI", "VERCEL_ENV", "HEALTHCARE_COMPLIANCE"],
-      "inputs": ["tsconfig*.json", "package.json", "vercel.json", "bun.lock"]
+      "env": ["NODE_ENV", "BUN_RUNTIME", "CI", "VERCEL_ENV", "HEALTHCARE_COMPLIANCE", "BUN_PERFORMANCE"],
+      "inputs": ["tsconfig*.json", "package.json", "vercel.json", "bun.lock", "bun.config.js"]
     },
     "build:vercel": {
       "dependsOn": ["build"],
@@ -90,7 +95,7 @@
     "build:core": {
       "dependsOn": [
         "@neonpro/core#build",
-        "@neonpro/database#build", 
+        "@neonpro/database#build",
         "@neonpro/types#build",
         "@neonpro/ui#build",
         "@neonpro/config#build"
@@ -102,14 +107,16 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["NODE_ENV=development"],
-      "passThroughEnv": ["NODE_ENV", "CI", "VERCEL_ENV"]
+      "env": ["NODE_ENV=development", "BUN_RUNTIME=development"],
+      "passThroughEnv": ["NODE_ENV", "BUN_RUNTIME", "CI", "VERCEL_ENV", "BUN_PERFORMANCE"]
     },
     "test": {
       "dependsOn": ["build:types"],
       "outputs": ["coverage/**"],
       "cache": true,
-      "persistent": false
+      "persistent": false,
+      "env": ["BUN_RUNTIME=test", "HEALTHCARE_COMPLIANCE"],
+      "passThroughEnv": ["BUN_PERFORMANCE", "LGPD_COMPLIANCE"]
     },
     "lint": {
       "outputs": [],

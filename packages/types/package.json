@@ -28,25 +28,25 @@
     }
   },
   "scripts": {
-    "build": "node ../../scripts/tsc-wrapper.cjs",
-    "dev": "node ../../scripts/tsc-wrapper.cjs --watch",
+    "build": "bun ../../scripts/tsc-wrapper.cjs",
+    "dev": "bun ../../scripts/tsc-wrapper.cjs --watch",
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest",
     "types:generate": "supabase gen types typescript --local > src/generated/database.ts",
     "dev:bun": "vite dev --force",
-    "build:bun": "node ../../scripts/tsc-wrapper.cjs --build --declaration",
+    "build:bun": "bun ../../scripts/tsc-wrapper.cjs --build --declaration",
     "build:analyze": "vite build --mode analyze",
     "test:bun": "vitest run --reporter=dot",
     "test:watch:bun": "vitest watch --reporter=dot",
-    "type-check:bun": "node ../../scripts/tsc-wrapper.cjs --noEmit",
+    "type-check:bun": "bun ../../scripts/tsc-wrapper.cjs --noEmit",
     "clean:bun": "rm -rf dist node_modules/.cache",
     "format:bun": "biome format . --write",
     "lint:bun": "oxlint . --fix",
     "perf:test": "vitest run --reporter=verbose --isolate",
     "setup:test": "bun install && bun run build",
-    "build:watch": "node ../../scripts/tsc-wrapper.cjs --build --declaration --watch",
-    "validate:types": "node ../../scripts/tsc-wrapper.cjs --noEmit --strict",
+    "build:watch": "bun ../../scripts/tsc-wrapper.cjs --build --declaration --watch",
+    "validate:types": "bun ../../scripts/tsc-wrapper.cjs --noEmit --strict",
     "generate:docs": "typedoc src/index.ts",
     "test:types": "vitest run --reporter=verbose",
     "format:types": "biome format --write src/",
@@ -70,6 +70,6 @@
   "author": "NeonPro Team",
   "license": "MIT",
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.1.0"
   }
 }

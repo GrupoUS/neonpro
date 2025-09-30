@@ -1,14 +1,14 @@
-// Auth & Security
-export * from './auth/index.js';
-export * from './security/index.js';
+// NeonPro Core Business Logic
+// Focused on aesthetic clinic management in Brazil
 
-// Business Logic
-export * from './services/index.js';
-export * from './healthcare/index.js';
-export * from './realtime/index.js';
+// Common utilities and types
+export * from './common/types'
+export * from './common/utils'
+export * from './common/services'
 
-// AI Services
-export * from './ai-services/index.js';
-
-// Utilities
-export * from './utils/index.js';
+// Business domains
+export * from './appointments'
+export * from './pacientes'
+export * from './financeiro'
+export * from './profissionais'
+export * from './tratamentos'
