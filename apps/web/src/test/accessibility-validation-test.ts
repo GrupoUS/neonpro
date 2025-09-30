@@ -1,6 +1,6 @@
 /**
  * Accessibility Validation Test Suite
- * 
+ *
  * Comprehensive testing for WCAG 2.1 AA+ compliance and healthcare-specific accessibility
  */
 
@@ -13,19 +13,19 @@ const AccessibilityProvider = ({ children }: { children: React.ReactNode }) => (
   React.createElement('div', { 'data-accessibility-provider': 'true' }, children)
 )
 
-const EmergencyAlertSystem = ({ children, ...props }: any) => (
+const EmergencyAlertSystem = ({ children, ...props }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) => (
   React.createElement('div', { 'data-emergency-alert-system': props }, children)
 )
 
-const MobileHealthcareButton = ({ children, ...props }: any) => (
+const MobileHealthcareButton = ({ children, ...props }: React.PropsWithChildren<React.ButtonHTMLAttributes<HTMLButtonElement>>) => (
   React.createElement('button', { 'data-mobile-healthcare-button': true, ...props }, children)
 )
 
-const LGPDPrivacyControls = ({ ...props }: any) => (
+const LGPDPrivacyControls = ({ ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   React.createElement('div', { 'data-lgpd-privacy-controls': true, ...props })
 )
 
-const Alert = ({ children, ...props }: any) => (
+const Alert = ({ children, ...props }: React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>) => (
   React.createElement('div', { 'data-alert': true, ...props }, children)
 )
 
@@ -151,7 +151,7 @@ describe('Accessibility Improvements Validation', () => {
       // Test keyboard interaction
       const firstAlert = alertCards[0] as HTMLElement
       fireEvent.keyDown(firstAlert, { key: 'Enter' })
-      
+
       // Should not throw errors and handle keyboard events
       expect(firstAlert).toBeInTheDocument()
     })
@@ -171,7 +171,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for mobile-specific classes
       expect(button?.className).toContain('min-h-[44px]')
       expect(button?.className).toContain('touch-manipulation')
@@ -190,7 +190,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for emergency-specific sizing
       expect(button?.className).toContain('min-h-[80px]')
       expect(button?.className).toContain('font-bold')
@@ -208,7 +208,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for touch feedback classes
       expect(button?.className).toContain('active:scale-95')
       expect(button?.className).toContain('transition-transform')
@@ -218,7 +218,7 @@ describe('Accessibility Improvements Validation', () => {
   describe('LGPD Privacy Controls', () => {
     it('should have accessible consent management', () => {
       const mockConsentUpdate = vi.fn()
-      
+
       const { container } = render(
         React.createElement(AccessibilityProvider, null,
           React.createElement(LGPDPrivacyControls, {
@@ -239,7 +239,7 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have accessible data request buttons', () => {
       const mockDataRequest = vi.fn()
-      
+
       const { container } = render(
         React.createElement(AccessibilityProvider, null,
           React.createElement(LGPDPrivacyControls, {
@@ -264,7 +264,7 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have screen reader announcements', () => {
       const mockDataRequest = vi.fn()
-      
+
       const { container } = render(
         React.createElement(AccessibilityProvider, null,
           React.createElement(LGPDPrivacyControls, {
@@ -296,7 +296,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const alert = container.querySelector('[role="alert"]')
       expect(alert).toBeInTheDocument()
-      
+
       // Check for high contrast classes
       expect(alert?.className).toContain('bg-red-200')
       expect(alert?.className).toContain('text-red-950')
@@ -314,7 +314,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const alert = container.querySelector('[role="alert"]')
       expect(alert).toBeInTheDocument()
-      
+
       // Check for emergency-specific styling
       expect(alert?.className).toContain('bg-red-100')
       expect(alert?.className).toContain('text-red-900')
@@ -332,7 +332,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const alert = container.querySelector('[role="alert"]')
       expect(alert).toBeInTheDocument()
-      
+
       // Check for medical-specific styling
       expect(alert?.className).toContain('bg-purple-50')
       expect(alert?.className).toContain('text-purple-900')
@@ -349,7 +349,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for focus ring classes
       expect(button?.className).toContain('focus-visible:outline-none')
       expect(button?.className).toContain('focus-visible:ring-2')
@@ -366,10 +366,10 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Click to show confirmation modal
       fireEvent.click(button!)
-      
+
       // Check for modal focus management
       const modal = container.querySelector('.fixed')
       expect(modal).toBeInTheDocument()
@@ -386,7 +386,7 @@ describe('Accessibility Improvements Validation', () => {
 
       // Check if language is maintained
       expect(document.documentElement.lang).toBe('pt-BR')
-      
+
       // Check for Portuguese text content
       const portugueseText = screen.queryByText(/Consentimento|Emergência|Dados/)
       expect(portugueseText).toBeInTheDocument()
@@ -408,7 +408,7 @@ describe('Accessibility Improvements Validation', () => {
 
     it('should have screen reader announcements for actions', () => {
       const mockAnnouncement = vi.fn()
-      
+
       render(
         React.createElement(AccessibilityProvider, null,
           React.createElement(MobileHealthcareButton, {
@@ -436,7 +436,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for medical-specific classes
       expect(button?.className).toContain('bg-red-700')
     })
@@ -454,7 +454,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for emergency-specific attributes
       expect(button?.className).toContain('animate-pulse')
       expect(button?.className).toContain('font-bold')
@@ -471,7 +471,7 @@ describe('Accessibility Improvements Validation', () => {
 
       const button = container.querySelector('button')
       expect(button).toBeInTheDocument()
-      
+
       // Check for LGPD-specific attributes
       expect(button).toHaveAttribute('lgpdaction', 'data_access')
     })
@@ -482,7 +482,7 @@ describe('Accessibility Improvements Validation', () => {
 export const accessibilityTestUtils = {
   mockPatients,
   mockAlerts,
-  renderWithAccessibility: (component: React.ReactNode) => 
+  renderWithAccessibility: (component: React.ReactNode) =>
     render(React.createElement(AccessibilityProvider, null, component)),
   checkContrastRatio: (element: HTMLElement) => {
     // This would be implemented with actual contrast ratio calculation

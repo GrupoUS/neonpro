@@ -495,8 +495,9 @@ PRÓXIMO PASSO: [Data e ação agendada]
 
 ### 📞 Contatos de Emergência
 
-**Emergências Médicas:**
-- SAMU: 192
+**Urgências Estéticas:**
+- Coordenador clínico: [número]
+- Profissional de plantão: [número]
 - Bombeiros: 193
 - Polícia: 190
 

@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json.schemastore.org/jscpd-configuration.json",
+  "_description": "JSCPD configuration for code duplication analysis - Phase 3.1 NeonPro",
+  "threshold": 5,
+  "reporters": [
+    "html",
+    "console",
+    "json",
+    "markdown"
+  ],
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/test-results/**",
+    "**/playwright-report/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/tools/tests/**",
+    "**/.serena/**",
+    "**/.specify/**",
+    "**/node_modules/**",
+    "**/*.min.js",
+    "**/*.log",
+    "**/*.tmp",
+    "**/*.cache",
+    "**/vitest.config.*",
+    "**/playwright.config.*",
+    "**/vite.config.*",
+    "**/tailwind.config.*",
+    "**/routeTree.gen.ts",
+    "**/generated/**",
+    "**/docs/**",
+    "**/*.d.ts"
+  ],
+  "absolute": true,
+  "gitignore": true,
+  "skipLocal": true,
+  "pattern": "**/*.{js,jsx,ts,tsx}",
+  "format": {
+    "json": {
+      "output": "analysis/reports/jscpd-report.json"
+    },
+    "html": {
+      "output": "analysis/reports/jscpd-report.html"
+    },
+    "markdown": {
+      "output": "analysis/reports/jscpd-report.md"
+    }
+  },
+  "mode": "mild",
+  "minLines": 5,
+  "maxLines": 1000,
+  "minTokens": 50,
+  "maxSize": "100kb",
+  "bail": false,
+  "noSymlinks": true,
+  "debug": false,
+  "reporters": ["html", "console", "json", "markdown"],
+  "output": "analysis/reports",
+  "languages": {
+    "javascript": {
+      "extensions": ["js", "jsx"],
+      "comments": {
+        "lineComment": "//",
+        "blockComment": ["/*", "*/"]
+      },
+      "quotes": ["\"", "'", "`"],
+      "escapes": "\\\\",
+      "ignoreCase": false,
+      "strictLines": true
+    },
+    "typescript": {
+      "extensions": ["ts", "tsx"],
+      "comments": {
+        "lineComment": "//",
+        "blockComment": ["/*", "*/"]
+      },
+      "quotes": ["\"", "'", "`"],
+      "escapes": "\\\\",
+      "ignoreCase": false,
+      "strictLines": true
+    }
+  },
+  "healthcare": {
+    "criticalPaths": [
+      "**/compliance/**",
+      "**/patient-data/**",
+      "**/medical-records/**",
+      "**/appointments/**",
+      "**/security/**",
+      "**/auth/**",
+      "**/api/**"
+    ],
+    "allowedDuplication": 0,
+    "strictValidation": true
+  },
+  "architectural": {
+    "criticalPatterns": [
+      "React Component patterns",
+      "tRPC procedures",
+      "Hono middleware",
+      "Database models",
+      "Security validation"
+    ],
+    "maxDuplicationPercentage": 3,
+    "reportArchitecturalIssues": true
+  }
+}

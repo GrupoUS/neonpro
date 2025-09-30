@@ -6,8 +6,7 @@
   "type": "module",
   "packageManager": "bun@1.2.23",
   "engines": {
-    "node": ">=20.0.0",
-    "bun": ">=1.0.0"
+    "bun": ">=1.1.0"
   },
   "workspaces": [
     "apps/*",
@@ -30,12 +29,12 @@
     "@types/react-dom": "^19.0.0"
   },
   "scripts": {
-    "build": "turbo build",
-    "build:bun": "turbo build --force",
-    "build:deps": "turbo build:deps --filter=@neonpro/types --filter=@neonpro/config --concurrency=20",
-    "build:core": "turbo build:types --filter=@neonpro/database --filter=@neonpro/core --concurrency=10",
-    "build:ui": "turbo build:lib --filter=@neonpro/ui --concurrency=15",
-    "build:apps": "turbo build --filter=@neonpro/web --filter=@neonpro/api --concurrency=5",
+    "build": "scripts/build-simple-bun.sh",
+    "build:native": "scripts/build-simple-bun.sh",
+    "build:deps": "scripts/build-native-bun.sh packages/config packages/types --concurrency=20",
+    "build:core": "scripts/build-native-bun.sh packages/core packages/database --concurrency=10",
+    "build:ui": "scripts/build-native-bun.sh packages/ui --concurrency=15",
+    "build:apps": "scripts/build-native-bun.sh apps/web apps/api --concurrency=5",
     "build:pipeline": "bun run build:deps && bun run build:core && bun run build:ui && bun run build:apps",
     "dev": "turbo dev --concurrency=15",
     "dev:web": "turbo dev --filter=@neonpro/web",
@@ -91,20 +90,19 @@
     "lint:bun": "oxlint . --import-plugin --jsx-a11y-plugin --fix",
     "lint:bun:security": "eslint . --fix --max-warnings 0",
     "lint:bun:format": "biome format --write .",
-    "analyze": "turbo build && node scripts/analyze-bundle.js",
-    "analyze:bundle": "node scripts/analyze-bundle.js",
-    "perf:compare": "node scripts/compare-baselines.js",
-    "migrate:scripts": "node scripts/migrate-root-scripts.js",
-    "migrate:deps": "node scripts/migrate-dependencies.js",
+    "analyze": "bun run build && bun scripts/analyze-bundle.js",
+    "analyze:bundle": "bun scripts/analyze-bundle.js",
+    "perf:compare": "bun scripts/compare-baselines.js",
+    "migrate:scripts": "bun scripts/migrate-root-scripts.js",
+    "migrate:deps": "bun scripts/migrate-dependencies.js",
     "setup:dev": "bun install && turbo build",
     "deploy:prepare": "turbo build && vitest && bun run lint",
     "health:check": "turbo type-check && vitest && bun run lint",
     "dev:hot": "turbo dev --concurrency=15 --force",
     "dev:inspect": "turbo dev --concurrency=10",
     "dev:bun": "turbo dev --concurrency=20",
-    "build:bun": "turbo build --force",
-    "perf:baseline": "node scripts/simple-benchmark.js",
-    "perf:measure": "node scripts/benchmark-performance.js"
+    "perf:baseline": "bun scripts/simple-benchmark.js",
+    "perf:measure": "bun scripts/benchmark-performance.js"
   },
   "keywords": [
     "neonpro",
@@ -198,7 +196,14 @@
     "undici": "7.16.0",
     "vite-plugin-node-polyfills": "0.24.0",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.2.4"
+    "vitest": "3.2.4",
+    "@jscpd/cli": "^4.0.4",
+    "jscpd": "^4.0.4",
+    "sonarqube-scanner": "^3.3.0",
+    "dependency-cruiser": "^16.2.0",
+    "madge": "^6.1.0",
+    "plato": "^1.7.0",
+    "depcheck": "^1.4.7"
   },
   "main": "create_agent_tables_simple.js",
   "directories": {

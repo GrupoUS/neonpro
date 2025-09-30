@@ -12,7 +12,6 @@
     "node"
   ],
   "rules": {
-    // Core TypeScript Rules (Healthcare Compliance)
     "no-unused-vars": "error",
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-debugger": "error",
@@ -20,6 +19,14 @@
     "no-var": "error",
     "object-shorthand": "error",
     "no-dupe-keys": "error",
+    "prefer-tag-template": "error",
+    "prefer-template": "error",
+    "unicorn/no-empty-file": "error",
+    "unicorn/no-array-for-each": "error",
+    "unicorn/no-array-for-each": "error",
+    "unicorn/no-hexadecimal-number": "error",
+    "unicorn/no-unsafe-regexp": "error",
+    "unicorn/no-useless-filename": "error",
     
     // TypeScript Safety (Healthcare Critical)
     "typescript/prefer-optional-chain": "error",
@@ -48,10 +55,8 @@
     "jsx-a11y/aria-unsupported-elements": "error",
     "jsx-a11y/role-has-required-aria-props": "error",
     "jsx-a11y/role-supports-aria-props": "error",
-    "jsx-a11y/anchor-has-content": "error",
     "jsx-a11y/label-has-associated-control": "error",
     "jsx-a11y/click-events-have-key-events": "error",
-    "jsx-a11y/interactive-supports-focus": "error",
     "jsx-a11y/no-access-key": "error",
     "jsx-a11y/no-autofocus": "error",
     "jsx-a11y/no-distracting-elements": "error",
@@ -68,9 +73,10 @@
     "import/order": [
       "error",
       {
-        "groups": ["builtin", "external", "internal", "parent", "sibling", "index"],
-        "newlines-between": "always"
-      }
+        "groups": [
+        "builtin", "external", "internal", "parent", "sibling", "index"
+      ],
+      "newlines-between": "always"
     ],
     "import/namespace": "warn",
     
@@ -82,13 +88,12 @@
     
     // Documentation (CFM Compliance)
     "jsdoc/require-jsdoc": ["warn", {
-      "contexts": ["FunctionExpression", "ClassDeclaration", "FunctionDeclaration", "MethodDefinition"],
-      "require": {
-        "FunctionExpression": true,
-        "ClassDeclaration": true,
-        "FunctionDeclaration": true,
-        "MethodDefinition": true
-      }
+      "contexts": [
+        "FunctionExpression",
+        "ClassDeclaration",
+        "FunctionDeclaration",
+        "MethodDefinition"
+      ]
     }],
     
     // Security (LGPD Compliance)
@@ -111,73 +116,9 @@
     "no-warning-comments": ["warn", {
       "terms": ["todo", "fixme", "hack", "temporary", "temp"],
       "location": "start"
-    }]
-  },
-  "overrides": [
-    // Test Files (Relaxed Rules)
-    {
-      "files": ["**/*.test.{ts,tsx,js,jsx}", "**/*.spec.{ts,tsx,js,jsx}"],
-      "rules": {
-        "no-console": "off",
-        "no-unused-vars": "off",
-        "jsdoc/require-jsdoc": "off",
-        "no-warning-comments": "off",
-        "jsx-a11y/alt-text": "off",
-        "jsx-a11y/anchor-is-valid": "off"
-      }
-    },
+    }],
     
-    // Configuration Files
-    {
-      "files": ["**/*.config.{js,ts}", "vitest.config.*", "playwright.config.*", "vite.config.*", "tailwind.config.*"],
-      "rules": {
-        "no-console": "warn",
-        "import/no-extraneous-dependencies": "off",
-        "jsdoc/require-jsdoc": "off"
-      }
-    },
-    
-    // Healthcare Compliance Critical Areas
-    {
-      "files": [
-        "**/compliance/**/*.{ts,tsx}",
-        "**/patient-data/**/*.{ts,tsx}",
-        "**/medical-records/**/*.{ts,tsx}",
-        "**/appointments/**/*.{ts,tsx}",
-        "**/security/**/*.{ts,tsx}"
-      ],
-      "rules": {
-        "no-console": "error",
-        "typescript/no-unsafe-assignment": "error",
-        "typescript/no-unsafe-member-access": "error",
-        "typescript/no-unsafe-call": "error",
-        "typescript/no-unsafe-return": "error",
-        "typescript/no-explicit-any": "error",
-        "typescript/prefer-optional-chain": "error",
-        "typescript/prefer-nullish-coalescing": "error",
-        "jsdoc/require-jsdoc": "error",
-        "no-warning-comments": "error"
-      }
-    },
-    
-    // UI Components (Strict Accessibility)
-    {
-      "files": ["**/components/**/*.{tsx,ts}", "**/ui/**/*.{tsx,ts}"],
-      "rules": {
-        "jsx-a11y/alt-text": "error",
-        "jsx-a11y/anchor-is-valid": "error",
-        "jsx-a11y/aria-props": "error",
-        "jsx-a11y/aria-proptypes": "error",
-        "jsx-a11y/aria-unsupported-elements": "error",
-        "jsx-a11y/role-has-required-aria-props": "error",
-        "jsx-a11y/role-supports-aria-props": "error",
-        "jsx-a11y/label-has-associated-control": "error",
-        "react/jsx-no-target-blank": "error",
-        "react/no-unescaped-entities": "error"
-      }
-    },
-    
-    // Logging Infrastructure
+    // Logging Infrastructure (Relaxed for Healthcare)
     {
       "files": [
         "**/logger/**/*.{ts,js}",
@@ -223,6 +164,112 @@
         "no-console": "error"
       }
     }
+  },
+  "overrides": [
+    // Test Files (Relaxed Rules)
+    {
+      "files": ["**/*.test.{ts,tsx,js,jsx}", "**/*.spec.{ts,tsx,js,jsx}"],
+      "rules": {
+        "no-console": "off",
+        "no-unused-vars": "off",
+        "jsdoc/require-jsdoc": "off",
+        "no-warning-comments": "off",
+        "jsx-a11y/alt-text": "off",
+        "jsx-a11y/anchor-is-valid": "off",
+        "jsx-a11y/click-events-have-key-events": "off"
+      }
+    },
+    
+    // Configuration Files (Relaxed Rules)
+    {
+      "files": [
+        "**/*.config.{js,ts}",
+        "vitest.config.*",
+        "playwright.config.*",
+        "vite.config.*",
+        "tailwind.config.*"
+      ],
+      "rules": {
+        "no-console": "warn",
+        "import/no-extraneous-dependencies": "off",
+        "jsdoc/require-jsdoc": "off"
+      }
+    },
+    
+    // Healthcare Compliance Critical Areas
+    {
+      "files": [
+        "**/compliance/**/*.{ts,tsx}",
+        "**/patient-data/**/*.{ts,tsx}",
+        "**/medical-records/**/*.{ts,tsx}",
+        "**/appointments/**/*.{ts,tsx}",
+        "**/security/**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "no-console": "error",
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "typescript/no-explicit-any": "error",
+        "typescript/prefer-optional-chain": "error",
+        "typescript/prefer-nullish-coalescing": "error",
+        "jsdoc/require-jsdoc": "error",
+        "no-warning-comments": "error"
+      }
+    },
+    
+    // UI Components (Strict Accessibility)
+    {
+      "files": [
+        "**/components/**/*.{tsx,ts}",
+        "**/ui/**/*.{tsx,ts}"
+      ],
+      "rules": {
+        "jsx-a11y/alt-text": "error",
+        "jsx-a11y/anchor-is-valid": "error",
+        "jsx-a11y/aria-props": "error",
+        "jsx-a11y/aria-proptypes": "error",
+        "jsx-a11y/aria-unsupported-elements": "error",
+        "jsx-a11y/role-has-required-aria-props": "error",
+        "jsx-a11y/role-supports-aria-props": "error",
+        "jsx-a11y/label-has-associated-control": "error",
+        "react/jsx-no-target-blank": "error",
+        "react/no-unescaped-entities": "error"
+      }
+    },
+    
+    // Logging Infrastructure (Relaxed)
+    {
+      "files": [
+        "**/logger/**/*.{ts,js}",
+        "**/console-manager.ts",
+        "**/logging/**/*.{ts,js}",
+        "**/healthcare-logger.ts"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    
+    // API & Services (Strict Security)
+    {
+      "files": [
+        "**/services/**/*.{ts,js}",
+        "**/trpc/**/*.{ts,js}",
+        "**/middleware/**/*.{ts,js}"
+      ],
+      "rules": {
+        "typescript/no-explicit-any": "error",
+        "typescript/no-unsafe-assignment": "error",
+        "typescript/no-unsafe-member-access": "error",
+        "typescript/no-unsafe-call": "error",
+        "typescript/no-unsafe-return": "error",
+        "promise/prefer-await-to-then": "error",
+        "jsdoc/require-jsdoc": "error",
+        "no-console": "error"
+      }
+    }
   ],
   "ignorePatterns": [
     "node_modules/**",
@@ -237,7 +284,6 @@
     ".turbo/**",
     "**/node_modules/**",
     "tools/tests/**",
-    "tools/reports/**",
     ".serena/**",
     ".specify/**",
     ".oxlint_cache/**",

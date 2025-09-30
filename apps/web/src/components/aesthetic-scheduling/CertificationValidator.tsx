@@ -358,10 +358,10 @@ export function CertificationValidator(
                 variant='outline'
                 size='lg'
                 className='h-12'
-                onClick={() => window.location.href = 'tel:192'}
+                onClick={() => window.location.href = 'tel:+551112345678'}
               >
                 <Phone className='h-5 w-5 mr-2' />
-                SAMU 192
+                Clínica de Estética
               </Button>
               <Button
                 variant='outline'

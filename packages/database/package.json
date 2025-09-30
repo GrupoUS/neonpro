@@ -14,9 +14,9 @@
     }
   },
   "scripts": {
-    "build": "node /home/vibecode/neonpro/node_modules/.bin/tsc -p tsconfig.json",
-    "dev": "node /home/vibecode/neonpro/node_modules/.bin/tsc -w -p tsconfig.json",
-    "type-check": "node /home/vibecode/neonpro/node_modules/.bin/tsc -p tsconfig.json --noEmit",
+    "build": "bun run tsc -p tsconfig.json",
+    "dev": "bun run tsc -w -p tsconfig.json",
+    "type-check": "bun run tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",
     "test": "vitest run",
     "test:bun": "vitest --config vitest.config.bun.ts run",
@@ -40,10 +40,10 @@
     "db:studio": "prisma studio",
     "sync": "bun run db:types && bun run build",
     "dev:bun": "vite dev --force",
-    "build:bun": "prisma generate && node /home/vibecode/neonpro/node_modules/.bin/tsc --noEmit",
+    "build:bun": "prisma generate && bun run tsc --noEmit",
     "build:analyze": "vite build --mode analyze",
     "test:watch:bun": "vitest watch --reporter=dot",
-    "type-check:bun": "node /home/vibecode/neonpro/node_modules/.bin/tsc --noEmit",
+    "type-check:bun": "bun run tsc --noEmit",
     "clean:bun": "rm -rf dist node_modules/.cache",
     "format:bun": "biome format . --write",
     "lint:bun": "oxlint . --fix",
@@ -72,6 +72,6 @@
     "access": "restricted"
   },
   "engines": {
-    "bun": ">=1.0.0"
+    "bun": ">=1.1.0"
   }
 }

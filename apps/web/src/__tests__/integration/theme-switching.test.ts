@@ -1,9 +1,9 @@
 /**
  * Integration Test: Theme Switching Workflow
- * 
+ *
  * CRITICAL: THIS TEST MUST FAIL BEFORE IMPLEMENTATION
  * Following TDD: RED → GREEN → REFACTOR
- * 
+ *
  * Tests complete theme switching workflow with NEONPRO theme
  * Including Context API + localStorage persistence
  */
@@ -16,7 +16,7 @@ import { axe, toHaveNoViolations } from 'vitest-axe';
 expect.extend(toHaveNoViolations);
 
 // Mock implementations for TDD testing - these will be replaced with real implementations
-const ThemeProvider = ({ children, ...props }: any) => {
+const ThemeProvider = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) => {
   return React.createElement('div', { 'data-theme-provider': 'true', ...props }, children);
 };
 
@@ -27,8 +27,8 @@ const useTheme = () => ({
   forcedTheme: null,
 });
 
-const ThemeToggleButton = (props: any) => React.createElement('button', props, 'Theme Toggle');
-const NeonproThemeWrapper = (props: any) => React.createElement('div', props, 'NEONPRO Theme Wrapper');
+const ThemeToggleButton = (props: React.ButtonHTMLAttributes<HTMLButtonElement>) => React.createElement('button', props, 'Theme Toggle');
+const NeonproThemeWrapper = (props: React.HTMLAttributes<HTMLDivElement>) => React.createElement('div', props, 'NEONPRO Theme Wrapper');
 
 // Mock localStorage for testing
 const localStorageMock = {
@@ -81,13 +81,13 @@ describe('Theme Switching Workflow Integration Tests', () => {
       const { theme, setTheme } = useTheme();
       return React.createElement('div', null,
         React.createElement('span', { 'data-testid': 'theme-display' }, theme),
-        React.createElement('button', { 
-          'data-testid': 'toggle-btn', 
-          onClick: () => setTheme(theme === 'light' ? 'dark' : 'light') 
+        React.createElement('button', {
+          'data-testid': 'toggle-btn',
+          onClick: () => setTheme(theme === 'light' ? 'dark' : 'light')
         }, 'Toggle'),
-        React.createElement('div', { 
-          'data-testid': 'neonpro-element', 
-          className: 'bg-neonpro-primary text-neonpro-background' 
+        React.createElement('div', {
+          'data-testid': 'neonpro-element',
+          className: 'bg-neonpro-primary text-neonpro-background'
         }, 'NEONPRO Themed Element')
       );
     };
@@ -123,9 +123,9 @@ describe('Theme Switching Workflow Integration Tests', () => {
     // Arrange
     const TestComponent = () => {
       const { setTheme } = useTheme();
-      return React.createElement('button', { 
-        'data-testid': 'set-dark', 
-        onClick: () => setTheme('dark') 
+      return React.createElement('button', {
+        'data-testid': 'set-dark',
+        onClick: () => setTheme('dark')
       }, 'Set Dark Theme');
     };
 
@@ -183,12 +183,12 @@ describe('Theme Switching Workflow Integration Tests', () => {
     const performanceMarks: number[] = [];
     const originalMark = performance.mark;
     const originalMeasure = performance.measure;
-    
+
     performance.mark = vi.fn((name: string) => {
       performanceMarks.push(Date.now());
       return originalMark.call(performance, name);
     });
-    
+
     performance.measure = vi.fn((name: string, start?: string, end?: string) => {
       const result = originalMeasure.call(performance, name, start, end);
       if (name === 'theme-switch-duration') {
@@ -199,11 +199,11 @@ describe('Theme Switching Workflow Integration Tests', () => {
 
     const TestComponent = () => {
       const { theme, setTheme } = useTheme();
-      
+
       const handleSwitch = () => {
         performance.mark('theme-switch-start');
         setTheme(theme === 'light' ? 'dark' : 'light');
-        
+
         // Simulate theme switch completion
         setTimeout(() => {
           performance.mark('theme-switch-end');

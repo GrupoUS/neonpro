@@ -1,270 +1,87 @@
 #!/usr/bin/env bun
 /**
  * NeonPro TypeScript Wrapper - Bun Native Implementation
- * Architecture: Clean Architecture with Runtime Abstraction
+ * Architecture: Simple and reliable for healthcare compliance
  * Compliance: LGPD, ANVISA, CFM compliant
  * Performance: Optimized for Bun runtime
  */
 
-import { spawn } from 'bun'
-import { resolve } from 'path'
-import { existsSync } from 'fs'
+const args = process.argv.slice(2)
 
-// Interface following Dependency Inversion Principle
-interface CompilerAdapter {
-  compile(options: CompileOptions): Promise<CompileResult>
-  getVersion(): string
-  validateEnvironment(): EnvironmentStatus
-}
+async function main() {
+  const startTime = Date.now()
+  const operation = {
+    timestamp: new Date(),
+    command: ['tsc', ...args],
+    workingDirectory: process.cwd(),
+    environment: 'Bun',
+    duration: undefined,
+    success: undefined
+  }
 
-// Runtime Abstraction Layer
-enum RuntimeType {
-  NODE = 'node',
-  BUN = 'bun'
-}
-
-// Healthcare Compliance Types
-interface ComplianceLogger {
-  log(operation: CompileOperation): Promise<void>
-  auditTrail: string[]
-}
-
-interface CompileOptions {
-  args: string[]
-  cwd?: string
-  env?: Record<string, string>
-  complianceMode?: boolean
-}
-
-interface CompileResult {
-  success: boolean
-  exitCode: number
-  stdout: string
-  stderr: string
-  duration: number
-}
-
-interface EnvironmentStatus {
-  isValid: boolean
-  runtime: RuntimeType
-  typescriptVersion: string
-  errors: string[]
-}
-
-interface CompileOperation {
-  timestamp: Date
-  command: string[]
-  workingDirectory: string
-  environment: RuntimeType
-  duration?: number
-  success?: boolean
-}
-
-// Compliance Logger Implementation
-class HealthcareComplianceLogger implements ComplianceLogger {
-  auditTrail: string[] = []
-
-  async log(operation: CompileOperation): Promise<void> {
-    const logEntry = JSON.stringify({
-      timestamp: operation.timestamp.toISOString(),
-      operation: 'typescript-compilation',
-      command: operation.command.join(' '),
-      directory: operation.workingDirectory,
-      environment: operation.environment,
-      success: operation.success,
-      duration: operation.duration,
-      compliance: {
-        lgpd: true, // Data processing logged
-        anvisa: true, // Medical device compliance maintained
-        cfm: true, // Professional standards preserved
-      }
+  try {
+    // Use bunx to run TypeScript - most reliable approach
+    const proc = Bun.spawn(['bunx', 'tsc', ...args], {
+      cwd: process.cwd(),
+      stdout: 'inherit',
+      stderr: 'inherit'
     })
 
-    this.auditTrail.push(logEntry)
-    
-    // Ensure audit trail persistence for healthcare compliance
-    if (operation.complianceMode !== false) {
-      console.log(`[HEALTHCARE-AUDIT] ${logEntry}`)
-    }
-  }
-}
+    const exitCode = await proc.exited
+    const duration = Date.now() - startTime
 
-// Bun-specific Compiler Adapter Implementation
-class BunCompilerAdapter implements CompilerAdapter {
-  private complianceLogger: ComplianceLogger
-  private tscPath: string | null = null
+    operation.duration = duration
+    operation.success = exitCode === 0
 
-  constructor(complianceLogger: ComplianceLogger) {
-    this.complianceLogger = complianceLogger
-  }
-
-  async validateEnvironment(): Promise<EnvironmentStatus> {
-    const errors: string[] = []
-    
-    try {
-      // Validate TypeScript installation
-      this.tscPath = await this.resolveTypeScriptBinary()
-      
-      // Validate runtime
-      const runtime = this.detectRuntime()
-      
-      return {
-        isValid: errors.length === 0,
-        runtime,
-        typescriptVersion: await this.getTypescriptVersion(),
-        errors
-      }
-    } catch (error) {
-      errors.push(`TypeScript resolution failed: ${error}`)
-      return {
-        isValid: false,
-        runtime: RuntimeType.BUN,
-        typescriptVersion: 'unknown',
-        errors
-      }
-    }
-  }
-
-  async compile(options: CompileOptions): Promise<CompileResult> {
-    const startTime = Date.now()
-    const operation: CompileOperation = {
-      timestamp: new Date(),
-      command: ['tsc', ...options.args],
-      workingDirectory: options.cwd || process.cwd(),
-      environment: RuntimeType.BUN
-    }
-
-    try {
-      // Ensure TypeScript binary is resolved
-      if (!this.tscPath) {
-        throw new Error('TypeScript binary not resolved. Run environment validation first.')
-      }
-
-      // Execute TypeScript compilation with Bun spawn
-      const proc = spawn({
-        cmd: [this.tscPath, ...options.args],
-        cwd: options.cwd || process.cwd(),
-        env: { ...process.env, ...options.env },
-        stdout: 'pipe',
-        stderr: 'pipe'
-      })
-
-      const [stdout, stderr] = await Promise.all([
-        new TextDecoder().decode(await proc.exited),
-        new TextDecoder().decode(await proc.stderr)
-      ])
-
-      const duration = Date.now() - startTime
-      operation.duration = duration
-      operation.success = proc.exitCode === 0
-
-      // Compliance logging for healthcare data processing
-      await this.complianceLogger.log(operation)
-
-      return {
-        success: proc.exitCode === 0,
-        exitCode: proc.exitCode || 0,
-        stdout,
-        stderr,
-        duration
-      }
-
-    } catch (error) {
-      const duration = Date.now() - startTime
-      operation.duration = duration
-      operation.success = false
-      
-      // Log failure for compliance audit
-      await this.complianceLogger.log(operation)
-
-      return {
-        success: false,
-        exitCode: 1,
-        stdout: '',
-        stderr: `TypeScript compilation failed: ${error}`,
-        duration
-      }
-    }
-  }
-
-  getVersion(): string {
-    return 'bun-typescript-wrapper-v1.0.0'
-  }
-
-  private detectRuntime(): RuntimeType {
-    return RuntimeType.BUN // Always Bun for this adapter
-  }
-
-  private async resolveTypeScriptBinary(): Promise<string> {
-    // Try multiple resolution strategies for reliability
-    const candidates = [
-      'typescript/bin/tsc',
-      'node_modules/typescript/bin/tsc',
-      '../../node_modules/typescript/bin/tsc'
-    ]
-
-    for (const candidate of candidates) {
-      try {
-        const resolved = await import.resolve(candidate, { paths: [process.cwd()] })
-        if (existsSync(resolved)) {
-          return resolved
+    // Healthcare compliance logging
+    if (process.env.HEALTHCARE_COMPLIANCE !== 'false') {
+      console.log(`[HEALTHCARE-AUDIT] ${JSON.stringify({
+        timestamp: operation.timestamp.toISOString(),
+        operation: 'typescript-compilation',
+        command: operation.command.join(' '),
+        directory: operation.workingDirectory,
+        environment: operation.environment,
+        success: operation.success,
+        duration: operation.duration,
+        compliance: {
+          lgpd: true,
+          anvisa: true,
+          cfm: true
         }
-      } catch {
-        // Continue to next candidate
-      }
+      })}`)
     }
 
-    throw new Error('Unable to resolve TypeScript binary. Ensure TypeScript is installed.')
-  }
+    process.exit(exitCode || 0)
 
-  private async getTypescriptVersion(): Promise<string> {
-    try {
-      const packagePath = await import.resolve('typescript/package.json', { paths: [process.cwd()] })
-      const pkg = await import(packagePath)
-      return pkg.version || 'unknown'
-    } catch {
-      return 'unknown'
+  } catch (error) {
+    const duration = Date.now() - startTime
+    operation.duration = duration
+    operation.success = false
+
+    // Log failure for compliance audit
+    if (process.env.HEALTHCARE_COMPLIANCE !== 'false') {
+      console.log(`[HEALTHCARE-AUDIT] ${JSON.stringify({
+        timestamp: operation.timestamp.toISOString(),
+        operation: 'typescript-compilation',
+        command: operation.command.join(' '),
+        directory: operation.workingDirectory,
+        environment: operation.environment,
+        success: operation.success,
+        duration: operation.duration,
+        error: error.toString(),
+        compliance: {
+          lgpd: true,
+          anvisa: true,
+          cfm: true
+        }
+      })}`)
     }
-  }
-}
 
-// Main execution function with healthcare compliance
-async function main() {
-  const args = process.argv.slice(2)
-  const complianceLogger = new HealthcareComplianceLogger()
-  const compilerAdapter = new BunCompilerAdapter(complianceLogger)
-
-  // Validate environment before compilation
-  const envStatus = await compilerAdapter.validateEnvironment()
-  if (!envStatus.isValid) {
-    console.error('Environment validation failed:')
-    envStatus.errors.forEach(error => console.error(`  - ${error}`))
     process.exit(1)
   }
-
-  // Prepare compile options
-  const compileOptions: CompileOptions = {
-    args,
-    cwd: process.cwd(),
-    complianceMode: process.env.HEALTHCARE_COMPLIANCE !== 'false'
-  }
-
-  // Execute compilation
-  const result = await compilerAdapter.compile(compileOptions)
-
-  // Output results maintaining healthcare compliance
-  if (result.stdout) {
-    process.stdout.write(result.stdout)
-  }
-  if (result.stderr) {
-    process.stderr.write(result.stderr)
-  }
-
-  // Exit with proper code for build system integration
-  process.exit(result.exitCode)
 }
 
-// Execute main function with error handling
+// Execute main function
 if (import.meta.main) {
   main().catch(error => {
     console.error('Fatal error in TypeScript Bun wrapper:', error)

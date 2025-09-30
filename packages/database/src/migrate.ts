@@ -13,19 +13,17 @@
 
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './types/supabase'
-
-interface MigrationOptions {
-  dryRun?: boolean
-  batchSize?: number
-  logLevel?: 'debug' | 'info' | 'warn' | 'error'
-}
-
-interface MigrationResult {
-  success: boolean
-  migratedCount: number
-  failedCount: number
-  errors: Array<{ id: string; error: string }>
-}
+import { 
+  MigrationOptions,
+  MigrationResult,
+  MigrationData,
+  ClinicData,
+  UserData,
+  UserClinicData,
+  AppointmentData,
+  MigrationConfig,
+  MigrationValidation
+} from '@neonpro/types'
 
 class DataMigration {
   private supabase: ReturnType<typeof createClient<Database>>
@@ -47,7 +45,7 @@ class DataMigration {
     }
   }
   
-  private log(level: string, message: string, data?: any) {
+  private log(level: string, message: string, data?: unknown) {
     const levels = ['debug', 'info', 'warn', 'error']
     if (levels.indexOf(level) >= levels.indexOf(this.options.logLevel)) {
       console.log(`[${level.toUpperCase()}] ${message}`, data || '')
@@ -58,7 +56,7 @@ class DataMigration {
    * Step 1: Migrate Clinics
    * Root multi-tenant entity - must be migrated first
    */
-  async migrateClinics(clinics: any[]): Promise<MigrationResult> {
+  async migrateClinics(clinics: ClinicData[]): Promise<MigrationResult> {
     this.log('info', `Starting clinic migration (${clinics.length} records)`)
     
     const result: MigrationResult = {
@@ -113,7 +111,7 @@ class DataMigration {
    * Step 2: Migrate Users
    * User accounts with LGPD compliance fields
    */
-  async migrateUsers(users: any[]): Promise<MigrationResult> {
+  async migrateUsers(users: UserData[]): Promise<MigrationResult> {
     this.log('info', `Starting user migration (${users.length} records)`)
     
     const result: MigrationResult = {
@@ -167,7 +165,7 @@ class DataMigration {
    * Step 3: Migrate User-Clinic Relationships
    * Junction table for multi-tenant access
    */
-  async migrateUserClinics(userClinics: any[]): Promise<MigrationResult> {
+  async migrateUserClinics(userClinics: UserClinicData[]): Promise<MigrationResult> {
     this.log('info', `Starting user-clinic relationship migration (${userClinics.length} records)`)
     
     const result: MigrationResult = {
@@ -217,7 +215,7 @@ class DataMigration {
    * Step 4: Migrate Appointments
    * Business table with real-time scheduling
    */
-  async migrateAppointments(appointments: any[]): Promise<MigrationResult> {
+  async migrateAppointments(appointments: AppointmentData[]): Promise<MigrationResult> {
     this.log('info', `Starting appointment migration (${appointments.length} records)`)
     
     const result: MigrationResult = {
@@ -304,12 +302,7 @@ class DataMigration {
 export async function executeFullMigration(
   supabaseUrl: string,
   serviceRoleKey: string,
-  data: {
-    clinics: any[]
-    users: any[]
-    userClinics: any[]
-    appointments: any[]
-  },
+  data: MigrationData,
   options: MigrationOptions = {}
 ) {
   const migration = new DataMigration(supabaseUrl, serviceRoleKey, options)

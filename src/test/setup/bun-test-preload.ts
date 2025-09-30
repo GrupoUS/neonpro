@@ -22,16 +22,17 @@ globalThis.LGPD_COMPLIANCE_ENABLED = true
 
 // Mock healthcare compliance services
 globalThis.healthcareCompliance = {
-  validateANVISA(data: any): boolean {
+  validateANVISA(data: unknown): boolean {
     if (!data || typeof data !== 'object') return false
+    const dataObj = data as Record<string, unknown>
     const requiredFields = ['id', 'createdAt', 'createdBy']
-    return requiredFields.every(field => field in data)
+    return requiredFields.every(field => field in dataObj)
   },
 
-  sanitizeData(data: any): any {
-    if (!data || typeof data !== 'object') return data
+  sanitizeData(data: unknown): Record<string, unknown> | null {
+    if (!data || typeof data !== 'object') return data as Record<string, unknown> | null
 
-    const sanitized = { ...data }
+    const sanitized = { ...data } as Record<string, unknown>
     const sensitiveFields = ['ssn', 'medicalRecordNumber', 'insuranceId']
     sensitiveFields.forEach(field => {
       if (field in sanitized) {
@@ -54,17 +55,18 @@ globalThis.healthcareCompliance = {
 
 // Mock LGPD validation
 globalThis.lgpdValidation = {
-  validateConsent(consentData: any): boolean {
+  validateConsent(consentData: unknown): boolean {
     if (!consentData || typeof consentData !== 'object') return false
 
+    const dataObj = consentData as Record<string, unknown>
     const requiredFields = ['version', 'grantedAt', 'purpose', 'dataSubjectId']
-    return requiredFields.every(field => field in consentData)
+    return requiredFields.every(field => field in dataObj)
   },
 
-  anonymizeData(data: any): any {
-    if (!data || typeof data !== 'object') return data
+  anonymizeData(data: unknown): Record<string, unknown> | null {
+    if (!data || typeof data !== 'object') return data as Record<string, unknown> | null
 
-    const anonymized = { ...data }
+    const anonymized = { ...data } as Record<string, unknown>
     const personalFields = ['name', 'email', 'phone', 'address']
     personalFields.forEach(field => {
       if (field in anonymized) {
@@ -75,10 +77,13 @@ globalThis.lgpdValidation = {
     return anonymized
   },
 
-  validateRetention(data: any): boolean {
-    if (!data || !data.createdAt) return false
+  validateRetention(data: unknown): boolean {
+    if (!data || typeof data !== 'object') return false
 
-    const createdAt = new Date(data.createdAt)
+    const dataObj = data as Record<string, unknown>
+    if (!dataObj.createdAt) return false
+
+    const createdAt = new Date(dataObj.createdAt as string)
     const now = new Date()
     const retentionPeriod = 365 * 24 * 60 * 60 * 1000 // 1 year in milliseconds
 
@@ -112,7 +117,7 @@ globalThis.securityContext = {
     return permissions.includes('all') || permissions.includes(dataType)
   },
 
-  generateAuditLog(action: string, userId: string, dataType: string): any {
+  generateAuditLog(action: string, userId: string, dataType: string): Record<string, unknown> {
     return {
       id: `audit-${Date.now()}`,
       action,
@@ -162,23 +167,26 @@ globalThis.testUtils = {
     }
   },
 
-  validateHealthcareCompliance(data: any): boolean {
+  validateHealthcareCompliance(data: unknown): boolean {
     if (!data || typeof data !== 'object') return false
-    if (!data.auditTrail) return false
-    if (data.patientId && !data.consentVersion) return false
+    const dataObj = data as Record<string, unknown>
+    if (!dataObj.auditTrail) return false
+    if (dataObj.patientId && !dataObj.consentVersion) return false
     return true
   },
 }
 
 // Minimal function stubs used by tests
-globalThis.validateAestheticProcedure = function(procedure: any) {
-  if (!procedure || typeof procedure !== 'object') return { valid: false }
-  return { valid: true, id: procedure.id ?? 'unknown' }
+globalThis.validateAestheticProcedure = function(procedure: unknown): { valid: boolean; id: string } {
+  if (!procedure || typeof procedure !== 'object') return { valid: false, id: 'unknown' }
+  const procedureObj = procedure as Record<string, unknown>
+  return { valid: true, id: (procedureObj.id as string) ?? 'unknown' }
 }
 
-globalThis.scheduleAestheticAppointment = function(appointment: any) {
-  if (!appointment || typeof appointment !== 'object') return { scheduled: false }
-  return { scheduled: true, appointmentId: appointment.id ?? `appt_${Date.now()}` }
+globalThis.scheduleAestheticAppointment = function(appointment: unknown): { scheduled: boolean; appointmentId: string } {
+  if (!appointment || typeof appointment !== 'object') return { scheduled: false, appointmentId: 'unknown' }
+  const appointmentObj = appointment as Record<string, unknown>
+  return { scheduled: true, appointmentId: (appointmentObj.id as string) ?? `appt_${Date.now()}` }
 }
 
 globalThis.getSchedulingPreferences = function() {
@@ -209,8 +217,9 @@ globalThis.someFunction = function(id: string) {
   return id ?? 'default'
 }
 
-globalThis.validateProcedure = function(procedure: any) {
-  return { valid: !!(procedure && procedure.name) }
+globalThis.validateProcedure = function(procedure: unknown) {
+  const procedureObj = procedure as Record<string, unknown>
+  return { valid: !!(procedure && procedureObj.name) }
 }
 
 globalThis.someSchedulingFunction = function() {
@@ -218,7 +227,7 @@ globalThis.someSchedulingFunction = function() {
 }
 
 // Expose z globally (zod) for tests that rely on `z`
-globalThis.z = (z as any)
+globalThis.z = z as unknown
 
 // Enhanced console for healthcare test logging
 const originalConsole = {
@@ -255,15 +264,17 @@ console.info = function(...args) {
 globalThis.performance = {
   ...globalThis.performance,
   now: () => Date.now(),
-  mark: (name: string) => {
+  mark: (name: string): PerformanceMark => {
     if (process.env.TEST_DEBUG === 'true') {
       console.log(`[PERF] Mark: ${name}`)
     }
+    return performance.mark(name)
   },
-  measure: (name: string, _startMark?: string, _endMark?: string) => {
+  measure: (name: string, _startMark?: string, _endMark?: string): PerformanceMeasure => {
     if (process.env.TEST_DEBUG === 'true') {
       console.log(`[PERF] Measure: ${name}`)
     }
+    return performance.measure(name, _startMark, _endMark)
   },
 }
 
@@ -284,48 +295,48 @@ declare global {
   const LGPD_COMPLIANCE_ENABLED: boolean
 
   const healthcareCompliance: {
-    validateANVISA(data: any): boolean
-    sanitizeData(data: any): any
+    validateANVISA(data: unknown): boolean
+    sanitizeData(data: unknown): Record<string, unknown> | null
     validateProfessionalLicense(license: string): boolean
     generateHealthcareTimestamp(): string
   }
 
   const lgpdValidation: {
-    validateConsent(consentData: any): boolean
-    anonymizeData(data: any): any
-    validateRetention(data: any): boolean
+    validateConsent(consentData: unknown): boolean
+    anonymizeData(data: unknown): Record<string, unknown> | null
+    validateRetention(data: unknown): boolean
   }
 
   const securityContext: {
     encrypt(data: string): string
     decrypt(encryptedData: string): string
     validateAccess(userRole: string, dataType: string): boolean
-    generateAuditLog(action: string, userId: string, dataType: string): any
+    generateAuditLog(action: string, userId: string, dataType: string): Record<string, unknown>
   }
 
   const testUtils: {
     wait(ms: number): Promise<void>
-    createMockPatientData(): any
-    createMockAppointmentData(): any
-    validateHealthcareCompliance(data: any): boolean
+    createMockPatientData(): Record<string, unknown>
+    createMockAppointmentData(): Record<string, unknown>
+    validateHealthcareCompliance(data: unknown): boolean
   }
 
   const cleanup: () => void
 
   // Added minimal function types
-  function validateAestheticProcedure(procedure: any): any
-  function scheduleAestheticAppointment(appointment: any): any
-  function getSchedulingPreferences(): any
-  function generateFinancialReport(): any
-  function updateInventoryLevels(): any
-  function sendPatientNotification(): any
-  function createTreatmentPlan(): any
-  function coordinateMultiProfessionalTeam(): any
-  function someFunction(id: string): any
-  function validateProcedure(proc: any): any
-  function someSchedulingFunction(): any
+  function validateAestheticProcedure(procedure: unknown): { valid: boolean; id: string }
+  function scheduleAestheticAppointment(appointment: unknown): { scheduled: boolean; appointmentId: string }
+  function getSchedulingPreferences(): Record<string, unknown>
+  function generateFinancialReport(): Record<string, unknown>
+  function updateInventoryLevels(): Record<string, unknown>
+  function sendPatientNotification(): Record<string, unknown>
+  function createTreatmentPlan(): Record<string, unknown>
+  function coordinateMultiProfessionalTeam(): Record<string, unknown>
+  function someFunction(id: string): unknown
+  function validateProcedure(proc: unknown): { valid: boolean }
+  function someSchedulingFunction(): Record<string, unknown>
 
-  const z: any
+  const z: unknown
 }
 
 console.log('[BUN TEST SETUP] Healthcare compliance test environment loaded')

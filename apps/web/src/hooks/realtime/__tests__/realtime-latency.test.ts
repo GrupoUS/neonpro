@@ -5,10 +5,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
 import { useRealtimeQuery } from '../useRealtimeQuery'
 
-const listeners: Array<(payload: RealtimePostgresChangesPayload<any>) => void> = []
+const listeners: Array<(payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => void> = []
 const removeChannel = vi.fn()
 const subscribe = vi.fn(() => ({ unsubscribe: vi.fn() }))
-const on = vi.fn((_, __, handler: (payload: RealtimePostgresChangesPayload<any>) => void) => {
+const on = vi.fn((_, __, handler: (payload: RealtimePostgresChangesPayload<Record<string, unknown>>) => void) => {
   listeners.push(handler)
   return mockChannel
 })

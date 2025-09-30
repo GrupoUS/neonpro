@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 /**
  * NEONPRO - BUN DEPENDENCY MIGRATION SCRIPT
  * =========================================
