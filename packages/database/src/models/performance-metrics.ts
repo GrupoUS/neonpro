@@ -407,181 +407,98 @@ export const trackBuildPerformance = async (
   }
 }
 
-  metrics: PerformanceMetrics,
-  updates: Partial<PerformanceMetrics>
-): PerformanceMetrics => {
-  // Ensure we get a fresh timestamp that's always different
-  const now = new Date()
-  // Add milliseconds to ensure uniqueness if timestamps are the same
-  now.setMilliseconds(now.getMilliseconds() + 1)
+export const trackSystemPerformance = async (
+  supabase: any,
+  metricsId: string,
+  performance: SystemPerformance
+): Promise<void> => {
+  const { error } = await supabase
+    .from('system_performance_logs')
+    .insert({
+      metrics_id: metricsId,
+      uptime: performance.uptime,
+      memory_usage: performance.memoryUsage,
+      cpu_usage: performance.cpuUsage,
+      disk_usage: performance.diskUsage,
+      timestamp: performance.timestamp,
+    })
 
-  return validatePerformanceMetrics({
-    ...metrics,
-    ...updates,
-    metadata: {
-      ...metrics.metadata,
-      updated_at: now.toISOString(),
-      updated_by: updates.metadata?.updated_by || metrics.metadata.updated_by,
-      ...updates.metadata
-    }
-  })
+  if (error) {
+    throw new Error(`Failed to track system performance: ${error.message}`)
+  }
 }
 
-// Metric recording
-export const recordMetric = (
-  metrics: PerformanceMetrics,
-  metricType: MetricTypeType,
-  value: number,
-  unit: MetricUnitType,
-  options: {
-    region?: string
-    metadata?: Record<string, unknown>
-  } = {}
-): PerformanceMetrics => {
-  const newEntry = {
-    timestamp: new Date().toISOString(),
-    metric_type: metricType,
-    value,
-    unit,
-    region: options.region,
-    metadata: options.metadata
+// Get performance history
+export const getPerformanceHistory = async (
+  supabase: any,
+  metricsId: string,
+  limit: number = 10
+): Promise<PerformanceMetrics[]> => {
+  const { data, error } = await supabase
+    .from('performance_metrics')
+    .select('*')
+    .eq('id', metricsId)
+    .order('createdAt', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    throw new Error(`Failed to get performance history: ${error.message}`)
   }
 
-  return updatePerformanceMetrics(metrics, {
-    history: [...metrics.history, newEntry]
-  })
+  return data.map((metrics: any) => validatePerformanceMetrics(metrics))
 }
 
-// Performance validation
-export const validateTTFBTarget = (metrics: PerformanceMetrics): boolean => {
-  return metrics.edge.metrics.ttfb.current <= metrics.edge.metrics.ttfb.target
-}
+// Compare performance with baseline
+export const comparePerformanceWithBaseline = async (
+  supabase: any,
+  metricsId: string,
+  currentMetrics: PerformanceMetrics
+): Promise<{
+  edgeTTFBImprovement: number
+  realtimeUIPatchImprovement: number
+  aiCopilotToolRoundtripImprovement: number
+  buildTimeImprovement: number
+  uptimeImprovement: number
+}> => {
+  // Get baseline metrics (first recorded metrics)
+  const history = await getPerformanceHistory(supabase, metricsId, 1)
 
-export const validateColdStartTarget = (metrics: PerformanceMetrics): boolean => {
-  return metrics.edge.metrics.cold_start.current <= metrics.edge.metrics.cold_start.target
-}
-
-export const validateBunPerformance = (metrics: PerformanceMetrics): boolean => {
-  const { build_time, install_time, memory_usage } = metrics.bun.metrics
-
-  return build_time.current <= build_time.target &&
-         install_time.current <= install_time.target &&
-         memory_usage.current <= memory_usage.target
-}
-
-export const validateHealthcarePerformance = (metrics: PerformanceMetrics): boolean => {
-  const { lgpd, anvisa, cfm } = metrics.healthcare.compliance
-
-  return lgpd.data_access_time.current <= lgpd.data_access_time.target &&
-         lgpd.audit_log_time.current <= lgpd.audit_log_time.target &&
-         anvisa.validation_time.current <= anvisa.validation_time.target &&
-         cfm.medical_record_access_time.current <= cfm.medical_record_access_time.target
-}
-
-// Performance analysis
-export const getPerformanceSummary = (metrics: PerformanceMetrics) => {
-  return {
-    edge: {
-      ttfb_status: validateTTFBTarget(metrics) ? 'on_target' : 'needs_improvement',
-      ttfb_improvement: ((metrics.edge.metrics.ttfb.baseline - metrics.edge.metrics.ttfb.current) / metrics.edge.metrics.ttfb.baseline) * 100,
-      cold_start_status: validateColdStartTarget(metrics) ? 'on_target' : 'needs_improvement',
-      cache_hit_rate_status: metrics.edge.metrics.cache_hit_rate.current >= metrics.edge.metrics.cache_hit_rate.target ? 'on_target' : 'needs_improvement'
-    },
-    bun: {
-      status: validateBunPerformance(metrics) ? 'on_target' : 'needs_improvement',
-      build_improvement: metrics.bun.metrics.build_time.improvement_percentage,
-      install_improvement: metrics.bun.metrics.install_time.improvement_percentage,
-      memory_reduction: metrics.bun.metrics.memory_usage.reduction_percentage
-    },
-    healthcare: {
-      status: validateHealthcarePerformance(metrics) ? 'compliant' : 'non_compliant',
-      lgpd_compliant: metrics.healthcare.compliance.lgpd.data_access_time.current <= metrics.healthcare.compliance.lgpd.data_access_time.target,
-      anvisa_compliant: metrics.healthcare.compliance.anvisa.validation_time.current <= metrics.healthcare.compliance.anvisa.validation_time.target,
-      cfm_compliant: metrics.healthcare.compliance.cfm.medical_record_access_time.current <= metrics.healthcare.compliance.cfm.medical_record_access_time.target
+  if (history.length === 0) {
+    return {
+      edgeTTFBImprovement: 0,
+      realtimeUIPatchImprovement: 0,
+      aiCopilotToolRoundtripImprovement: 0,
+      buildTimeImprovement: 0,
+      uptimeImprovement: 0,
     }
   }
-}
 
-// Alert checking
-export const checkAlerts = (metrics: PerformanceMetrics) => {
-  const alerts: string[] = []
-  const { alert_thresholds } = metrics.monitoring
+  const baseline = history[0]
 
-  if (metrics.edge.metrics.ttfb.current > alert_thresholds.ttfb) {
-    alerts.push(`TTFB (${metrics.edge.metrics.ttfb.current}ms) exceeds threshold (${alert_thresholds.ttfb}ms)`)
-  }
+  // Calculate improvements
+  const edgeTTFBImprovement = baseline.edgePerformance.ttfb > 0
+    ? ((baseline.edgePerformance.ttfb - currentMetrics.edgePerformance.ttfb) / baseline.edgePerformance.ttfb) * 100
+    : 0
 
-  if (metrics.edge.metrics.cold_start.current > alert_thresholds.cold_start) {
-    alerts.push(`Cold start (${metrics.edge.metrics.cold_start.current}ms) exceeds threshold (${alert_thresholds.cold_start}ms)`)
-  }
+  const realtimeUIPatchImprovement = baseline.realtimePerformance.uiPatchTime > 0
+    ? ((baseline.realtimePerformance.uiPatchTime - currentMetrics.realtimePerformance.uiPatchTime) / baseline.realtimePerformance.uiPatchTime) * 100
+    : 0
 
-  if (metrics.application.metrics.memory_usage.current > alert_thresholds.memory_usage) {
-    alerts.push(`Memory usage (${metrics.application.metrics.memory_usage.current}MB) exceeds threshold (${alert_thresholds.memory_usage}MB)`)
-  }
+  const aiCopilotToolRoundtripImprovement = baseline.aiPerformance.copilotToolRoundtrip > 0
+    ? ((baseline.aiPerformance.copilotToolRoundtrip - currentMetrics.aiPerformance.copilotToolRoundtrip) / baseline.aiPerformance.copilotToolRoundtrip) * 100
+    : 0
 
-  if (metrics.application.metrics.cpu_usage.current > alert_thresholds.cpu_usage) {
-    alerts.push(`CPU usage (${metrics.application.metrics.cpu_usage.current}%) exceeds threshold (${alert_thresholds.cpu_usage}%)`)
-  }
+  const buildTimeImprovement = baseline.buildPerformance.buildTime > 0
+    ? ((baseline.buildPerformance.buildTime - currentMetrics.buildPerformance.buildTime) / baseline.buildPerformance.buildTime) * 100
+    : 0
 
-  return alerts
-}
-
-// History cleanup
-export const cleanupHistory = (metrics: PerformanceMetrics, retentionDays: number = 30): PerformanceMetrics => {
-  const cutoffDate = new Date()
-  cutoffDate.setDate(cutoffDate.getDate() - retentionDays)
-
-  const filteredHistory = metrics.history.filter(entry =>
-    new Date(entry.timestamp) >= cutoffDate
-  )
-
-  return updatePerformanceMetrics(metrics, {
-    history: filteredHistory
-  })
-}
-
-// Regional performance analysis
-export const getRegionalPerformance = (metrics: PerformanceMetrics, region: string) => {
-  const regionalHistory = metrics.history.filter(entry => entry.region === region)
-
-  if (regionalHistory.length === 0) {
-    return null
-  }
-
-  const latestMetrics = regionalHistory.reduce((latest, current) =>
-    new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
-  )
+  const uptimeImprovement = currentMetrics.systemPerformance.uptime - baseline.systemPerformance.uptime
 
   return {
-    region,
-    latest_metrics: latestMetrics,
-    data_points: regionalHistory.length,
-    average_ttfb: regionalHistory
-      .filter(m => m.metric_type === 'ttfb')
-      .reduce((sum, m, _, arr) => sum + m.value / arr.length, 0)
+    edgeTTFBImprovement,
+    realtimeUIPatchImprovement,
+    aiCopilotToolRoundtripImprovement,
+    buildTimeImprovement,
+    uptimeImprovement,
   }
 }
-
-// Bun optimization recommendations
-export const getBunOptimizationRecommendations = (metrics: PerformanceMetrics) => {
-  const recommendations: string[] = []
-
-  if (!validateBunPerformance(metrics)) {
-    if (metrics.bun.metrics.build_time.current > metrics.bun.metrics.build_time.target) {
-      recommendations.push('Consider enabling aggressive build optimization level')
-      recommendations.push('Review build configuration for unused dependencies')
-    }
-
-    if (metrics.bun.metrics.memory_usage.current > metrics.bun.metrics.memory_usage.target) {
-      recommendations.push('Enable memory profiling to identify memory leaks')
-      recommendations.push('Optimize bundle size and enable tree shaking')
-    }
-  }
-
-  if (metrics.bun.optimization_level !== 'aggressive') {
-    recommendations.push('Consider upgrading to aggressive optimization level for better performance')
-  }
-
-  return recommendations
-}
-

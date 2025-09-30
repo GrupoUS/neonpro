@@ -1,183 +1,173 @@
 /**
- * Main API Router
- *
- * This file combines all the tRPC routers for the NeonPro platform API,
- * providing end-to-end type safety across the entire application.
+ * Main tRPC Router
+ * Hybrid Architecture: Bun + Vercel Edge + Supabase Functions
+ * Healthcare Compliance: LGPD, ANVISA, CFM
  */
 
 import { initTRPC } from '@trpc/server'
-import { z } from 'zod'
+import { type CreateHTTPContextOptions } from '@trpc/server/adapters/standalone'
+import { type CreateWSSContextFnOptions } from '@trpc/server/adapters/ws'
+import { SupabaseClient } from '@supabase/supabase-js'
+import { Database } from '@neonpro/database'
+import { createTRPCRouter } from './trpc'
 import { architectureRouter } from './routers/architecture'
 import { migrationRouter } from './routers/migration'
-import { analysisRouter } from './routers/analysis/analysis-router'
 
-// Initialize tRPC
-const t = initTRPC.create()
+/**
+ * This is the actual context you'll use in your router
+ * @link https://trpc.io/docs/context
+ */
+export const createTRPCContext = async (opts: CreateHTTPContextOptions) => {
+  const { req } = opts
 
-// Create a context type for the API
-export interface Context {
-  user?: {
-    id: string
-    email: string
-    role: string
-  }
-  req?: Request
-}
+  // Get the token from the Authorization header
+  const token = req.headers.get('authorization')?.replace('Bearer ', '')
 
-// Create context function
-export const createContext = ({ req }: { req?: Request }): Context => {
-  // In a real implementation, you would extract user info from auth headers
-  // For now, we'll return a mock context
-  return {
-    user: {
-      id: 'mock-user-id',
-      email: 'user@neonpro.com.br',
-      role: 'admin'
-    },
-    req
-  }
-}
-
-// Create a protected procedure that requires authentication
-const protectedProcedure = t.procedure.use(({ ctx, next }) => {
-  if (!ctx.user) {
-    throw new Error('Unauthorized')
-  }
-  return next({
-    ctx: {
-      ...ctx,
-      user: ctx.user
-    }
-  })
-})
-
-// Health check procedure
-const healthRouter = t.router({
-  check: t.procedure
-    .query(async () => {
-      return {
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        uptime: process.uptime()
-      }
-    }),
-
-    detailed: t.procedure
-    .query(async () => {
-      return {
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        uptime: process.uptime(),
-        environment: process.env['NODE_ENV'] || 'development',
-        platform: 'node',
-        architecture: 'hybrid',
-        runtime: 'bun',
-        memory: process.memoryUsage(),
-        cpu: process.cpuUsage()
-      }
-    })
-})
-
-// System info procedure
-const systemRouter = t.router({
-  info: t.procedure
-    .query(async () => {
-      return {
-        name: 'NeonPro API',
-        description: 'Healthcare platform for aesthetic clinics in Brazil',
-        version: '1.0.0',
-        environment: process.env['NODE_ENV'] || 'development',
-        platform: {
-          runtime: 'bun',
-          framework: 'hono',
-          database: 'supabase',
-          orm: 'prisma',
-          validation: 'zod',
-          testing: 'vitest',
-          deployment: 'vercel'
+  // Create Supabase client
+  const supabase = new SupabaseClient<Database>(
+    process.env.SUPABASE_URL || '',
+    process.env.SUPABASE_ANON_KEY || '',
+    {
+      global: {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
         },
-        features: {
-          healthcare_compliance: ['lgpd', 'anvisa', 'cfm'],
-          real_time: true,
-          edge_optimization: true,
-          performance_monitoring: true,
-          audit_trail: true
-        }
-      }
-    }),
+      },
+    }
+  )
 
-    metrics: protectedProcedure
-    .query(async ({ ctx }) => {
-      // In a real implementation, you would fetch actual metrics
-      return {
-        user_id: ctx.user?.id,
-        timestamp: new Date().toISOString(),
-        metrics: {
-          requests_total: 1000,
-          requests_per_minute: 15,
-          average_response_time: 120,
-          error_rate: 0.02,
-          active_connections: 50
+  // Get the user from the token
+  const { data: { user } } = await supabase.auth.getUser(token)
+
+  // Get the clinic ID from user metadata
+  const clinicId = user?.user_metadata?.clinic_id as string | undefined
+
+  return {
+    supabase,
+    user,
+    clinicId: clinicId || '',
+    environment: process.env.NODE_ENV === 'production' ? 'production' :
+                 process.env.NODE_ENV === 'staging' ? 'staging' : 'development',
+  }
+}
+
+/**
+ * This is the context used in WebSocket connections
+ * @link https://trpc.io/docs/adapters/ws
+ */
+export const createWSSContext = async (opts: CreateWSSContextFnOptions) => {
+  const { req, res } = opts
+
+  // Get the token from the query string
+  const token = req.url?.split('token=')[1]
+
+  // Create Supabase client
+  const supabase = new SupabaseClient<Database>(
+    process.env.SUPABASE_URL || '',
+    process.env.SUPABASE_ANON_KEY || '',
+    {
+      global: {
+        headers: {
+          Authorization: token ? `Bearer ${token}` : '',
+        },
+      },
+    }
+  )
+
+  // Get the user from the token
+  const { data: { user } } = await supabase.auth.getUser(token)
+
+  // Get the clinic ID from user metadata
+  const clinicId = user?.user_metadata?.clinic_id as string | undefined
+
+  return {
+    supabase,
+    user,
+    clinicId: clinicId || '',
+    environment: process.env.NODE_ENV === 'production' ? 'production' :
+                 process.env.NODE_ENV === 'staging' ? 'staging' : 'development',
+  }
+}
+
+/**
+ * 2. INITIALIZATION
+ *
+ * This is where the tRPC API is initialized, connecting the context and transformer
+ */
+const t = initTRPC.context<typeof createTRPCContext>().create({
+  /**
+   * @link https://trpc.io/docs/data-transformers
+   */
+  transformer: {
+    serialize: (object) => {
+      return JSON.parse(JSON.stringify(object, (key, value) => {
+        // Convert Date objects to ISO strings
+        if (value instanceof Date) {
+          return value.toISOString()
         }
-      }
-    })
+        return value
+      }))
+    },
+    deserialize: (object) => {
+      return JSON.parse(JSON.stringify(object), (key, value) => {
+        // Convert ISO strings to Date objects
+        if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
+          return new Date(value)
+        }
+        return value
+      })
+    },
+  },
+  /**
+   * @link https://trpc.io/docs/error-formatting
+   */
+  errorFormatter: ({ shape, error }) => {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError: error.code === 'BAD_REQUEST' && error.cause instanceof Error ? error.cause.message : null,
+      },
+    }
+  },
 })
 
-// API status procedure
-const statusRouter = t.router({
-  migration: t.procedure
-    .query(async () => {
-      return {
-        migration_status: 'completed',
-        bun_enabled: true,
-        pnpm_disabled: true,
-        edge_optimization: true,
-        performance_improvement: '3-5x',
-        last_updated: new Date().toISOString()
-      }
-    }),
+/**
+ * 3. ROUTER & PROCEDURES
+ *
+ * These are the pieces you use to build your tRPC API.
+ * @link https://trpc.io/docs/router
+ * @link https://trpc.io/docs/procedures
+ */
 
-    architecture: t.procedure
-    .query(async () => {
-      return {
-        architecture_type: 'hybrid',
-        runtime: 'bun',
-        package_manager: 'bun',
-        build_system: 'turborepo',
-        edge_provider: 'vercel',
-        healthcare_compliance: true,
-        performance_monitoring: true
-      }
-    }),
-
-    compliance: t.procedure
-    .query(async () => {
-      return {
-        lgpd_compliant: true,
-        anvisa_compliant: true,
-        cfm_compliant: true,
-        audit_trail_enabled: true,
-        data_encryption: true,
-        backup_frequency_days: 7,
-        last_audit: new Date().toISOString()
-      }
-    })
-})
-
-// Main router combining all sub-routers
-export const appRouter = t.router({
-  health: healthRouter,
-  system: systemRouter,
-  status: statusRouter,
+/**
+ * Create a router
+ * @link https://trpc.io/docs/router
+ */
+export const appRouter = createTRPCRouter({
   architecture: architectureRouter,
   migration: migrationRouter,
-  analysis: analysisRouter
+  health: t.procedure.query(() => ({ status: 'ok' })),
 })
 
-// Export type for the router
+/**
+ * Export type definition of API
+ * @link https://trpc.io/docs/type-safety
+ */
 export type AppRouter = typeof appRouter
 
-// Export context type
-export type { Context }
+/**
+ * Create a server-side handler for tRPC
+ * @link https://trpc.io/docs/server
+ */
+export const createTRPCHandler = () => {
+  return t.createCallerFactory(appRouter)(createTRPCContext)
+}
+
+/**
+ * Create a WebSocket handler for tRPC
+ * @link https://trpc.io/docs/adapters/ws
+ */
+export const createTRPCWSHandler = () => {
+  return t.createCallerFactory(appRouter)(createWSSContext)
+}
