@@ -14,131 +14,21 @@
 import { z } from 'zod'
 import { router, procedure } from '../trpc-factory'
 import { rlsGuard } from '../middleware/rls-guard'
+import { 
+  PatientProfile,
+  TreatmentRecommendation,
+  ContraindicationAnalysis,
+  ProgressMonitoring,
+  TreatmentOutcomePredictor,
+  ClinicalGuideline,
+  EmergencyProtocol,
+  TreatmentRecommendationInput,
+  ContraindicationAnalysisInput,
+  ProgressMonitoringInput,
+  OutcomePredictionInput
+} from '@neonpro/types'
 
-// Types
-export interface PatientProfile {
-  id: string
-  age: number
-  gender: 'male' | 'female' | 'other'
-  skinType: string // Fitzpatrick classification
-  medicalHistory: Array<{
-    condition: string
-    severity: 'mild' | 'moderate' | 'severe'
-    treatments: string[]
-    outcomes: string[]
-  }>
-  allergies: string[]
-  medications: Array<{
-    name: string
-    dosage: string
-    frequency: string
-  }>
-  lifestyleFactors: {
-    smoking: boolean
-    alcohol: boolean
-    sunExposure: 'low' | 'moderate' | 'high'
-    stress: 'low' | 'moderate' | 'high'
-  }
-}
-
-export interface TreatmentRecommendation {
-  id: string
-  patientId: string
-  treatmentType: string
-  recommendedProducts: Array<{
-    name: string
-    concentration: string
-    applicationProtocol: string
-    expectedResults: string
-    contraindications: string[]
-  }>
-  protocol: {
-    sessions: number
-    interval: string
-    duration: string
-    preparation: string[]
-    aftercare: string[]
-  }
-  riskLevel: 'low' | 'moderate' | 'high'
-  expectedOutcomes: string[]
-  alternatives: string[]
-  considerations: string[]
-  generatedAt: Date
-  confidence: number // 0-100
-}
-
-export interface ContraindicationAnalysis {
-  id: string
-  patientId: string
-  proposedTreatment: string
-  contraindications: Array<{
-    type: 'absolute' | 'relative' | 'precaution'
-    description: string
-    severity: 'low' | 'moderate' | 'high' | 'critical'
-    recommendation: string
-  }>
-  riskFactors: Array<{
-    factor: string
-    impact: string
-    mitigation: string
-  }>
-  overallRisk: 'minimal' | 'low' | 'moderate' | 'high' | 'contraindicated'
-  recommendations: string[]
-  reviewedAt: Date
-}
-
-export interface ProgressMonitoring {
-  id: string
-  patientId: string
-  treatmentId: string
-  baselineData: {
-    photos: string[]
-    measurements: Record<string, number>
-    satisfactionScore: number
-  }
-  currentProgress: {
-    photos: string[]
-    measurements: Record<string, number>
-    satisfactionScore: number
-    sideEffects: string[]
-  }
-  progressMetrics: {
-    improvementPercentage: number
-    expectedVsActual: string
-    complications: string[]
-    adherenceRate: number
-  }
-  nextSteps: string[]
-  lastUpdated: Date
-}
-
-export interface TreatmentOutcomePredictor {
-  id: string
-  patientId: string
-  treatmentScenario: {
-    treatmentType: string
-    protocol: string
-    products: string[]
-  }
-  prediction: {
-    successProbability: number // 0-100
-    expectedResults: string[]
-    timeline: string
-    risks: Array<{
-      type: string
-      probability: number
-      severity: 'low' | 'moderate' | 'high'
-      mitigation: string
-    }>
-    costEstimate: {
-      min: number
-      max: number
-      currency: 'BRL'
-    }
-  }
-  confidenceLevel: number // 0-100
-  generatedAt: Date
-}
+// Type-safe interfaces are now imported from @neonpro/types
 
 // Input schemas
 const PatientProfileSchema = z.object({
@@ -539,10 +429,10 @@ export const aiClinicalSupportRouter = router({
 
 // Helper functions (mock implementations - would integrate with actual AI services)
 async function generateTreatmentRecommendations(
-  patient: any,
+  patient: PatientProfile,
   concerns: string[],
   goals: string[],
-  budget?: { min?: number; max?: number; currency: string },
+  budget?: BudgetRange,
   timeCommitment?: string
 ): Promise<TreatmentRecommendation[]> {
   // Mock AI recommendation generation
@@ -580,10 +470,10 @@ async function generateTreatmentRecommendations(
 }
 
 async function performContraindicationAnalysis(
-  patient: any,
+  patient: PatientProfile,
   proposedTreatment: string,
   products?: string[],
-  protocolDetails?: Record<string, any>
+  protocolDetails?: Record<string, unknown>
 ): Promise<ContraindicationAnalysis> {
   // Mock contraindication analysis
   return {
@@ -616,10 +506,15 @@ async function performContraindicationAnalysis(
 }
 
 async function generateProgressInsights(
-  treatment: any,
-  monitoring: any,
-  currentData: any
-): Promise<any> {
+  treatment: ProgressMonitoring,
+  monitoring: ProgressMonitoring,
+  currentData: ProgressMonitoringInput
+): Promise<{
+  progressPercentage: number;
+  expectedVsActual: string;
+  recommendations: string[];
+  nextAppointment: string;
+}> {
   // Mock progress insights generation
   return {
     progressPercentage: 65,
@@ -634,11 +529,11 @@ async function generateProgressInsights(
 }
 
 async function generateTreatmentOutcomePrediction(
-  patient: any,
+  patient: PatientProfile,
   treatmentType: string,
   protocol: string,
   products: string[],
-  adherenceLevel: string
+  adherenceLevel: 'high' | 'moderate' | 'low'
 ): Promise<TreatmentOutcomePredictor> {
   // Mock outcome prediction
   return {
@@ -679,8 +574,8 @@ async function generateTreatmentOutcomePrediction(
 async function getClinicalGuidelines(
   treatmentType: string,
   condition?: string,
-  patientProfile?: any
-): Promise<any[]> {
+  patientProfile?: PatientProfile
+): Promise<ClinicalGuideline[]> {
   // Mock clinical guidelines
   return [
     {
@@ -707,9 +602,9 @@ async function getClinicalGuidelines(
 
 async function getEmergencyProtocol(
   situation: string,
-  severity: string,
+  severity: 'low' | 'moderate' | 'high' | 'critical',
   patientId?: string
-): Promise<any> {
+): Promise<EmergencyProtocol> {
   // Mock emergency protocol
   return {
     situation,
@@ -734,7 +629,11 @@ async function getEmergencyProtocol(
   }
 }
 
-async function getEmergencyContacts(clinicId: string): Promise<any[]> {
+async function getEmergencyContacts(clinicId: string): Promise<Array<{
+  name: string;
+  phone: string;
+  role?: string;
+}>> {
   // Mock emergency contacts
   return [
     { name: 'SAMU', phone: '192' },
@@ -745,11 +644,11 @@ async function getEmergencyContacts(clinicId: string): Promise<any[]> {
 }
 
 async function createProgressMonitoring(
-  supabase: any,
+  supabase: any, // SupabaseClient type would be ideal here
   patientId: string,
   treatmentId: string,
-  currentData: any
-): Promise<any> {
+  currentData: ProgressMonitoringInput
+): Promise<ProgressMonitoring> {
   const { data, error } = await supabase
     .from('treatment_progress_monitoring')
     .insert({
@@ -775,10 +674,10 @@ async function createProgressMonitoring(
 }
 
 async function updateProgressMonitoring(
-  supabase: any,
-  existing: any,
-  currentData: any
-): Promise<any> {
+  supabase: any, // SupabaseClient type would be ideal here
+  existing: ProgressMonitoring,
+  currentData: ProgressMonitoringInput
+): Promise<ProgressMonitoring> {
   const { data, error } = await supabase
     .from('treatment_progress_monitoring')
     .update({

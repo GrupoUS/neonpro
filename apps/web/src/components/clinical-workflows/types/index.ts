@@ -175,6 +175,184 @@ export interface EmergencyStep {
   critical: boolean
 }
 
+// Aesthetic Treatment Coordination Types
+/**
+ * Alertas específicos para coordenamento de tratamentos estéticos
+ * Conformidade com LGPD, ANVISA e CFM para clínicas estéticas brasileiras
+ */
+export interface AestheticTreatmentAlert {
+  id: string
+  /** Tipo de alerta específico para tratamentos estéticos */
+  type: 
+    | 'consultation_request'      // Solicitação de consulta
+    | 'treatment_coordination'    // Coordenação de tratamento
+    | 'patient_concern'           // Preocupação do paciente
+    | 'product_availability'      // Disponibilidade de produtos
+    | 'equipment_support'         // Suporte técnico de equipamento
+    | 'mild_reaction'             // Reação leve ao tratamento
+    | 'post_treatment_follow'     // Acompanhamento pós-tratamento
+    | 'scheduling_conflict'       // Conflito de agendamento
+    | 'payment_issue'             // Issue de pagamento
+    | 'professional_consultation' // Consulta profissional
+  
+  /** Prioridade baseada em impacto no paciente e fluxo clínico */
+  priority: 'low' | 'medium' | 'high' | 'urgent'
+  
+  /** Identificação do paciente (quando aplicável) */
+  patientId?: string
+  
+  /** Localização na clínica (sala, equipamento, etc.) */
+  location: string
+  
+  /** Descrição detalhada do alerta */
+  description: string
+  
+  /** ID do profissional que registrou o alerta */
+  reportedBy: string // StaffMember ID
+  
+  /** Data e hora de registro em formato ISO */
+  reportedAt: string
+  
+  /** Status atual do alerta */
+  status: 
+    | 'pending'       // Aguardando ação
+    | 'in_progress'   // Em andamento
+    | 'coordinated'   // Coordenado
+    | 'resolved'      // Resolvido
+    | 'cancelled'     // Cancelado
+  
+  /** IDs dos profissionais responsáveis pelo atendimento */
+  assignedStaff: string[]
+  
+  /** Categoria do tratamento estético */
+  treatmentCategory?: 
+    | 'facial_treatments'
+    | 'body_treatments' 
+    | 'injectables'
+    | 'laser_treatments'
+    | 'peelings'
+    | 'preventive_care'
+    | 'recovery'
+  
+  /** Notas sobre a resolução do alerta */
+  resolutionNotes?: string
+  
+  /** Data e hora da resolução */
+  resolvedAt?: string
+  
+  /** ID do protocolo ativado (quando aplicável) */
+  protocolId?: string
+  
+  /** Nível de urgência baseado em impacto no paciente */
+  urgencyLevel: 'routine' | 'priority' | 'urgent'
+  
+  /** Indica se requer intervenção médica */
+  requiresMedicalReview: boolean
+  
+  /** Conformidade LGPD - consentimento do paciente */
+  patientConsent?: boolean
+}
+
+/**
+ * Protocolos específicos para tratamentos estéticos e procedimentos clínicos
+ * Alinhado com padrões ANVISA e melhores práticas clínicas
+ */
+export interface AestheticTreatmentProtocol {
+  id: string
+  /** Nome do protocolo de tratamento */
+  name: string
+  
+  /** Descrição detalhada do procedimento */
+  description: string
+  
+  /** Gatilhos que ativam este protocolo */
+  triggers: string[]
+  
+  /** Etapas do procedimento em ordem sequencial */
+  steps: AestheticTreatmentStep[]
+  
+  /** Papéis profissionais necessários para o protocolo */
+  requiredRoles: StaffRole[]
+  
+  /** Tempo estimado para conclusão (em minutos) */
+  estimatedDuration: number
+  
+  /** Categoria do tratamento estético */
+  category:
+    | 'consultation'           // Consulta inicial
+    | 'treatment_preparation' // Preparo do tratamento
+    | 'treatment_execution'   // Execução do tratamento
+    | 'post_treatment_care'   // Cuidados pós-tratamento
+    | 'emergency_response'    // Resposta a emergências
+    | 'equipment_maintenance' // Manutenção de equipamentos
+    | 'patient_coordination'  // Coordenação de paciente
+  
+  /** Nível de complexidade do protocolo */
+  complexityLevel: 'basic' | 'intermediate' | 'advanced' | 'specialized'
+  
+  /** Materiais e produtos necessários */
+  requiredMaterials?: string[]
+  
+  /** Equipamentos necessários */
+  requiredEquipment?: string[]
+  
+  /** Contraindicações e cuidados especiais */
+  contraindications?: string[]
+  
+  /** Tempo de recuperação estimado */
+  recoveryTime?: number // em horas
+  
+  /** Necessidade de acompanhamento pós-procedimento */
+  requiresFollowUp: boolean
+  
+  /** Intervalo recomendado entre sessões */
+  sessionInterval?: number // em dias
+  
+  /** Última atualização do protocolo */
+  lastUpdated: string
+  
+  /** Versão do protocolo */
+  version: string
+  
+  /** Responsável técnico pelo protocolo */
+  technicalResponsible: string // StaffMember ID
+  
+  /** Conformidade com regulamentações */
+  complianceStandards: {
+    anvisa: boolean
+    lgpd: boolean
+    cfm: boolean
+  }
+  
+  /** Documentação obrigatória */
+  requiredDocumentation?: string[]
+  
+  /** Protocolo de segurança do paciente */
+  patientSafetyProtocol?: string[]
+}
+
+/**
+ * Etapa específica de tratamento estético
+ */
+export interface AestheticTreatmentStep {
+  order: number
+  title: string
+  description: string
+  assignedRole: StaffRole
+  estimatedDuration: number // em minutos
+  critical: boolean
+  /** Detalhes adicionais da etapa */
+  instructions?: string[]
+  /** Materiais específicos para esta etapa */
+  materials?: string[]
+  /** Checklists de verificação */
+  checklist?: string[]
+  /** Pontos de atenção crítica */
+  criticalPoints?: string[]
+  /** Documentação necessária para a etapa */
+  documentation?: string[]
+}
+
 // Mobile Clinical Interface Types
 export interface MobileClinicalSession {
   id: string
@@ -360,38 +538,3 @@ export interface WorkflowValidationWarning {
   code: string
 }
 
-// Export all types
-export type {
-  StaffMember,
-  WorkingHours,
-  TimeRange,
-  ClinicalTask,
-  PatientIntakeStep,
-  PatientIntakeFlow,
-  ClinicalNote,
-  DocumentAttachment,
-  TreatmentProgress,
-  TreatmentMeasurements,
-  EmergencyAlert,
-  EmergencyProtocol,
-  EmergencyStep,
-  MobileClinicalSession,
-  DeviceInfo,
-  ClinicalActivity,
-  ClinicalMessage,
-  VideoConsultation,
-  ANVISAReport,
-  MedicalMaterial,
-  ClinicalDashboard,
-  DailyClinicalStats,
-  StaffPerformance,
-  PatientFlowData,
-  EmergencyStatus,
-  AlertItem,
-  ClinicalWorkflowComponentProps,
-  MobileClinicalProps,
-  StaffCoordinationProps,
-  ClinicalWorkflowValidation,
-  WorkflowValidationError,
-  WorkflowValidationWarning
-}

@@ -77,7 +77,7 @@ export interface TreatmentProgressProps {
   onTreatmentComplete?: () => void
   onAddNote?: (stepId: string, note: string) => void
   onTakePhoto?: (stepId: string, type: 'before' | 'after') => void
-  onUpdateMetrics?: (stepId: string, metrics: any) => void
+  onUpdateMetrics?: (stepId: string, metrics: Record<string, unknown>) => void
   className?: string
 }
 

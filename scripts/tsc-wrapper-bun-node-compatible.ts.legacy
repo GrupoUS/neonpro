@@ -160,14 +160,14 @@ class BunCompilerAdapter implements CompilerAdapter {
 
       const duration = Date.now() - startTime
       operation.duration = duration
-      operation.success = proc.exitCode === 0
+      operation.success = exitCode === 0
 
       // Compliance logging for healthcare data processing
       await this.complianceLogger.log(operation)
 
       return {
-        success: proc.exitCode === 0,
-        exitCode: proc.exitCode || 0,
+        success: exitCode === 0,
+        exitCode: exitCode || 0,
         stdout,
         stderr,
         duration

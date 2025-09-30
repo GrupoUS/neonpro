@@ -10,30 +10,16 @@ export const Route = createFileRoute('/')({
 function IndexPage() {
   const { isAuthenticated, isLoading } = useAuth()
 
-  // DEBUG: Permitir bypass da autenticação com parâmetro de URL
-  const urlParams = new URLSearchParams(window.location.search)
-  const bypassAuth = urlParams.get('bypass') === 'true'
-
-  useEffect(() => {
-    console.log('[IndexPage] Auth state:', { isAuthenticated, isLoading })
-  }, [isAuthenticated, isLoading])
-
-  // TEMPORÁRIO: Forçar redirecionamento para o dashboard depois de 3 segundos se ainda estiver carregando
+  // Security: Auth timeout fallback - redirect if auth check takes too long
   useEffect(() => {
     const timer = setTimeout(() => {
       if (isLoading) {
-        console.log('[IndexPage] Force redirect after timeout')
         window.location.href = '/dashboard/'
       }
     }, 3000)
 
     return () => clearTimeout(timer)
   }, [isLoading])
-
-  if (bypassAuth) {
-    console.log('[IndexPage] Bypassing authentication for debug')
-    return <Navigate to="/dashboard" />
-  }
 
   // Show loading while checking authentication
   if (isLoading) {
@@ -56,14 +42,6 @@ function IndexPage() {
           <p className='text-xs opacity-50 mt-2'>
             (Redirecionando automaticamente em breve...)
           </p>
-          <div className='mt-4'>
-            <a
-              href="/?bypass=true"
-              className='text-white/80 hover:text-white text-sm underline'
-            >
-              🔧 Debug: Pular Autenticação
-            </a>
-          </div>
         </div>
       </div>
     )
@@ -71,10 +49,8 @@ function IndexPage() {
 
   // Redirect based on authentication status
   if (isAuthenticated) {
-    console.log('[IndexPage] User authenticated, redirecting to dashboard')
     return <Navigate to="/dashboard" />
   } else {
-    console.log('[IndexPage] User not authenticated, redirecting to login')
     return <Navigate to="/auth/login" />
   }
 }

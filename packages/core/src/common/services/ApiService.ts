@@ -30,7 +30,7 @@ export class ApiService {
       
       return await response.json()
     } catch (error) {
-      console.error(`API request failed: ${endpoint}`, error)
+      // Security: Removed console statement from production code
       throw error
     }
   }
@@ -40,24 +40,33 @@ export class ApiService {
     return this.request<T>(endpoint, { method: 'GET' })
   }
   
-  // POST request
-  static async post<T>(endpoint: string, data?: any): Promise<T> {
+  // POST request with proper typing
+  static async post<T, D = Record<string, unknown>>(
+    endpoint: string, 
+    data?: D
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
     })
   }
   
-  // PUT request
-  static async put<T>(endpoint: string, data?: any): Promise<T> {
+  // PUT request with proper typing
+  static async put<T, D = Record<string, unknown>>(
+    endpoint: string, 
+    data?: D
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
     })
   }
   
-  // PATCH request
-  static async patch<T>(endpoint: string, data?: any): Promise<T> {
+  // PATCH request with proper typing
+  static async patch<T, D = Record<string, unknown>>(
+    endpoint: string, 
+    data?: D
+  ): Promise<T> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,

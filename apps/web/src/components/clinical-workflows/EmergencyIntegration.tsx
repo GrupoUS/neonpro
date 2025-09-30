@@ -26,19 +26,38 @@ import {
   EmergencyAlert,
   EmergencyProtocol,
   EmergencyStep,
+  AestheticTreatmentAlert,
+  AestheticTreatmentProtocol,
   ClinicalWorkflowComponentProps,
   StaffRole
 } from './types'
 
 import { HealthcareContext } from '@/types/healthcare'
 
+/**
+ * Contact configuration interface for emergency and support numbers
+ * Follows healthcare compliance and security best practices
+ */
+interface ContactConfiguration {
+  /** Specialist contact number for medical emergencies */
+  specialist?: string
+  /** Technical support number for equipment issues */
+  technical?: string
+  /** Clinic main contact number */
+  clinic?: string
+  /** Emergency services number (default: 192 for SAMU in Brazil) */
+  emergency?: string
+}
+
 interface AestheticTreatmentCoordinationProps extends ClinicalWorkflowComponentProps {
-  activeAlerts?: EmergencyAlert[]
-  treatmentProtocols?: EmergencyProtocol[]
-  onCreateAlert?: (alert: Omit<EmergencyAlert, 'id' | 'reportedAt'>) => Promise<void>
-  onUpdateAlert?: (alertId: string, alert: Partial<EmergencyAlert>) => Promise<void>
+  activeAlerts?: AestheticTreatmentAlert[]
+  treatmentProtocols?: AestheticTreatmentProtocol[]
+  onCreateAlert?: (alert: Omit<AestheticTreatmentAlert, 'id' | 'reportedAt'>) => Promise<void>
+  onUpdateAlert?: (alertId: string, alert: Partial<AestheticTreatmentAlert>) => Promise<void>
   onActivateProtocol?: (protocolId: string, alertId: string) => Promise<void>
   onContactSupport?: (type: 'specialist' | 'technical' | 'clinic', location: string) => void
+  /** Optional contact configuration to override environment defaults */
+  contactConfig?: ContactConfiguration
 }
 
 const TREATMENT_TYPES = [
@@ -59,7 +78,78 @@ const STAFF_ROLES: StaffRole[] = [
   'medico', 'enfermeiro', 'tecnico_enfermagem', 'esteticista', 'coordenador_clinico', 'recepcao', 'administrativo'
 ]
 
-const DEFAULT_PROTOCOLS: EmergencyProtocol[] = [
+/**
+ * Brazilian phone number validation regex
+ * Supports both mobile and landline formats with proper area codes
+ * Format: +55 XX XXXXX-XXXX or +55 XX XXXX-XXXX
+ */
+const BRAZILIAN_PHONE_REGEX = /^\+55\s?(\d{2})\s?(\d{4,5})-(\d{4})$/
+
+/**
+ * Validates Brazilian phone numbers for healthcare compliance
+ * @param phoneNumber Phone number to validate
+ * @returns True if valid Brazilian phone number
+ */
+const validateBrazilianPhone = (phoneNumber: string): boolean => {
+  if (!phoneNumber || typeof phoneNumber !== 'string') {
+    return false
+  }
+  
+  // Remove spaces and check basic format
+  const cleanNumber = phoneNumber.replace(/\s/g, '')
+  return BRAZILIAN_PHONE_REGEX.test(cleanNumber)
+}
+
+/**
+ * Gets contact configuration from environment variables with fallbacks
+ * Prioritizes props over environment variables for flexibility
+ * @param contactConfig Optional contact configuration from props
+ * @returns Contact configuration with validated phone numbers
+ */
+const getContactConfiguration = (contactConfig?: ContactConfiguration): ContactConfiguration => {
+  // Environment variable mapping with secure defaults
+  const envConfig: ContactConfiguration = {
+    specialist: process.env.NEXT_PUBLIC_CONTACT_SPECIALIST,
+    technical: process.env.NEXT_PUBLIC_CONTACT_TECHNICAL,
+    clinic: process.env.NEXT_PUBLIC_CONTACT_CLINIC,
+    emergency: process.env.NEXT_PUBLIC_CONTACT_EMERGENCY || '+55192' // SAMU Brazil
+  }
+
+  // Merge props with environment, giving priority to props
+  const finalConfig = { ...envConfig, ...contactConfig }
+  
+  // Validate and filter out invalid phone numbers
+  const validatedConfig: ContactConfiguration = {}
+  Object.entries(finalConfig).forEach(([key, value]) => {
+    if (value && validateBrazilianPhone(value)) {
+      validatedConfig[key as keyof ContactConfiguration] = value
+    }
+  })
+
+  return validatedConfig
+}
+
+/**
+ * Formats phone number for tel: URI
+ * Ensures proper formatting for mobile dialing
+ * @param phoneNumber Phone number to format
+ * @returns Formatted phone number for tel: URI
+ */
+const formatPhoneForTel = (phoneNumber: string): string => {
+  if (!phoneNumber) return ''
+  
+  // Remove any non-digit characters except +
+  const cleanNumber = phoneNumber.replace(/[^\d+]/g, '')
+  
+  // Ensure it starts with +
+  if (!cleanNumber.startsWith('+')) {
+    return `+${cleanNumber}`
+  }
+  
+  return cleanNumber
+}
+
+const DEFAULT_PROTOCOLS: AestheticTreatmentProtocol[] = [
   {
     id: 'consultation_coordination',
     name: 'Coordenação de Consulta',
@@ -100,9 +190,23 @@ const DEFAULT_PROTOCOLS: EmergencyProtocol[] = [
       }
     ],
     requiredRoles: ['medico', 'coordenador_clinico', 'recepcao'],
-    estimatedResponseTime: 5,
+    estimatedDuration: 25,
+    category: 'consultation',
+    complexityLevel: 'basic',
+    requiredMaterials: ['ficha de anamnese', 'formulario de consentimento', 'canetas', 'luvas'],
+    requiredEquipment: ['mesa de exame', 'cadeira clínica', 'iluminação adequada'],
+    contraindications: [],
+    requiresFollowUp: true,
+    sessionInterval: 7,
     lastUpdated: new Date().toISOString(),
-    version: '1.0'
+    version: '1.0',
+    technicalResponsible: 'coordenador_clinico',
+    complianceStandards: {
+      anvisa: true,
+      lgpd: true,
+      cfm: true
+    },
+    requiredDocumentation: ['termo de consentimento', 'avaliação inicial', 'plano de tratamento']
   },
   {
     id: 'mild_reaction_care',
@@ -144,9 +248,23 @@ const DEFAULT_PROTOCOLS: EmergencyProtocol[] = [
       }
     ],
     requiredRoles: ['enfermeiro', 'tecnico_enfermagem'],
-    estimatedResponseTime: 8,
+    estimatedDuration: 23,
+    category: 'post_treatment_care',
+    complexityLevel: 'intermediate',
+    requiredMaterials: ['produtos calmantes', 'compressas geladas', 'cremes hipoalergênicos'],
+    requiredEquipment: ['equipamentos de monitoramento', 'material de primeiros socorros'],
+    contraindications: ['reações alérgicas graves', 'problemas respiratórios'],
+    requiresFollowUp: true,
+    sessionInterval: 1,
     lastUpdated: new Date().toISOString(),
-    version: '1.0'
+    version: '1.0',
+    technicalResponsible: 'enfermeiro',
+    complianceStandards: {
+      anvisa: true,
+      lgpd: true,
+      cfm: true
+    },
+    requiredDocumentation: ['relatório de reação', 'tratamento aplicado', 'orientações pós-tratamento']
   },
   {
     id: 'equipment_assistance',
@@ -188,9 +306,23 @@ const DEFAULT_PROTOCOLS: EmergencyProtocol[] = [
       }
     ],
     requiredRoles: ['esteticista', 'coordenador_clinico', 'administrativo'],
-    estimatedResponseTime: 10,
+    estimatedDuration: 18,
+    category: 'equipment_maintenance',
+    complexityLevel: 'basic',
+    requiredMaterials: ['ferramentas de manutenção', 'equipamentos de proteção'],
+    requiredEquipment: ['equipamento estético específico', 'ferramentas de diagnóstico'],
+    contraindications: ['manutenção durante tratamento ativo'],
+    requiresFollowUp: true,
+    sessionInterval: 30,
     lastUpdated: new Date().toISOString(),
-    version: '1.0'
+    version: '1.0',
+    technicalResponsible: 'coordenador_clinico',
+    complianceStandards: {
+      anvisa: true,
+      lgpd: true,
+      cfm: true
+    },
+    requiredDocumentation: ['relatório de manutenção', 'ordem de serviço', 'laudo técnico']
   }
 ]
 
@@ -204,19 +336,20 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
   onCreateAlert,
   onUpdateAlert,
   onActivateProtocol,
-  onContactSupport
+  onContactSupport,
+  contactConfig
 }) => {
   const [activeTab, setActiveTab] = useState('alerts')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isOffline, setIsOffline] = useState(false)
-  const [selectedAlert, setSelectedAlert] = useState<EmergencyAlert | null>(null)
+  const [selectedAlert, setSelectedAlert] = useState<AestheticTreatmentAlert | null>(null)
   const [isCountingDown, setIsCountingDown] = useState(false)
   const [countdownTime, setCountdownTime] = useState(0)
 
   // Form states
   const [newAlert, setNewAlert] = useState({
     type: 'consultation_request' as const,
-    severity: 'medium' as const,
+    priority: 'medium' as const,
     location: '',
     description: ''
   })
@@ -262,26 +395,29 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
     try {
       setIsSubmitting(true)
 
-      const alertData: Omit<EmergencyAlert, 'id' | 'reportedAt'> = {
+      const alertData: Omit<AestheticTreatmentAlert, 'id' | 'reportedAt'> = {
         type: newAlert.type,
-        severity: newAlert.severity,
+        priority: newAlert.priority,
         patientId,
         location: newAlert.location,
         description: newAlert.description,
         reportedBy: staffId,
-        status: 'active',
-        responseTeam: []
+        status: 'pending',
+        assignedStaff: [staffId],
+        urgencyLevel: newAlert.priority === 'critical' ? 'urgent' : 'priority',
+        requiresMedicalReview: false,
+        patientConsent: true
       }
 
       if (onCreateAlert) {
         const createdAlert = await onCreateAlert(alertData)
-        setSelectedAlert(createdAlert as EmergencyAlert)
+        setSelectedAlert(createdAlert as AestheticTreatmentAlert)
         
         // Start countdown for VIP treatments
-        if (newAlert.severity === 'critical') {
-          const severityInfo = TREATMENT_PRIORITY.find(s => s.value === 'critical')
-          if (severityInfo) {
-            setCountdownTime(severityInfo.responseTime * 60) // Convert to seconds
+        if (newAlert.priority === 'critical') {
+          const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === 'critical')
+          if (priorityInfo) {
+            setCountdownTime(priorityInfo.responseTime * 60) // Convert to seconds
             setIsCountingDown(true)
           }
         }
@@ -290,7 +426,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
       // Reset form
       setNewAlert({
         type: 'consultation_request',
-        severity: 'medium',
+        priority: 'medium',
         location: '',
         description: ''
       })
@@ -353,12 +489,25 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
       onContactSupport(type, location)
     }
     
-    // Make actual phone call in mobile environment for specialist
-    if (type === 'specialist') {
-      // Would call clinic specialist line instead of emergency services
-      window.open(`tel:+5511999991111`, '_self')
+    // Get contact configuration with validation and fallbacks
+    const config = getContactConfiguration(contactConfig)
+    const phoneNumber = config[type]
+    
+    // Make actual phone call in mobile environment for available numbers
+    if (phoneNumber && validateBrazilianPhone(phoneNumber)) {
+      const formattedPhone = formatPhoneForTel(phoneNumber)
+      window.open(`tel:${formattedPhone}`, '_self')
+    } else {
+      // Log security incident for missing contact configuration
+      console.warn(`Missing or invalid contact configuration for ${type}. Please check environment variables.`)
+      
+      // Fallback to emergency services for critical specialist calls
+      if (type === 'specialist' && config.emergency) {
+        const emergencyPhone = formatPhoneForTel(config.emergency)
+        window.open(`tel:${emergencyPhone}`, '_self')
+      }
     }
-  }, [onContactSupport, newAlert.location])
+  }, [onContactSupport, newAlert.location, contactConfig])
 
   const formatCountdown = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -383,7 +532,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
   }
 
   const activeVIPAlerts = activeAlerts.filter(alert => 
-    alert.status === 'active' && alert.severity === 'critical'
+    alert.status === 'pending' && alert.priority === 'critical'
   )
 
   return (
@@ -543,7 +692,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   <HealthcareFormGroup label="Prioridade" context={healthcareContext}>
                     <select
                       value={newAlert.severity}
-                      onChange={(e) => setNewAlert(prev => ({ ...prev, severity: e.target.value as any }))}
+                      onChange={(e) => setNewAlert(prev => ({ ...prev, priority: e.target.value as any }))}
                       className="w-full p-2 border rounded-md"
                     >
                       {TREATMENT_PRIORITY.map(priority => (
@@ -643,17 +792,17 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
 
 // Sub-components
 const AlertCard: React.FC<{
-  alert: EmergencyAlert
+  alert: AestheticTreatmentAlert
   isSelected?: boolean
   onClick?: () => void
   onUpdateStatus: (alertId: string, status: string) => void
   onActivateProtocol: (protocolId: string, alertId: string) => void
-  protocols: EmergencyProtocol[]
+  protocols: AestheticTreatmentProtocol[]
   disabled: boolean
   readonly?: boolean
 }> = ({ alert, isSelected, onClick, onUpdateStatus, onActivateProtocol, protocols, disabled, readonly }) => {
   const typeInfo = TREATMENT_TYPES.find(t => t.value === alert.type)
-  const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.severity)
+  const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.priority)
   
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
@@ -679,7 +828,7 @@ const AlertCard: React.FC<{
     <div
       className={`p-4 border rounded-lg cursor-pointer transition-colors ${
         isSelected ? 'border-purple-500 bg-purple-50' : 
-        alert.severity === 'critical' ? 'border-purple-500 bg-purple-50' : 
+        alert.priority === 'critical' ? 'border-purple-500 bg-purple-50' : 
         'border-gray-200 hover:border-gray-300'
       }`}
       onClick={onClick}
@@ -737,9 +886,9 @@ const AlertCard: React.FC<{
   )
 }
 
-const AlertDetail: React.FC<{ alert: EmergencyAlert }> = ({ alert }) => {
+const AlertDetail: React.FC<{ alert: AestheticTreatmentAlert }> = ({ alert }) => {
   const typeInfo = TREATMENT_TYPES.find(t => t.value === alert.type)
-  const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.severity)
+  const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.priority)
   
   return (
     <div className="space-y-4">
@@ -747,7 +896,7 @@ const AlertDetail: React.FC<{ alert: EmergencyAlert }> = ({ alert }) => {
         <div>
           <h4 className="font-semibold">Informações da Solicitação</h4>
           <p><strong>Tipo:</strong> {typeInfo?.label || alert.type}</p>
-          <p><strong>Prioridade:</strong> {priorityInfo?.label || alert.severity}</p>
+          <p><strong>Prioridade:</strong> {priorityInfo?.label || alert.priority}</p>
           <p><strong>Status:</strong> {alert.status}</p>
           <p><strong>Local:</strong> {alert.location}</p>
         </div>
@@ -755,7 +904,7 @@ const AlertDetail: React.FC<{ alert: EmergencyAlert }> = ({ alert }) => {
           <h4 className="font-semibold">Informações de Atendimento</h4>
           <p><strong>Solicitado por:</strong> {alert.reportedBy}</p>
           <p><strong>Data/Hora:</strong> {new Date(alert.reportedAt).toLocaleString('pt-BR')}</p>
-          <p><strong>Equipe de Atendimento:</strong> {alert.responseTeam.join(', ') || 'Não definida'}</p>
+          <p><strong>Equipe de Atendimento:</strong> {alert.assignedStaff.join(', ') || 'Não definida'}</p>
           {alert.resolvedAt && (
             <p><strong>Resolvido em:</strong> {new Date(alert.resolvedAt).toLocaleString('pt-BR')}</p>
           )}
@@ -778,7 +927,7 @@ const AlertDetail: React.FC<{ alert: EmergencyAlert }> = ({ alert }) => {
 }
 
 const ProtocolCard: React.FC<{
-  protocol: EmergencyProtocol
+  protocol: AestheticTreatmentProtocol
   onActivate: (protocolId: string) => void
   disabled: boolean
 }> = ({ protocol, onActivate, disabled }) => {
@@ -844,7 +993,7 @@ const ProtocolCard: React.FC<{
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-sm text-gray-600">
-                  Tempo estimado: {protocol.estimatedResponseTime}min
+                  Tempo estimado: {protocol.estimatedDuration}min
                 </span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {protocol.requiredRoles.map(role => (
