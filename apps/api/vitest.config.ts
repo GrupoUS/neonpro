@@ -24,12 +24,46 @@ export default defineConfig({
       ],
       thresholds: {
         global: {
-          branches: 80,
-          functions: 80,
-          lines: 80,
-          statements: 80,
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95,
+        },
+        // Healthcare API endpoints compliance (LGPD, ANVISA, CFM)
+        'api-endpoints': {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95,
+        },
+        healthcare: {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95,
+        },
+        security: {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95,
+        },
+        'data-validation': {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95,
         },
       },
+      // Healthcare compliance reporting
+      reportOnFailure: true,
+      include: [
+        '**/api/**/*.{js,ts}',
+        '**/healthcare/**/*.{js,ts}',
+        '**/security/**/*.{js,ts}',
+        '**/validation/**/*.{js,ts}',
+        '**/middleware/**/*.{js,ts}',
+      ],
     },
     include: [
       'src/**/*.{test,spec}.{js,ts}',

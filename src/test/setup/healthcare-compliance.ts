@@ -13,7 +13,7 @@ export async function setupHealthcareCompliance() {
     /**
      * Validate healthcare data against ANVISA standards
      */
-    validateANVISA(data: any): boolean {
+    validateANVISA(data: unknown): boolean {
       // Basic ANVISA validation logic
       if (!data || typeof data !== 'object') return false
       
@@ -25,7 +25,7 @@ export async function setupHealthcareCompliance() {
     /**
      * Sanitize healthcare data for testing
      */
-    sanitizeData(data: any): any {
+    sanitizeData(data: unknown): unknown {
       if (!data || typeof data !== 'object') return data
       
       const sanitized = { ...data }
@@ -65,7 +65,7 @@ export async function setupLGPDValidation() {
     /**
      * Validate LGPD consent
      */
-    validateConsent(consentData: any): boolean {
+    validateConsent(consentData: unknown): boolean {
       if (!consentData || typeof consentData !== 'object') return false
       
       const requiredFields = ['version', 'grantedAt', 'purpose', 'dataSubjectId']
@@ -75,7 +75,7 @@ export async function setupLGPDValidation() {
     /**
      * Generate LGPD-compliant anonymized data
      */
-    anonymizeData(data: any): any {
+    anonymizeData(data: unknown): unknown {
       if (!data || typeof data !== 'object') return data
       
       const anonymized = { ...data }
@@ -94,7 +94,7 @@ export async function setupLGPDValidation() {
     /**
      * Validate data retention policies
      */
-    validateRetention(data: any): boolean {
+    validateRetention(data: unknown): boolean {
       if (!data || !data.createdAt) return false
       
       const createdAt = new Date(data.createdAt)
@@ -147,7 +147,7 @@ export async function setupSecurityContext() {
     /**
      * Generate audit log entry
      */
-    generateAuditLog(action: string, userId: string, dataType: string): any {
+    generateAuditLog(action: string, userId: string, dataType: string): unknown {
       return {
         id: `audit-${Date.now()}`,
         action,
@@ -164,25 +164,23 @@ export async function setupSecurityContext() {
 
 // Type definitions for global healthcare compliance objects
 declare global {
-  var healthcareCompliance: {
-    validateANVISA(data: any): boolean
-    sanitizeData(data: any): any
+  const healthcareCompliance: {
+    validateANVISA(data: unknown): boolean
+    sanitizeData(data: unknown): unknown
     validateProfessionalLicense(license: string): boolean
     generateHealthcareTimestamp(): string
   }
   
-  var lgpdValidation: {
-    validateConsent(consentData: any): boolean
-    anonymizeData(data: any): any
-    validateRetention(data: any): boolean
+  const lgpdValidation: {
+    validateConsent(consentData: unknown): boolean
+    anonymizeData(data: unknown): unknown
+    validateRetention(data: unknown): boolean
   }
   
-  var securityContext: {
+  const securityContext: {
     encrypt(data: string): string
     decrypt(encryptedData: string): string
     validateAccess(userRole: string, dataType: string): boolean
-    generateAuditLog(action: string, userId: string, dataType: string): any
+    generateAuditLog(action: string, userId: string, dataType: string): unknown
   }
 }
-
-export {}

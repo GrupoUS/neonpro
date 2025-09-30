@@ -13,10 +13,19 @@
     },
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowJs": false,
+    "checkJs": false,
     "composite": true,
     "noEmit": false,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src/**/*",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "src/__tests__/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.js"]
 }

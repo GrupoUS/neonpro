@@ -57,7 +57,7 @@ class HealthcareBuilder {
   }
 
   async executeCommand(command, cwd = process.cwd()) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       const child = spawn(command, { 
         cwd, 
         shell: true,

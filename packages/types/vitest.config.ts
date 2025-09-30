@@ -14,7 +14,30 @@ export default defineConfig({
         'src/**/*.spec.ts',
         'src/__tests__/**/*',
         'src/**/*.d.ts'
-      ]
+      ],
+      thresholds: {
+        global: {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95
+        },
+        // Healthcare types and interfaces compliance
+        'healthcare-types': {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95
+        },
+        'validation-schemas': {
+          branches: 95,
+          functions: 95,
+          lines: 95,
+          statements: 95
+        }
+      },
+      // Healthcare compliance reporting
+      reportOnFailure: true
     }
   }
 });

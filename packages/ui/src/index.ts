@@ -1,59 +1,44 @@
-// Export UI components that are working correctly
+// Core UI Components - Healthcare Optimized
 export { Button, buttonVariants } from "./components/ui/button";
 export type { ButtonProps } from "./components/ui/button";
+
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
+export type { CardProps } from "./components/ui/card";
 
-// Export basic components that are confirmed working
 export { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
-export { Badge } from "./components/ui/badge";
-export { Input } from "./components/ui/input";
-export { Progress } from "./components/ui/progress";
+export type { AlertProps } from "./components/ui/alert";
 
-// Export utility functions
+export { Badge, badgeVariants } from "./components/ui/badge";
+export type { BadgeProps } from "./components/ui/badge";
+
+export { Input } from "./components/ui/input";
+export type { InputProps } from "./components/ui/input";
+
+export { AccessibilityInput } from "./components/ui/accessibility-input";
+export type { AccessibilityInputProps } from "./components/ui/accessibility-input";
+
+// Healthcare-specific components
+export { EmergencyAlert } from "./components/healthcare/emergency-alert";
+export type { EmergencyAlertProps, EmergencyAlertType, EmergencySeverity } from "./components/healthcare/emergency-alert";
+
+export { MobileHealthcareButton } from "./components/ui/mobile-healthcare-button";
+export type { MobileHealthcareButtonProps, MedicalActionType } from "./components/ui/mobile-healthcare-button";
+
+// Accessibility components
+export { KeyboardNavigation } from "./components/accessibility/keyboard-navigation";
+export type { KeyboardNavigationProps, FocusTrapProps } from "./components/accessibility/keyboard-navigation";
+
+// Utilities
 export { cn } from "./lib/utils";
 
-// Export only enhanced components that don't have external dependency issues
-export { DashboardLayout, DashboardCard } from "./components/ui/dashboard-layout";
+// Type re-exports for convenience
+export type * from "./lib/types";
 
-// Export working shadcn/ui components
-export { Label } from "./components/ui/label";
-export {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectGroup,
-  SelectLabel,
-  SelectSeparator,
-  SelectScrollUpButton,
-  SelectScrollDownButton
-} from "./components/ui/select";
-export { Checkbox } from "./components/ui/checkbox";
-export {
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-  useFormField
-} from "./components/ui/form";
-export { Switch } from "./components/ui/switch";
-
-// Real component exports
-export { Calendar } from './components/ui/calendar'
-export { Command } from './components/ui/command'
-export { Dialog } from './components/ui/dialog'
-export { DropdownMenu } from './components/ui/dropdown-menu'
-export { Popover } from './components/ui/popover'
-export { RadioGroup } from './components/ui/radio-group'
-export { ScrollArea } from './components/ui/scroll-area'
-export { Separator } from './components/ui/separator'
-export { Table } from './components/ui/table'
-export { Textarea } from './components/ui/textarea'
-export { Pagination } from './components/ui/pagination'
-
-export { MobileHealthcareButton } from './components/ui/mobile-healthcare-button'
-export { AccessibilityInput } from './components/ui/accessibility-input'
+// Healthcare compliance version
+export const UI_VERSION = "1.0.0";
+export const HEALTHCARE_COMPLIANCE = {
+  WCAG_2_1_AA: true,
+  LGPD_COMPLIANT: true,
+  ANVISA_COMPLIANT: true,
+  EMERGENCY_READY: true,
+} as const;

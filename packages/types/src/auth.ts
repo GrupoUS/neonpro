@@ -1,4 +1,5 @@
 // Authentication types for NeonPro healthcare platform
+import type { ReactNode } from 'react'
 import type { BaseEntity } from './common.js'
 
 // Estende o User do Supabase com dados específicos do healthcare
@@ -164,10 +165,10 @@ export interface UseAuthReturn {
 
 // Route protection types
 export interface ProtectedRouteProps {
-  children: React.ReactNode
+  children: ReactNode
   requireEmailVerification?: boolean
   allowedProfessions?: ProfessionType[]
-  fallback?: React.ReactNode
+  fallback?: ReactNode
 }
 
 export interface RouteGuardConfig {

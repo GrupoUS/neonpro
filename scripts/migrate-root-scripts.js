@@ -15,30 +15,6 @@ console.log('🔄 Analyzing current scripts for Bun migration...');
 const currentScripts = packageJson.scripts;
 const bunOptimizedScripts = {};
 
-// Script migration rules
-const migrationRules = {
-  // Direct replacements (pnpm -> bun)
-  'pnpm run': 'bun run',
-  'pnpm ': 'bun ',
-  
-  // Tool-specific optimizations
-  'turbo': 'turbo', // turbo works with Bun
-  'vitest': 'vitest', // vitest works with Bun
-  'tsx': 'tsx', // tsx works with Bun
-  'tsc': 'tsc', // TypeScript compiler works with Bun
-  
-  // Commands that can use Bun directly
-  'node ': 'bun run ',
-  
-  // Test optimizations
-  'vitest --watch': 'vitest --watch', // Already optimized
-  'vitest --coverage': 'vitest --coverage',
-  
-  // Build optimizations - Bun can run these faster
-  'vite build': 'vite build',
-  'tsc --noEmit': 'tsc --noEmit'
-};
-
 // Script-specific optimizations
 const scriptOptimizations = {
   // Core scripts - keep as-is since they use turbo which works well with Bun
@@ -113,8 +89,7 @@ const scriptOptimizations = {
   
   // Performance monitoring
   'perf:baseline': 'node scripts/simple-benchmark.js',
-  'perf:measure': 'node scripts/benchmark-performance.js',
-  'perf:compare': 'node scripts/compare-baselines.js'
+  'perf:measure': 'node scripts/benchmark-performance.js'
 };
 
 console.log('📋 Applying script optimizations for Bun...');

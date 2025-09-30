@@ -34,10 +34,9 @@
     },
     "tsBuildInfoFile": "./.tsbuildinfo"
   },
-  "include": ["src/**/*", ".next/types/**/*.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
+  "include": [
+    "src/**/*", 
+    ".next/types/**/*.ts",
     "tests/**/*",
     "src/__tests__/**/*",
     "**/__tests__/**",
@@ -45,6 +44,11 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.js"
   ],
   "references": [
     { "path": "../../packages/core" },

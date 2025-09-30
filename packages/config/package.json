@@ -4,8 +4,9 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "build": "node /home/vibecode/neonpro/node_modules/.bin/tsc",
-    "test": "vitest"
+    "build": "npx tsc --skipLibCheck src/index.ts src/feature-flags.ts --outDir dist --declaration",
+    "test": "vitest",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "zod": "^3.22.0"

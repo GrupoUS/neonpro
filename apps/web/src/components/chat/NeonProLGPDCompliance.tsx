@@ -29,6 +29,7 @@ import {
   Lock,
   Unlock,
   UserCheck,
+  Audit,
 } from 'lucide-react'
 
 // Types

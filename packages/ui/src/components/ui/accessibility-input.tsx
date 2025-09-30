@@ -1,49 +1,145 @@
-import React from 'react'
-import { Input } from './input'
-import { Label } from './label'
-import { AlertCircle } from 'lucide-react'
+import * as React from "react"
+import { cn } from "@/lib/utils"
 
-interface AccessibilityInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
+export interface AccessibilityInputProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  // Accessibility-specific props
+  label?: string
   error?: string
-  helperText?: string
+  description?: string
   required?: boolean
-  id: string
+  healthcare?: boolean
+  sensitive?: boolean
+  // Screen reader announcements
+  ariaDescribedBy?: string
+  ariaErrorMessage?: string
+  // LGPD compliance for sensitive data
+  dataMasking?: boolean
+  validationPattern?: string
+  // Visual accessibility
+  highContrast?: boolean
+  largeText?: boolean
+  // Size variants for accessibility
+  size?: "sm" | "default" | "lg" | "xl"
 }
 
-export const AccessibilityInput: React.FC<AccessibilityInputProps> = ({
-  label,
-  error,
-  helperText,
-  required = false,
-  id,
-  ...props
-}) => {
-  const hasError = !!error
+const AccessibilityInput = React.forwardRef<HTMLInputElement, AccessibilityInputProps>(
+  ({
+    className,
+    type = "text",
+    label,
+    error,
+    description,
+    required = false,
+    healthcare = false,
+    sensitive = false,
+    dataMasking = false,
+    validationPattern,
+    highContrast = false,
+    largeText = false,
+    size = "default",
+    id,
+    placeholder,
+    ...props
+  }, ref) => {
+    // Generate unique ID if not provided
+    const inputId = id || `input-${React.useId()}`
+    const errorId = error ? `${inputId}-error` : undefined
+    const descriptionId = description ? `${inputId}-description` : undefined
 
-  return (
-    <div className="space-y-2">
-      <Label htmlFor={id} className={hasError ? 'text-destructive' : ''}>
-        {label} {required && <span className="text-destructive">*</span>}
-      </Label>
-      <Input
-        id={id}
-        aria-invalid={hasError}
-        aria-describedby={hasError ? `${id}-error` : helperText ? `${id}-helper` : undefined}
-        className={hasError ? 'border-destructive focus-visible:ring-destructive' : ''}
-        {...props}
-      />
-      {hasError && (
-        <div className="flex items-center gap-2 text-destructive text-sm">
-          <AlertCircle className="h-4 w-4" />
-          <span id={`${id}-error`}>{error}</span>
-        </div>
-      )}
-      {helperText && !hasError && (
-        <p id={`${id}-helper`} className="text-sm text-muted-foreground">
-          {helperText}
-        </p>
-      )}
-    </div>
-  )
-}
+    // Size-based classes
+    const sizeClasses = {
+      sm: "h-8 text-sm px-2",
+      default: "h-10 px-3", 
+      lg: "h-12 text-lg px-4",
+      xl: "h-14 text-xl px-5"
+    }
+
+    // Healthcare-specific attributes
+    const healthcareProps = healthcare ? {
+      "data-healthcare": "true",
+      "data-sensitive": sensitive.toString(),
+      "aria-required": required,
+      "autocomplete": sensitive ? "off" : props.autoComplete,
+    } : {}
+
+    // Input masking for sensitive data
+    const inputType = dataMasking && sensitive ? "password" : type
+
+    return (
+      <div className={cn("space-y-1.5", className)}>
+        {label && (
+          <label
+            htmlFor={inputId}
+            className={cn(
+              "block text-sm font-medium leading-none",
+              highContrast && "text-foreground font-bold",
+              largeText && "text-base"
+            )}
+          >
+            {label}
+            {required && (
+              <span className="text-destructive ml-1" aria-label="required">
+                *
+              </span>
+            )}
+          </label>
+        )}
+        
+        {description && (
+          <p
+            id={descriptionId}
+            className={cn(
+              "text-xs",
+              highContrast && "text-foreground",
+              largeText && "text-sm"
+            )}
+          >
+            {description}
+          </p>
+        )}
+
+        <input
+          ref={ref}
+          type={inputType}
+          id={inputId}
+          placeholder={placeholder}
+          className={cn(
+            "flex w-full rounded-md border border-input bg-background px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+            sizeClasses[size],
+            error && "border-destructive focus-visible:ring-destructive",
+            highContrast && "border-2 font-bold",
+            healthcare && sensitive && "font-mono"
+          )}
+          aria-invalid={!!error}
+          aria-describedby={cn(
+            errorId,
+            descriptionId
+          )}
+          aria-errormessage={errorId}
+          pattern={validationPattern}
+          {...healthcareProps}
+          {...props}
+        />
+
+        {error && (
+          <p
+            id={errorId}
+            className={cn(
+              "text-xs text-destructive",
+              highContrast && "font-bold",
+              largeText && "text-sm"
+            )}
+            role="alert"
+          >
+            {error}
+          </p>
+        )}
+      </div>
+    )
+  }
+)
+
+AccessibilityInput.displayName = "AccessibilityInput"
+
+export { AccessibilityInput }

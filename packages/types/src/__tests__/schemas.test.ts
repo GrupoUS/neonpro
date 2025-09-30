@@ -1,11 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { z } from 'zod';
-import { 
-  AppointmentSchema, 
+import { describe, it, expect } from 'vitest'
+import {
+  AppointmentSchema,
   CreateAppointmentSchema,
-  UserSchema,
-  CreateUserSchema 
-} from '../index.js';
+  UserSchema
+} from '../index.js'
 
 describe('Types and Schemas', () => {
   describe('AppointmentSchema', () => {

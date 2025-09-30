@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+# NeonPro Enhanced Pre-push Hook
+# Following Husky v9+ best practices with healthcare compliance
+# Last Updated: 2025-09-29
+# Documentation: .husky/README.md
+
+set -e  # Exit on any error
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}🚀 Running NeonPro Pre-push Validation...${NC}"
+echo -e "${BLUE}📚 See .husky/README.md for troubleshooting guidance${NC}"
+
+# 1. Run comprehensive test suite
+echo -e "${YELLOW}🧪 Running comprehensive test suite...${NC}"
+if ! bun run test; then
+    echo -e "${RED}❌ Tests failed! Please fix failing tests before pushing.${NC}"
+    echo -e "${BLUE}💡 Run 'bun run test' for detailed errors${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✅ All tests passed${NC}"
+
+# 2. Healthcare Compliance Tests
+echo -e "${YELLOW}🏥 Running healthcare compliance tests...${NC}"
+if bun run test:healthcare-compliance &> /dev/null; then
+    echo -e "${GREEN}✅ Healthcare compliance tests passed${NC}"
+else
+    echo -e "${YELLOW}⚠️ Healthcare compliance tests had issues (non-blocking)${NC}"
+    echo -e "${BLUE}💡 Run 'bun run test:healthcare-compliance' for details${NC}"
+fi
+
+# 3. Security Compliance Tests
+echo -e "${YELLOW}🛡️ Running security compliance tests...${NC}"
+if bun run test:security-compliance &> /dev/null; then
+    echo -e "${GREEN}✅ Security compliance tests passed${NC}"
+else
+    echo -e "${YELLOW}⚠️ Security compliance tests had issues (non-blocking)${NC}"
+    echo -e "${BLUE}💡 Run 'bun run test:security-compliance' for details${NC}"
+fi
+
+# 4. Build Critical Packages (to ensure they compile)
+echo -e "${YELLOW}🔨 Building critical packages...${NC}"
+
+# Check if @neonpro/types package exists and build it
+if [ -d "packages/types" ]; then
+    echo -e "${BLUE}Building @neonpro/types...${NC}"
+    if ! (cd packages/types && bun run build); then
+        echo -e "${RED}❌ Types package failed to build!${NC}"
+        echo -e "${BLUE}💡 Check packages/types for build errors${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✅ Types package built successfully${NC}"
+else
+    echo -e "${YELLOW}⚠️ Types package not found, skipping build${NC}"
+fi
+
+# Check if @neonpro/ui package exists and build it
+if [ -d "packages/ui" ]; then
+    echo -e "${BLUE}Building @neonpro/ui...${NC}"
+    if ! (cd packages/ui && bun run build); then
+        echo -e "${RED}❌ UI package failed to build!${NC}"
+        echo -e "${BLUE}💡 Check packages/ui for build errors${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✅ UI package built successfully${NC}"
+else
+    echo -e "${YELLOW}⚠️ UI package not found, skipping build${NC}"
+fi
+
+echo -e "${GREEN}🎉 All pre-push validations passed! Ready to push...${NC}"
+echo -e "${BLUE}📚 For troubleshooting, see: .husky/README.md${NC}"

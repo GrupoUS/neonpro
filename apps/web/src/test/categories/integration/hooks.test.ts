@@ -317,8 +317,8 @@ describe('Healthcare Hooks Integration Tests', () => {
 
           // Cleanup timer in test cleanup
           return () => clearTimeout(timer)
-        })
-      )
+        }
+      );
 
       await act(async () => {
         await result.current.handleSubmit(largeDataset)

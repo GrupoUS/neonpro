@@ -1,6 +1,6 @@
 {
   "env": {
-    "ANTHROPIC_MODEL": "glm-4.5"
+    "ANTHROPIC_MODEL": "GLM-4.6"
   },
   "statusLine": {
     "type": "command",

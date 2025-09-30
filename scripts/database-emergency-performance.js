@@ -202,7 +202,7 @@ class DatabaseEmergencyPerformanceMonitor {
     return patternResult
   }
 
-  async executeTestQuery(query, patternId) {
+  async executeTestQuery(query, _patternId) {
     const queryStartTime = performance.now()
     
     try {

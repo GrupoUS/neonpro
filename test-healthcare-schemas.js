@@ -23,23 +23,23 @@ try {
     console.log('✅ CPF validation function works:', validCPF);
   }
   
-} catch (error) {
-  console.error('❌ Healthcare schemas test failed:', error.message);
+} catch (_error) {
+  console.error('❌ Healthcare schemas test failed:', _error.message);
 }
 
 // Try to import tRPC contracts
 try {
   require('./apps/api/src/trpc/contracts/patient.ts');
   console.log('✅ Patient tRPC contracts imported successfully');
-} catch (error) {
-  console.error('❌ Patient tRPC contracts import failed:', error.message);
+} catch (_error) {
+  console.error('❌ Patient tRPC contracts import failed:', _error.message);
 }
 
 try {
   require('./apps/api/src/trpc/contracts/appointment.ts');
   console.log('✅ Appointment tRPC contracts imported successfully');
-} catch (error) {
-  console.error('❌ Appointment tRPC contracts import failed:', error.message);
+} catch (_error) {
+  console.error('❌ Appointment tRPC contracts import failed:', _error.message);
 }
 
 console.log('🎉 Healthcare schemas test completed!');

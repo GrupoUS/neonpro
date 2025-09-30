@@ -28,7 +28,7 @@ try {
   execSync('npm run build:vercel', { stdio: 'inherit' })
 
   console.log('✅ Build completed successfully!')
-} catch (error) {
-  console.error('❌ Build failed:', error.message)
+} catch (_error) {
+  console.error('❌ Build failed:', _error.message)
   process.exit(1)
 }
