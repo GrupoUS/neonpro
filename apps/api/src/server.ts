@@ -42,11 +42,21 @@ app.get('/health', (c) => {
 	}) => unknown)({
 		router: appRouter,
 		createContext: (opts: unknown) => {
-			return createContext(opts)
+			// Hono adapter passes an object like { req: Request }. Cast to the expected shape.
+			return createContext(opts as { req?: Request })
 		}
 	})
 
-	app.use('/trpc/*', trpcHandler)
+	// Add a thin wrapper middleware that forwards to the tRPC adapter.
+	// This keeps types happy (we define a Hono-compatible middleware) while
+	// only casting inside the wrapper where necessary.
+	const trpcMiddleware = async (c: Parameters<typeof app['fetch']>[0], next?: any) => {
+		// Forward to the trpc handler. adapter may not have precise TS types, so cast locally.
+		return await (trpcHandler as unknown as (arg: any, next?: any) => Promise<Response>)(c, next)
+	}
+
+	// Use the wrapper instead of passing the untyped handler directly.
+	app.use('/trpc/*', trpcMiddleware)
 }
 
 // API info endpoint

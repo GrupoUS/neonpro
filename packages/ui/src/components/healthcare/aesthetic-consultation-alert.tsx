@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Alert, AlertTitle, AlertDescription } from '../ui/alert'
 import { Button } from '../ui/button'
 import { AlertTriangle, MapPin, Clock, User, Volume2, VolumeX, Calendar, Sparkles } from 'lucide-react'
+import { ACCESSIBLE_PURPLE_COLORS, HEALTHCARE_ACCESSIBILITY_COLORS } from '../../accessibility/colors'
+import { AccessibleVIPAlert, announceToScreenReader } from '../../accessibility/aria'
 
 interface AestheticConsultationAlertProps {
   type: 'new_client' | 'consultation_request' | 'follow_up' | 'treatment_reminder' | 'special_offer' | 'appointment_confirmation'
@@ -43,43 +45,49 @@ export const AestheticConsultationAlert: React.FC<AestheticConsultationAlertProp
   const [isResolved, setIsResolved] = useState(false)
   const [timeElapsed, setTimeElapsed] = useState(0)
 
-  // Aesthetic consultation type configuration
+  // Aesthetic consultation type configuration with accessible colors
   const consultationConfig = {
     new_client: {
       title: 'Novo Cliente',
-      color: 'text-purple-700',
+      color: ACCESSIBLE_PURPLE_COLORS.primary.text, // WCAG 2.1 AA compliant
       icon: <Sparkles className="h-5 w-5" />,
       sound: 'new-client.mp3',
+      ariaLabel: 'Novo cliente VIP chegou à clínica',
     },
     consultation_request: {
       title: 'Solicitação de Consulta',
-      color: 'text-blue-700',
+      color: 'text-blue-900', // High contrast blue
       icon: <Calendar className="h-5 w-5" />,
       sound: 'consultation-request.mp3',
+      ariaLabel: 'Nova solicitação de consulta recebida',
     },
     follow_up: {
       title: 'Acompanhamento',
-      color: 'text-green-700',
+      color: 'text-green-900', // High contrast green
       icon: <Calendar className="h-5 w-5" />,
       sound: 'follow-up.mp3',
+      ariaLabel: 'Consulta de acompanhamento agendada',
     },
     treatment_reminder: {
       title: 'Lembrete de Tratamento',
-      color: 'text-yellow-700',
+      color: 'text-yellow-900', // High contrast yellow
       icon: <Clock className="h-5 w-5" />,
       sound: 'treatment-reminder.mp3',
+      ariaLabel: 'Lembrete de tratamento próximo',
     },
     special_offer: {
       title: 'Oferta Especial',
-      color: 'text-pink-700',
+      color: 'text-pink-900', // High contrast pink
       icon: <Sparkles className="h-5 w-5" />,
       sound: 'special-offer.mp3',
+      ariaLabel: 'Oferta especial disponível',
     },
     appointment_confirmation: {
       title: 'Confirmação de Agendamento',
-      color: 'text-indigo-700',
+      color: 'text-indigo-900', // High contrast indigo
       icon: <Calendar className="h-5 w-5" />,
       sound: 'appointment-confirmation.mp3',
+      ariaLabel: 'Agendamento confirmado com sucesso',
     },
   }
 
@@ -105,7 +113,7 @@ export const AestheticConsultationAlert: React.FC<AestheticConsultationAlertProp
     return () => clearInterval(interval)
   }, [isResolved])
 
-  // Consultation notification sound and gentle vibration
+  // Consultation notification sound and accessibility announcements
   useEffect(() => {
     if (isResolved || isMuted) return
 
@@ -123,18 +131,30 @@ export const AestheticConsultationAlert: React.FC<AestheticConsultationAlertProp
       }
     }
 
-    // Initial notification
+    // Screen reader announcement for accessibility
+    const makeAnnouncement = () => {
+      const message = config.ariaLabel || `${config.title} - Prioridade ${priority.toUpperCase()}`
+      const priorityLevel = priority === 'vip' || priority === 'high' ? 'assertive' : 'polite'
+      announceToScreenReader(message, priorityLevel)
+    }
+
+    // Initial notification with accessibility
     playNotificationSound()
     vibratePattern()
+    makeAnnouncement()
 
     // Repeat based on priority
     const soundInterval = setInterval(() => {
       playNotificationSound()
       vibratePattern()
+      // Only announce VIP and high priority repeats to avoid spam
+      if (priority === 'vip' || priority === 'high') {
+        makeAnnouncement()
+      }
     }, priorityCfg.interval)
 
     return () => clearInterval(soundInterval)
-  }, [priority, isResolved, isMuted, config.sound, priorityCfg.interval])
+  }, [priority, isResolved, isMuted, config.sound, priorityCfg.interval, config.ariaLabel])
 
   // Auto-dismiss for low priority
   useEffect(() => {
@@ -171,20 +191,44 @@ export const AestheticConsultationAlert: React.FC<AestheticConsultationAlertProp
 
   if (isResolved) return null
 
+  // Get accessible color classes based on priority
+  const getAccessibleColors = () => {
+    if (priority === 'vip') {
+      return ACCESSIBLE_PURPLE_COLORS.vip.borderCritical + ' ' + 
+             ACCESSIBLE_PURPLE_COLORS.vip.backgroundCritical + ' ' +
+             ACCESSIBLE_PURPLE_COLORS.vip.textCritical
+    }
+    return 'border-blue-200 bg-blue-50 text-blue-900'
+  }
+
+  const getAriaLive = () => {
+    if (isResolved) return 'off'
+    return priority === 'vip' || priority === 'high' ? 'assertive' : 'polite'
+  }
+
   return (
-    <Alert 
-      variant="default" 
-      className={`border-2 ${priority === 'vip' ? 'border-purple-600 bg-purple-50' : 'border-blue-200 bg-blue-50'} ${priority === 'vip' ? 'animate-pulse' : ''}`}
+    <AccessibleVIPAlert
+      isActive={priority === 'vip' && !isResolved}
+      priority={priority}
+      ariaLabel={config.ariaLabel}
+      className={`border-2 ${getAccessibleColors()} ${priority === 'vip' ? 'animate-pulse' : ''}`}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex items-start gap-3">
-          <div className={config.color}>
-            {config.icon}
-          </div>
-          <div className="flex-1">
-            <AlertTitle className={config.color}>
-              {config.title} - {priority.toUpperCase()}
-            </AlertTitle>
+      <Alert 
+        role="alert"
+        aria-live={getAriaLive()}
+        aria-atomic="true"
+        variant="default" 
+        className={`border-0 ${getAccessibleColors()}`}
+      >
+        <div className="flex items-start justify-between">
+          <div className="flex items-start gap-3">
+            <div className={config.color} aria-hidden="true">
+              {config.icon}
+            </div>
+            <div className="flex-1">
+              <AlertTitle className={config.color}>
+                {config.title} - {priority.toUpperCase()}
+              </AlertTitle>
             <AlertDescription className="space-y-2">
               <div className="flex items-center gap-4 text-sm">
                 {clientName && (
@@ -245,6 +289,7 @@ export const AestheticConsultationAlert: React.FC<AestheticConsultationAlertProp
         </div>
       </div>
     </Alert>
+    </AccessibleVIPAlert>
   )
 }
 

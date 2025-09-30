@@ -17,6 +17,8 @@ import {
   Sparkles,
   Shield
 } from 'lucide-react'
+import { ACCESSIBLE_PURPLE_COLORS, HEALTHCARE_ACCESSIBILITY_COLORS } from '../../../accessibility/colors'
+import { AccessibleVIPBadge, announceToScreenReader, useVIPFocusManagement } from '../../../accessibility/aria'
 
 // NeonPro Aesthetic Brand Colors
 const NEONPRO_COLORS = {
@@ -55,39 +57,47 @@ export interface VIPClientStatusProps {
 const VIP_LEVELS = {
   silver: {
     name: 'Silver',
-    color: '#C0C0C0',
+    color: '#6B7280', // High contrast gray
     bgColor: 'bg-gray-50',
-    borderColor: 'border-gray-300',
+    borderColor: 'border-gray-400',
     icon: <Star className="h-4 w-4" />,
     minSpent: 5000,
-    benefits: ['10% desconto', 'Atendimento prioritário', 'Produtos exclusivos']
+    benefits: ['10% desconto', 'Atendimento prioritário', 'Produtos exclusivos'],
+    accessibleColors: 'text-gray-700 bg-gray-50 border-gray-400',
+    ariaLabel: 'Cliente nível Silver com benefícios básicos VIP'
   },
   gold: {
     name: 'Gold',
-    color: NEONPRO_COLORS.primary,
+    color: '#B45309', // High contrast amber
     bgColor: 'bg-amber-50',
-    borderColor: 'border-amber-300',
+    borderColor: 'border-amber-500',
     icon: <Crown className="h-4 w-4" />,
     minSpent: 15000,
-    benefits: ['15% desconto', 'Acesso VIP', 'Tratamentos exclusivos', 'Consultor pessoal']
+    benefits: ['15% desconto', 'Acesso VIP', 'Tratamentos exclusivos', 'Consultor pessoal'],
+    accessibleColors: 'text-amber-900 bg-amber-50 border-amber-500',
+    ariaLabel: 'Cliente nível Gold com benefícios avançados VIP'
   },
   platinum: {
     name: 'Platinum',
-    color: '#E5E4E2',
+    color: '#1E293B', // High contrast slate
     bgColor: 'bg-slate-50',
-    borderColor: 'border-slate-300',
+    borderColor: 'border-slate-500',
     icon: <Gem className="h-4 w-4" />,
     minSpent: 30000,
-    benefits: ['20% desconto', 'Serviço concierge', 'Eventos exclusivos', 'Tratamentos premium']
+    benefits: ['20% desconto', 'Serviço concierge', 'Eventos exclusivos', 'Tratamentos premium'],
+    accessibleColors: 'text-slate-900 bg-slate-50 border-slate-500',
+    ariaLabel: 'Cliente nível Platinum com benefícios premium VIP'
   },
   diamond: {
     name: 'Diamond',
-    color: '#B9F2FF',
-    bgColor: 'bg-blue-50',
-    borderColor: 'border-blue-300',
+    color: ACCESSIBLE_PURPLE_COLORS.vip.textCritical, // WCAG 2.1 AA compliant purple
+    bgColor: ACCESSIBLE_PURPLE_COLORS.vip.backgroundCritical,
+    borderColor: ACCESSIBLE_PURPLE_COLORS.vip.borderCritical,
     icon: <Sparkles className="h-4 w-4" />,
     minSpent: 50000,
-    benefits: ['25% desconto', 'Acesso irrestrito', 'Experiências personalizadas', 'Clínica privada']
+    benefits: ['25% desconto', 'Acesso irrestrito', 'Experiências personalizadas', 'Clínica privada'],
+    accessibleColors: `${ACCESSIBLE_PURPLE_COLORS.vip.textCritical} ${ACCESSIBLE_PURPLE_COLORS.vip.backgroundCritical} ${ACCESSIBLE_PURPLE_COLORS.vip.borderCritical}`,
+    ariaLabel: 'Cliente nível Diamond com benefícios exclusivos máximos VIP'
   }
 }
 
@@ -115,8 +125,20 @@ export const VIPClientStatus: React.FC<VIPClientStatusProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const [progressToNextLevel, setProgressToNextLevel] = useState(0)
+  const prevVipLevel = useState(vipLevel)[0] // Track VIP level changes
   
   const levelConfig = VIP_LEVELS[vipLevel]
+  
+  // Focus management for VIP elements
+  const vipBadgeRef = useVIPFocusManagement(vipLevel === 'diamond')
+  
+  // Announce VIP level changes
+  useEffect(() => {
+    if (prevVipLevel !== vipLevel) {
+      const message = `Cliente ${clientName} alcançou o nível VIP ${levelConfig.name}`
+      announceToScreenReader(message, 'polite')
+    }
+  }, [vipLevel, clientName, levelConfig.name, prevVipLevel])
   
   // Calculate progress to next VIP level
   useEffect(() => {
@@ -160,12 +182,14 @@ export const VIPClientStatus: React.FC<VIPClientStatusProps> = ({
   const needsFollowUp = daysSinceLastVisit > 30
 
   return (
-    <Card className={`w-full ${levelConfig.bgColor} ${levelConfig.borderColor} border-2 ${className}`}>
+    <Card className={`w-full ${levelConfig.accessibleColors} border-2 ${className}`}
+          role="region"
+          aria-label={`Perfil VIP do cliente ${clientName}, nível ${levelConfig.name}`}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-12 w-12 border-2" style={{ borderColor: levelConfig.color }}>
-              <AvatarImage src={avatarUrl} alt={clientName} />
+              <AvatarImage src={avatarUrl} alt={`Foto de ${clientName}`} />
               <AvatarFallback className="text-sm font-semibold">
                 {clientName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
               </AvatarFallback>
@@ -176,21 +200,43 @@ export const VIPClientStatus: React.FC<VIPClientStatusProps> = ({
                 <CardTitle className="text-lg font-bold text-gray-800">
                   {clientName}
                 </CardTitle>
-                <Badge 
-                  variant="default" 
+                <AccessibleVIPBadge
+                  vipLevel={levelConfig.name}
+                  isAnimated={vipLevel === 'diamond'}
+                  ariaLabel={levelConfig.ariaLabel}
                   className="text-xs px-2 py-1"
-                  style={{ backgroundColor: levelConfig.color, color: 'white' }}
                 >
-                  <div className="flex items-center gap-1">
-                    {levelConfig.icon}
-                    {levelConfig.name}
-                  </div>
-                </Badge>
-                {vipLevel === 'diamond' && (
-                  <Badge variant="default" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs animate-pulse">
-                    <Crown className="h-3 w-3 mr-1" />
-                    TOP VIP
+                  <Badge 
+                    variant="default" 
+                    className={`text-xs px-2 py-1 ${vipLevel === 'diamond' ? 'animate-pulse' : ''}`}
+                    style={{ backgroundColor: levelConfig.color, color: 'white' }}
+                    role="status"
+                    aria-live={vipLevel === 'diamond' ? 'polite' : undefined}
+                  >
+                    <div className="flex items-center gap-1">
+                      <span aria-hidden="true">{levelConfig.icon}</span>
+                      {levelConfig.name}
+                    </div>
                   </Badge>
+                </AccessibleVIPBadge>
+                {vipLevel === 'diamond' && (
+                  <AccessibleVIPBadge
+                    vipLevel="TOP VIP"
+                    isAnimated={true}
+                    ariaLabel="Cliente TOP VIP com benefícios exclusivos máximos"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs animate-pulse"
+                  >
+                    <Badge 
+                      variant="default" 
+                      className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs animate-pulse"
+                      role="status"
+                      aria-live="polite"
+                      ref={vipBadgeRef}
+                    >
+                      <Crown className="h-3 w-3 mr-1" aria-hidden="true" />
+                      TOP VIP
+                    </Badge>
+                  </AccessibleVIPBadge>
                 )}
               </div>
               
@@ -209,19 +255,30 @@ export const VIPClientStatus: React.FC<VIPClientStatusProps> = ({
           
           <div className="flex items-center gap-2">
             {vipLevel === 'diamond' && (
-              <div className="text-right">
+              <div className="text-right" role="status" aria-live="polite">
                 <div className="text-xs text-gray-600">Status</div>
-                <div className="text-sm font-semibold text-purple-600">Premium</div>
+                <div className="text-sm font-semibold" style={{ color: ACCESSIBLE_PURPLE_COLORS.vip.textCritical }}>
+                  Premium
+                </div>
               </div>
             )}
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => {
+                setIsExpanded(!isExpanded)
+                const message = isExpanded ? "Detalhes do cliente recolhidos" : "Detalhes do cliente expandidos"
+                announceToScreenReader(message, 'polite')
+              }}
               className="h-8 w-8 p-0"
-              aria-label={isExpanded ? "Recolher detalhes" : "Expandir detalhes"}
+              aria-label={isExpanded ? "Recolher detalhes do cliente" : "Expandir detalhes do cliente"}
+              aria-expanded={isExpanded}
+              aria-controls="cliente-expanded-content"
             >
-              <Sparkles className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+              <Sparkles 
+                className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} 
+                aria-hidden="true"
+              />
             </Button>
           </div>
         </div>
@@ -288,7 +345,12 @@ export const VIPClientStatus: React.FC<VIPClientStatusProps> = ({
         
         {/* Expanded Content */}
         {isExpanded && (
-          <div className="space-y-4 pt-4 border-t border-gray-200">
+          <div 
+            id="cliente-expanded-content"
+            className="space-y-4 pt-4 border-t border-gray-200"
+            role="region"
+            aria-label="Informações detalhadas do cliente VIP"
+          >
             {/* Next Appointment */}
             {nextAppointment && (
               <div className="flex items-center gap-2 text-sm">

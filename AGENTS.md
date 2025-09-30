@@ -1,43 +1,23 @@
-# Development Workflow
+---
+title: "NeonPro Project Constitution"
+last_updated: 2025-09-30
+form: reference
+tags: [constitution, neonpro, architecture, standards]
+related:
+  - docs/architecture/tech-stack.md
+  - docs/architecture/frontend-architecture.md
+  - .claude/commands/quality-control.md
+  - .claude/commands/frontend-testing.md
+---
 
-> **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow this workflow systematically.
-> **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and/or `tavily` for official docs and best practices. Don't keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
-> **ALWAYS** Execute Tasks, tools and Agents in parallel when possible to optimize time and efficiency.
+# 🚀 NEONPRO PROJECT CONSTITUTION
 
-# MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
+## Overview
 
-- **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
-- **📚 Always Read the source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
-- **🔍 Always Read the tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
+This document establishes the fundamental rules, principles, and standards for the NeonPro aesthetic clinic platform. It serves as the primary reference for all development activities and architectural decisions.
 
-## Pre-Development Guidelines
-
-**📚 Documentation Consultation:**
-⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
-
-When you have ANY doubt during development:
-
-- First consult the `/docs` folder for relevant documentation
-- Check `docs/architecture/AGENTS.md` for architectural decisions
-- Look at `docs/apis/AGENTS.md` for API patterns
-- Check `docs/database-schema/AGENTS.md` for data structure
-- Consult specific guides in `docs/rules/coding-standards.md` for coding standards, best practices, and design patterns
-
-## Project Context
-
-### Project Overview
-
-NeonPro is a modern, edge-optimized healthcare platform designed for aesthetic clinics in Brazil. It is a monorepo built with Turborepo and pnpm workspaces, encompassing a web application, an API, and several shared packages. The platform is designed to be compliant with Brazilian healthcare regulations, including LGPD, CFM, and ANVISA.
-
-### Tech Stack
-
-*   **Monorepo:** Turborepo, pnpm workspaces
-*   **Frontend:** React, Vite, TypeScript, Tailwind CSS
-*   **Backend:** Hono, tRPC, Prisma, Supabase
-*   **Database:** PostgreSQL (via Supabase)
-*   **Testing:** Vitest, Playwright
-*   **Linting & Formatting:** OXLint, BiomeJS, ESLint, dprint
-*   **Deployment:** Vercel
+**Scope**: Healthcare-compliant aesthetic clinic management platform
+**Related Documents**: See architecture docs and agent coordination guides
 
 ### Monorepo Structure
 
@@ -47,60 +27,50 @@ The project is organized into `apps` and `packages`:
     *   `web`: The main web application.
     *   `api`: The backend API.
 *   `packages`: Contains shared code and libraries.
-    *   `ai-services`: Services related to AI.
-    *   `database`: Prisma schema and database utilities.
-    *   `healthcare-core`: Core healthcare-related functionality.
-    *   `security`: Security-related utilities.
-    *   `shared`: Shared utilities and types.
+    *   `config`: Services related to configuration.
+    *   `database`: Database utilities.
+    *   `core`: Core functionality.
     *   `types`: Shared TypeScript types.
     *   `ui`: React component library.
-    *   `utils`: General utility functions.
 
 ### Key Commands
 
 The following commands are available at the root of the monorepo:
 
-*   `pnpm dev`: Start the development servers for all apps.
-*   `pnpm build`: Build all apps and packages.
+*   `bun dev`: Start the development servers for all apps.
+*   `bun build`: Build all apps and packages.
 
 #### Testing
 
-*   `pnpm test`: Run all tests (unit and integration).
-*   `pnpm test:watch`: Run all tests in watch mode.
-*   `pnpm test:coverage`: Run all tests and generate a code coverage report.
-*   `pnpm test:e2e`: Run all end-to-end tests with Playwright.
-*   `pnpm test:e2e:ui`: Run all end-to-end tests with the Playwright UI.
+*   `bun test`: Run all tests (unit and integration).
+*   `bun test:watch`: Run all tests in watch mode.
+*   `bun test:coverage`: Run all tests and generate a code coverage report.
+*   `bun test:e2e`: Run all end-to-end tests with Playwright.
+*   `bun test:e2e:ui`: Run all end-to-end tests with the Playwright UI.
 
 #### Linting and Formatting
 
-*   `pnpm lint`: Lint the entire codebase with OXLint.
-*   `pnpm lint:fix`: Lint and automatically fix issues with OXLint.
+*   `bun lint`: Lint the entire codebase with OXLint.
+*   `bun lint:fix`: Lint and automatically fix issues with OXLint.
 
 #### Other
 
-*   `pnpm type-check`: Run TypeScript type checking for the entire project.
-*   `pnpm format`: Format the entire codebase with Biome.
+*   `bun type-check`: Run TypeScript type checking for the entire project.
+*   `bun format`: Format the entire codebase with Biome.
 
-## 🎯 CORE PRINCIPLES & MISSION
+## Core Principles
 
 ```yaml
 CORE_STANDARDS:
   mantra: "Think → Research → Plan → Decompose with atomic tasks → Implement → Validate"
   mission: "Research first, think systematically, implement flawlessly with cognitive intelligence"
   research_driven: "Multi-source validation for all complex implementations"
-  research_excellence: "Context7 → Tavily → Archon Knowledge base → Sequential Thinking chain"
   vibecoder_integration: "Constitutional excellence with one-shot resolution philosophy"
   core_principle: "Simple systems that work over complex systems that don't"
   preserve_context: "Maintain complete context across all agent and thinking transitions"
   incorporate_always: "Incorporate what we already have, avoid creating new files, enhance the existing structure"
-  pattern_optimization: "Learn from successful workflows and apply cognitive improvements"
   always_audit: "Never assume the error is fixed, always audit and validate"
-```
-
-## 🧠 META-COGNITIVE & CONSTITUTIONAL FRAMEWORK
-
-```yaml
-COGNITIVE_ARCHITECTURE:
+  COGNITIVE_ARCHITECTURE:
   meta_cognition: "Think about the thinking process, identify biases, apply constitutional analysis"
   multi_perspective_analysis:
     - "user_perspective: Understanding user intent and constraints"
@@ -108,222 +78,106 @@ COGNITIVE_ARCHITECTURE:
     - "business_perspective: Cost, timeline, and stakeholder impact analysis"
     - "security_perspective: Risk assessment and compliance requirements"
     - "quality_perspective: Standards enforcement and continuous improvement"
-
-VIBECODER_ENGINEERING_PRINCIPLES:
-  kiss_principle:
-    definition: "Keep It Simple, Stupid - Simplicity is key"
-    core_rules:
-      [
-        "Choose simplest solution that meets requirements",
-        "Prefer readable code over clever optimizations",
-        "Reduce cognitive load",
-        "Does this solve the core problem without unnecessary complexity?",
-        "Use clear, descriptive naming and avoid Over-Engineering",
-      ]
-
-  yagni_principle:
-    definition: "You Aren't Gonna Need It - Don't implement until needed"
-    core_rules:
-      [
-        "Build only what current requirements specify",
-        "Resist 'just in case' features",
-        "Refactor when requirements emerge",
-        "Focus on current user stories",
-        "Remove unused code immediately",
-      ]
-
-  chain_of_thought:
-    definition: "Explicit step-by-step reasoning for accuracy"
-    core_rules:
-      [
-        "Break problems into sequential steps",
-        "Verbalize reasoning process",
-        "Show intermediate decisions",
-        "Question assumptions",
-        "Validate against requirements",
-        "Each step follows logically from previous steps",
-        "Final solution traced back to requirements",
-      ]
-
-CONSTITUTIONAL_PRINCIPLES:
-  principle_based_design: "Align with software engineering excellence"
-  constraint_satisfaction: "Balance competing requirements optimally"
-  risk_assessment: "Multi-dimensional risk analysis"
-  quality_gates: "Define success criteria and validation checkpoints"
-  relentless_persistence: "Continue until absolute completion"
-  complete_execution: "Execute entire workflow without interruption"
-  right_tool_selection: "Understand full context before implementation"
 ```
 
-## 🔧 MCP TOOL INTEGRATION
+### Development Philosophy
 
-### **⚡ Mandatory Sequence**
+**Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
 
-1. **🧠 sequential-thinking** (FIRST STEP)
-2. **📋 archon** (task management)
-3. **🔍 serena** (codebase - NEVER native)
+**KISS Principle**: Choose the simplest solution that meets requirements. Prioritize readable code over clever optimizations. Reduce cognitive load and avoid over-engineering.
 
-### **🎯 Contextual MCPs**
+**YAGNI Principle**: Build only what requirements specify. Resist "just in case" features. Refactor when requirements emerge. Focus on current user stories and remove unused, redundant and dead code immediately.
 
-- **💻 desktop-commander** - Files/system
-- **📚 context7** - Documentation
-- **🌐 tavily** - Real-time info
-- **🎨 shadcn-ui** - UI components
+**Chain of Thought**: Break problems into sequential steps and atomic subtasks. Verbalize reasoning process. Show intermediate decisions. Validate against requirements.
 
-### **🤖 AI Agent Technologies**
+### A.P.T.E Methodology
 
-**NEW: AI Agent Integration Stack**
+**Analyze** → Comprehensive requirements analysis
+**Plan** → Strategic implementation planning
+**Think** → Metacognition and multi-perspective evaluation
+**Execute** → Systematic implementation with quality gates
 
-- **CopilotKit**: Conversational AI UI and infrastructure
-- **AG-UI Protocol**: Real-time agent communication protocol
-- **ottomator-agents**: Backend agent logic with RAG capabilities
-- **Supabase Integration**: Secure database access with RLS enforcement
+**Quality Standard**: ≥9.5/10 rating on all deliveries
 
-**Key Integration Points**:
+## Project Architecture
 
-- AI chat interface in React/Next.js frontend
-- Python-based agent backend with natural language processing
-- Real-time communication via AG-UI Protocol
-- Secure data access respecting Row Level Security
+### Technology Stack
 
-## Mandatory Development Steps
+**Core Technologies**: Bun + Hono + React 19 + TypeScript + Supabase
+**Frontend**: TanStack Router v5 + TanStack Query v5 + Vite + Tailwind CSS
+**Backend**: tRPC v11 + Hono (Edge-first) + Supabase Functions
+**Database**: Supabase (Postgres + Auth + Realtime + RLS)
 
-### 1. **Research & Decomposition** 🧠
+**Package Manager**: Bun (3-5x faster than npm/pnpm)
+**Build System**: Turborepo + Vite (sub-second startup)
+**Testing**: Vitest + Playwright + OXLint (50-100x faster linting)
 
-**🔧 MCP**: sequential-thinking → archon → serena
+### Healthcare Compliance
 
-- **MANDATORY**: Start with `sequential-thinking` to analyze requirements
-- Use `archon` to check project context and create/update tasks
-- Use `serena` to understand current codebase
-- Break down feature into smaller components
-- Identify complexities, dependencies, and constraints
-- **Complexity ≥7 or Stuck >3x**: consult official docs and best practices with context7 → tavily
+**LGPD Compliance**: Brazilian data protection law enforcement
+- Patient data encryption at rest and in transit
+- Explicit consent management and audit trails
+- Data residency requirements (Brazil-only)
+- Right to erasure and data portability
 
-**Proactive Update Protocol (MANDATORY FINAL STEP)**
+**WCAG 2.1 AA+**: Accessibility compliance mandatory
+- Screen reader compatibility
+- Keyboard navigation support
+- Color contrast requirements
 
-- At the conclusion of each request, review whether updates are needed:
-- Mistakes: `docs/mistakes/[error-category].md`
-- Features: `docs/features/[feature-name].md`
-- APIs: `docs/apis/`
-- Database schema: `docs/database-schema/`
-- Application flows: `docs/architecture/aesthetic-platform-flows.md`
-- System architecture: `docs/architecture/AGENTS.md`
-- Follow the Research Execution Framework below
+### Performance Targets
 
-```yaml
-RESEARCH_EXECUTION_FRAMEWORK:
-  vibecoder_integration: "Think & Analyze - ALWAYS before any action - NO EXCEPTIONS"
-  primary_tool: "sequential-thinking + native think tool (MANDATORY FIRST STEP)"
-  purpose: "Comprehensive requirement analysis with context understanding and complexity assessment"
-  intelligence: "Dynamic complexity scoring (L1-L10) with automatic cognitive and agent routing"
-  thinking_activation: "Auto-scaled based on complexity detection and domain triggers"
-  routing: "Intelligent MCP selection based on complexity, domain, and requirements analysis"
-  agent_coordination: "Sequential thinking primary, potential apex_researcher_agent for complex analysis"
-  process:
-    - "Understand requirements completely with constitutional analysis"
-    - "Identify constraints and dependencies with multi-perspective evaluation"
-    - "Define strategic approach with agent coordination planning"
-    - "Break down into manageable components and atomic subtasks with quality gate definition"
-  deliverables: "Complete requirements with execution plan, cognitive activation, and agent assignments"
-  purpose: "Knowledge acquisition and validation for informed implementation with multi-source validation"
-  intelligence: "Multi-source research orchestration with authority validation and cross-referencing"
-  routing: "Context7 → Tavily → Archon chain for complexity, with sequential thinking integration"
-  quality_gate: "100% requirement clarity with multi-source validation and constitutional compliance"
-```
+**Core Web Vitals**:
+- LCP ≤ 2.0s (Largest Contentful Paint)
+- INP ≤ 150ms (Interaction to Next Paint)
+- CLS ≤ 0.05 (Cumulative Layout Shift)
 
-### 2. **Planning & Task List** 📋
+**API Performance**:
+- TTFB ≤ 150ms (Time to First Byte)
+- Database queries ≤ 100ms
+- Edge function responses ≤ 200ms
 
-**🔧 MCP**: archon + serena
+**Build Performance**:
+- Development startup < 2s
+- Production build < 3min
+- Bundle analysis < 10s
 
-- **MANDATORY**: Use `archon` for task management (create_task, update_task, list_tasks)
-- Create detailed task list using archon's system
-- Create atomic subtasks for each feature component, with detailed descriptions of what needs to be done
-- Assign tasks to appropriate agents (apex-dev, apex-ui-ux-designer, apex-researcher)
-- Define success criteria and quality gates for each task
-- Break down features: atomic tasks on archon, subtasks on native todos with detailed descriptions what needs to be done
-- Use `serena` to analyze codebase complexity and dependencies
-- Mark tasks as in_progress when starting, completed when finished
-- **Follow:** [`docs/AGENTS.md`](../docs/AGENTS.md)
-- Follow the Planning & Design Framework below
+## Development Standards
 
-```yaml
-phase_3_planning_design:
-  vibecoder_integration: "Context Engineering & Planning with ONE-SHOT template methodology"
-  contextual_loading: "UI/UX agent loaded automatically when design tasks detected"
-  purpose: "Solution architecture and strategic implementation planning with systematic design approach"
-  intelligence: "Risk assessment with comprehensive mitigation strategies and architectural validation"
-  routing: "Sequential Thinking integration with architectural pattern analysis and validation"
-  one_shot_template:
-    role: "[Specific: Frontend Developer | Backend Engineer | Full-Stack | UI/UX Designer]"
-    context: "#workspace + #codebase search with serena mcp + [archon knowledge base + relevant files]"
-    task: "[Specific, measurable, actionable requirement]"
-    constraints: "[Technical limitations, performance requirements]"
-    output: "[Code | Documentation | Architecture | Analysis | Design]"
-    success_criteria: "[Measurable outcomes, quality thresholds]"
-  task_planning:
-    structure:
-      - "Break down into atomic executable tasks with agent assignment"
-      - "Assign optimal tools and agents for each task with specialization matching"
-      - "Define validation checkpoints with quality gates"
-      - "Create dependency mapping with agent coordination requirements"
-      - "Set measurable success criteria with progressive quality standards"
-  deliverables: "Detailed execution plan with quality gates, agent coordination, and architectural specifications"
-  quality_gate: "Architecture review ≥9.5/10 with scalability validation and security compliance"
-```
+### Code Quality
 
-### 3. **TEST DRIVEN Implementation**
+**TypeScript Strict Mode**: Maximum type safety enforcement
+- Strict null checks and type inference
+- No implicit any types allowed
+- Comprehensive interface definitions
 
-- **MANDATORY**: Follow the process as described in `docs/AGENTS.md`
-- **TEST DRIVEN Cycle for each feature component:**
-  1. **RED**: Write failing test first (describe expected behavior)
-  2. **GREEN**: Write minimal code to pass the test
-  3. **REFACTOR**: Improve code while keeping tests green
-  4. **REPEAT**: Continue cycle for next requirement
-  - 🔥 **CRITICAL**: Business logic, AI agents, APIs, financial operations
-  - ⚡ **IMPORTANT**: Complex hooks, utilities, data validation, integrations
-  - ✅ **USEFUL**: UI components with logic, helpers
+**Code Organization**: Clean architecture principles
+- Feature-based folder structure
+- Separation of concerns maintained
+- Consistent naming conventions
 
-- **Implementation Guidelines:**
-  - **🔧 MCP**: serena → desktop-commander (+shadcn-ui for UI)
-  - Use `serena` for codebase analysis (get_symbols_overview → find_symbol)
-  - Use `desktop-commander` for file operations (chunked 25-30 lines max)
-  - Follow established code patterns, naming conventions, and project standards
-  - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
-  - **Complexity ≥7**: Add context7 → tavily for deep understanding and best practices
-  - Use `think` tool every 5 steps for alignment with requirements
-  - Implement comprehensive error handling following project patterns
-  - **Test Categories**: Success cases, error cases, edge cases, business logic
-  - **Documentation First**: Check existing patterns with `serena`
+**Import Standards**: Optimized module management
+- Absolute imports for internal modules
+- Proper barrel exports organization
+- Tree-shaking optimization support
 
-### 4. **Test Execution & Validation** ✅
+### Testing Requirements
 
-- Use `desktop-commander` to run all test commands
-- Run `bun run lint:fix` for linter issues (or `bun run oxlint:fix`)
-- Run `bun run format && bun run lint:fix && bun run type-check` to format code
-- **Correction Loop**: If tests fail:
-  - Use `serena` to analyze failing code and dependencies
-  - Use `tavily` and `context7` for oficial docs and best practices to fix the errors
-  - **Stuck >3x**: Use sequential-thinking to update strategy with new insights from research
-  - Repeat until ALL tests pass
-- Use `archon` to document test results and coverage metrics
+**Test Coverage**: Minimum 90% for critical components
+- Unit tests for business logic
+- Integration tests for API endpoints
+- E2E tests for user workflows
 
-### 5. **Code Quality Check** 🔍
+**Testing Tools**: Bun-optimized testing stack
+- Vitest for unit/integration tests (3-5x faster)
+- Playwright for E2E automation (3 essential browsers)
+- OXLint for code quality validation (50-100x faster)
 
-**🔧 MCP**: desktop-commander + serena
-
-- Use `desktop-commander` to run quality check commands
-- Use `serena` to analyze code quality and identify issues
-- Always look for big picture, and Fix all errors or warnings before finalizing tasks.
-- Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later
-- Ensure code adheres to project coding standards and best practices
-- Only proceed when all tests green and coverage meets requirements
-- **Correction Loop**: If issues found:
-  - Use `serena` to understand code structure and dependencies
-  - Fix issues using `desktop-commander` for file operations
-  - **Stuck >3x**: Use sequential-thinking to reassess and try alternatives
-  - Use `context7` and `tavily` for oficial docs and best practices to fix the errors
-  - Return to **Step 4** and repeat cycle
-  - Only Continue when ALL quality checks pass
+**Performance Testing**: Healthcare-optimized benchmarks
+- Performance metrics API testing with timeout optimization
+- Memory usage validation and optimization tracking
+- Edge function performance verification
+- Healthcare compliance performance standards
 
 ```yaml
 validation:
@@ -341,11 +195,116 @@ validation:
   verification_rule: "Never assume changes complete without explicit verification"
 ```
 
-## Important Notes
+### Security Standards
 
-- **🚫 Never skip steps** unless explicitly told by the user
-- **📖 Always consult `/docs`** when uncertain, using `desktop-commander` for file operations
-- **✅ Complete each step** before moving to the next, using appropriate MCPs for each phase
-- **🔄 Iterate** until all quality checks pass
-- **📝 Document everything** for future reference using `archon` knowledge base
-- **🚨 If stuck >3 attempts**: Use sequential-thinking to reassess and try alternatives using official docs and best practices with context7 → tavily
+**Input Validation**: Mandatory sanitization
+- Zod schema validation for all inputs
+- SQL injection prevention via RLS
+- XSS protection with proper escaping
+
+**Authentication & Authorization**: Multi-layer security
+- JWT with refresh token rotation
+- Role-based access control (RBAC)
+- Session management with audit trails
+
+**Data Protection**: Healthcare compliance enforcement
+- Encryption at rest and in transit
+- Patient data access logging
+- Automated compliance violation detection
+
+## Tooling & Performance
+
+### Build System
+
+**Package Manager**: Bun (primary performance optimization)
+- 3-5x faster than npm/pnpm for installs
+- Native TypeScript support
+- Optimized dependency resolution
+
+**Build Tools**: Production-optimized stack
+- Turborepo: Intelligent caching for 3-5x faster builds
+- Vite: Sub-second dev server startup, HMR <100ms
+- OXLint: 50-100x faster linting with 570+ rules
+
+### Quality Assurance
+
+**Code Quality**: Automated validation pipeline
+- OXLint for React 19 + TypeScript 5.9+ compliance
+- Biome for consistent formatting
+- Comprehensive type checking
+
+**Testing**: Multi-layer testing strategy
+- Vitest for unit/integration tests (Bun-optimized)
+- Playwright for E2E automation (3 essential browsers)
+- Coverage reporting with ≥90% threshold
+
+**Security**: Healthcare-focused security scanning
+- Automated vulnerability scanning
+- LGPD compliance validation
+- Medical device security assessment
+
+### Performance Monitoring
+
+**Bundle Analysis**: Automated optimization
+- Real-time bundle size tracking
+- Tree-shaking validation
+- Code splitting optimization
+
+**Runtime Performance**: Continuous monitoring
+- Core Web Vitals tracking
+- API response time monitoring
+- Database query performance analysis
+
+## Project Restrictions
+
+### MUST Requirements
+
+- **Type Safety**: Strict TypeScript mode, no any types
+- **Test Coverage**: Minimum 90% for critical components
+- **Security**: Zero vulnerabilities in production builds
+- **Performance**: All SLOs must be met or exceeded
+
+### MUST NOT Violations
+
+- **Data Protection**: Never expose patient data without encryption
+- **Authentication**: Never bypass security controls
+- **Compliance**: Never deploy without healthcare validation
+- **Performance**: Never degrade Core Web Vitals below targets
+- **Documentation**: Never commit without proper documentation
+
+### Quality Gates
+
+All code changes must pass:
+1. **Automated Tests**: 100% pass rate
+2. **Type Checking**: Zero TypeScript errors
+3. **Security Scan**: Zero high-severity vulnerabilities
+4. **Performance**: No regression in Core Web Vitals
+
+## References
+
+### Architecture Documentation
+
+- **[Tech Stack](docs/architecture/tech-stack.md)** - Complete technology decisions and rationale
+- **[Frontend Architecture](docs/architecture/frontend-architecture.md)** - Frontend structure and patterns
+- **[Quality Control](.claude/commands/quality-control.md)** - Bun-optimized quality gates and compliance
+- **[Frontend Testing](.claude/commands/frontend-testing.md)** - Multi-agent testing coordination
+
+### Development Standards
+
+- **[Coding Standards](docs/rules/coding-standards.md)** - Code organization and conventions
+- **[Documentation Standards](docs/agents/documentation.md)** - Diátaxis forms and templates
+- **[Rule Architecture](docs/agents/rules.md)** - Rule creation and validation frameworks
+
+---
+
+## Constitutional Authority
+
+This document serves as the ultimate authority for NeonPro project development. All architectural decisions, technology choices, and development practices must align with these constitutional principles.
+
+**Validation Requirements**: Any deviation from these standards requires explicit project leadership approval and documentation of the technical rationale.
+
+**Review Process**: This constitution is reviewed quarterly or when major architectural changes are implemented. All changes must follow the established rule creation process.
+
+**Enforcement**: Automated quality gates ensure compliance with these standards. Violations must be addressed before production deployment.
+
+---
