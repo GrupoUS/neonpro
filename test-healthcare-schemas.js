@@ -4,42 +4,45 @@ const require = createRequire(import.meta.url);
 
 // Try to import healthcare schemas
 try {
-  const healthcareSchemas = require('./apps/api/src/schemas/healthcare-validation-schemas.ts');
-  console.log('✅ Healthcare schemas imported successfully');
-  
+  // @ts-ignore - Dynamic require for TypeScript files
+  const healthcareSchemas = /** @type {{PatientSchema?: any, AppointmentSchema?: any, validateCPF?: Function}} */ (require('./apps/api/src/schemas/healthcare-validation-schemas.ts'));
+  console.warn('✅ Healthcare schemas imported successfully');
+
   // Test patient schema
-  if (healthcareSchemas.PatientSchema) {
-    console.log('✅ Patient schema is available');
+  if (healthcareSchemas && healthcareSchemas.PatientSchema) {
+    console.warn('✅ Patient schema is available');
   }
-  
+
   // Test appointment schema
-  if (healthcareSchemas.AppointmentSchema) {
-    console.log('✅ Appointment schema is available');
+  if (healthcareSchemas && healthcareSchemas.AppointmentSchema) {
+    console.warn('✅ Appointment schema is available');
   }
-  
+
   // Test CPF validation function
-  if (healthcareSchemas.validateCPF) {
-    const validCPF = healthcareSchemas.validateCPF('12345678909');
-    console.log('✅ CPF validation function works:', validCPF);
+  if (healthcareSchemas && typeof healthcareSchemas.validateCPF === 'function') {
+    const validCPF = /** @type {any} */ (healthcareSchemas.validateCPF('12345678909'));
+    console.warn('✅ CPF validation function works:', validCPF);
   }
-  
+
 } catch (_error) {
-  console.error('❌ Healthcare schemas test failed:', _error.message);
+  console.error('❌ Healthcare schemas test failed:', String(_error));
 }
 
 // Try to import tRPC contracts
 try {
+  // @ts-ignore - Dynamic require for TypeScript files
   require('./apps/api/src/trpc/contracts/patient.ts');
-  console.log('✅ Patient tRPC contracts imported successfully');
+  console.warn('✅ Patient tRPC contracts imported successfully');
 } catch (_error) {
-  console.error('❌ Patient tRPC contracts import failed:', _error.message);
+  console.error('❌ Patient tRPC contracts import failed:', String(_error));
 }
 
 try {
+  // @ts-ignore - Dynamic require for TypeScript files
   require('./apps/api/src/trpc/contracts/appointment.ts');
-  console.log('✅ Appointment tRPC contracts imported successfully');
+  console.warn('✅ Appointment tRPC contracts imported successfully');
 } catch (_error) {
-  console.error('❌ Appointment tRPC contracts import failed:', _error.message);
+  console.error('❌ Appointment tRPC contracts import failed:', String(_error));
 }
 
-console.log('🎉 Healthcare schemas test completed!');
+console.warn('🎉 Healthcare schemas test completed!');

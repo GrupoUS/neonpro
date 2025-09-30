@@ -1,50 +1,50 @@
 /**
- * Emergency Alert System Component
+ * Aesthetic Consultation Coordination System Component
  * 
- * Brazilian healthcare compliant emergency management system for aesthetic clinics.
- * This critical safety component provides real-time emergency alert creation, management,
- * and response coordination for medical emergencies, facility incidents, and safety threats.
- * Designed to comply with Brazilian healthcare regulations (ANVISA RDC 15/2012, CFM standards).
+ * Brazilian aesthetic clinic focused consultation management system.
+ * This professional component provides real-time consultation alerts, treatment coordination,
+ * and client service coordination for aesthetic consultations, treatment planning, and
+ * beauty enhancement procedures. Designed to comply with Brazilian aesthetic clinic standards.
  * 
  * @component
  * @example
- * // Usage in emergency response dashboard
- * <EmergencyAlertSystem 
- *   patients={patientList}
- *   activeAlerts={emergencyAlerts}
+ * // Usage in aesthetic consultation coordination dashboard
+ * <AestheticConsultationSystem 
+ *   clients={clientList}
+ *   activeAlerts={consultationAlerts}
  *   onCreateAlert={handleCreateAlert}
  *   onUpdateAlert={handleUpdateAlert}
  *   onResolveAlert={handleResolveAlert}
- *   onContactEmergency={handleEmergencyContact}
- *   healthcareContext={clinicContext}
+ *   onContactSupport={handleSupportContact}
+ *   aestheticContext={clinicContext}
  * />
  * 
  * @remarks
- * - WCAG 2.1 AA+ compliant accessibility for emergency situations
- * - Brazilian healthcare emergency protocols compliance
- * - Real-time alert notifications and response tracking
+ * - WCAG 2.1 AA+ compliant accessibility for professional aesthetic settings
+ * - Brazilian aesthetic clinic compliance
+ * - Real-time consultation notifications and coordination tracking
  * - Multi-language support (Portuguese primary)
- * - Integration with emergency services (SAMU, Corpo de Bombeiros)
- * - Audit trail for regulatory compliance and incident investigation
- * - Mobile-responsive with 44px+ touch targets for emergency use
+ * - Integration with professional aesthetic support services
+ * - Audit trail for regulatory compliance and client service quality
+ * - Mobile-responsive with 44px+ touch targets for professional use
  * 
  * @security
- * - Role-based access control for emergency response
- * - Encrypted communication for sensitive emergency data
- * - Audit logging for compliance with Brazilian healthcare regulations
- * - LGPD compliance for patient data during emergencies
+ * - Role-based access control for consultation coordination
+ * - Encrypted communication for sensitive client data
+ * - Audit logging for compliance with Brazilian aesthetic clinic regulations
+ * - LGPD compliance for client data during consultations
  * 
  * @accessibility
- * - High contrast mode for emergency visibility
- * - Screen reader optimized for stress situations
+ * - High contrast mode for professional visibility
+ * - Screen reader optimized for professional settings
  * - Keyboard navigation support
- * - Large touch targets for emergency use
+ * - Large touch targets for professional use
  * 
  * @compliance
- * ANVISA RDC 15/2012 - Emergency response in healthcare facilities
- * CFM Resolution 2.227/2018 - Medical emergency protocols
- * LGPD Lei 13.709/2018 - Data protection during emergencies
- * NR 32 - Workplace safety in healthcare services
+ * ANVISA RDC 15/2012 - Aesthetic clinic safety and quality
+ * CFM Resolution 2.227/2018 - Professional aesthetic standards
+ * LGPD Lei 13.709/2018 - Data protection for aesthetic consultations
+ * NR 32 - Workplace safety in aesthetic services
  */
 
 import * as React from 'react'
@@ -68,18 +68,18 @@ import type {
 } from '@/types/healthcare'
 
 /**
- * Props interface for EmergencyAlertSystem component
+ * Props interface for AestheticConsultationSystem component
  * 
- * Defines the configuration and callback handlers for the emergency alert system.
- * All props are designed with fail-safety in mind for critical emergency scenarios.
+ * Defines the configuration and callback handlers for the aesthetic consultation system.
+ * All props are designed with professional aesthetics in mind for consultation scenarios.
  * 
- * @interface EmergencyAlertSystemProps
+ * @interface AestheticConsultationSystemProps
  * 
- * @property {PatientData[]} patients - Array of patient data for emergency patient selection
- *   Must include at minimum: id, name, medicalRecordNumber, and emergencyContact
- * @property {EmergencyAlert[]} activeAlerts - Currently active emergency alerts requiring response
- *   Sorted by severity and timestamp for priority handling
- * @property {Function} onCreateAlert - Callback for creating new emergency alerts
+ * @property {PatientData[]} patients - Array of client data for consultation client selection
+ *   Must include at minimum: id, name, clientNumber, and contact information
+ * @property {EmergencyAlert[]} activeAlerts - Currently active consultation alerts requiring attention
+ *   Sorted by priority and timestamp for professional handling
+ * @property {Function} onCreateAlert - Callback for creating new consultation alerts
  *   @param {Omit<EmergencyAlert, 'id' | 'createdAt' | 'updatedAt'>} alert - Alert data without system-generated fields
  *   @returns {void}
  * @property {Function} onUpdateAlert - Callback for updating alert status and response
@@ -89,124 +89,124 @@ import type {
  * @property {Function} onResolveAlert - Callback for marking alerts as resolved
  *   @param {string} alertId - Unique identifier of the resolved alert
  *   @returns {void}
- * @property {Function} onContactEmergency - Callback for contacting external emergency services
- *   @param {'ambulance' | 'fire' | 'police'} type - Type of emergency service to contact
+ * @property {Function} onContactSupport - Callback for contacting external support services
+ *   @param {'specialist' | 'technical' | 'clinic'} type - Type of support service to contact
  *   @returns {void}
  * @property {string} [className] - Optional CSS classes for component styling
- *   Should not override emergency-critical styles
+ *   Should not override professional-critical styles
  * @property {HealthcareContext} [healthcareContext] - Clinic/facility context for location-specific protocols
- *   Used for determining response procedures and emergency contacts
+ *   Used for determining response procedures and support contacts
  * 
  * @example
- * const props: EmergencyAlertSystemProps = {
- *   patients: clinicPatientList,
- *   activeAlerts: currentEmergencyAlerts,
- *   onCreateAlert: (alert) => emergencyService.create(alert),
- *   onUpdateAlert: (id, response) => emergencyService.update(id, response),
- *   onResolveAlert: (id) => emergencyService.resolve(id),
- *   onContactEmergency: (type) => emergencyService.contactExternal(type),
+ * const props: AestheticConsultationSystemProps = {
+ *   patients: clinicClientList,
+ *   activeAlerts: currentConsultationAlerts,
+ *   onCreateAlert: (alert) => consultationService.create(alert),
+ *   onUpdateAlert: (id, response) => consultationService.update(id, response),
+ *   onResolveAlert: (id) => consultationService.resolve(id),
+ *   onContactSupport: (type) => consultationService.contactExternal(type),
  *   healthcareContext: clinicContext
  * };
  */
-interface EmergencyAlertSystemProps {
+interface AestheticConsultationSystemProps {
   patients: PatientData[]
   activeAlerts: EmergencyAlert[]
   onCreateAlert: (alert: Omit<EmergencyAlert, 'id' | 'createdAt' | 'updatedAt'>) => void
   onUpdateAlert: (alertId: string, response: EmergencyResponse) => void
   onResolveAlert: (alertId: string) => void
-  onContactEmergency: (type: 'ambulance' | 'fire' | 'police') => void
+  onContactSupport: (type: 'specialist' | 'technical' | 'clinic') => void
   className?: string
   healthcareContext?: HealthcareContext
 }
 
 /**
- * State interface for emergency alert form
+ * State interface for consultation alert form
  * 
- * Manages the form state for creating new emergency alerts with comprehensive
- * risk assessment and response planning fields.
+ * Manages the form state for creating new consultation alerts with comprehensive
+ * priority assessment and coordination planning fields.
  * 
- * @interface AlertFormState
+ * @interface ConsultationFormState
  * 
- * @property {EmergencyAlert['type']} type - Type of emergency/alert
+ * @property {EmergencyAlert['type']} type - Type of consultation/alert
  *   Options: 'medical', 'facility', 'security', 'environmental', 'other'
- * @property {EmergencyAlert['severity']} severity - Alert severity level
+ * @property {EmergencyAlert['severity']} severity - Alert priority level
  *   Options: 'low', 'medium', 'high', 'critical' - determines response priority
- * @property {string} [patientId] - Optional patient ID if patient-specific emergency
- *   Required for medical emergencies involving specific patients
- * @property {string} description - Detailed description of the emergency situation
- *   Must include nature of emergency and immediate risks
- * @property {string} location - Specific location within the facility
- *   Format: "Floor/Room/Area" for emergency responder navigation
- * @property {boolean} requiresMedicalAttention - Whether medical response is needed
- *   Triggers automatic medical team notification
- * @property {boolean} requiresEvacuation - Whether area evacuation is required
- *   Triggers evacuation protocols and area lockdown procedures
- * @property {string[]} affectedAreas - Areas affected by the emergency
- *   Used for determining evacuation zones and access restrictions
- * @property {string} estimatedDuration - Estimated duration of emergency situation
- *   Format: "X horas/minutos" for resource planning and response coordination
+ * @property {string} [patientId] - Optional client ID if client-specific consultation
+ *   Required for aesthetic consultations involving specific clients
+ * @property {string} description - Detailed description of the consultation situation
+ *   Must include nature of consultation and immediate needs
+ * @property {string} location - Specific location within the clinic
+ *   Format: "Floor/Room/Area" for staff navigation
+ * @property {boolean} requiresSpecialistAttention - Whether specialist response is needed
+ *   Triggers automatic specialist team notification
+ * @property {boolean} requiresPrivateRoom - Whether private consultation room is required
+ *   Triggers room allocation and privacy protocols
+ * @property {string[]} affectedAreas - Areas affected by the consultation
+ *   Used for determining coordination zones and access management
+ * @property {string} estimatedDuration - Estimated duration of consultation
+ *   Format: "X horas/minutos" for resource planning and coordination
  * @property {string} additionalNotes - Additional context and special instructions
  *   Include any special considerations or accessibility requirements
  * 
  * @example
- * const formState: AlertFormState = {
+ * const formState: ConsultationFormState = {
  *   type: 'medical',
- *   severity: 'critical',
- *   patientId: 'patient-123',
- *   description: 'Paciente em parada cardiorrespiratória',
+ *   severity: 'high',
+ *   patientId: 'client-123',
+ *   description: 'Cliente necessita avaliação para tratamento de preenchimento facial',
  *   location: '2º Andar/Sala 205',
- *   requiresMedicalAttention: true,
- *   requiresEvacuation: false,
+ *   requiresSpecialistAttention: true,
+ *   requiresPrivateRoom: false,
  *   affectedAreas: ['Sala 205', 'Corredor 2'],
  *   estimatedDuration: '30 minutos',
- *   additionalNotes: 'Paciente com histórico cardíaco'
+ *   additionalNotes: 'Cliente com histórico de alergias'
  * };
  */
-interface AlertFormState {
+interface ConsultationFormState {
   type: EmergencyAlert['type']
   severity: EmergencyAlert['severity']
   patientId?: string
   description: string
   location: string
-  requiresMedicalAttention: boolean
-  requiresEvacuation: boolean
+  requiresSpecialistAttention: boolean
+  requiresPrivateRoom: boolean
   affectedAreas: string[]
   estimatedDuration: string
   additionalNotes: string
 }
 
 /**
- * Emergency contact information interface
+ * Professional support contact information interface
  * 
- * Defines the structure for emergency response team contacts and external
- * emergency service providers for rapid response coordination.
+ * Defines the structure for consultation support team contacts and external
+ * professional support services for rapid coordination.
  * 
- * @interface EmergencyContact
+ * @interface ProfessionalContact
  * 
- * @property {string} name - Full name of the emergency contact person
+ * @property {string} name - Full name of the professional contact person
  *   Format: "Dr./Sr./Sra. [Nome Completo]" as per Brazilian conventions
  * @property {string} role - Professional role or title of the contact
- *   Medical: "Médico Plantonista", "Enfermeiro Chefe"
- *   Administrative: "Coordenador de Emergência", "Segurança Patrimonial"
- *   External: "SAMU", "Corpo de Bombeiros", "Polícia Militar"
+ *   Medical: "Dermatologista", "Cirurgião Plástico"
+ *   Administrative: "Coordenador de Consulta", "Suporte Técnico"
+ *   External: "Consultor Especialista", "Serviço Técnico"
  * @property {string} phone - Contact phone number with country code
  *   Format: "+55 XX XXXXX-XXXX" for Brazilian numbers
- *   Must be validated for emergency response capability
+ *   Must be validated for professional response capability
  * @property {boolean} available - Current availability status
- *   Real-time status for emergency response planning
- * @property {boolean} isOnCall - Whether contact is currently on emergency duty
- *   Determines if contact should receive automatic emergency notifications
+ *   Real-time status for consultation coordination
+ * @property {boolean} isOnCall - Whether contact is currently on professional duty
+ *   Determines if contact should receive automatic consultation notifications
  * 
  * @example
- * const contact: EmergencyContact = {
+ * const contact: ProfessionalContact = {
  *   name: "Dr. Carlos Silva",
- *   role: "Médico Plantonista",
+ *   role: "Dermatologista Responsável",
  *   phone: "+55 11 98765-4321",
  *   available: true,
  *   isOnCall: true
  * };
  */
-interface EmergencyContact {
+interface ProfessionalContact {
   name: string
   role: string
   phone: string
@@ -214,10 +214,10 @@ interface EmergencyContact {
   isOnCall: boolean
 }
 
-const emergencyContacts: EmergencyContact[] = [
+const professionalContacts: ProfessionalContact[] = [
   {
     name: 'Dr. Carlos Silva',
-    role: 'Médico Responsável',
+    role: 'Dermatologista Responsável',
     phone: '(11) 99999-1111',
     available: true,
     isOnCall: true
@@ -238,73 +238,73 @@ const emergencyContacts: EmergencyContact[] = [
   },
   {
     name: 'Enfermeira Maria Oliveira',
-    role: 'Enfermagem Chefe',
+    role: 'Coordenadora de Enfermagem',
     phone: '(11) 99999-4444',
     available: true,
     isOnCall: true
   }
 ]
 
-const emergencyProtocols = {
+const consultationProtocols = {
   medical: {
-    title: 'Emergência Médica',
-    description: 'Reação adversiva, desmaio, dor intensa, ou outra condição médica urgente',
+    title: 'Consulta Estética',
+    description: 'Reação adversiva, dúvida de tratamento, ou necessidade de avaliação profissional',
     steps: [
-      'Avaliar a segurança do local',
-      'Verificar sinais vitais do paciente',
-      'Contactar médico responsável imediatamente',
-      'Preparar kit de primeiros socorros',
+      'Avaliar a necessidade da consulta',
+      'Verificar histórico do cliente',
+      'Contactar especialista responsável',
+      'Preparar material de consulta',
       'Documentar todos os procedimentos realizados'
     ],
-    color: 'red'
+    color: 'blue'
   },
   facility: {
-    title: 'Emergência da Instalação',
-    description: 'Incêndio, vazamento, falta de energia, ou outro problema estrutural',
+    title: 'Coordenação da Instalação',
+    description: 'Manutenção de equipamento, necessidade de sala, ou suporte técnico',
     steps: [
-      'Acionar alarme de emergência',
-      'Iniciar evacuação orderly',
-      'Verificar contagem de pacientes',
-      'Contactar serviços de emergência',
-      'Aguardar autoridades competentes'
+      'Verificar disponibilidade de recursos',
+      'Coordenar equipe de suporte',
+      'Verificar agendamento de clientes',
+      'Contactar suporte técnico se necessário',
+      'Garantir qualidade do serviço'
     ],
-    color: 'orange'
+    color: 'green'
   },
   security: {
-    title: 'Emergência de Segurança',
-    description: 'Ameaça, intrusão, ou outra situação de risco à segurança',
+    title: 'Suporte ao Cliente',
+    description: 'Dúvida sobre tratamento, insatisfação, ou necessidade de atendimento',
     steps: [
-      'Manter a calma e não confrontar',
-      'Contactar segurança ou polícia',
-      'Trancar portas se seguro para fazê-lo',
-      'Mover pacientes para área segura',
-      'Aguardar instruções das autoridades'
+      'Manter profissionalismo e empatia',
+      'Contactar coordenador do cliente',
+      'Oferecer ambiente privado para atendimento',
+      'Documentar preocupações do cliente',
+      'Aguardar instruções da coordenação'
     ],
     color: 'purple'
   }
 }
 
-export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
+export const AestheticConsultationSystem: React.FC<AestheticConsultationSystemProps> = ({
   patients,
   activeAlerts,
   onCreateAlert,
   onUpdateAlert,
   onResolveAlert,
-  onContactEmergency,
+  onContactSupport,
   className,
-  healthcareContext = 'emergency'
+  healthcareContext = 'aesthetic'
 }) => {
   const [showAlertForm, setShowAlertForm] = React.useState(false)
   const [selectedAlert, setSelectedAlert] = React.useState<EmergencyAlert | null>(null)
-  const [isEvacuationMode, setIsEvacuationMode] = React.useState(false)
+  const [isPrivateMode, setIsPrivateMode] = React.useState(false)
   
-  const [alertForm, setAlertForm] = React.useState<AlertFormState>({
+  const [alertForm, setAlertForm] = React.useState<ConsultationFormState>({
     type: 'medical',
-    severity: 'high',
+    severity: 'medium',
     description: '',
     location: 'Clínica Principal',
-    requiresMedicalAttention: false,
-    requiresEvacuation: false,
+    requiresSpecialistAttention: false,
+    requiresPrivateRoom: false,
     affectedAreas: [],
     estimatedDuration: '',
     additionalNotes: ''
@@ -319,7 +319,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
 
   const handleCreateAlert = () => {
     if (!alertForm.description.trim()) {
-      alert('É necessário fornecer uma descrição da emergência.')
+      alert('É necessário fornecer uma descrição da consulta.')
       return
     }
 
@@ -332,56 +332,56 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
     }
 
     onCreateAlert(newAlert)
-    addToResponseLog(`Novo alerta criado: ${alertForm.type} - ${alertForm.severity}`)
+    addToResponseLog(`Nova solicitação criada: ${alertForm.type} - ${alertForm.severity}`)
     
     // Reset form
     setAlertForm({
       type: 'medical',
-      severity: 'high',
+      severity: 'medium',
       description: '',
       location: 'Clínica Principal',
-      requiresMedicalAttention: false,
-      requiresEvacuation: false,
+      requiresSpecialistAttention: false,
+      requiresPrivateRoom: false,
       affectedAreas: [],
       estimatedDuration: '',
       additionalNotes: ''
     })
     setShowAlertForm(false)
 
-    // Auto-enable evacuation mode if required
-    if (alertForm.requiresEvacuation) {
-      setIsEvacuationMode(true)
-      addToResponseLog('Modo de evacuação ativado automaticamente')
+    // Auto-enable private mode if required
+    if (alertForm.requiresPrivateRoom) {
+      setIsPrivateMode(true)
+      addToResponseLog('Modo de atendimento privado ativado automaticamente')
     }
   }
 
   const handleUpdateAlert = (response: EmergencyResponse) => {
     if (selectedAlert) {
       onUpdateAlert(selectedAlert.id, response)
-      addToResponseLog(`Resposta registrada para alerta ${selectedAlert.id}: ${response.action}`)
+      addToResponseLog(`Resposta registrada para solicitação ${selectedAlert.id}: ${response.action}`)
     }
   }
 
   const handleResolveAlert = () => {
     if (selectedAlert) {
       onResolveAlert(selectedAlert.id)
-      addToResponseLog(`Alerta ${selectedAlert.id} resolvido`)
+      addToResponseLog(`Solicitação ${selectedAlert.id} resolvida`)
       setSelectedAlert(null)
       
-      // Disable evacuation mode if no more evacuation alerts
-      const hasEvacuationAlerts = activeAlerts.some(alert => 
+      // Disable private mode if no more private consultations
+      const hasPrivateAlerts = activeAlerts.some(alert => 
         alert.id !== selectedAlert.id && alert.requiresEvacuation
       )
-      if (!hasEvacuationAlerts) {
-        setIsEvacuationMode(false)
-        addToResponseLog('Modo de evacuação desativado')
+      if (!hasPrivateAlerts) {
+        setIsPrivateMode(false)
+        addToResponseLog('Modo de atendimento privado desativado')
       }
     }
   }
 
-  const handleContactEmergency = (type: 'ambulance' | 'fire' | 'police') => {
-    onContactEmergency(type)
-    addToResponseLog(`Serviço de emergência contatado: ${type}`)
+  const handleContactSupport = (type: 'specialist' | 'technical' | 'clinic') => {
+    onContactSupport(type)
+    addToResponseLog(`Serviço de suporte contatado: ${type}`)
   }
 
   const handleAreaToggle = (area: string) => {
@@ -398,7 +398,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
     'Sala de Espera',
     'Consultório 1',
     'Consultório 2',
-    'Sala de Procedimentos',
+    'Sala de Tratamento',
     'Recuperação',
     'Estoque',
     'Banheiros'
@@ -411,47 +411,47 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
 
   const getSeverityColor = (severity: EmergencyAlert['severity']) => {
     switch (severity) {
-      case 'critical': return 'bg-red-900 text-white font-bold border-2 border-red-700 shadow-lg'
-      case 'high': return 'bg-red-700 text-white font-semibold border-2 border-red-600 shadow-md'
-      case 'medium': return 'bg-orange-700 text-white font-medium border-2 border-orange-600'
-      case 'low': return 'bg-yellow-600 text-gray-900 font-medium border-2 border-yellow-500'
+      case 'critical': return 'bg-blue-900 text-white font-bold border-2 border-blue-700 shadow-lg'
+      case 'high': return 'bg-blue-700 text-white font-semibold border-2 border-blue-600 shadow-md'
+      case 'medium': return 'bg-green-700 text-white font-medium border-2 border-green-600'
+      case 'low': return 'bg-gray-600 text-white font-medium border-2 border-gray-500'
       default: return 'bg-gray-700 text-white font-medium'
     }
   }
 
   const getTypeColor = (type: EmergencyAlert['type']) => {
     switch (type) {
-      case 'medical': return 'border-red-700 bg-red-100 hover:bg-red-200'
-      case 'facility': return 'border-orange-700 bg-orange-100 hover:bg-orange-200'
-      case 'security': return 'border-purple-700 bg-purple-100 hover:bg-purple-200'
-      default: return 'border-gray-700 bg-gray-100 hover:bg-gray-200'
+      case 'medical': return 'border-blue-700 bg-blue-50 hover:bg-blue-100'
+      case 'facility': return 'border-green-700 bg-green-50 hover:bg-green-100'
+      case 'security': return 'border-purple-700 bg-purple-50 hover:bg-purple-100'
+      default: return 'border-gray-700 bg-gray-50 hover:bg-gray-100'
     }
   }
 
   return (
     <div className={cn('space-y-6', className)}>
-      {/* Evacuation Mode Banner - Enhanced WCAG 2.1 AA+ Compliance */}
-      {isEvacuationMode && (
-        <Alert variant="evacuation" className="border-4 animate-pulse">
+      {/* Private Mode Banner - Enhanced WCAG 2.1 AA+ Compliance */}
+      {isPrivateMode && (
+        <Alert variant="private" className="border-4">
           <AlertDescription className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-2xl" aria-hidden="true">🚨</span>
+              <span className="text-2xl" aria-hidden="true">🔒</span>
               <div>
                 <span className="font-bold text-xl block">
-                  MODO DE EVACUAÇÃO ATIVO
+                  MODO DE ATENDIMENTO PRIVADO ATIVO
                 </span>
                 <span className="font-medium">
-                  Siga as instruções da equipe e mantenha a calma.
+                  Privacidade garantida para o cliente.
                 </span>
               </div>
             </div>
             <AccessibilityButton
               variant="outline"
               size="lg"
-              onClick={() => setIsEvacuationMode(false)}
-              healthcareContext="emergency"
-              aria-label="Desativar modo de evacuação"
-              className="border-2 border-orange-800 text-orange-900 bg-orange-50 hover:bg-orange-100 font-semibold"
+              onClick={() => setIsPrivateMode(false)}
+              healthcareContext="aesthetic"
+              aria-label="Desativar modo de atendimento privado"
+              className="border-2 border-blue-800 text-blue-900 bg-blue-50 hover:bg-blue-100 font-semibold"
             >
               Desativar
             </AccessibilityButton>
@@ -463,9 +463,9 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
       <Card>
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
-            🚨 Sistema de Emergência
-            <Badge variant={activeAlerts.length > 0 ? 'destructive' : 'secondary'}>
-              {activeAlerts.length} Alertas Ativos
+            💎 Sistema de Coordenação Estética
+            <Badge variant={activeAlerts.length > 0 ? 'default' : 'secondary'}>
+              {activeAlerts.length} Solicitações Ativas
             </Badge>
           </CardTitle>
         </CardHeader>
@@ -473,31 +473,31 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
           <div className="flex gap-3">
             <AccessibilityButton
               onClick={() => setShowAlertForm(true)}
-              healthcareContext="emergency"
+              healthcareContext="aesthetic"
               className="flex-1"
             >
-              Novo Alerta de Emergência
+              Nova Solicitação de Consulta
             </AccessibilityButton>
             <AccessibilityButton
               variant="outline"
-              onClick={() => handleContactEmergency('ambulance')}
-              healthcareContext="emergency"
+              onClick={() => handleContactSupport('specialist')}
+              healthcareContext="aesthetic"
             >
-              🚑 Ambulância
+              👨‍⚕️ Especialista
             </AccessibilityButton>
             <AccessibilityButton
               variant="outline"
-              onClick={() => handleContactEmergency('fire')}
-              healthcareContext="emergency"
+              onClick={() => handleContactSupport('technical')}
+              healthcareContext="aesthetic"
             >
-              🚒 Bombeiros
+              🔧 Suporte Técnico
             </AccessibilityButton>
             <AccessibilityButton
               variant="outline"
-              onClick={() => handleContactEmergency('police')}
-              healthcareContext="emergency"
+              onClick={() => handleContactSupport('clinic')}
+              healthcareContext="aesthetic"
             >
-              🚔 Polícia
+              🏥 Clínica
             </AccessibilityButton>
           </div>
         </CardContent>
@@ -506,7 +506,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
       {/* Active Alerts */}
       {activeAlerts.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Alertas Ativos</h3>
+          <h3 className="text-lg font-semibold">Solicitações Ativas</h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {sortedAlerts.map(alert => (
               <Card
@@ -514,12 +514,12 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                 className={cn(
                   'cursor-pointer transition-all hover:shadow-lg hover:scale-[1.02] min-h-[120px]',
                   getTypeColor(alert.type),
-                  alert.severity === 'critical' && 'ring-2 ring-red-500 animate-pulse'
+                  alert.severity === 'critical' && 'ring-2 ring-blue-500'
                 )}
                 onClick={() => setSelectedAlert(alert)}
                 role="button"
                 tabIndex={0}
-                aria-label={`Ver detalhes do alerta ${emergencyProtocols[alert.type].title} - ${alert.severity}`}
+                aria-label={`Ver detalhes da solicitação ${consultationProtocols[alert.type].title} - ${alert.severity}`}
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault()
@@ -532,16 +532,16 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                     <div>
                       <CardTitle className="text-base flex items-center gap-2 font-bold">
                         <span className="text-xl" aria-hidden="true">
-                          {alert.type === 'medical' && '🏥'}
+                          {alert.type === 'medical' && '💎'}
                           {alert.type === 'facility' && '🏢'}
-                          {alert.type === 'security' && '🛡️'}
+                          {alert.type === 'security' && '👤'}
                         </span>
                         <span className="sr-only">
-                          {alert.type === 'medical' && 'Emergência médica: '}
-                          {alert.type === 'facility' && 'Emergência de instalação: '}
-                          {alert.type === 'security' && 'Emergência de segurança: '}
+                          {alert.type === 'medical' && 'Consulta estética: '}
+                          {alert.type === 'facility' && 'Coordenação de instalação: '}
+                          {alert.type === 'security' && 'Suporte ao cliente: '}
                         </span>
-                        {emergencyProtocols[alert.type].title}
+                        {consultationProtocols[alert.type].title}
                       </CardTitle>
                       <p className="text-sm font-medium mt-1">
                         {format(parseISO(alert.createdAt), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
@@ -550,15 +550,15 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                     <div className="flex gap-2 flex-wrap">
                       <Badge 
                         className={getSeverityColor(alert.severity)}
-                        aria-label={`Severidade: ${alert.severity}`}
+                        aria-label={`Prioridade: ${alert.severity}`}
                       >
-                        {alert.severity === 'critical' && 'Crítico'}
-                        {alert.severity === 'high' && 'Alto'}
-                        {alert.severity === 'medium' && 'Médio'}
-                        {alert.severity === 'low' && 'Baixo'}
+                        {alert.severity === 'critical' && 'VIP'}
+                        {alert.severity === 'high' && 'Alta'}
+                        {alert.severity === 'medium' && 'Média'}
+                        {alert.severity === 'low' && 'Baixa'}
                       </Badge>
                       <Badge 
-                        variant={alert.status === 'active' ? 'destructive' : 'secondary'}
+                        variant={alert.status === 'active' ? 'default' : 'secondary'}
                         aria-label={`Status: ${alert.status}`}
                       >
                         {alert.status === 'active' ? 'Ativo' : 'Resolvido'}
@@ -576,7 +576,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                     </div>
                     {alert.patientId && (
                       <div className="flex items-center gap-1">
-                        <span className="font-semibold">Paciente:</span>
+                        <span className="font-semibold">Cliente:</span>
                         <span>{
                           patients.find(p => p.personalInfo.cpf === alert.patientId)?.personalInfo.fullName || 'Desconhecido'
                         }</span>
@@ -584,13 +584,13 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                     )}
                     {alert.affectedAreas.length > 0 && (
                       <div className="flex items-center gap-1">
-                        <span className="font-semibold">Áreas Afetadas:</span>
+                        <span className="font-semibold">Áreas Envolvidas:</span>
                         <span>{alert.affectedAreas.join(', ')}</span>
                       </div>
                     )}
                     {alert.requiresEvacuation && (
-                      <div className="text-red-900 font-bold bg-red-100 p-2 rounded border border-red-300">
-                        🚨 Requer evacuação imediata
+                      <div className="text-blue-900 font-bold bg-blue-100 p-2 rounded border border-blue-300">
+                        🔒 Requer sala privada
                       </div>
                     )}
                   </div>
@@ -626,7 +626,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
             <div className="flex justify-between items-start">
               <div>
                 <CardTitle className="text-lg">
-                  Detalhes do Alerta - {selectedAlert.id}
+                  Detalhes da Solicitação - {selectedAlert.id}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Criado em: {format(parseISO(selectedAlert.createdAt), 'dd/MM/yyyy HH:mm:ss', { locale: ptBR })}
@@ -641,11 +641,11 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                   Fechar
                 </Button>
                 <Button
-                  variant="destructive"
+                  variant="default"
                   size="sm"
                   onClick={handleResolveAlert}
                 >
-                  Resolver Alerta
+                  Resolver Solicitação
                 </Button>
               </div>
             </div>
@@ -654,22 +654,22 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
             {/* Alert Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <h4 className="font-medium mb-2">Informações do Alerta</h4>
+                <h4 className="font-medium mb-2">Informações da Solicitação</h4>
                 <div className="space-y-2 text-sm">
-                  <div><strong>Tipo:</strong> {emergencyProtocols[selectedAlert.type].title}</div>
-                  <div><strong>Severidade:</strong> 
+                  <div><strong>Tipo:</strong> {consultationProtocols[selectedAlert.type].title}</div>
+                  <div><strong>Prioridade:</strong> 
                     <Badge className={`ml-2 ${getSeverityColor(selectedAlert.severity)}`}>
                       {selectedAlert.severity}
                     </Badge>
                   </div>
                   <div><strong>Status:</strong> 
-                    <Badge variant={selectedAlert.status === 'active' ? 'destructive' : 'secondary'} className="ml-2">
+                    <Badge variant={selectedAlert.status === 'active' ? 'default' : 'secondary'} className="ml-2">
                       {selectedAlert.status}
                     </Badge>
                   </div>
                   <div><strong>Local:</strong> {selectedAlert.location}</div>
                   {selectedAlert.patientId && (
-                    <div><strong>Paciente:</strong> {
+                    <div><strong>Cliente:</strong> {
                       patients.find(p => p.personalInfo.cpf === selectedAlert.patientId)?.personalInfo.fullName || 'Desconhecido'
                     }</div>
                   )}
@@ -679,7 +679,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
               <div>
                 <h4 className="font-medium mb-2">Protocolo Recomendado</h4>
                 <div className="space-y-1 text-sm">
-                  {emergencyProtocols[selectedAlert.type].steps.map((step, index) => (
+                  {consultationProtocols[selectedAlert.type].steps.map((step, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <span className="text-blue-600 font-medium">{index + 1}.</span>
                       <span>{step}</span>
@@ -695,11 +695,11 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
               <p className="text-sm">{selectedAlert.description}</p>
             </div>
 
-            {/* Emergency Contacts */}
+            {/* Professional Contacts */}
             <div>
-              <h4 className="font-medium mb-2">Contatos de Emergência</h4>
+              <h4 className="font-medium mb-2">Contatos Profissionais</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {emergencyContacts.map(contact => (
+                {professionalContacts.map(contact => (
                   <Card key={contact.phone} className="p-3">
                     <div className="flex justify-between items-center">
                       <div>
@@ -760,14 +760,14 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                   variant="outline"
                   size="sm"
                   onClick={() => handleUpdateAlert({
-                    action: 'Médico notificado',
+                    action: 'Especialista notificado',
                     responderName: 'Sistema',
                     responderRole: 'Automático',
                     timestamp: new Date().toISOString(),
-                    notes: 'Médico responsável contatado via telefone'
+                    notes: 'Especialista responsável contatado via telefone'
                   })}
                 >
-                  👨‍⚕️ Notificar Médico
+                  👨‍⚕️ Notificar Especialista
                 </Button>
                 <Button
                   variant="outline"
@@ -777,7 +777,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                     responderName: 'Sistema',
                     responderRole: 'Automático',
                     timestamp: new Date().toISOString(),
-                    notes: 'Equipe de emergência reunida no local'
+                    notes: 'Equipe profissional reunida no local'
                   })}
                 >
                   👥 Reunir Equipe
@@ -785,17 +785,17 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleContactEmergency('ambulance')}
+                  onClick={() => handleContactSupport('specialist')}
                 >
-                  🚑 Chamar Ambulância
+                  👨‍⚕️ Chamar Especialista
                 </Button>
                 {selectedAlert.requiresEvacuation && (
                   <Button
-                    variant="destructive"
+                    variant="default"
                     size="sm"
-                    onClick={() => setIsEvacuationMode(true)}
+                    onClick={() => setIsPrivateMode(true)}
                   >
-                    🚨 Iniciar Evacuação
+                    🔒 Iniciar Atendimento Privado
                   </Button>
                 )}
               </div>
@@ -809,7 +809,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle className="text-lg">Criar Novo Alerta</CardTitle>
+              <CardTitle className="text-lg">Criar Nova Solicitação</CardTitle>
               <Button
                 variant="outline"
                 size="sm"
@@ -821,9 +821,9 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <HealthcareFormGroup label="Tipo de Emergência" healthcareContext="emergency">
+              <HealthcareFormGroup label="Tipo de Solicitação" healthcareContext="aesthetic">
                 <div className="space-y-2">
-                  {Object.entries(emergencyProtocols).map(([type, protocol]) => (
+                  {Object.entries(consultationProtocols).map(([type, protocol]) => (
                     <Card
                       key={type}
                       className={cn(
@@ -841,7 +841,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                 </div>
               </HealthcareFormGroup>
 
-              <HealthcareFormGroup label="Severidade" healthcareContext="emergency">
+              <HealthcareFormGroup label="Prioridade" healthcareContext="aesthetic">
                 <div className="space-y-2">
                   {(['critical', 'high', 'medium', 'low'] as const).map(severity => (
                     <Card
@@ -855,7 +855,9 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                       <CardContent className="p-3">
                         <div className="flex items-center gap-2">
                           <div className={cn('w-3 h-3 rounded-full', getSeverityColor(severity))} />
-                          <span className="font-medium capitalize">{severity}</span>
+                          <span className="font-medium capitalize">
+                            {severity === 'critical' ? 'VIP' : severity === 'high' ? 'Alta' : severity === 'medium' ? 'Média' : 'Baixa'}
+                          </span>
                         </div>
                       </CardContent>
                     </Card>
@@ -865,11 +867,11 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
             </div>
 
             <AccessibilityInput
-              label="Descrição da Emergência"
-              placeholder="Descreva detalhadamente o que está acontecendo..."
+              label="Descrição da Consulta"
+              placeholder="Descreva detalhadamente a necessidade da consulta..."
               value={alertForm.description}
               onChange={(e) => setAlertForm(prev => ({ ...prev, description: e.target.value }))}
-              healthcareContext="emergency"
+              healthcareContext="aesthetic"
               multiline
               rows={3}
               required
@@ -878,10 +880,10 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <AccessibilityInput
                 label="Local"
-                placeholder="Onde está ocorrendo a emergência?"
+                placeholder="Onde será realizada a consulta?"
                 value={alertForm.location}
                 onChange={(e) => setAlertForm(prev => ({ ...prev, location: e.target.value }))}
-                healthcareContext="emergency"
+                healthcareContext="aesthetic"
               />
 
               <AccessibilityInput
@@ -889,11 +891,11 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                 placeholder="Ex: 30 minutos, 1 hora, etc."
                 value={alertForm.estimatedDuration}
                 onChange={(e) => setAlertForm(prev => ({ ...prev, estimatedDuration: e.target.value }))}
-                healthcareContext="emergency"
+                healthcareContext="aesthetic"
               />
             </div>
 
-            <HealthcareFormGroup label="Áreas Afetadas" healthcareContext="emergency">
+            <HealthcareFormGroup label="Áreas Envolvidas" healthcareContext="aesthetic">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {availableAreas.map(area => (
                   <Button
@@ -913,29 +915,29 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={alertForm.requiresMedicalAttention}
-                    onChange={(e) => setAlertForm(prev => ({ ...prev, requiresMedicalAttention: e.target.checked }))}
+                    checked={alertForm.requiresSpecialistAttention}
+                    onChange={(e) => setAlertForm(prev => ({ ...prev, requiresSpecialistAttention: e.target.checked }))}
                   />
-                  <span className="text-sm">Requer atenção médica imediata</span>
+                  <span className="text-sm">Requer atenção especialista imediata</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
-                    checked={alertForm.requiresEvacuation}
-                    onChange={(e) => setAlertForm(prev => ({ ...prev, requiresEvacuation: e.target.checked }))}
+                    checked={alertForm.requiresPrivateRoom}
+                    onChange={(e) => setAlertForm(prev => ({ ...prev, requiresPrivateRoom: e.target.checked }))}
                   />
-                  <span className="text-sm">Requer evacuação do local</span>
+                  <span className="text-sm">Requer sala privada</span>
                 </label>
               </div>
 
-              {alertForm.requiresMedicalAttention && (
+              {alertForm.requiresSpecialistAttention && (
                 <AccessibilityInput
-                  label="Paciente Envolvido (opcional)"
-                  placeholder="Selecione o paciente se aplicável"
-                  healthcareContext="emergency"
+                  label="Cliente Envolvido (opcional)"
+                  placeholder="Selecione o cliente se aplicável"
+                  healthcareContext="aesthetic"
                   select
                 >
-                  <option value="">Selecione um paciente</option>
+                  <option value="">Selecione um cliente</option>
                   {patients.map(patient => (
                     <option key={patient.personalInfo.cpf} value={patient.personalInfo.cpf}>
                       {patient.personalInfo.fullName}
@@ -950,7 +952,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
               placeholder="Informações complementares importantes..."
               value={alertForm.additionalNotes}
               onChange={(e) => setAlertForm(prev => ({ ...prev, additionalNotes: e.target.value }))}
-              healthcareContext="emergency"
+              healthcareContext="aesthetic"
               multiline
               rows={3}
             />
@@ -958,10 +960,10 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
             <div className="flex gap-3">
               <AccessibilityButton
                 onClick={handleCreateAlert}
-                healthcareContext="emergency"
+                healthcareContext="aesthetic"
                 className="flex-1"
               >
-                Criar Alerta de Emergência
+                Criar Solicitação de Consulta
               </AccessibilityButton>
               <Button
                 variant="outline"
@@ -977,7 +979,7 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
       {/* System Response Log */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">Log do Sistema de Emergência</CardTitle>
+          <CardTitle className="text-base">Log do Sistema Estético</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-1 max-h-40 overflow-y-auto text-sm font-mono">
@@ -999,4 +1001,4 @@ export const EmergencyAlertSystem: React.FC<EmergencyAlertSystemProps> = ({
   )
 }
 
-EmergencyAlertSystem.displayName = 'EmergencyAlertSystem'
+AestheticConsultationSystem.displayName = 'AestheticConsultationSystem'

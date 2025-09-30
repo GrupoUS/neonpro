@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "build": "npx tsc --skipLibCheck src/index.ts src/feature-flags.ts --outDir dist --declaration",
+    "build": "node ../../scripts/tsc-wrapper-hybrid.ts --project tsconfig.json",
     "test": "vitest",
     "clean": "rm -rf dist"
   },

@@ -1,9 +1,5 @@
 {
   "mcpServers": {
-    "shadcn": {
-      "command": "bunx",
-      "args": ["shadcn@latest", "mcp"]
-    },
     "context7": {
       "command": "bunx",
       "args": ["@upstash/context7-mcp@latest"],
@@ -26,14 +22,6 @@
         "SEQUENTIAL_THINKING_THOUGHTS_TO_KEEP": "10",
         "SEQUENTIAL_THINKING_TIMEOUT": "15000"
       }
-    },
-    "supabase": {
-      "command": "bunx",
-      "args": [
-        "@supabase/mcp-server-supabase@latest",
-        "--access-token",
-        "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
-      ]
     }
   }
 }

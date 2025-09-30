@@ -16,6 +16,7 @@
     "noResolve": false,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "paths": {
       "@/*": ["./src/*"],
@@ -41,10 +42,10 @@
     { "path": "../../packages/config" }
   ],
   "include": [
-    "src/**/*", 
-    "vite-env.d.ts", 
-    "src/**/*.ts", 
-    "src/**/*.tsx", 
+    "src/**/*",
+    "vite-env.d.ts",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "src/**/*.d.ts",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
@@ -58,6 +59,7 @@
     "node_modules",
     "dist",
     "**/dist/**/*",
-    "**/*.js"
+    "**/*.js",
+    "src/scripts"
   ]
 }

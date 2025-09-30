@@ -1,7 +1,7 @@
 // Test file to validate Zod v4.1.11 functionality
 import { z } from 'zod';
 
-console.log('Testing Zod functionality...');
+console.warn('Testing Zod functionality...');
 
 // Test basic schema functionality
 const testSchema = z.object({
@@ -18,7 +18,7 @@ const testData = {
 
 try {
   const result = testSchema.parse(testData);
-  console.log('✅ Basic Zod schema validation works:', result);
+  console.warn('✅ Basic Zod schema validation works:', result);
 } catch (_error) {
   console.error('❌ Zod schema validation failed:', _error);
 }
@@ -28,7 +28,7 @@ const cpfSchema = z.string().regex(/^\d{11}$/, 'CPF must have 11 digits');
 
 try {
   const cpfResult = cpfSchema.parse('12345678909');
-  console.log('✅ CPF validation works:', cpfResult);
+  console.warn('✅ CPF validation works:', cpfResult);
 } catch (_error) {
   console.error('❌ CPF validation failed:', _error);
 }
@@ -38,9 +38,9 @@ const transformSchema = z.string().transform(val => val.toUpperCase());
 
 try {
   const transformResult = transformSchema.parse('hello world');
-  console.log('✅ Transform functionality works:', transformResult);
+  console.warn('✅ Transform functionality works:', transformResult);
 } catch (_error) {
   console.error('❌ Transform functionality failed:', _error);
 }
 
-console.log('🎉 Zod functionality test completed successfully!');
+console.warn('🎉 Zod functionality test completed successfully!');

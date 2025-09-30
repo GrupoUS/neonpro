@@ -426,26 +426,26 @@ export function createScreenReaderDescription(
 ): string {
   const descriptions = {
     patient: (data: Record<string, unknown>) =>
-      `Paciente: ${data.name || 'Nome não informado'}. ` +
-      `Idade: ${data.age || 'Não informada'}. ` +
-      `Prontuário: ${data.medicalRecord || 'Não informado'}.`,
+      `Paciente: ${data['name'] || 'Nome não informado'}. ` +
+      `Idade: ${data['age'] || 'Não informada'}. ` +
+      `Prontuário: ${data['medicalRecord'] || 'Não informado'}.`,
 
     appointment: (data: Record<string, unknown>) =>
-      `Consulta: ${data.date || 'Data não informada'} às ${
-        data.time || 'Horário não informado'
+      `Consulta: ${data['date'] || 'Data não informada'} às ${
+        data['time'] || 'Horário não informado'
       }. ` +
-      `Especialidade: ${data.specialty || 'Não informada'}. ` +
-      `Status: ${data.status || 'Não informado'}.`,
+      `Especialidade: ${data['specialty'] || 'Não informada'}. ` +
+      `Status: ${data['status'] || 'Não informado'}.`,
 
     medication: (data: Record<string, unknown>) =>
-      `Medicamento: ${data.name || 'Nome não informado'}. ` +
-      `Dosagem: ${data.dosage || 'Não informada'}. ` +
-      `Frequência: ${data.frequency || 'Não informada'}.`,
+      `Medicamento: ${data['name'] || 'Nome não informado'}. ` +
+      `Dosagem: ${data['dosage'] || 'Não informada'}. ` +
+      `Frequência: ${data['frequency'] || 'Não informada'}.`,
 
     result: (data: Record<string, unknown>) =>
-      `Exame: ${data.type || 'Tipo não informado'}. ` +
-      `Data: ${data.date || 'Data não informada'}. ` +
-      `Status: ${data.status || 'Status não informado'}.`,
+      `Exame: ${data['type'] || 'Tipo não informado'}. ` +
+      `Data: ${data['date'] || 'Data não informada'}. ` +
+      `Status: ${data['status'] || 'Status não informado'}.`,
   }
 
   return descriptions[type](data)

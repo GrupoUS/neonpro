@@ -296,22 +296,22 @@ export function validateEmergencyData(data: Record<string, unknown>): {
   const errors: string[] = []
 
   // Emergency contact validation
-  if (!data.emergencyContact) {
+  if (!data['emergencyContact']) {
     errors.push('Contato de emergência é obrigatório')
   }
 
   // Critical allergy validation
-  if (data.allergies && Array.isArray(data.allergies)) {
-    const criticalAllergies = data.allergies.filter(
-      (a: Record<string, unknown>) => a.severity === 'grave',
+  if (data['allergies'] && Array.isArray(data['allergies'])) {
+    const criticalAllergies = data['allergies'].filter(
+      (a: Record<string, unknown>) => a['severity'] === 'grave',
     )
-    if (criticalAllergies.length > 0 && !data.allergyAlert) {
+    if (criticalAllergies.length > 0 && !data['allergyAlert']) {
       errors.push('Alerta de alergia grave deve estar ativo')
     }
   }
 
   // Medical record completeness
-  if (!data.medicalRecordNumber) {
+  if (!data['medicalRecordNumber']) {
     errors.push('Número do prontuário é obrigatório')
   }
 
