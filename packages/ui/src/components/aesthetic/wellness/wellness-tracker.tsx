@@ -8,7 +8,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '../../ui/avatar'
 import { 
   Heart, 
   TrendingUp, 
-  Calendar, 
+  Calendar,
+  Circle, 
   Droplet, 
   Moon, 
   Activity,

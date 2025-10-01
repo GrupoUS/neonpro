@@ -1,6 +1,6 @@
 // Common API service for aesthetic clinic
 export class ApiService {
-  private static baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api'
+  private static baseUrl = process.env['NEXT_PUBLIC_API_URL'] ?? '/api'
   
   // Generic request method
   static async request<T>(
@@ -12,15 +12,20 @@ export class ApiService {
     const defaultHeaders = {
       'Content-Type': 'application/json',
     }
-    
-    const config = {
-      ...options,
-      headers: {
-        ...defaultHeaders,
-        ...options.headers,
-      },
+
+    const mergedHeaders = new Headers(defaultHeaders)
+
+    if (options.headers) {
+      new Headers(options.headers).forEach((value, key) => {
+        mergedHeaders.set(key, value)
+      })
     }
-    
+
+    const config: RequestInit = {
+      ...options,
+      headers: mergedHeaders,
+    }
+
     try {
       const response = await fetch(url, config)
       
@@ -30,8 +35,7 @@ export class ApiService {
       
       return await response.json()
     } catch (error) {
-      // Security: Removed console statement from production code
-      throw error
+      throw new Error(`API request failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
   
@@ -45,10 +49,10 @@ export class ApiService {
     endpoint: string, 
     data?: D
   ): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
-    })
+    const body = data !== undefined ? JSON.stringify(data) : undefined
+    const init: RequestInit = body !== undefined ? { method: 'POST', body } : { method: 'POST' }
+
+    return this.request<T>(endpoint, init)
   }
   
   // PUT request with proper typing
@@ -56,10 +60,10 @@ export class ApiService {
     endpoint: string, 
     data?: D
   ): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : undefined,
-    })
+    const body = data !== undefined ? JSON.stringify(data) : undefined
+    const init: RequestInit = body !== undefined ? { method: 'PUT', body } : { method: 'PUT' }
+
+    return this.request<T>(endpoint, init)
   }
   
   // PATCH request with proper typing
@@ -67,10 +71,10 @@ export class ApiService {
     endpoint: string, 
     data?: D
   ): Promise<T> {
-    return this.request<T>(endpoint, {
-      method: 'PATCH',
-      body: data ? JSON.stringify(data) : undefined,
-    })
+    const body = data !== undefined ? JSON.stringify(data) : undefined
+    const init: RequestInit = body !== undefined ? { method: 'PATCH', body } : { method: 'PATCH' }
+
+    return this.request<T>(endpoint, init)
   }
   
   // DELETE request

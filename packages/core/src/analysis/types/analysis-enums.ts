@@ -470,7 +470,7 @@ export function getBrazilianContextForHealthcareDomain(domain: BrazilianHealthDo
     [BrazilianHealthDomain.PLASTICA]: {
       portugueseTerms: ['cirurgião plástico', 'cirurgia plástica', 'reconstrução', 'implante'],
       clinicalSpecialties: ['cirurgia plástica geral', 'cirurgia reparadora', 'microcirurgia'],
-      commonProcedures ['prótese', 'implante', 'lipoaspiração', 'abdominoplastia'],
+      commonProcedures: ['prótese', 'implante', 'lipoaspiração', 'abdominoplastia'],
       regulatoryBodies: ['CFM', 'ANVISA', 'COREN', 'CFO']
     },
     [BrazilianHealthDomain.ODONTOLOGIA]: {

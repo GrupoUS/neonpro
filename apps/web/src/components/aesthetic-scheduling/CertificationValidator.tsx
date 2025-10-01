@@ -7,9 +7,8 @@
 import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
-  Input, Progress
+  Input
 } from '@/components/ui/index.js'
-import { Label } from '@/components/ui/label.js'
 // Switch component not available in current UI kit - using simple toggle instead
 import { trpc } from '@/lib/trpc.js'
 import {
@@ -193,7 +192,7 @@ export function CertificationValidator(
       })
       localStorage.setItem(STORAGE_KEYS.VALIDATIONS, JSON.stringify(cachedValidations.slice(-50))) // Keep last 50
       
-      queryClient.invalidateQueries({ queryKey: ['professionals'] })
+      void queryClient.invalidateQueries({ queryKey: ['professionals'] })
     },
     onError: (error: unknown) => {
       onError?.(error as Error)
@@ -281,8 +280,8 @@ export function CertificationValidator(
     }
   }
 
-  const selectedProfessionalData = professionalsData?.find((p: ProfessionalDetails) => p.id === selectedProfessional)
-  const selectedProceduresData = proceduresData?.filter((p: AestheticProcedure) => selectedProcedures.includes(p.id)) || []
+  const _selectedProfessionalData = professionalsData?.find((p: ProfessionalDetails) => p.id === selectedProfessional)
+  const _selectedProceduresData = proceduresData?.filter((p: AestheticProcedure) => selectedProcedures.includes(p.id)) || []
   const isValidating = validateMutation.isPending
 
   const getExperienceLevelColor = (level: string) => {

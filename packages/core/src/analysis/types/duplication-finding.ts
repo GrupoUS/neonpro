@@ -733,7 +733,7 @@ export function isDuplicationCluster(obj: any): obj is DuplicationCluster {
     typeof obj.id === 'string' &&
     Array.isArray(obj.files) &&
     typeof obj.lines === 'number' &&
-    typeof obj.tokens === 'number &&
+    typeof obj.tokens === 'number' &&
     typeof obj.similarity === 'number' &&
     typeof obj.firstOccurrence === 'object' &&
     Array.isArray(obj.occurrences);

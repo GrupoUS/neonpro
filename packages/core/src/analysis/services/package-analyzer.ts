@@ -411,7 +411,7 @@ export function calculatePackagePriority(analysis: PackageAnalysis): number {
   const dependencyIssues = analysis.dependencies.metrics.circularDependencies + analysis.dependencies.metrics.vulnerableDependencies + analysis.dependencies.metrics.outdatedDependencies;
   const qualityIssues = analysis.metrics.quality.testCoverage < QualityThresholds.MIN_TEST_COVERAGE ? 1 : 0;
   
-  let priority = Math.max(healthScore, 100 - (healthScore / 2)) * 2); // Higher score = higher priority
+  let priority = Math.max(healthScore, 100 - (healthScore / 2)) * 2; // Higher score = higher priority
   
   // Adjust for healthcare compliance issues
   if (analysis.healthcareCompliance.overallScore < 70) {

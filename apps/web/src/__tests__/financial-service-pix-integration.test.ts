@@ -225,8 +225,6 @@ describe('FinancialService - PIX Integration', () => {
         }
       ]
 
-      const summary = FinancialService.getMonthlySummary([mockInvoice], transactions, currentMonth)
-      
       const pixTransactions = transactions.filter(tx => tx.payment_method === PaymentMethod.PIX)
       const completedPixTransactions = pixTransactions.filter(tx => tx.status === 'completed')
       
@@ -282,9 +280,6 @@ describe('FinancialService - PIX Integration', () => {
     })
 
     it('should handle Brazilian business days for due dates', () => {
-      const friday = new Date('2024-01-05') // Friday
-      const mondayDue = new Date('2024-01-08') // Monday (skip weekend)
-      
       const invoice = FinancialService.generateInvoice('p1', 'c1', 'Test', 100, 3)
       const dueDate = new Date(invoice.due_date)
       

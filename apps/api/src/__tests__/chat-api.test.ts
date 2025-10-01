@@ -4,7 +4,7 @@
  * Coverage: Multi-agent coordination, LGPD compliance, real-time features
  */
 
-import { describe, it, expect, beforeEach, beforeAll, afterAll } from 'vitest'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { appRouter } from '../trpc/router'
 import { createTestContext, createMockSupabaseClient } from './utils/test-helpers'
 
@@ -14,10 +14,13 @@ const mockUserId = '123e4567-e89b-12d3-a456-426614174001'
 const mockPatientId = '123e4567-e89b-12d3-a456-426614174002'
 
 describe('Chat API', () => {
-  let mockSupabase: any
+  let mockSupabase: ReturnType<typeof createMockSupabaseClient>
+  let caller: ReturnType<typeof appRouter.createCaller>
 
   beforeEach(() => {
     mockSupabase = createMockSupabaseClient()
+    const context = createTestContext({ supabase: mockSupabase })
+    caller = appRouter.createCaller(context)
   })
 
   describe('createSession', () => {
@@ -37,7 +40,7 @@ describe('Chat API', () => {
         },
       }
 
-      const result = await msw.chat.createSession.mutate(input)
+      const result = await caller.chat.createSession.mutate(input)
 
       expect(result.success).toBe(true)
       expect(result.session).toBeDefined()
@@ -62,7 +65,7 @@ describe('Chat API', () => {
         },
       }
 
-      await expect(msw.chat.createSession.mutate(input)).rejects.toThrow()
+      await expect(caller.chat.createSession.mutate(input)).rejects.toThrow()
     })
 
     it('should handle database errors gracefully', async () => {
@@ -88,7 +91,7 @@ describe('Chat API', () => {
         },
       }
 
-      await expect(msw.chat.createSession.mutate(input)).rejects.toThrow('Failed to create chat session')
+      await expect(caller.chat.createSession.mutate(input)).rejects.toThrow('Failed to create chat session')
     })
 
     it('should log session creation for audit compliance', async () => {
@@ -106,7 +109,7 @@ describe('Chat API', () => {
         },
       }
 
-      await msw.chat.createSession.mutate(input)
+      await caller.chat.createSession.mutate(input)
 
       // Verify audit logging was called
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs')
@@ -173,7 +176,7 @@ describe('Chat API', () => {
         },
       }
 
-      const result = await msw.chat.sendMessage.mutate(input)
+      const result = await caller.chat.sendMessage.mutate(input)
 
       expect(result.success).toBe(true)
       expect(result.userMessage).toBeDefined()
@@ -209,7 +212,7 @@ describe('Chat API', () => {
         content: 'Test message',
       }
 
-      await expect(msw.chat.sendMessage.mutate(input)).rejects.toThrow('Session is not active')
+      await expect(caller.chat.sendMessage.mutate(input)).rejects.toThrow('Session is not active')
     })
 
     it('should validate message content length', async () => {
@@ -218,7 +221,7 @@ describe('Chat API', () => {
         content: 'a'.repeat(2001), // Exceeds 2000 character limit
       }
 
-      await expect(msw.chat.sendMessage.mutate(input)).rejects.toThrow()
+      await expect(caller.chat.sendMessage.mutate(input)).rejects.toThrow()
     })
 
     it('should handle empty messages', async () => {
@@ -227,7 +230,7 @@ describe('Chat API', () => {
         content: '',
       }
 
-      await expect(msw.chat.sendMessage.mutate(input)).rejects.toThrow()
+      await expect(caller.chat.sendMessage.mutate(input)).rejects.toThrow()
     })
   })
 
@@ -289,7 +292,7 @@ describe('Chat API', () => {
 
       const input = { sessionId: mockSessionId }
 
-      const result = await msw.chat.getSession.query(input)
+      const result = await caller.chat.getSession.query(input)
 
       expect(result.session).toBeDefined()
       expect(result.session.id).toBe(mockSessionId)
@@ -312,7 +315,7 @@ describe('Chat API', () => {
 
       const input = { sessionId: 'non-existent-session' }
 
-      await expect(msw.chat.getSession.query(input)).rejects.toThrow('Session not found or access denied')
+      await expect(caller.chat.getSession.query(input)).rejects.toThrow('Session not found or access denied')
     })
 
     it('should enforce clinic isolation', async () => {
@@ -332,7 +335,7 @@ describe('Chat API', () => {
 
       const input = { sessionId: mockSessionId }
 
-      await expect(msw.chat.getSession.query(input)).rejects.toThrow('Session not found or access denied')
+      await expect(caller.chat.getSession.query(input)).rejects.toThrow('Session not found or access denied')
     })
   })
 
@@ -363,7 +366,7 @@ describe('Chat API', () => {
         offset: 0,
       }
 
-      const result = await msw.chat.getHistory.query(input)
+      const result = await caller.chat.getHistory.query(input)
 
       expect(result.sessions).toEqual(mockHistory)
       expect(result.total).toBe(2)
@@ -389,7 +392,7 @@ describe('Chat API', () => {
         offset: 20,
       }
 
-      const result = await msw.chat.getHistory.query(input)
+      const result = await caller.chat.getHistory.query(input)
 
       expect(result.sessions).toHaveLength(1)
     })
@@ -417,7 +420,7 @@ describe('Chat API', () => {
         offset: 0,
       }
 
-      const result = await msw.chat.getHistory.query(input)
+      const result = await caller.chat.getHistory.query(input)
 
       expect(result.sessions[0].patient_id).toBe(mockPatientId)
     })
@@ -462,7 +465,7 @@ describe('Chat API', () => {
         context: { currentTask: 'appointment_booking' },
       }
 
-      const result = await msw.chat.updateAgent.mutate(input)
+      const result = await caller.chat.updateAgent.mutate(input)
 
       expect(result.success).toBe(true)
       expect(result.agent.status).toBe('thinking')
@@ -476,7 +479,7 @@ describe('Chat API', () => {
         status: 'invalid-status' as any,
       }
 
-      await expect(msw.chat.updateAgent.mutate(input)).rejects.toThrow()
+      await expect(caller.chat.updateAgent.mutate(input)).rejects.toThrow()
     })
   })
 
@@ -515,7 +518,7 @@ describe('Chat API', () => {
 
       const input = { sessionId: mockSessionId }
 
-      const result = await msw.chat.endSession.mutate(input)
+      const result = await caller.chat.endSession.mutate(input)
 
       expect(result.success).toBe(true)
       expect(result.endedAt).toBeDefined()
@@ -556,7 +559,7 @@ describe('Chat API', () => {
       })
 
       const input = { sessionId: mockSessionId }
-      await msw.chat.endSession.mutate(input)
+      await caller.chat.endSession.mutate(input)
 
       expect(auditLogCalled).toBe(true)
     })
@@ -582,7 +585,7 @@ describe('Chat API', () => {
         },
       }
 
-      await expect(msw.chat.createSession.mutate(input)).rejects.toThrow('Failed to create chat session')
+      await expect(caller.chat.createSession.mutate(input)).rejects.toThrow('Failed to create chat session')
     })
 
     it('should handle malformed input gracefully', async () => {
@@ -600,7 +603,7 @@ describe('Chat API', () => {
         },
       }
 
-      await expect(msw.chat.createSession.mutate(input)).rejects.toThrow()
+      await expect(caller.chat.createSession.mutate(input)).rejects.toThrow()
     })
 
     it('should maintain data consistency during concurrent operations', async () => {
@@ -631,7 +634,7 @@ describe('Chat API', () => {
 
       // Test concurrent operations
       const messagePromises = Array.from({ length: 5 }, (_, i) =>
-        msw.chat.sendMessage.mutate({
+        caller.chat.sendMessage.mutate({
           sessionId,
           content: `Message ${i + 1}`,
         })
@@ -684,7 +687,7 @@ describe('Chat API', () => {
       })
 
       const startTime = Date.now()
-      const result = await msw.chat.getSession.query({ sessionId: 'session-1' })
+      const result = await caller.chat.getSession.query({ sessionId: 'session-1' })
       const endTime = Date.now()
 
       expect(result.messages).toHaveLength(1000)
@@ -709,7 +712,7 @@ describe('Chat API', () => {
         })
       }))
 
-      await expect(msw.chat.getSession.query({ sessionId: 'session-1' }))
+      await expect(caller.chat.getSession.query({ sessionId: 'session-1' }))
         .rejects.toThrow('Session not found or access denied')
     })
 
@@ -739,7 +742,7 @@ describe('Chat API', () => {
         return createMockSupabaseClient()
       })
 
-      const result = await msw.chat.sendMessage.mutate(maliciousInput)
+      const result = await caller.chat.sendMessage.mutate(maliciousInput)
 
       // Message should be stored but potentially sanitized
       expect(result.success).toBe(true)

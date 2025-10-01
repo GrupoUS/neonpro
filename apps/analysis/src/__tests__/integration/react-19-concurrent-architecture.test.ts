@@ -29,14 +29,14 @@ import { MonorepoAnalysisContext } from '../../src/types/analysis'
 describe('T012 - Integration Test: React 19 Concurrent Architecture Analysis', () => {
   let reactAnalyzer: React19ConcurrentAnalyzer
   let healthcareReactValidator: HealthcareReactValidator
-  let mobilePerformanceAnalyzer: MobileReactPerformanceAnalyzer
-  let context: MonorepoAnalysisContext
+  let _mobilePerformanceAnalyzer: MobileReactPerformanceAnalyzer
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     reactAnalyzer = new React19ConcurrentAnalyzer()
     healthcareReactValidator = new HealthcareReactValidator()
-    mobilePerformanceAnalyzer = new MobileReactPerformanceAnalyzer()
-    context = {
+    _mobilePerformanceAnalyzer = new MobileReactPerformanceAnalyzer()
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'react-19-concurrent-analysis',
       thresholds: {

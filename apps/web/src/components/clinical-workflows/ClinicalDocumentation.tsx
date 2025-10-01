@@ -12,7 +12,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui'
 import { Button } from '@neonpro/ui'
-import { Alert, AlertDescription } from '@neonpro/ui'
 import { Badge } from '@neonpro/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@neonpro/ui'
 import { AccessibilityProvider } from '@neonpro/ui'
@@ -26,11 +25,8 @@ import {
   DocumentAttachment,
   TreatmentProgress,
   TreatmentMeasurements,
-  ClinicalWorkflowComponentProps,
-  ClinicalWorkflowValidation
+  ClinicalWorkflowComponentProps
 } from './types'
-
-import { PatientData, TreatmentSession, HealthcareContext } from '@/types/healthcare'
 
 interface ClinicalDocumentationProps extends ClinicalWorkflowComponentProps {
   patientId: string

@@ -7,26 +7,22 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
 import { Badge } from '@/components/ui/badge.js'
 import { Button } from '@/components/ui/button.js'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Progress } from '@/components/ui/progress.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { trpc } from '@/components/providers/TRPCProvider.js'
 import { useHealthcareQuery, useHealthcareMutation } from '@/hooks/useTRPCHealthcare.js'
 import {
   type TreatmentPackage,
   type TreatmentPackageResponse,
 } from '@/types/aesthetic-scheduling.js'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import {
   Calendar,
-  CheckCircle,
   Clock,
-  DollarSign,
   Info,
   Loader2,
   Package,
   XCircle,
 } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 
 interface TreatmentPackageSchedulerProps {
   patientId: string
@@ -56,8 +52,8 @@ export function TreatmentPackageScheduler(
     'aestheticScheduling.scheduleTreatmentPackage',
     {
       onSuccess: (data: any) => {
-        queryClient.invalidateQueries({ queryKey: ['appointments'] })
-        queryClient.invalidateQueries({ queryKey: ['patients', patientId] })
+        void queryClient.invalidateQueries({ queryKey: ['appointments'] })
+        void queryClient.invalidateQueries({ queryKey: ['patients', patientId] })
         onSuccess?.(data)
       },
       onError: (error: any) => {

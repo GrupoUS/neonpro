@@ -336,7 +336,7 @@ export class EdgePerformanceAnalysisService {
   /**
    * Detect edge regions from configuration
    */
-  private detectEdgeRegions(files: string[]): string[] {
+  private async detectEdgeRegions(files: string[]): Promise<string[]> {
     const regions: string[] = [];
     
     // Common edge regions for Brazilian healthcare

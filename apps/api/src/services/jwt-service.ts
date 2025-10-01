@@ -88,11 +88,12 @@ export class JWTService {
     }
   }
 
-  generateToken(payload: JWTPayload, expiresIn: string = '1h'): string {
-    const tokenPayload = {
+  generateToken(payload: Omit<JWTPayload, 'exp' | 'iat'>, expiresIn: string = '1h'): string {
+    const issuedAt = Math.floor(Date.now() / 1000)
+    const tokenPayload: JWTPayload = {
       ...payload,
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + this.parseExpiration(expiresIn)
+      iat: issuedAt,
+      exp: issuedAt + this.parseExpiration(expiresIn)
     }
 
     return jwt.sign(tokenPayload, this.secret, { algorithm: this.algorithm })

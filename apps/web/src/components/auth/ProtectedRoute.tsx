@@ -52,5 +52,5 @@ export function ProtectedRoute({
   }
 
   // Render protected content
-  return <>{children}</>
+  return children;
 }

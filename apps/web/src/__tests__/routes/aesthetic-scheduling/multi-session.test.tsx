@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -42,7 +42,7 @@ describe('MultiSessionScheduler Route', () => {
     })
   })
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
     </QueryClientProvider>
@@ -81,9 +81,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because loader is not properly implemented
@@ -116,9 +116,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because error handling is not implemented
@@ -157,9 +157,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because validation is not implemented
@@ -196,9 +196,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const scheduleButton = screen.getByTestId('schedule-button')
@@ -230,9 +230,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const scheduleButton = screen.getByTestId('schedule-button')
@@ -276,9 +276,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because data loading is not optimized
@@ -311,16 +311,16 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       const { rerender } = render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because caching is not implemented
       rerender(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // Should only call API once due to caching
@@ -353,9 +353,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because accessibility is not implemented
@@ -388,9 +388,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const scheduleButton = screen.getByTestId('schedule-button')
@@ -431,9 +431,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const scheduleButton = screen.getByTestId('schedule-button')
@@ -472,9 +472,9 @@ describe('MultiSessionScheduler Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const scheduleButton = screen.getByTestId('schedule-button')

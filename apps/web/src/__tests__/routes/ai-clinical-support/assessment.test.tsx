@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { createMemoryRouter, RouterProvider } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { vi } from 'vitest'
@@ -64,7 +64,7 @@ describe('PatientAssessment Route', () => {
     })
   })
 
-  const wrapper = ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       {children}
     </QueryClientProvider>
@@ -103,9 +103,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because patient ID validation is not comprehensive
@@ -135,9 +135,9 @@ describe('PatientAssessment Route', () => {
       
       // This should fail because error handling is not user-friendly
       expect(() => render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )).toThrow('Patient ID is required and must be a valid UUID format')
     })
 
@@ -167,9 +167,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because optional parameter handling is not robust
@@ -208,9 +208,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because LGPD compliance is not enforced
@@ -243,9 +243,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const submitButton = screen.getByTestId('submit-assessment')
@@ -280,9 +280,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const submitButton = screen.getByTestId('submit-assessment')
@@ -352,9 +352,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       const submitButton = screen.getByTestId('submit-assessment')
@@ -388,9 +388,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because real-time support is not implemented
@@ -433,9 +433,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because AI model loading is not optimized
@@ -468,16 +468,16 @@ describe('PatientAssessment Route', () => {
       ])
       
       const { rerender } = render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because AI analysis caching is not implemented
       rerender(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // Should cache AI analysis results
@@ -516,9 +516,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because encryption is not implemented
@@ -558,9 +558,9 @@ describe('PatientAssessment Route', () => {
       ])
       
       render(
-        <wrapper>
+        <Wrapper>
           <RouterProvider router={router} />
-        </wrapper>
+        </Wrapper>
       )
       
       // This should fail because data integrity validation is not implemented

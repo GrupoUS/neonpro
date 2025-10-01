@@ -3,7 +3,7 @@
  * Common utilities for API testing
  */
 
-import { vi } from 'vitest'
+import { vi, expect } from 'vitest'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
 export interface MockContext {
@@ -326,15 +326,15 @@ export const isValidBrazilianPhone = (phone: string): boolean => {
 
 // Environment helpers
 export const setTestEnvironment = () => {
-  process.env.NODE_ENV = 'test'
-  process.env.SUPABASE_URL = 'https://test.supabase.co'
-  process.env.SUPABASE_ANON_KEY = 'test-key'
+  process.env['NODE_ENV'] = 'test'
+  process.env['SUPABASE_URL'] = 'https://test.supabase.co'
+  process.env['SUPABASE_ANON_KEY'] = 'test-key'
 }
 
 export const cleanupTestEnvironment = () => {
-  delete process.env.NODE_ENV
-  delete process.env.SUPABASE_URL
-  delete process.env.SUPABASE_ANON_KEY
+  delete process.env['NODE_ENV']
+  delete process.env['SUPABASE_URL']
+  delete process.env['SUPABASE_ANON_KEY']
 }
 
 // Export all mocks for easy import

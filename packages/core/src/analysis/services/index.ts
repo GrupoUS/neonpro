@@ -3,13 +3,21 @@
  * Centralized exports for all analysis services
  */
 
-export { ReportGenerator } from './report-generator'
-export type { ReportOptions, GeneratedReport } from './report-generator'
+export { ReportGenerator, SimpleReportGenerator } from './report-generator'
+export type { GeneratedReport, ReportOptions } from './report-generator'
 
 export { VisualizationService } from './visualization-service'
-export type { VisualizationOptions, GeneratedVisualization } from './visualization-service'
+export type { GeneratedVisualization, VisualizationOptions } from './visualization-service'
 
 // Re-export existing services
-export { JSCPDService } from './jscpd-service'
-export { PackageAnalyzer } from './package-analyzer'
+export { JscpdService, JscpdService as JSCPDService } from './jscpd-service'
+
 export { AnalysisOrchestrator } from './analysis-orchestrator'
+
+// NOTE: removed invalid re-export of `PackageAnalyzer` because
+// ./package-analyzer does not export a member named `PackageAnalyzer`.
+// If ./package-analyzer exposes a different name (or a default export),
+// re-export that correct symbol here, e.g.:
+//   export { CorrectName } from './package-analyzer'
+// or
+//   export { default as PackageAnalyzer } from './package-analyzer'

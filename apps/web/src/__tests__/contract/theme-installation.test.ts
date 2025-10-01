@@ -12,7 +12,7 @@ import { describe, test, expect, beforeEach, vi } from 'vitest';
 
 // These imports WILL FAIL until implementation exists - THIS IS EXPECTED
 import { installTheme, configureTheme, installFont } from '@/lib/theme/installation';
-import { ThemeInstallationRequest, ThemeInstallationResponse } from '@/types/theme';
+import { ThemeInstallationRequest } from '@/types/theme';
 import { validateThemeInstallation } from '@/lib/theme/validation';
 
 describe('Theme Installation Contract Tests', () => {

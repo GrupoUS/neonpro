@@ -11,7 +11,7 @@ import { describe, test, expect, beforeEach, vi } from 'vitest';
 
 // These imports WILL FAIL until implementation exists - THIS IS EXPECTED
 import { configureTheme, updateThemeColors, validateThemeConfig } from '@/lib/theme/configuration';
-import { ThemeConfigurationRequest, ColorScheme } from '@/types/theme';
+import { ThemeConfigurationRequest } from '@/types/theme';
 
 describe('Theme Configuration Contract Tests', () => {
   beforeEach(() => {

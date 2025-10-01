@@ -188,7 +188,7 @@ describe('Migration Status API Integration Tests', () => {
       
       // Verify phase tracking
       expect(status).toHaveProperty('phases')
-      expect(Array.isArray(status.phases))
+      expect(Array.isArray(status.phases)
       expect(status.phases.length).toBe(5)
       
       // Verify completed phases
@@ -197,11 +197,11 @@ describe('Migration Status API Integration Tests', () => {
       
       // Verify current phase
       expect(status.phases.find(p => p.name === 'configuration')).toHaveProperty('status', 'in_progress')
-      expect(status.phases.find(p => p.name === 'migration')).toHaveProperty('status', 'pending'))
-      expect(status.phases.find(p => p.name === 'validation')).toHaveProperty('status', 'pending'))
+      expect(status.phases.find(p => p.name === 'migration')).toHaveProperty('status', 'pending')
+      expect(status.phases.find(p => p.name === 'validation')).toHaveProperty('status', 'pending')
       
       // Verify migration metrics
-      expect(status).toHaveProperty('metrics'))
+      expect(status).toHaveProperty('metrics')
       expect(status.metrics).toHaveProperty('buildTimeImprovement', 0)
       expect(status.metrics).toHaveProperty('memoryUsageReduction', 0)
       expect(status.metrics).toHaveProperty('performanceImprovement', 0)
@@ -269,7 +269,7 @@ describe('Migration Status API Integration Tests', () => {
       expect(config.bunConfiguration).toHaveProperty('enabledFeatures', ['native_bundling', 'file_system_cache', 'typescript_transpilation'])
       
       // Verify performance targets
-      expect(config).toHaveProperty('performanceTargets'))
+      expect(config).toHaveProperty('performanceTargets')
       expect(config.performanceTargets.buildTimeImprovement).toBe(4.0)
       expect(config.performanceTargets.memoryUsageReduction).toBe(0.22)
       expect(config.performanceTargets.edgeTTFBTarget).toBe(100)
@@ -277,7 +277,7 @@ describe('Migration Status API Integration Tests', () => {
       expect(config.performanceTargets.warmStartTarget).toBe(50)
       
       // Verify healthcare compliance configuration
-      expect(config).toHaveProperty('healthcareCompliance'))
+      expect(config).toHaveProperty('healthcareCompliance')
       expect(config.healthcareCompliance.lgpd).toHaveProperty('dataProcessingBasis', 'consent')
       expect(config.healthcareCompliance.anvisa).toHaveProperty('medicalDeviceClass', 'II')
       expect(config.healthcareCompliance.cfm).toHaveProperty('auditRequired', true)
@@ -285,7 +285,7 @@ describe('Migration Status API Integration Tests', () => {
       expect(config.healthcareCompliance.cfm).toHaveProperty('patientSafety', true)
       
       // Verify rollback configuration
-      expect(config).toHaveProperty('rollbackConfiguration'))
+      expect(config).toHaveProperty('rollbackConfiguration')
       expect(config.rollbackConfiguration).toHaveProperty('enabled', true)
       expect(config.rollbackConfiguration).toHaveProperty('backupBeforeRollback', true)
       expect(config.rollbackConfiguration).toHaveProperty('rollbackPoint', 'pre-migration-backup')
@@ -303,47 +303,47 @@ describe('Migration Status API Integration Tests', () => {
       // Verify metrics structure
       expect(metrics).toHaveProperty('id')
       expect(metrics).toHaveProperty('migrationId', 'migration-status-001')
-      expect(metrics).toHaveProperty('timestamp'))
+      expect(metrics).toHaveProperty('timestamp')
       expect(metrics).toHaveProperty('environment', 'development')
       expect(metrics).toHaveProperty('phase', 'configuration')
       expect(metrics).toHaveProperty('status', 'in_progress')
-      expect(metrics).toHaveProperty('progress', 45))
+      expect(metrics).toHaveProperty('progress', 45)
       
       // Verify performance metrics
-      expect(metrics).toHaveProperty('performanceMetrics'))
-      expect(metrics.performanceMetrics).toHaveProperty('baseline'))
-      expect(metrics.performanceMetrics).toHaveProperty('current'))
-      expect(metrics.performanceMetrics).toHaveProperty('targets'))
+      expect(metrics).toHaveProperty('performanceMetrics')
+      expect(metrics.performanceMetrics).toHaveProperty('baseline')
+      expect(metrics.performanceMetrics).toHaveProperty('current')
+      expect(metrics.performanceMetrics).toHaveProperty('targets')
       
       // Verify baseline metrics
       expect(metrics.performanceMetrics.baseline).toHaveProperty('buildTime', 120)
       expect(metrics.performanceMetrics.baseline).toHaveProperty('installTime', 180)
-      expect(metrics.performanceMetrics.baseline).toHaveProperty('memoryUsage', 1024))
-      expect(metrics.performanceMetrics.baseline).toHaveProperty('cpuUsage', 50))
+      expect(metrics.performanceMetrics.baseline).toHaveProperty('memoryUsage', 1024)
+      expect(metrics.performanceMetrics.baseline).toHaveProperty('cpuUsage', 50)
       
       // Verify current metrics (improvement tracking)
-      expect(metrics.performanceMetrics.current).toHaveProperty('buildTime', 66))
-      expect(metrics.performanceMetrics.current).toHaveProperty('installTime', 90))
-      expect(metrics.performanceMetrics.current).toHaveProperty('memoryUsage', 800))
-      expect(metrics.performanceMetrics.current).toHaveProperty('cpuUsage', 40))
+      expect(metrics.performanceMetrics.current).toHaveProperty('buildTime', 66)
+      expect(metrics.performanceMetrics.current).toHaveProperty('installTime', 90)
+      expect(metrics.performanceMetrics.current).toHaveProperty('memoryUsage', 800)
+      expect(metrics.performanceMetrics.current).toHaveProperty('cpuUsage', 40)
       
       // Verify targets and improvements
       expect(metrics.performanceMetrics.targets.buildTimeImprovement).toBeCloseTo(66.7, 1)
-      expect(metrics.performanceMetrics.targets.memoryUsageReduction).toBeCloseTo(22, 0))
-      expect(metrics.performanceMetrics.targets).toHaveProperty('performanceImprovement', 300))
+      expect(metrics.performanceMetrics.targets.memoryUsageReduction).toBeCloseTo(22, 0)
+      expect(metrics.performanceMetrics.targets).toHaveProperty('performanceImprovement', 300)
       
       // Verify healthcare metrics
-      expect(metrics).toHaveProperty('healthcareMetrics'))
-      expect(metrics.healthcareMetrics.lgpdCompliance).toHaveProperty('dataAccessTime', 25))
-      expect(metrics.healthcareMetrics.anvisaCompliance).toHaveProperty('validationTime', 100))
-      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('medicalRecordAccessTime', 30))
-      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('auditTrailTime', 20))
+      expect(metrics).toHaveProperty('healthcareMetrics')
+      expect(metrics.healthcareMetrics.lgpdCompliance).toHaveProperty('dataAccessTime', 25)
+      expect(metrics.healthcareMetrics.anvisaCompliance).toHaveProperty('validationTime', 100)
+      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('medicalRecordAccessTime', 30)
+      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('auditTrailTime', 20)
       
       // Verify system metrics
-      expect(metrics).toHaveProperty('metrics'))
-      expect(metrics.metrics).toHaveProperty('lastCheck'))
-      expect(metrics.metrics).toHaveProperty('uptime'))
-      expect(metrics.metrics).toHaveProperty('activeConnections'))
+      expect(metrics).toHaveProperty('metrics')
+      expect(metrics.metrics).toHaveProperty('lastCheck')
+      expect(metrics.metrics).toHaveProperty('uptime')
+      expect(metrics.metrics).toHaveProperty('activeConnections')
       
       // Verify timestamp consistency
       expect(metrics.timestamp).toBe(metrics.metrics.lastCheck)
@@ -361,7 +361,7 @@ describe('Migration Status API Integration Tests', () => {
       const config = await response.json()
       
       // The configuration should reference database connectivity features
-      expect(config).toHaveProperty('optimization'))
+      expect(config).toHaveProperty('optimization')
       expect(config.optimization.queryCaching).toBe(true)
       expect(config.optimization.connectionPooling).toBe(true)
       expect(config.optimization.performanceMonitoring).toBe(true)
@@ -376,7 +376,7 @@ describe('Migration Status API Integration Tests', () => {
       if (status === 200) {
         const config = await response.json()
         // Should show healthy status even with database issues
-        expect(config).toHaveProperty('optimization'))
+        expect(config).toHaveProperty('optimization')
         expect(config.optimization).toHaveProperty('performanceMonitoring', true)
       }
     })

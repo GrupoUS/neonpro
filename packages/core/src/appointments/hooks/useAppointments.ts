@@ -1,6 +1,6 @@
 // Hook for managing appointments in aesthetic clinic
 import { useState, useEffect } from 'react'
-import { Appointment, AppointmentStatus } from '../types'
+import type { Appointment, AppointmentStatus } from '../../../../types/src/healthcare.js'
 import { AppointmentService } from '../services'
 
 interface UseAppointmentsOptions {
@@ -16,7 +16,7 @@ export function useAppointments(options: UseAppointmentsOptions = {}) {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchAppointments()
+    void fetchAppointments()
   }, [options.professionalId, options.patientId, options.status])
 
   const fetchAppointments = async () => {
@@ -25,19 +25,20 @@ export function useAppointments(options: UseAppointmentsOptions = {}) {
       setError(null)
       
       // This would be an actual API call
-      // For now, simulate with empty data
-      let filteredAppointments: Appointment[] = []
+      // For now, simulate with placeholder data
+      const baseAppointments: Appointment[] = []
+      let filteredAppointments = baseAppointments
       
       // Apply filters
       if (options.professionalId) {
         filteredAppointments = filteredAppointments.filter(
-          apt => apt.professional_id === options.professionalId
+          apt => apt.professionalId === options.professionalId
         )
       }
       
       if (options.patientId) {
         filteredAppointments = filteredAppointments.filter(
-          apt => apt.patient_id === options.patientId
+          apt => apt.patientId === options.patientId
         )
       }
       
@@ -55,14 +56,14 @@ export function useAppointments(options: UseAppointmentsOptions = {}) {
     }
   }
 
-  const createAppointment = async (appointmentData: Omit<Appointment, 'id' | 'created_at' | 'updated_at'>) => {
+  const createAppointment = async (appointmentData: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       // API call to create appointment
       const newAppointment: Appointment = {
         ...appointmentData,
         id: crypto.randomUUID(),
-        created_at: new Date(),
-        updated_at: new Date()
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
       
       setAppointments(prev => [...prev, newAppointment])
@@ -79,7 +80,7 @@ export function useAppointments(options: UseAppointmentsOptions = {}) {
       setAppointments(prev => 
         prev.map(apt => 
           apt.id === appointmentId 
-            ? { ...apt, status, updated_at: new Date() }
+            ? { ...apt, status, updatedAt: new Date() }
             : apt
         )
       )

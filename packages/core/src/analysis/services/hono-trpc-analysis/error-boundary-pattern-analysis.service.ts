@@ -192,7 +192,7 @@ export class ErrorBoundaryPatternAnalysisService {
   /**
    * Extract global error handlers
    */
-  private extractGlobalErrorHandlers(files: string[]): GlobalErrorHandler[] {
+  private async extractGlobalErrorHandlers(files: string[]): Promise<GlobalErrorHandler[]> {
     const handlers: GlobalErrorHandler[] = [];
     
     for (const file of files) {
@@ -229,7 +229,7 @@ export class ErrorBoundaryPatternAnalysisService {
   /**
    * Extract route-specific error handlers
    */
-  private extractRouteSpecificErrorHandlers(files: string[]): RouteErrorHandler[] {
+  private async extractRouteSpecificErrorHandlers(files: string[]): Promise<RouteErrorHandler[]> {
     const handlers: RouteErrorHandler[] = [];
     
     for (const file of files) {
@@ -268,7 +268,7 @@ export class ErrorBoundaryPatternAnalysisService {
   /**
    * Extract patient data error handlers
    */
-  private extractPatientDataErrorHandlers(files: string[]): PatientDataErrorHandler[] {
+  private async extractPatientDataErrorHandlers(files: string[]): Promise<PatientDataErrorHandler[]> {
     const handlers: PatientDataErrorHandler[] = [];
     
     for (const file of files) {

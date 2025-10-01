@@ -81,7 +81,7 @@ export function ProgressMonitoring({
       return await api.aiClinicalSupport.addProgressUpdate(update)
     },
     onSuccess: () => {
-      refetch()
+      void refetch()
       setIsAddingUpdate(false)
       setNewUpdate({
         sessionId: '',
@@ -195,7 +195,7 @@ export function ProgressMonitoring({
         <div className='flex items-center gap-2'>
           <Button
             variant='outline'
-            onClick={() => refetch()}
+            onClick={() => void refetch()}
             className='flex items-center gap-2'
           >
             <RefreshCw className='h-4 w-4' />
