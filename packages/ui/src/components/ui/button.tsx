@@ -52,7 +52,23 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, emergency, accessible, ariaLabel, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      emergency,
+      accessible,
+      ariaLabel,
+      onClick,
+      onKeyDown,
+      role,
+      tabIndex,
+      ...restProps
+    },
+    ref,
+  ) => {
     const Comp = asChild ? Slot : "button"
 
     // Apply emergency/accessible variants
@@ -68,36 +84,40 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       finalSize = "accessible"
     }
 
+    const { ["aria-label"]: ariaLabelFromRest, ...otherRestProps } =
+      restProps as React.ButtonHTMLAttributes<HTMLButtonElement>
+
     // Keyboard handler to satisfy accessibility linter when Button is used as a child (non-button semantic)
-    const handleKeyDown = (e: React.KeyboardEvent) => {
-      const key = e.key
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      const key = event.key
       const isActivationKey = key === "Enter" || key === " " || key === "Spacebar"
       if (isActivationKey) {
         // Prevent page scroll on Space
-        e.preventDefault()
-        if (typeof (props as any).onClick === "function") {
-          ;(props as any).onClick(e as unknown as React.MouseEvent)
+        event.preventDefault()
+        if (typeof onClick === "function") {
+          onClick(event as unknown as React.MouseEvent<HTMLButtonElement>)
         }
       }
 
       // Call user-provided onKeyDown if present
-      if (typeof (props as any).onKeyDown === "function") {
-        ;(props as any).onKeyDown(e)
+      if (typeof onKeyDown === "function") {
+        onKeyDown(event)
       }
     }
 
     return (
       <Comp
-        {...(props as any)}
+        {...otherRestProps}
         className={cn(buttonVariants({ variant: finalVariant, size: finalSize }), className)}
         ref={ref}
-        aria-label={ariaLabel || (props as any)['aria-label']}
+        aria-label={ariaLabel ?? ariaLabelFromRest}
+        onClick={onClick}
         onKeyDown={handleKeyDown}
-        role={asChild ? (props as any).role ?? "button" : undefined}
-        tabIndex={asChild ? (props as any).tabIndex ?? 0 : undefined}
+        role={asChild ? role ?? "button" : role}
+        tabIndex={asChild ? tabIndex ?? 0 : tabIndex}
       />
     )
-  }
+  },
 )
 Button.displayName = "Button"
 

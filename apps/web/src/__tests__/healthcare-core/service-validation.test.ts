@@ -47,13 +47,6 @@ describe('Healthcare Core Service Validation', () => {
     })
 
     it('should handle unused parameters in scheduling functions', () => {
-      const preferences = {} // Used to avoid unused warning
-      const clinicId = 'test-clinic' // Used
-      const professionalId = 'test-professional' // Used
-      preferences // Reference to use
-      clinicId // Reference
-      professionalId // Reference
-
       const result = getSchedulingPreferences()
       expect(result).toBeDefined()
     })
@@ -61,15 +54,6 @@ describe('Healthcare Core Service Validation', () => {
 
   describe('Financial Management Service', () => {
     it('should handle financial data without unused parameters', () => {
-      const supabaseUrl = 'test-url' // Used
-      const supabaseKey = 'test-key' // Used
-      const startDate = new Date() // Used
-      const endDate = new Date() // Used
-      supabaseUrl // Reference
-      supabaseKey // Reference
-      startDate // Reference
-      endDate // Reference
-
       const result = generateFinancialReport()
       expect(result).toBeDefined()
     })
@@ -77,11 +61,6 @@ describe('Healthcare Core Service Validation', () => {
 
   describe('Inventory Management Service', () => {
     it('should handle inventory operations without unused parameters', () => {
-      const supabaseUrl = 'test-url' // Used
-      const supabaseKey = 'test-key' // Used
-      supabaseUrl // Reference
-      supabaseKey // Reference
-
       const result = updateInventoryLevels()
       expect(result).toBeDefined()
     })
@@ -89,11 +68,6 @@ describe('Healthcare Core Service Validation', () => {
 
   describe('Patient Engagement Service', () => {
     it('should handle patient engagement without unused parameters', () => {
-      const supabaseUrl = 'test-url' // Used
-      const supabaseKey = 'test-key' // Used
-      supabaseUrl // Reference
-      supabaseKey // Reference
-
       const result = sendPatientNotification()
       expect(result).toBeDefined()
     })
@@ -101,11 +75,6 @@ describe('Healthcare Core Service Validation', () => {
 
   describe('Treatment Planning Service', () => {
     it('should handle treatment planning without unused parameters', () => {
-      const supabaseUrl = 'test-url' // Used
-      const supabaseKey = 'test-key' // Used
-      supabaseUrl // Reference
-      supabaseKey // Reference
-
       const result = createTreatmentPlan()
       expect(result).toBeDefined()
     })
@@ -113,17 +82,6 @@ describe('Healthcare Core Service Validation', () => {
 
   describe('Multi-Professional Coordination Service', () => {
     it('should handle professional coordination without unused parameters', () => {
-      const database = {} // Used
-      const clinicId = 'test-clinic' // Used
-      const professionalId = 'test-professional' // Used
-      const type = 'consultation' // Used
-      const filters = {} // Used
-      database // Reference
-      clinicId // Reference
-      professionalId // Reference
-      type // Reference
-      filters // Reference
-
       const result = coordinateMultiProfessionalTeam()
       expect(result).toBeDefined()
     })

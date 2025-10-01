@@ -128,7 +128,7 @@ export class PWAIndexedDB {
     })
   }
 
-  async getCachedData(key: string): Promise<any | null> {
+  async getCachedData<T = unknown>(key: string): Promise<T | null> {
     if (!this.db) await this.init()
 
     return new Promise((resolve, reject) => {
@@ -140,7 +140,7 @@ export class PWAIndexedDB {
       request.onsuccess = () => {
         const result = request.result
         if (result && result.expiry > Date.now()) {
-          resolve(result.data)
+          resolve(result.data as T)
         } else {
           resolve(null)
         }
@@ -321,7 +321,7 @@ export class PWAOfflineSync {
 
       if (attempt < this.retryAttempts) {
         setTimeout(() => {
-          this.syncItem(item, attempt + 1)
+          void this.syncItem(item, attempt + 1)
         }, this.retryDelay * attempt)
       }
     }

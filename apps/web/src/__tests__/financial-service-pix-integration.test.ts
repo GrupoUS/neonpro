@@ -205,8 +205,6 @@ describe('FinancialService - PIX Integration', () => {
     })
 
     it('should track PIX vs other payment methods', () => {
-      const currentMonth = new Date()
-      
       const transactions = [
         mockTransaction, // PIX - pending
         {

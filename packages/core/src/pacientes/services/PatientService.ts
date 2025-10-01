@@ -79,7 +79,7 @@ export class PatientService {
   // Check for contraindications based on medical history
   static checkContraindications(
     medicalHistory: MedicalHistory,
-    treatmentCategory: string
+    _treatmentCategory: string
   ): { hasContraindications: boolean; reasons: string[] } {
     const reasons: string[] = []
     
