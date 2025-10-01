@@ -12,6 +12,11 @@ related:
 
 # 🚀 NEONPRO PROJECT CONSTITUTION
 
+## MANDATORY READ:
+
+- **[Tech Stack](docs/architecture/tech-stack.md)** - Complete technology decisions and rationale
+- **[Frontend Architecture](docs/architecture/frontend-architecture.md)** - Frontend structure and patterns
+
 ## Overview
 
 This document establishes the fundamental rules, principles, and standards for the NeonPro aesthetic clinic platform. It serves as the primary reference for all development activities and architectural decisions.
@@ -278,21 +283,6 @@ All code changes must pass:
 2. **Type Checking**: Zero TypeScript errors
 3. **Security Scan**: Zero high-severity vulnerabilities
 4. **Performance**: No regression in Core Web Vitals
-
-## References
-
-### Architecture Documentation
-
-- **[Tech Stack](docs/architecture/tech-stack.md)** - Complete technology decisions and rationale
-- **[Frontend Architecture](docs/architecture/frontend-architecture.md)** - Frontend structure and patterns
-- **[Quality Control](.claude/commands/quality-control.md)** - Bun-optimized quality gates and compliance
-- **[Frontend Testing](.claude/commands/frontend-testing.md)** - Multi-agent testing coordination
-
-### Development Standards
-
-- **[Coding Standards](docs/rules/coding-standards.md)** - Code organization and conventions
-- **[Documentation Standards](docs/agents/documentation.md)** - Diátaxis forms and templates
-- **[Rule Architecture](docs/agents/rules.md)** - Rule creation and validation frameworks
 
 ---
 

@@ -50,6 +50,37 @@ export type Database = {
         Insert: Omit<LegacyAppointment, 'id'>;
         Update: Partial<LegacyAppointment>;
       };
+      audit_logs: {
+        Row: {
+          id: string;
+          clinic_id: string;
+          user_id: string | null;
+          action: string;
+          resource_type: string;
+          resource_id: string | null;
+          details: Record<string, unknown> | null;
+          created_at: Date;
+        };
+        Insert: {
+          id?: string;
+          clinic_id: string;
+          user_id?: string | null;
+          action: string;
+          resource_type: string;
+          resource_id?: string | null;
+          details?: Record<string, unknown> | null;
+          created_at?: Date;
+        };
+        Update: Partial<{
+          clinic_id: string;
+          user_id: string | null;
+          action: string;
+          resource_type: string;
+          resource_id: string | null;
+          details: Record<string, unknown> | null;
+          created_at: Date;
+        }>;
+      };
       // Add other tables as needed based on schema
     };
     Views: Record<string, unknown>;

@@ -1,28 +1,3 @@
-<!--
-# Sync Impact Report
-- **Version change**: 1.1.0 → 2.0.0 (major update - comprehensive architecture integration)
-- **Modified principles**: All principles enhanced with architectural knowledge and design patterns
-- **Added sections**:
-  - Architecture & Design Patterns (new section)
-  - Documentation Standards (new section)
-  - Performance & Reliability Targets (expanded)
-- **Removed sections**: None
-- **Templates requiring updates**:
-  - ⚠ .specify/templates/plan-template.md (pending - add architecture validation)
-  - ⚠ .specify/templates/spec-template.md (pending - add design pattern requirements)
-  - ⚠ .specify/templates/tasks-template.md (pending - add architecture review tasks)
-- **Follow-up TODOs**:
-  - Update templates to reference architecture documentation catalog
-  - Add architecture review checklist to PR template
-  - Create architecture decision record (ADR) template
-
-Rationale for MAJOR version bump:
-- Fundamental shift from basic principles to comprehensive architecture-driven governance
-- Introduction of mandatory design patterns and architectural standards
-- New documentation requirements that affect all development workflows
-- Breaking change: All new features must now follow documented architectural patterns
--->
-
 # NeonPro Constitution
 
 ## Core Principles
@@ -534,11 +509,3 @@ This constitution supersedes all other development practices and guidelines. All
 - Documentation currency: <30 days outdated
 
 ---
-
-**Version**: 2.0.0 | **Ratified**: 2025-09-23 | **Last Amended**: 2025-09-29
-
-**Change Log**:
-
-- **2.0.0** (2025-09-29): Major update - comprehensive architecture integration, new design patterns section, expanded documentation standards
-- **1.1.0** (2025-09-23): Minor update - scope clarification for aesthetic clinic focus
-- **1.0.0** (2025-09-23): Initial constitution ratification
