@@ -9,6 +9,7 @@ import { type CreateHTTPContextOptions } from '@trpc/server/adapters/standalone'
 import { type CreateWSSContextFnOptions } from '@trpc/server/adapters/ws'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@neonpro/database'
+import { logAuditEvent } from './utils/audit-log'
 
 /**
  * This is the actual context you'll use in your router
@@ -18,13 +19,14 @@ export const createTRPCContext = async (opts: CreateHTTPContextOptions) => {
   const { req } = opts
 
   // Get the token from the Authorization header
-  const authHeader = req.headers.get('authorization')
-  const token = authHeader?.replace('Bearer ', '')
+  const rawAuthHeader = req.headers['authorization']
+  const bearerHeader = Array.isArray(rawAuthHeader) ? rawAuthHeader[0] : rawAuthHeader
+  const token = bearerHeader?.startsWith('Bearer ') ? bearerHeader.replace('Bearer ', '') : bearerHeader
 
   // Create Supabase client
   const supabase = new SupabaseClient<Database>(
-    process.env['SUPABASE_URL'] || '',
-    process.env['SUPABASE_ANON_KEY'] || '',
+    process.env['SUPABASE_URL'] ?? '',
+    process.env['SUPABASE_ANON_KEY'] ?? '',
     {
       global: {
         headers: {
@@ -38,12 +40,13 @@ export const createTRPCContext = async (opts: CreateHTTPContextOptions) => {
   const { data: { user } } = await supabase.auth.getUser(token)
 
   // Get the clinic ID from user metadata
-  const clinicId = user?.user_metadata?.['clinic_id'] as string | undefined
+  const userMetadata = user?.user_metadata as Record<string, unknown> | undefined
+  const clinicId = typeof userMetadata?.['clinic_id'] === 'string' ? userMetadata['clinic_id'] : undefined
 
   return {
     supabase,
     user,
-    clinicId: clinicId || '',
+    clinicId: clinicId ?? '',
     environment: process.env['NODE_ENV'] === 'production' ? 'production' :
                  process.env['NODE_ENV'] === 'staging' ? 'staging' : 'development',
   }
@@ -54,15 +57,15 @@ export const createTRPCContext = async (opts: CreateHTTPContextOptions) => {
  * @link https://trpc.io/docs/adapters/ws
  */
 export const createWSSContext = async (opts: CreateWSSContextFnOptions) => {
-  const { req, res } = opts
+  const { req } = opts
 
   // Get the token from the query string
   const token = req.url?.split('token=')[1]
 
   // Create Supabase client
   const supabase = new SupabaseClient<Database>(
-    process.env['SUPABASE_URL'] || '',
-    process.env['SUPABASE_ANON_KEY'] || '',
+    process.env['SUPABASE_URL'] ?? '',
+    process.env['SUPABASE_ANON_KEY'] ?? '',
     {
       global: {
         headers: {
@@ -76,12 +79,13 @@ export const createWSSContext = async (opts: CreateWSSContextFnOptions) => {
   const { data: { user } } = await supabase.auth.getUser(token)
 
   // Get the clinic ID from user metadata
-  const clinicId = user?.user_metadata?.['clinic_id'] as string | undefined
+  const userMetadata = user?.user_metadata as Record<string, unknown> | undefined
+  const clinicId = typeof userMetadata?.['clinic_id'] === 'string' ? userMetadata['clinic_id'] : undefined
 
   return {
     supabase,
     user,
-    clinicId: clinicId || '',
+    clinicId: clinicId ?? '',
     environment: process.env['NODE_ENV'] === 'production' ? 'production' :
                  process.env['NODE_ENV'] === 'staging' ? 'staging' : 'development',
   }
@@ -98,7 +102,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
    */
   transformer: {
     serialize: (object) => {
-      return JSON.parse(JSON.stringify(object, (key, value) => {
+      return JSON.parse(JSON.stringify(object, (_key, value) => {
         // Convert Date objects to ISO strings
         if (value instanceof Date) {
           return value.toISOString()
@@ -107,7 +111,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
       }))
     },
     deserialize: (object) => {
-      return JSON.parse(JSON.stringify(object), (key, value) => {
+      return JSON.parse(JSON.stringify(object), (_key, value) => {
         // Convert ISO strings to Date objects
         if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(value)) {
           return new Date(value)
@@ -177,17 +181,18 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
  */
 export const healthcareComplianceMiddleware = t.middleware(async ({ ctx, next }) => {
   // Log access for compliance
-  await ctx.supabase.from('audit_logs').insert({
-    clinic_id: ctx.clinicId,
-    user_id: ctx.user?.id || '',
+  await logAuditEvent({
+    supabase: ctx.supabase,
+    clinicId: ctx.clinicId,
+    userId: ctx.user?.id ?? null,
     action: 'API_ACCESS',
-    resource_type: 'TRPC_API',
-    resource_id: '',
+    resourceType: 'TRPC_API',
+    resourceId: null,
     details: {
       environment: ctx.environment,
       timestamp: new Date(),
     },
-    created_at: new Date(),
+    createdAt: new Date(),
   })
 
   return next({

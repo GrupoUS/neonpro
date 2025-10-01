@@ -102,13 +102,11 @@ export function useRealtimeQuery<TData = unknown, TError = Error>(
           // Handle different event types
           if (invalidateOn.includes(payload.eventType)) {
             // Invalidate queries to trigger refetch
-            void (async () => {
-              try {
-                await queryClient.invalidateQueries({ queryKey: queryOptions.queryKey })
-              } catch (error) {
-                console.error('Failed to invalidate queries for realtime update', error)
-              }
-            })()
+            const invalidatePromise = queryClient.invalidateQueries({ queryKey: queryOptions.queryKey })
+            invalidatePromise.catch((error) => {
+              console.error('Failed to invalidate queries for realtime update', error)
+            })
+            void invalidatePromise
           }
 
           // Optimistic updates for specific operations
@@ -155,13 +153,11 @@ export function useRealtimeQuery<TData = unknown, TError = Error>(
     // Cleanup subscription on unmount
     return () => {
       if (channelRef.current) {
-        void (async () => {
-          try {
-            await supabase.removeChannel(channelRef.current!)
-          } catch (error) {
-            console.error('Failed to remove realtime channel', error)
-          }
-        })()
+        const removePromise = supabase.removeChannel(channelRef.current)
+        removePromise.catch((error) => {
+          console.error('Failed to remove realtime channel', error)
+        })
+        void removePromise
         channelRef.current = null
       }
     }
