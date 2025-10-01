@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 
 // Mock financial and healthcare services
 vi.mock('@/lib/financial-service', () => ({
@@ -428,7 +428,7 @@ describe('Financial Operations - TUSS/SUS Integration', () => {
 
       const startTime = Date.now()
       const promises = claimSubmissions.map(claim => mockSUSIntegration.submitSUSClaim(claim))
-      const results = await Promise.allSettled(promises)
+      await Promise.allSettled(promises)
       const endTime = Date.now()
       
       const processingTime = endTime - startTime

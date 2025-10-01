@@ -511,8 +511,8 @@ export class HealthcareComplianceService {
                               license?: ProfessionalLicense): Promise<{
     overallCompliant: boolean
     complianceScore: ComplianceScore
-    lgpd: any
-    anvisa: device ? any : null
+    lgpd: any,
+    anvisa: device ? any : null,
     cfm: license ? any : null
     recommendations: string[]
     requiredActions: string[]

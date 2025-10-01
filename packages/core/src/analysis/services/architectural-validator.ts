@@ -252,7 +252,7 @@ export class ArchitecturalValidator {
     rule: string,
     scope: ArchitecturalValidationRequest,
     config: typeof ArchitecturalValidator['HEALTHCARE_RULE_CONFIGS'][string],
-    violations: Finding[]
+    existingViolations: Finding[]
   ): Promise<Finding[]> {
     const violations: Finding[] = [];
     

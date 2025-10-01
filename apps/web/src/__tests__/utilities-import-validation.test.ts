@@ -5,7 +5,7 @@
  * Validates that all web utility modules can be imported correctly from index.ts
  */
 
-import { describe, it, expect } from '@jest/globals'
+import { describe, it, expect, expectTypeOf } from '@jest/globals'
 
 // Test imports from the new utils index
 import {
@@ -84,19 +84,11 @@ describe('Web Utilities Import Validation', () => {
 
   describe('Type Exports', () => {
     it('should export IndexedDBConfig type', () => {
-      expect(() => {
-        type TestConfig = IndexedDBConfig
-        // If we get here without errors, type is properly exported
-        expect(true).toBe(true)
-      }).not.toThrow()
+      expectTypeOf<IndexedDBConfig>().not.toBeAny()
     })
 
     it('should export PWAOfflineData type', () => {
-      expect(() => {
-        type TestOfflineData = PWAOfflineData
-        // If we get here without errors, type is properly exported
-        expect(true).toBe(true)
-      }).not.toThrow()
+      expectTypeOf<PWAOfflineData>().not.toBeAny()
     })
   })
 

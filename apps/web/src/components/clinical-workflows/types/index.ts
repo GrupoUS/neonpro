@@ -6,7 +6,7 @@
  * @module ClinicalWorkflowTypes
  */
 
-import { PatientData, TreatmentSession, HealthcareContext } from '@/types/healthcare'
+import { PatientData, HealthcareContext } from '@/types/healthcare'
 
 // Staff Role Types
 export type StaffRole = 

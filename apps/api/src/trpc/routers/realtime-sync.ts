@@ -10,6 +10,7 @@
  * - Healthcare-compliant real-time notifications
  */
 
+import type { SupabaseClient } from '@supabase/supabase-js'
 import { z } from 'zod'
 import { router, procedure } from '../trpc-factory'
 import { rlsGuard } from '../middleware/rls-guard'
@@ -83,7 +84,7 @@ export interface OfflineQueue {
 const SubscribeToRealtimeSchema = z.object({
   resourceType: z.enum(['appointments', 'chat_sessions', 'clinical_data', 'compliance_alerts', 'system_notifications']),
   resourceId: z.string().uuid().optional(),
-  filters: z.record(z.any()).optional(),
+  filters: z.record(z.string(), z.any()).optional(),
   deviceId: z.string().optional(),
 });
 
@@ -94,7 +95,7 @@ const UnsubscribeFromRealtimeSchema = z.object({
 const SyncDataSchema = z.object({
   resourceType: z.string(),
   resourceId: z.string().uuid(),
-  data: z.record(z.any()),
+  data: z.record(z.string(), z.any()),
   version: z.number().optional(),
   checksum: z.string().optional(),
 });
@@ -102,7 +103,7 @@ const SyncDataSchema = z.object({
 const ResolveConflictSchema = z.object({
   conflictId: z.string().uuid(),
   resolution: z.enum(['local_wins', 'remote_wins', 'manual_review']),
-  customData: z.record(z.any()).optional(),
+  customData: z.record(z.string(), z.any()).optional(),
 });
 
 const GetOfflineQueueSchema = z.object({
@@ -116,6 +117,7 @@ export const realtimeSyncRouter = router({
     .input(SubscribeToRealtimeSchema)
     .use(rlsGuard)
     .mutation(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
         const subscriptionId = crypto.randomUUID()
         
@@ -131,13 +133,13 @@ export const realtimeSyncRouter = router({
           createdAt: new Date(),
           lastActivity: new Date(),
           metadata: {
-            userAgent: ctx.req?.headers.get('user-agent') || 'unknown',
+            userAgent: 'unknown',
             deviceId: input.deviceId,
           },
         }
 
         // Store subscription
-        const { data: savedSubscription, error: saveError } = await ctx.supabase
+        const { data: savedSubscription, error: saveError } = await supabase
           .from('realtime_subscriptions')
           .insert({
             id: subscriptionId,
@@ -157,7 +159,7 @@ export const realtimeSyncRouter = router({
         if (saveError) throw saveError
 
         // Generate Supabase Realtime token
-        const realtimeToken = await generateRealtimeToken(ctx.supabase, {
+        const realtimeToken = await generateRealtimeToken(supabase, {
           userId: subscription.userId,
           clinicId: ctx.clinicId,
           resourceType: input.resourceType,
@@ -165,7 +167,7 @@ export const realtimeSyncRouter = router({
         })
 
         // Log subscription creation
-        await ctx.supabase
+        await supabase
           .from('audit_logs')
           .insert({
             id: crypto.randomUUID(),
@@ -200,9 +202,10 @@ export const realtimeSyncRouter = router({
     .input(UnsubscribeFromRealtimeSchema)
     .use(rlsGuard)
     .mutation(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
         // Deactivate subscription
-        const { error } = await ctx.supabase
+        const { error } = await supabase
           .from('realtime_subscriptions')
           .update({ 
             is_active: false,
@@ -214,7 +217,7 @@ export const realtimeSyncRouter = router({
         if (error) throw error
 
         // Log unsubscription
-        await ctx.supabase
+        await supabase
           .from('audit_logs')
           .insert({
             id: crypto.randomUUID(),
@@ -248,8 +251,9 @@ export const realtimeSyncRouter = router({
     }))
     .use(rlsGuard)
     .query(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
-        let query = ctx.supabase
+        let query = supabase
           .from('realtime_subscriptions')
           .select('*')
           .eq('clinic_id', ctx.clinicId)
@@ -284,6 +288,7 @@ export const realtimeSyncRouter = router({
     .input(SyncDataSchema)
     .use(rlsGuard)
     .mutation(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
         const syncEvent: SyncEvent = {
           id: crypto.randomUUID(),
@@ -302,12 +307,12 @@ export const realtimeSyncRouter = router({
         }
 
         // Check for conflicts
-        const conflict = await checkForSyncConflict(ctx.supabase, syncEvent)
+        const conflict = await checkForSyncConflict(supabase, syncEvent)
 
         if (conflict) {
           // Create conflict resolution record
           const conflictId = crypto.randomUUID()
-          await ctx.supabase
+          await supabase
             .from('sync_conflicts')
             .insert({
               id: conflictId,
@@ -331,10 +336,10 @@ export const realtimeSyncRouter = router({
         }
 
         // Apply sync changes
-        const result = await applySyncChanges(ctx.supabase, syncEvent)
+        const result = await applySyncChanges(supabase, syncEvent)
 
         // Log sync event
-        await ctx.supabase
+        await supabase
           .from('sync_events')
           .insert({
             id: syncEvent.id,
@@ -367,8 +372,9 @@ export const realtimeSyncRouter = router({
     }))
     .use(rlsGuard)
     .query(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
-        let query = ctx.supabase
+        let query = supabase
           .from('sync_conflicts')
           .select('*')
           .eq('clinic_id', ctx.clinicId)
@@ -405,9 +411,10 @@ export const realtimeSyncRouter = router({
     .input(ResolveConflictSchema)
     .use(rlsGuard)
     .mutation(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
         // Get conflict details
-        const { data: conflict, error: conflictError } = await ctx.supabase
+        const { data: conflict, error: conflictError } = await supabase
           .from('sync_conflicts')
           .select('*')
           .eq('id', input.conflictId)
@@ -431,14 +438,14 @@ export const realtimeSyncRouter = router({
         }
 
         // Update the resource with resolved data
-        await updateResourceWithResolvedData(ctx.supabase, {
+        await updateResourceWithResolvedData(supabase, {
           resourceType: conflict.resource_type,
           resourceId: conflict.resource_id,
           data: finalData,
         })
 
         // Update conflict record
-        const { error: updateError } = await ctx.supabase
+        const { error: updateError } = await supabase
           .from('sync_conflicts')
           .update({
             resolution: input.resolution,
@@ -451,7 +458,7 @@ export const realtimeSyncRouter = router({
         if (updateError) throw updateError
 
         // Log conflict resolution
-        await ctx.supabase
+        await supabase
           .from('audit_logs')
           .insert({
             id: crypto.randomUUID(),
@@ -485,8 +492,9 @@ export const realtimeSyncRouter = router({
     .input(GetOfflineQueueSchema)
     .use(rlsGuard)
     .query(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
-        let query = ctx.supabase
+        let query = supabase
           .from('offline_queues')
           .select('*')
           .eq('user_id', ctx.session?.id || 'anonymous')
@@ -500,21 +508,19 @@ export const realtimeSyncRouter = router({
 
         if (error) throw error
 
-        // Filter operations by status if specified
-        let operations = []
-        if (queues) {
-          operations = queues.flatMap(queue => 
-            queue.operations.filter((op: any) => 
-              !input.status || op.status === input.status
-            )
-          )
+        const typedQueues = (queues ?? []) as Array<OfflineQueue>
+        const operations: OfflineQueue['operations'] = []
+
+        for (const queue of typedQueues) {
+          const filtered = queue.operations.filter(op => !input.status || op.status === input.status)
+          operations.push(...filtered)
         }
 
         return {
           success: true,
           operations,
-          totalQueues: queues?.length || 0,
-          pendingOperations: operations.filter((op: any) => op.status === 'pending').length,
+          totalQueues: typedQueues.length,
+          pendingOperations: operations.filter(op => op.status === 'pending').length,
         }
       } catch (error) {
         console.error('Failed to get offline queue:', error)
@@ -530,9 +536,10 @@ export const realtimeSyncRouter = router({
     }))
     .use(rlsGuard)
     .mutation(async ({ ctx, input }) => {
+      const supabase = ctx.supabase as SupabaseClient<any>
       try {
         // Get pending operations
-        const { data: queues, error: queueError } = await ctx.supabase
+        const { data: queues, error: queueError } = await supabase
           .from('offline_queues')
           .select('*')
           .eq('user_id', ctx.session?.id || 'anonymous')
@@ -540,21 +547,27 @@ export const realtimeSyncRouter = router({
 
         if (queueError) throw queueError
 
-        let operationsToProcess = []
-        if (queues) {
-          operationsToProcess = queues.flatMap(queue => 
-            queue.operations.filter((op: any) => 
-              op.status === 'pending' &&
-              (!input.operationIds || input.operationIds.includes(op.id))
-            )
+        const typedQueues = (queues ?? []) as Array<OfflineQueue>
+        const operationsToProcess: OfflineQueue['operations'] = []
+
+        for (const queue of typedQueues) {
+          const pendingOperations = queue.operations.filter(operation =>
+            operation.status === 'pending' &&
+            (!input.operationIds || input.operationIds.includes(operation.id))
           )
+          operationsToProcess.push(...pendingOperations)
         }
 
-        const results = []
+        const results: Array<{
+          operationId: string
+          success: boolean
+          result?: unknown
+          error?: string
+        }> = []
         for (const operation of operationsToProcess) {
           try {
             // Process the operation
-            const result = await processOfflineOperation(ctx.supabase, operation)
+            const result = await processOfflineOperation(supabase, operation)
             results.push({
               operationId: operation.id,
               success: true,
@@ -562,7 +575,7 @@ export const realtimeSyncRouter = router({
             })
 
             // Update operation status
-            await updateOperationStatus(ctx.supabase, operation.id, 'completed')
+            await updateOperationStatus(supabase, operation.id, 'completed')
           } catch (error) {
             results.push({
               operationId: operation.id,
@@ -571,18 +584,18 @@ export const realtimeSyncRouter = router({
             })
 
             // Update operation status with retry logic
-            const retryCount = operation.retryCount + 1
+            const retryCount = (operation.retryCount ?? 0) + 1
             if (retryCount < 3) {
-              await updateOperationStatus(ctx.supabase, operation.id, 'pending', retryCount)
+              await updateOperationStatus(supabase, operation.id, 'pending', retryCount)
             } else {
-              await updateOperationStatus(ctx.supabase, operation.id, 'failed', retryCount)
+              await updateOperationStatus(supabase, operation.id, 'failed', retryCount)
             }
           }
         }
 
         // Update last sync timestamp
-        if (queues && queues.length > 0) {
-          await ctx.supabase
+        if (typedQueues.length > 0) {
+          await supabase
             .from('offline_queues')
             .update({ 
               last_sync_at: new Date().toISOString(),
@@ -606,7 +619,7 @@ export const realtimeSyncRouter = router({
 })
 
 // Helper functions
-async function generateRealtimeToken(supabase: any, payload: any): Promise<string> {
+async function generateRealtimeToken(_supabase: any, _payload: any): Promise<string> {
   // Generate a token for Supabase Realtime
   // In production, this would use proper JWT signing
   return crypto.randomUUID()
@@ -699,10 +712,10 @@ async function processOfflineOperation(supabase: any, operation: any): Promise<a
 }
 
 async function updateOperationStatus(
-  supabase: any,
+  _supabase: any,
   operationId: string,
   status: string,
-  retryCount?: number
+  _retryCount?: number
 ): Promise<void> {
   // This would update the operation status in the queue
   // Implementation depends on the actual queue structure

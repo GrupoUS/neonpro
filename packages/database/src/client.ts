@@ -12,13 +12,18 @@
  * - Edge runtime support
  */
 
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { Database } from '@neonpro/types'
+import {
+  createClient as createSupabaseClientOriginal,
+  type SupabaseClient,
+} from '@supabase/supabase-js'
 import { z } from 'zod'
+import { DatabaseConfig, loadDatabaseConfig } from './client-service'
 
 // Re-export SupabaseClient type for external use
-export type { SupabaseClient } from '@supabase/supabase-js'
 export type { Database as NeonProDatabase } from '@neonpro/types'
+export type { SupabaseClient } from '@supabase/supabase-js'
+export type { DatabaseConfig } from './client-service'
 
 // Configuration schema for database client
 export const DatabaseClientConfigSchema = z.object({
@@ -32,7 +37,7 @@ export const DatabaseClientConfigSchema = z.object({
     queryCaching: z.boolean(),
     performanceMonitoring: z.boolean(),
     auditLogging: z.boolean(),
-    edgeSupport: z.boolean()
+    edgeSupport: z.boolean(),
   }),
   healthcare: z.object({
     lgpdCompliant: z.boolean(),
@@ -40,11 +45,11 @@ export const DatabaseClientConfigSchema = z.object({
     cfmCompliant: z.boolean(),
     auditTrail: z.boolean(),
     dataEncryption: z.boolean(),
-    accessControl: z.boolean()
-  })
+    accessControl: z.boolean(),
+  }),
 })
 
-export type DatabaseClientConfig = z.infer<typeof DatabaseClientSchema>
+export type DatabaseClientConfig = z.infer<typeof DatabaseClientConfigSchema>
 
 // Default configuration
 const DEFAULT_CONFIG: Partial<DatabaseClientConfig> = {
@@ -55,7 +60,7 @@ const DEFAULT_CONFIG: Partial<DatabaseClientConfig> = {
     queryCaching: true,
     performanceMonitoring: true,
     auditLogging: true,
-    edgeSupport: true
+    edgeSupport: true,
   },
   healthcare: {
     lgpdCompliant: true,
@@ -63,20 +68,22 @@ const DEFAULT_CONFIG: Partial<DatabaseClientConfig> = {
     cfmCompliant: true,
     auditTrail: true,
     dataEncryption: true,
-    accessControl: true
-  }
+    accessControl: true,
+  },
 }
 
 // Create optimized Supabase client
-export const createClient = (config: Partial<DatabaseClientConfig> = {}): SupabaseClient<NeonProDatabase> => {
-  const validatedConfig = DatabaseClientSchema.parse({ ...DEFAULT_CONFIG, ...config })
+export const createClient = (
+  config: Partial<DatabaseClientConfig> = {},
+): SupabaseClient<Database> => {
+  const validatedConfig = DatabaseClientConfigSchema.parse({ ...DEFAULT_CONFIG, ...config })
 
   const clientConfig = {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
       detectSessionInUrl: true,
-      flowType: 'pkce' as const
+      flowType: 'pkce' as const,
     },
     global: {
       headers: {
@@ -84,39 +91,95 @@ export const createClient = (config: Partial<DatabaseClientConfig> = {}): Supaba
         'X-Healthcare-Compliance': JSON.stringify({
           lgpd: validatedConfig.healthcare.lgpdCompliant,
           anvisa: validatedConfig.healthcare.anvisaCompliant,
-          cfm: validatedConfig.healthcare.cfmCompliant
+          cfm: validatedConfig.healthcare.cfmCompliant,
         }),
         'X-Performance-Optimization': JSON.stringify({
           pooling: validatedConfig.optimization.connectionPooling,
           caching: validatedConfig.optimization.queryCaching,
-          monitoring: validatedConfig.optimization.performanceMonitoring
-        })
-      }
+          monitoring: validatedConfig.optimization.performanceMonitoring,
+        }),
+      },
     },
     db: {
-      schema: 'public',
+      schema: 'public' as const,
       // Enable realtime if available
       realtime: {
         params: {
-          eventsPerSecond: 10
-        }
-      }
-    }
+          eventsPerSecond: 10,
+        },
+      },
+    },
   }
 
   // Use appropriate key based on environment
   const key = validatedConfig.serviceKey ||
-    (validatedConfig.anonKey && validatedConfig.environment !== 'production') ? validatedConfig.anonKey : null
+      (validatedConfig.anonKey && validatedConfig.environment !== 'production')
+    ? validatedConfig.anonKey
+    : null
 
-  return createSupabaseClient<NeonProDatabase>(
+  return createSupabaseClientOriginal(
     validatedConfig.url,
-    key,
-    clientConfig
-  )
+    key || '',
+    clientConfig,
+  ) as SupabaseClient<Database>
+}
+
+// Create Supabase client with typed Database and optional config
+// Uses environment variables as defaults with secure loading
+export const createSupabaseClient = (
+  config?: Partial<DatabaseConfig>,
+): SupabaseClient<Database> => {
+  // Load default configuration from environment
+  const defaultConfig = loadDatabaseConfig()
+
+  // Merge with provided config
+  const finalConfig = { ...defaultConfig, ...config }
+
+  // Validate required configuration
+  if (!finalConfig.url) {
+    throw new Error('Database URL is required')
+  }
+
+  // Use anon key by default, fallback to service role key
+  const key = finalConfig.anonKey || finalConfig.serviceRoleKey
+
+  if (!key) {
+    throw new Error('Database key is required (anonKey or serviceRoleKey)')
+  }
+
+  // Audit log without sensitive data (LGPD compliance)
+  console.warn('Supabase client created', {
+    hasUrl: !!finalConfig.url,
+    hasKey: !!key,
+    keyType: finalConfig.anonKey ? 'anon' : 'service',
+    timestamp: new Date().toISOString(),
+  })
+
+  return createSupabaseClientOriginal<Database>(finalConfig.url, key, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    },
+    global: {
+      headers: {
+        'X-Client-Runtime': typeof globalThis !== 'undefined' && 'Bun' in globalThis
+          ? 'bun'
+          : 'node',
+        'X-Healthcare-Compliance': JSON.stringify({
+          lgpd: true,
+          anvisa: true,
+          cfm: true,
+        }),
+      },
+    },
+  })
 }
 
 // Create service client (for server-side operations)
-export const createServiceClient = (config: Partial<DatabaseClientConfig> = {}): SupabaseClient<NeonProDatabase> => {
+export const createServiceClient = (
+  config: Partial<DatabaseClientConfig> = {},
+): SupabaseClient<Database> => {
   return createClient({
     ...config,
     // Service client always uses service key for server operations
@@ -129,13 +192,14 @@ export const createServiceClient = (config: Partial<DatabaseClientConfig> = {}):
       connectionPooling: true,
       queryCaching: true,
       performanceMonitoring: true,
-      auditLogging: true
-    }
+      auditLogging: true,
+      edgeSupport: true,
+    },
   })
 }
 
 // Check database health (T020)
-export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabase>): Promise<{
+export const checkDatabaseHealth = async (client?: SupabaseClient<Database>): Promise<{
   healthy: boolean
   timestamp: string
   environment: string
@@ -171,7 +235,7 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
 
     // Basic connectivity test
     const startTime = Date.now()
-    const { data, error } = await healthClient
+    const { error } = await healthClient
       .from('health_check')
       .select('id')
       .limit(1)
@@ -183,11 +247,18 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
     const isHealthy = healthStatus === 'connected' && !error
 
     // Performance metrics (if available)
-    const performance = {
-      queryCacheHitRate: client ? 0.85 : undefined,
-      connectionPoolSize: client ? 10 : undefined,
-      averageResponseTime: latency
+    const performance: {
+      queryCacheHitRate?: number
+      connectionPoolSize?: number
+      averageResponseTime?: number
+    } = {}
+
+    if (client) {
+      performance.queryCacheHitRate = 0.85
+      performance.connectionPoolSize = 10
     }
+    // averageResponseTime is always available from the latency measurement
+    performance.averageResponseTime = latency
 
     // Healthcare compliance status
     const healthcare = {
@@ -195,14 +266,14 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
       anvisaCompliant: true,
       cfmCompliant: true,
       auditTrailEnabled: true,
-      dataEncryptionEnabled: true
+      dataEncryptionEnabled: true,
     }
 
     // System metrics
     const metrics = {
       lastCheck: timestamp,
       uptime: process.uptime(),
-      activeConnections: 1
+      activeConnections: 1,
     }
 
     return {
@@ -213,13 +284,12 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
       connection: {
         status: healthStatus,
         latency,
-        error: error?.message
+        ...(error?.message && { error: error.message }),
       },
       performance,
       healthcare,
-      metrics
+      metrics,
     }
-
   } catch (error) {
     return {
       healthy: false,
@@ -228,32 +298,32 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
       runtime: 'bun',
       connection: {
         status: 'error',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       },
       performance: {
         queryCacheHitRate: 0,
         connectionPoolSize: 0,
-        averageResponseTime: 0
+        averageResponseTime: 0,
       },
       healthcare: {
         lgpdCompliant: false,
         anvisaCompliant: false,
         cfmCompliant: false,
         auditTrailEnabled: false,
-        dataEncryptionEnabled: false
+        dataEncryptionEnabled: false,
       },
       metrics: {
         lastCheck: timestamp,
         uptime: process.uptime(),
-        activeConnections: 0
-      }
+        activeConnections: 0,
+      },
     }
   }
 }
 
 // Implement migration database tracking (T021)
 export const trackMigrationMetrics = async (
-  client: SupabaseClient<NeonProDatabase>,
+  client: SupabaseClient<Database>,
   migrationId: string,
   metrics: {
     phase: string
@@ -262,7 +332,7 @@ export const trackMigrationMetrics = async (
     buildTime?: number
     memoryUsage?: number
     errorCount?: number
-  }
+  },
 ): Promise<void> => {
   try {
     const timestamp = new Date().toISOString()
@@ -270,6 +340,10 @@ export const trackMigrationMetrics = async (
     // Insert migration metrics into tracking table
     await client
       .from('migration_metrics')
+      // The project's Database type currently doesn't include `migration_metrics`,
+      // causing Postgrest generics to resolve to `never`. Cast the payload to `any`
+      // to preserve runtime behavior while avoiding a compile error. Replace with
+      // a properly typed payload once `migration_metrics` is added to the Database types.
       .insert({
         migration_id: migrationId,
         timestamp,
@@ -284,10 +358,9 @@ export const trackMigrationMetrics = async (
         healthcare_compliance: {
           lgpd_compliant: true,
           anvisa_compliant: true,
-          cfm_compliant: true
-        }
-      })
-
+          cfm_compliant: true,
+        },
+      } as unknown as any)
   } catch (error) {
     console.error('Failed to track migration metrics:', error)
     // Don't throw error - migration tracking is not critical
@@ -296,7 +369,7 @@ export const trackMigrationMetrics = async (
 
 // Setup performance monitoring integration (T022)
 export const setupPerformanceMonitoring = (
-  client: SupabaseClient<NeonProDatabase>
+  client: SupabaseClient<Database>,
 ): {
   startMonitoring: () => Promise<void>
   stopMonitoring: () => Promise<void>
@@ -345,17 +418,16 @@ export const setupPerformanceMonitoring = (
           value: queryTime,
           metadata: {
             operation: 'health_check',
-            table: 'performance_metrics'
-          }
+            table: 'performance_metrics',
+          },
         })
-
       } catch (error) {
         await recordMetric({
           type: 'database_error',
           value: 1,
           metadata: {
-            error: error instanceof Error ? error.message : 'Database query error'
-          }
+            error: error instanceof Error ? error.message : 'Database query error',
+          },
         })
       }
     }, 30000) // Every 30 seconds
@@ -378,7 +450,7 @@ export const setupPerformanceMonitoring = (
     metrics.push({
       ...metric,
       timestamp,
-      metadata: metric.metadata || {}
+      metadata: metric.metadata || {},
     })
 
     // Keep only last 1000 metrics to prevent memory issues
@@ -393,7 +465,7 @@ export const setupPerformanceMonitoring = (
   const getMetrics = async () => {
     return {
       timestamp: new Date().toISOString(),
-      metrics: [...metrics]
+      metrics: [...metrics],
     }
   }
 
@@ -401,7 +473,7 @@ export const setupPerformanceMonitoring = (
     startMonitoring,
     stopMonitoring,
     recordMetric,
-    getMetrics
+    getMetrics,
   }
 }
 
@@ -414,15 +486,16 @@ export const closeDatabaseConnections = async (): Promise<void> => {
 
 // Health check for edge runtime compatibility
 export const checkEdgeCompatibility = (): boolean => {
-  return typeof EdgeRuntime !== 'undefined' &&
-         process.versions.bun &&
-         process.versions.bun >= '1.1.0'
+  return typeof globalThis !== 'undefined' &&
+    'EdgeRuntime' in globalThis &&
+    !!process.versions['bun'] &&
+    process.versions['bun'] >= '1.1.0'
 }
 
 // Bun-specific optimizations
-export const optimizeForBun = (client: SupabaseClient<NeonProDatabase>): void => {
+export const optimizeForBun = (_client: SupabaseClient<Database>): void => {
   // Enable Bun-specific optimizations
-  if (typeof Bun !== 'undefined') {
+  if (typeof globalThis !== 'undefined' && 'Bun' in globalThis) {
     console.log('⚡ Applying Bun runtime optimizations to database client')
 
     // Bun-specific optimizations would go here

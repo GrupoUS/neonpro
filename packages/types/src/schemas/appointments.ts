@@ -39,3 +39,27 @@ export const UpdateAppointmentSchema = AppointmentSchema.partial().extend({
 export type Appointment = z.infer<typeof AppointmentSchema>;
 export type CreateAppointment = z.infer<typeof CreateAppointmentSchema>;
 export type UpdateAppointment = z.infer<typeof UpdateAppointmentSchema>;
+
+// Multi-session scheduling interface for complex appointment scenarios
+export interface MultiSessionSchedulingRequest {
+  /** Required base appointment information */
+  clinic_id: string;
+  patient_id: string;
+  professional_id: string;
+  service_type: string;
+  
+  /** Optional patient preferences for multi-session scheduling */
+  preferredDates?: Date[];
+  
+  /** Optional medical history context for treatment planning */
+  medicalHistory?: string;
+  
+  /** LGPD compliance flag for processing sensitive data */
+  lgpd_processing_consent: boolean;
+  
+  /** Session count for multi-session treatments */
+  sessionCount?: number;
+  
+  /** Preferred time slots for scheduling */
+  preferredTimeSlots?: string[];
+}

@@ -12,7 +12,7 @@ import { describe, test, expect, beforeEach, vi } from 'vitest';
 
 // These imports WILL FAIL until implementation exists - THIS IS EXPECTED
 import { installFont, configureFontFace, validateFontLoading } from '@/lib/fonts/installation';
-import { FontInstallationRequest, FontInstallationResponse } from '@/types/fonts';
+import { FontInstallationRequest } from '@/types/fonts';
 
 describe('Font Installation Contract Tests', () => {
   beforeEach(() => {

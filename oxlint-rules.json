@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "healthcare-compliance": {
+      "no-console-pii": {
+        "description": "Disallow logging of personally identifiable information",
+        "pattern": "console\\.(log|error|warn|info)\\s*\\(.*(?:patient|cpf|rg|email|telefone|endereco)\\s*[:=]",
+        "message": "PII (Personally Identifiable Information) should not be logged in production",
+        "severity": "error"
+      },
+      "require-encryption-comment": {
+        "description": "Require encryption comments for sensitive data handling",
+        "pattern": "(?:patient|clinical|medical|health)\\s*(?:data|info)",
+        "message": "Sensitive healthcare data must include encryption comment: // LGPD: Encrypted at rest",
+        "severity": "warning"
+      },
+      "no-hardcoded-api-keys": {
+        "description": "Disallow hardcoded API keys or secrets",
+        "pattern": "(?:api_key|secret|password|token)\\s*[:=]\\s*['\"][^'\"]{8,}",
+        "message": "API keys and secrets must be stored in environment variables",
+        "severity": "error"
+      },
+      "require-patient-consent": {
+        "description": "Require patient consent validation for data processing",
+        "pattern": "processPatientData|handlePatientInfo",
+        "message": "Patient data processing must include consent validation",
+        "severity": "error"
+      }
+    }
+  }
+}

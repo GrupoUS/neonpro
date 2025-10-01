@@ -197,11 +197,11 @@ describe('Migration Status API Integration Tests', () => {
       
       // Verify current phase
       expect(status.phases.find(p => p.name === 'configuration')).toHaveProperty('status', 'in_progress')
-      expect(status.phases.find(p => p.name === 'migration')).toHaveProperty('status', 'pending'))
-      expect(status.phases.find(p => p.name === 'validation')).toHaveProperty('status', 'pending'))
+      expect(status.phases.find(p => p.name === 'migration')).toHaveProperty('status', 'pending')
+      expect(status.phases.find(p => p.name === 'validation')).toHaveProperty('status', 'pending')
       
       // Verify migration metrics
-      expect(status).toHaveProperty('metrics'))
+      expect(status).toHaveProperty('metrics')
       expect(status.metrics).toHaveProperty('buildTimeImprovement', 0)
       expect(status.metrics).toHaveProperty('memoryUsageReduction', 0)
       expect(status.metrics).toHaveProperty('performanceImprovement', 0)
@@ -269,7 +269,7 @@ describe('Migration Status API Integration Tests', () => {
       expect(config.bunConfiguration).toHaveProperty('enabledFeatures', ['native_bundling', 'file_system_cache', 'typescript_transpilation'])
       
       // Verify performance targets
-      expect(config).toHaveProperty('performanceTargets'))
+      expect(config).toHaveProperty('performanceTargets')
       expect(config.performanceTargets.buildTimeImprovement).toBe(4.0)
       expect(config.performanceTargets.memoryUsageReduction).toBe(0.22)
       expect(config.performanceTargets.edgeTTFBTarget).toBe(100)
@@ -277,7 +277,7 @@ describe('Migration Status API Integration Tests', () => {
       expect(config.performanceTargets.warmStartTarget).toBe(50)
       
       // Verify healthcare compliance configuration
-      expect(config).toHaveProperty('healthcareCompliance'))
+      expect(config).toHaveProperty('healthcareCompliance')
       expect(config.healthcareCompliance.lgpd).toHaveProperty('dataProcessingBasis', 'consent')
       expect(config.healthcareCompliance.anvisa).toHaveProperty('medicalDeviceClass', 'II')
       expect(config.healthcareCompliance.cfm).toHaveProperty('auditRequired', true)
@@ -285,7 +285,7 @@ describe('Migration Status API Integration Tests', () => {
       expect(config.healthcareCompliance.cfm).toHaveProperty('patientSafety', true)
       
       // Verify rollback configuration
-      expect(config).toHaveProperty('rollbackConfiguration'))
+      expect(config).toHaveProperty('rollbackConfiguration')
       expect(config.rollbackConfiguration).toHaveProperty('enabled', true)
       expect(config.rollbackConfiguration).toHaveProperty('backupBeforeRollback', true)
       expect(config.rollbackConfiguration).toHaveProperty('rollbackPoint', 'pre-migration-backup')

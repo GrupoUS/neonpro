@@ -4,6 +4,7 @@
 import { ClinicAnalyzer, ClinicAnalysisRequest } from './services/clinic-analyzer';
 import { SimpleReportGenerator } from './services/report-generator';
 import { PricingCalculator, BRAZILIAN_CLINIC_PRICING } from './pricing';
+import { Finding } from './types/finding';
 
 // Example: Dr. Silva's Aesthetic Clinic in São Paulo
 const brazilianClinicExample: ClinicAnalysisRequest = {
@@ -25,10 +26,10 @@ console.log(`📱 Mobile Performance: ${analysis.criticalMetrics.mobilePerforman
 // Step 2: Generate report for clinic owner
 const report = SimpleReportGenerator.generate({
   name: analysis.clinicName,
-  lgpdIssues: analysis.findings.filter(f => f.type === 'lgpd_violation').length,
+  lgpdIssues: analysis.findings.filter((f: Finding) => f.type === 'LGPD_VIOLATION').length,
   mobileScore: analysis.criticalMetrics.mobilePerformance,
-  bookingIssues: analysis.findings.filter(f => f.type === 'booking_failure').length,
-  paymentIssues: analysis.findings.filter(f => f.type === 'payment_issue').length,
+  bookingIssues: analysis.findings.filter((f: Finding) => f.type === 'ORGANIZATIONAL_ISSUE').length,
+  paymentIssues: analysis.findings.filter((f: Finding) => f.type === 'DEPENDENCY_ISSUE').length,
   findings: analysis.findings
 });
 

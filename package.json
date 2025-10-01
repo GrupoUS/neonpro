@@ -41,6 +41,7 @@
   "author": "NeonPro Team",
   "license": "MIT",
   "dependencies": {
+    "@neonpro/ai-quality": "workspace:*",
     "@neonpro/database": "workspace:*",
     "@neonpro/types": "workspace:*",
     "@neonpro/ui": "workspace:*",

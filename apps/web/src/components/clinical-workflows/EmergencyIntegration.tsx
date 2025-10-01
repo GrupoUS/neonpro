@@ -10,29 +10,21 @@
 'use client'
 
 import React, { useState, useCallback, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui'
-import { Button } from '@neonpro/ui'
-import { Alert, AlertDescription } from '@neonpro/ui'
-import { Badge } from '@neonpro/ui'
-import { Progress } from '@neonpro/ui'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@neonpro/ui'
-import { AccessibilityProvider } from '@neonpro/ui'
-import { ScreenReaderAnnouncer } from '@neonpro/ui'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { AccessibilityProvider } from '@/components/ui/accessibility-provider'
 import { HealthcareFormGroup } from '@/components/ui/healthcare-form-group'
 import { AccessibilityInput } from '@/components/ui/accessibility-input'
-import { MobileHealthcareButton } from '@/components/ui/mobile-healthcare-button'
+import { MobileHealthcareButton } from '@neonpro/ui'
+import { ScreenReaderAnnouncer } from '@neonpro/ui'
 
 import {
-  EmergencyAlert,
-  EmergencyProtocol,
-  EmergencyStep,
   AestheticTreatmentAlert,
   AestheticTreatmentProtocol,
-  ClinicalWorkflowComponentProps,
-  StaffRole
+  ClinicalWorkflowComponentProps
 } from './types'
-
-import { HealthcareContext } from '@/types/healthcare'
 
 /**
  * Contact configuration interface for emergency and support numbers
@@ -71,12 +63,8 @@ const TREATMENT_PRIORITY = [
   { value: 'low', label: 'Baixa', color: 'blue', responseTime: 30 },
   { value: 'medium', label: 'Média', color: 'green', responseTime: 15 },
   { value: 'high', label: 'Alta', color: 'orange', responseTime: 5 },
-  { value: 'critical', label: 'VIP', color: 'purple', responseTime: 2 }
-]
-
-const STAFF_ROLES: StaffRole[] = [
-  'medico', 'enfermeiro', 'tecnico_enfermagem', 'esteticista', 'coordenador_clinico', 'recepcao', 'administrativo'
-]
+  { value: 'urgent', label: 'VIP', color: 'purple', responseTime: 2 }
+] satisfies Array<{ value: AestheticTreatmentAlert['priority']; label: string; color: string; responseTime: number }>
 
 /**
  * Brazilian phone number validation regex
@@ -107,21 +95,37 @@ const validateBrazilianPhone = (phoneNumber: string): boolean => {
  * @returns Contact configuration with validated phone numbers
  */
 const getContactConfiguration = (contactConfig?: ContactConfiguration): ContactConfiguration => {
-  // Environment variable mapping with secure defaults
-  const envConfig: ContactConfiguration = {
-    specialist: process.env.NEXT_PUBLIC_CONTACT_SPECIALIST,
-    technical: process.env.NEXT_PUBLIC_CONTACT_TECHNICAL,
-    clinic: process.env.NEXT_PUBLIC_CONTACT_CLINIC,
-    emergency: process.env.NEXT_PUBLIC_CONTACT_EMERGENCY || '+55192' // SAMU Brazil
+  const envConfig: ContactConfiguration = {}
+
+  const specialist = process.env['NEXT_PUBLIC_CONTACT_SPECIALIST']
+  if (specialist) {
+    envConfig.specialist = specialist
   }
 
-  // Merge props with environment, giving priority to props
-  const finalConfig = { ...envConfig, ...contactConfig }
-  
-  // Validate and filter out invalid phone numbers
+  const technical = process.env['NEXT_PUBLIC_CONTACT_TECHNICAL']
+  if (technical) {
+    envConfig.technical = technical
+  }
+
+  const clinic = process.env['NEXT_PUBLIC_CONTACT_CLINIC']
+  if (clinic) {
+    envConfig.clinic = clinic
+  }
+
+  envConfig.emergency = process.env['NEXT_PUBLIC_CONTACT_EMERGENCY'] ?? '+55192'
+
+  const mergedConfig: ContactConfiguration = {
+    ...envConfig,
+    ...(contactConfig
+      ? Object.fromEntries(
+          Object.entries(contactConfig).filter(([, value]) => typeof value === 'string' && value.length > 0),
+        )
+      : {}),
+  }
+
   const validatedConfig: ContactConfiguration = {}
-  Object.entries(finalConfig).forEach(([key, value]) => {
-    if (value && validateBrazilianPhone(value)) {
+  Object.entries(mergedConfig).forEach(([key, value]) => {
+    if (typeof value === 'string' && validateBrazilianPhone(value)) {
       validatedConfig[key as keyof ContactConfiguration] = value
     }
   })
@@ -346,12 +350,14 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
   const [isCountingDown, setIsCountingDown] = useState(false)
   const [countdownTime, setCountdownTime] = useState(0)
 
+  type NewAlertFormState = Pick<AestheticTreatmentAlert, 'type' | 'priority' | 'location' | 'description'>
+
   // Form states
-  const [newAlert, setNewAlert] = useState({
-    type: 'consultation_request' as const,
-    priority: 'medium' as const,
+  const [newAlert, setNewAlert] = useState<NewAlertFormState>({
+    type: 'consultation_request',
+    priority: 'medium',
     location: '',
-    description: ''
+    description: '',
   })
 
   // Monitor offline status for mobile clinical use
@@ -395,29 +401,34 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
     try {
       setIsSubmitting(true)
 
+      const priorityToUrgency: Record<AestheticTreatmentAlert['priority'], AestheticTreatmentAlert['urgencyLevel']> = {
+        low: 'routine',
+        medium: 'priority',
+        high: 'urgent',
+        urgent: 'urgent',
+      }
+
       const alertData: Omit<AestheticTreatmentAlert, 'id' | 'reportedAt'> = {
         type: newAlert.type,
         priority: newAlert.priority,
-        patientId,
+        ...(patientId ? { patientId } : {}),
         location: newAlert.location,
         description: newAlert.description,
-        reportedBy: staffId,
+        reportedBy: staffId ?? 'clinical-team',
         status: 'pending',
-        assignedStaff: [staffId],
-        urgencyLevel: newAlert.priority === 'critical' ? 'urgent' : 'priority',
+        assignedStaff: staffId ? [staffId] : [],
+        urgencyLevel: priorityToUrgency[newAlert.priority],
         requiresMedicalReview: false,
-        patientConsent: true
+        patientConsent: true,
       }
 
       if (onCreateAlert) {
-        const createdAlert = await onCreateAlert(alertData)
-        setSelectedAlert(createdAlert as AestheticTreatmentAlert)
-        
-        // Start countdown for VIP treatments
-        if (newAlert.priority === 'critical') {
-          const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === 'critical')
+        await onCreateAlert(alertData)
+
+        if (newAlert.priority === 'urgent') {
+          const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === 'urgent')
           if (priorityInfo) {
-            setCountdownTime(priorityInfo.responseTime * 60) // Convert to seconds
+            setCountdownTime(priorityInfo.responseTime * 60)
             setIsCountingDown(true)
           }
         }
@@ -443,28 +454,29 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
     }
   }, [newAlert, patientId, staffId, onCreateAlert])
 
-  const handleUpdateAlertStatus = useCallback(async (alertId: string, newStatus: string) => {
-    try {
-      setIsSubmitting(true)
+  const handleUpdateAlertStatus = useCallback(
+    async (alertId: string, newStatus: AestheticTreatmentAlert['status']) => {
+      try {
+        setIsSubmitting(true)
 
-      if (onUpdateAlert) {
-        await onUpdateAlert(alertId, { status: newStatus as any })
+        if (onUpdateAlert) {
+          await onUpdateAlert(alertId, { status: newStatus })
+        }
+
+        if (newStatus === 'resolved' || newStatus === 'cancelled') {
+          setIsCountingDown(false)
+          setCountdownTime(0)
+        }
+
+        ScreenReaderAnnouncer.announce('Status da solicitação atualizado com sucesso')
+      } catch (error) {
+        console.error('Error updating alert status:', error)
+      } finally {
+        setIsSubmitting(false)
       }
-
-      // Stop countdown if alert is resolved
-      if (newStatus === 'resolved' || newStatus === 'false_alarm') {
-        setIsCountingDown(false)
-        setCountdownTime(0)
-      }
-
-      // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Status da solicitação atualizado com sucesso')
-    } catch (error) {
-      console.error('Error updating alert status:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [onUpdateAlert])
+    },
+    [onUpdateAlert],
+  )
 
   const handleActivateProtocol = useCallback(async (protocolId: string, alertId: string) => {
     try {
@@ -515,25 +527,12 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  const getTreatmentTypeColor = (type: string) => {
-    return TREATMENT_TYPES.find(t => t.value === type)?.color || 'gray'
-  }
-
-  const getTreatmentTypeLabel = (type: string) => {
-    return TREATMENT_TYPES.find(t => t.value === type)?.label || type
-  }
-
-  const getPriorityColor = (severity: string) => {
-    return TREATMENT_PRIORITY.find(s => s.value === severity)?.color || 'gray'
-  }
-
-  const getPriorityLabel = (severity: string) => {
-    return TREATMENT_PRIORITY.find(s => s.value === severity)?.label || severity
-  }
-
   const activeVIPAlerts = activeAlerts.filter(alert => 
-    alert.status === 'pending' && alert.priority === 'critical'
+    alert.status === 'pending' && alert.priority === 'urgent'
   )
+
+  const isActiveAlert = (alert: AestheticTreatmentAlert) =>
+    alert.status === 'pending' || alert.status === 'in_progress'
 
   return (
     <AccessibilityProvider>
@@ -635,7 +634,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
               <CardContent>
                 <div className="space-y-4">
                   {activeAlerts
-                    .filter(alert => alert.status === 'active')
+                    .filter(isActiveAlert)
                     .map(alert => (
                     <AlertCard
                       key={alert.id}
@@ -643,12 +642,10 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                       isSelected={selectedAlert?.id === alert.id}
                       onClick={() => setSelectedAlert(alert)}
                       onUpdateStatus={handleUpdateAlertStatus}
-                      onActivateProtocol={handleActivateProtocol}
-                      protocols={treatmentProtocols}
                       disabled={isSubmitting}
                     />
                   ))}
-                  {activeAlerts.filter(alert => alert.status === 'active').length === 0 && (
+                  {activeAlerts.filter(isActiveAlert).length === 0 && (
                     <div className="text-center py-8 text-gray-600">
                       Nenhuma solicitação de tratamento ativa no momento
                     </div>
@@ -679,7 +676,9 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   <HealthcareFormGroup label="Tipo de Solicitação" context={healthcareContext}>
                     <select
                       value={newAlert.type}
-                      onChange={(e) => setNewAlert(prev => ({ ...prev, type: e.target.value as any }))}
+                      onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                        setNewAlert(prev => ({ ...prev, type: event.target.value as AestheticTreatmentAlert['type'] }))
+                      }
                       className="w-full p-2 border rounded-md"
                     >
                       {TREATMENT_TYPES.map(type => (
@@ -691,8 +690,13 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   </HealthcareFormGroup>
                   <HealthcareFormGroup label="Prioridade" context={healthcareContext}>
                     <select
-                      value={newAlert.severity}
-                      onChange={(e) => setNewAlert(prev => ({ ...prev, priority: e.target.value as any }))}
+                      value={newAlert.priority}
+                      onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
+                        setNewAlert(prev => ({
+                          ...prev,
+                          priority: event.target.value as AestheticTreatmentAlert['priority'],
+                        }))
+                      }
                       className="w-full p-2 border rounded-md"
                     >
                       {TREATMENT_PRIORITY.map(priority => (
@@ -707,7 +711,9 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                 <HealthcareFormGroup label="Localização" context={healthcareContext}>
                   <AccessibilityInput
                     value={newAlert.location}
-                    onChange={(e) => setNewAlert(prev => ({ ...prev, location: e.target.value }))}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      setNewAlert(prev => ({ ...prev, location: event.target.value }))
+                    }
                     placeholder="Ex: Sala de tratamento, recepção, consultório..."
                   />
                 </HealthcareFormGroup>
@@ -715,7 +721,9 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                 <HealthcareFormGroup label="Descrição" context={healthcareContext}>
                   <textarea
                     value={newAlert.description}
-                    onChange={(e) => setNewAlert(prev => ({ ...prev, description: e.target.value }))}
+                    onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                      setNewAlert(prev => ({ ...prev, description: event.target.value }))
+                    }
                     className="w-full p-2 border rounded-md"
                     rows={4}
                     placeholder="Descreva detalhadamente a solicitação de tratamento..."
@@ -726,7 +734,6 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   <Button
                     onClick={handleCreateAlert}
                     disabled={isSubmitting || !newAlert.location || !newAlert.description}
-                    loading={isSubmitting}
                     variant="default"
                   >
                     Criar Solicitação
@@ -744,7 +751,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   protocol={protocol}
                   onActivate={(protocolId) => {
                     if (selectedAlert) {
-                      handleActivateProtocol(protocolId, selectedAlert.id)
+                      void handleActivateProtocol(protocolId, selectedAlert.id)
                     }
                   }}
                   disabled={isSubmitting || !selectedAlert}
@@ -761,7 +768,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
               <CardContent>
                 <div className="space-y-4">
                   {activeAlerts
-                    .filter(alert => alert.status !== 'active')
+                    .filter(alert => !isActiveAlert(alert))
                     .sort((a, b) => new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime())
                     .map(alert => (
                     <AlertCard
@@ -769,13 +776,11 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                       alert={alert}
                       onClick={() => setSelectedAlert(alert)}
                       onUpdateStatus={handleUpdateAlertStatus}
-                      onActivateProtocol={handleActivateProtocol}
-                      protocols={treatmentProtocols}
                       disabled={isSubmitting}
                       readonly
                     />
                   ))}
-                  {activeAlerts.filter(alert => alert.status !== 'active').length === 0 && (
+                  {activeAlerts.filter(alert => !isActiveAlert(alert)).length === 0 && (
                     <div className="text-center py-8 text-gray-600">
                       Nenhum histórico de tratamentos disponível
                     </div>
@@ -795,54 +800,42 @@ const AlertCard: React.FC<{
   alert: AestheticTreatmentAlert
   isSelected?: boolean
   onClick?: () => void
-  onUpdateStatus: (alertId: string, status: string) => void
-  onActivateProtocol: (protocolId: string, alertId: string) => void
-  protocols: AestheticTreatmentProtocol[]
+  onUpdateStatus: (alertId: string, status: AestheticTreatmentAlert['status']) => void
   disabled: boolean
   readonly?: boolean
-}> = ({ alert, isSelected, onClick, onUpdateStatus, onActivateProtocol, protocols, disabled, readonly }) => {
+}> = ({ alert, isSelected, onClick, onUpdateStatus, disabled, readonly }) => {
   const typeInfo = TREATMENT_TYPES.find(t => t.value === alert.type)
   const priorityInfo = TREATMENT_PRIORITY.find(s => s.value === alert.priority)
   
-  const getStatusColor = (status: string) => {
-    const colors: Record<string, string> = {
-      active: 'purple',
-      responding: 'yellow',
-      resolved: 'green',
-      false_alarm: 'gray'
-    }
-    return colors[status] || 'gray'
+  const statusStyles: Record<AestheticTreatmentAlert['status'], { color: string; label: string }> = {
+    pending: { color: 'yellow', label: 'Pendente' },
+    in_progress: { color: 'purple', label: 'Em andamento' },
+    coordinated: { color: 'blue', label: 'Coordenado' },
+    resolved: { color: 'green', label: 'Resolvido' },
+    cancelled: { color: 'gray', label: 'Cancelado' },
   }
 
-  const getStatusLabel = (status: string) => {
-    const labels: Record<string, string> = {
-      active: 'Ativo',
-      responding: 'Respondendo',
-      resolved: 'Resolvido',
-      false_alarm: 'Cancelado'
-    }
-    return labels[status] || status
-  }
+  const isActionable = alert.status === 'pending' || alert.status === 'in_progress'
 
   return (
     <div
       className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-        isSelected ? 'border-purple-500 bg-purple-50' : 
-        alert.priority === 'critical' ? 'border-purple-500 bg-purple-50' : 
+        isSelected ? 'border-purple-500 bg-purple-50' :
+        alert.priority === 'urgent' ? 'border-purple-500 bg-purple-50' :
         'border-gray-200 hover:border-gray-300'
       }`}
       onClick={onClick}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Badge variant={typeInfo?.color as any || 'secondary'}>
+          <Badge variant={(typeInfo?.color as any) || 'secondary'}>
             {typeInfo?.label || alert.type}
           </Badge>
-          <Badge variant={priorityInfo?.color as any || 'secondary'}>
-            {priorityInfo?.label || alert.severity}
+          <Badge variant={(priorityInfo?.color as any) || 'secondary'}>
+            {priorityInfo?.label || alert.priority}
           </Badge>
-          <Badge variant={getStatusColor(alert.status) as any}>
-            {getStatusLabel(alert.status)}
+          <Badge variant={(statusStyles[alert.status]?.color as any) || 'secondary'}>
+            {statusStyles[alert.status]?.label ?? alert.status}
           </Badge>
         </div>
         <span className="text-sm text-gray-600">
@@ -855,18 +848,18 @@ const AlertCard: React.FC<{
         <span className="text-sm text-gray-600">
           Solicitado por: {alert.reportedBy}
         </span>
-        {!readonly && alert.status === 'active' && (
+        {!readonly && isActionable && (
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
-                onUpdateStatus(alert.id, 'responding')
+                onUpdateStatus(alert.id, 'in_progress')
               }}
               disabled={disabled}
             >
-              Responder
+              Iniciar atendimento
             </Button>
             <Button
               variant="outline"
@@ -877,7 +870,7 @@ const AlertCard: React.FC<{
               }}
               disabled={disabled}
             >
-              Resolver
+              Marcar como resolvido
             </Button>
           </div>
         )}

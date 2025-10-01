@@ -5,7 +5,7 @@
  * Following TDD methodology and NeonPro quality standards
  */
 
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import edgeHealth from '../edge/health'
 import nodeHealth from '../node/health'
 
@@ -101,8 +101,6 @@ describe('Health Endpoints Integration', () => {
       const req = new Request('http://localhost/api/health/node')
       const res = await nodeHealth.fetch(req)
       const data = await res.json()
-      const responseText = JSON.stringify(data)
-      
       expect(data).toHaveProperty('serviceRoleConfigured')
       expect(typeof data.serviceRoleConfigured).toBe('boolean')
       expect(data).not.toHaveProperty('serviceRoleKey')

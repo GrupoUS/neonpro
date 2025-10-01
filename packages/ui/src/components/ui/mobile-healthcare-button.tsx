@@ -1,6 +1,9 @@
 import React from 'react'
-import { Button, ButtonProps } from './button'
 import { Heart, AlertTriangle, Phone, MapPin, Clock } from 'lucide-react'
+
+import { cn } from '@/lib/utils'
+
+import { Button, ButtonProps } from './button'
 
 export interface MobileHealthcareButtonProps extends ButtonProps {
   variant?: 'primary' | 'secondary' | 'destructive' | 'emergency' | 'medical'
@@ -13,6 +16,22 @@ export interface MobileHealthcareButtonProps extends ButtonProps {
   medicalAction?: 'call' | 'navigate' | 'alert' | 'record'
   patientId?: string
   location?: string
+}
+
+const extractTextContent = (node: React.ReactNode): string => {
+  return React.Children.toArray(node)
+    .map((child) => {
+      if (typeof child === 'string' || typeof child === 'number') {
+        return String(child)
+      }
+      if (React.isValidElement(child) && child.props?.children) {
+        return extractTextContent(child.props.children)
+      }
+      return ''
+    })
+    .filter(Boolean)
+    .join(' ')
+    .trim()
 }
 
 export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
@@ -80,14 +99,31 @@ export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
   // Generate accessibility labels
   const getAriaLabel = () => {
     if (props['aria-label']) return props['aria-label']
-    
-    let label = children?.toString() || ''
-    if (emergency) label = 'Emergency ' + label
-    if (medicalAction) label += ' - ' + medicalAction
-    if (patientId) label += ' for patient ' + patientId
-    if (location) label += ' at ' + location
-    
-    return label
+
+    const baseLabel = extractTextContent(children)
+    const segments: string[] = []
+
+    if (emergency) {
+      segments.push('Emergency')
+    }
+
+    if (baseLabel) {
+      segments.push(baseLabel)
+    }
+
+    if (medicalAction) {
+      segments.push(`Action ${medicalAction}`)
+    }
+
+    if (patientId) {
+      segments.push(`Patient ${patientId}`)
+    }
+
+    if (location) {
+      segments.push(`Location ${location}`)
+    }
+
+    return segments.length > 0 ? segments.join(' - ') : 'Healthcare action'
   }
 
   return (

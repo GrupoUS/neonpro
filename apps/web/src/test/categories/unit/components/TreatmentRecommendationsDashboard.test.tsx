@@ -63,10 +63,8 @@ describe('TreatmentRecommendationsDashboard', () => {
         <QueryClientProvider client={queryClient}>
           {/* This scenario simulates when activeAgent is undefined */}
           <div data-testid="no-agent-scenario">
-            {/* This represents the problematic code path */}
-            {false && (
-              <TreatmentRecommendationsDashboard {...defaultProps} />
-            )}
+            {/* This represents the problematic code path - commented out for test */}
+            {/* <TreatmentRecommendationsDashboard {...defaultProps} /> */}
           </div>
         </QueryClientProvider>
       )

@@ -28,7 +28,7 @@ import {
   ClinicalWorkflowValidation 
 } from './types'
 
-import { PatientData, HealthcareContext, FormValidationResult } from '@/types/healthcare'
+import { PatientData, HealthcareContext } from '@/types/healthcare'
 
 interface PatientIntakeFlowProps extends ClinicalWorkflowComponentProps {
   intakeFlow?: PatientIntakeFlow
@@ -107,7 +107,7 @@ export const PatientIntakeFlow: React.FC<PatientIntakeFlowProps> = ({
   staffId,
   healthcareContext,
   className,
-  intakeFlow,
+  intakeFlow: _intakeFlow,
   onStepComplete,
   onIntakeComplete,
   onIntakeCancel,

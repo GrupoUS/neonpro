@@ -72,7 +72,7 @@ export const HealthcareComponents = {
     return { alerts, setAlerts }
   },
   
-  usePatientRecords: (patientId?: string) => {
+  usePatientRecords: (_patientId?: string) => {
     // Hook for patient record management
     const [records, setRecords] = React.useState<any>(null)
     return { records, setRecords }

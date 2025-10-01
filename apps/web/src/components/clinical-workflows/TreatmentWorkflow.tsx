@@ -12,7 +12,6 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui'
 import { Button } from '@neonpro/ui'
-import { Alert, AlertDescription } from '@neonpro/ui'
 import { Badge } from '@neonpro/ui'
 import { Progress } from '@neonpro/ui'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@neonpro/ui'
@@ -32,7 +31,7 @@ import {
   ClinicalWorkflowComponentProps
 } from './types'
 
-import { AestheticTreatment, PatientData, HealthcareContext } from '@/types/healthcare'
+import { AestheticTreatment, HealthcareContext } from '@/types/healthcare'
 
 interface TreatmentWorkflowProps extends ClinicalWorkflowComponentProps {
   patientId: string
@@ -71,13 +70,12 @@ export const TreatmentWorkflow: React.FC<TreatmentWorkflowProps> = ({
   onSessionCreate,
   onSessionUpdate,
   onProgressCreate,
-  onTaskCreate,
   onTaskUpdate,
   onANVISAReport,
   onEmergencyAlert
 }) => {
   const [activeTab, setActiveTab] = useState('planning')
-  const [currentStep, setCurrentStep] = useState(0)
+  const [currentStep, _setCurrentStep] = useState(0)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isOffline, setIsOffline] = useState(false)
 
@@ -188,23 +186,6 @@ export const TreatmentWorkflow: React.FC<TreatmentWorkflowProps> = ({
       setIsSubmitting(false)
     }
   }, [patientId, staffId, onProgressCreate, onSessionUpdate])
-
-  const handleTaskCreate = useCallback(async (taskData: Omit<ClinicalTask, 'id' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      setIsSubmitting(true)
-
-      if (onTaskCreate) {
-        await onTaskCreate(taskData)
-      }
-
-      // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Tarefa criada com sucesso')
-    } catch (error) {
-      console.error('Error creating task:', error)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }, [onTaskCreate])
 
   const handleANVISASubmit = useCallback(async () => {
     try {
@@ -716,8 +697,11 @@ const SessionCard: React.FC<{
 
   const handleStatusUpdate = async (newStatus: string) => {
     setIsUpdating(true)
-    await onUpdateProgress(session.id, newStatus, notes)
-    setIsUpdating(false)
+    try {
+      await Promise.resolve(onUpdateProgress(session.id, newStatus, notes))
+    } finally {
+      setIsUpdating(false)
+    }
   }
 
   return (
@@ -815,7 +799,7 @@ const TaskCard: React.FC<{
   task: ClinicalTask
   onUpdate?: (taskId: string, task: Partial<ClinicalTask>) => Promise<void>
   disabled: boolean
-}> = ({ task, onUpdate, disabled }) => {
+}> = ({ task, onUpdate: _onUpdate, disabled: _disabled }) => {
   const getPriorityColor = (priority: string) => {
     const colors: Record<string, string> = {
       low: 'gray',

@@ -297,9 +297,9 @@ export class AnalysisOrchestrator {
           cluster.typescriptAnalysis?.typeComplexity > 0 ? 'TypeScript-specific patterns detected' : ''
         ] : [],
         structure: {
-          functionsDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0,
-          classesDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0,
-          interfacesDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0,
+          functionsDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0,
+          classesDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0,
+          interfacesDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0,
           componentsDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0
         }
       },

@@ -28,12 +28,8 @@ export class ApiService {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       
-      return await response.json()
-    } catch (error) {
-      // Security: Removed console statement from production code
-      throw error
-    }
-  }
+      return await response.json();
+  };
   
   // GET request
   static async get<T>(endpoint: string): Promise<T> {

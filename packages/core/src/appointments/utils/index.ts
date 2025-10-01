@@ -16,7 +16,8 @@ export const paymentStatusLabels: Record<PaymentStatus, string> = {
   [PaymentStatus.PAID]: 'Pago',
   [PaymentStatus.PARTIAL]: 'Parcial',
   [PaymentStatus.REFUNDED]: 'Reembolsado',
-  [PaymentStatus.CANCELLED]: 'Cancelado'
+  [PaymentStatus.CANCELLED]: 'Cancelado',
+  [PaymentStatus.OVERDUE]: 'Vencido'
 }
 
 export const getStatusColor = (status: AppointmentStatus): string => {

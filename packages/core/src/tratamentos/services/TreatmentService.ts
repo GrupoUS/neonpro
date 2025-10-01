@@ -1,5 +1,5 @@
 // Treatment service for aesthetic clinic procedures catalog
-import { Treatment, TreatmentPackage, TreatmentCategory } from '../types'
+import { Treatment, TreatmentCategory } from '../types'
 import { formatCurrency, getTreatmentDurationText } from '../../common/utils'
 
 export class TreatmentService {
@@ -19,28 +19,32 @@ export class TreatmentService {
       errors.push('Categoria do tratamento é obrigatória')
     }
     
-    if (!treatment.duration_minutes || treatment.duration_minutes <= 0) {
+    const durationMinutes = treatment.duration_minutes
+    if (durationMinutes === undefined || durationMinutes <= 0) {
       errors.push('Duração deve ser maior que zero minutos')
     }
     
-    if (treatment.base_price === undefined || treatment.base_price < 0) {
+    const basePrice = treatment.base_price
+    if (basePrice === undefined || basePrice < 0) {
       errors.push('Preço base deve ser positivo ou zero')
     }
     
-    if (!treatment.session_count || treatment.session_count <= 0) {
+    const sessionCount = treatment.session_count
+    if (sessionCount === undefined || sessionCount <= 0) {
       errors.push('Número de sessões deve ser maior que zero')
     }
     
-    if (treatment.interval_days < 0) {
+    const intervalDays = treatment.interval_days
+    if (intervalDays !== undefined && intervalDays < 0) {
       errors.push('Intervalo entre sessões não pode ser negativo')
     }
     
     // Brazilian-specific validations
-    if (treatment.base_price > 50000) {
+    if (basePrice !== undefined && basePrice > 50000) {
       errors.push('Preço base muito alto para padrões de mercado brasileiro')
     }
     
-    if (treatment.duration_minutes > 480) { // 8 hours
+    if (durationMinutes !== undefined && durationMinutes > 480) { // 8 hours
       errors.push('Duração do tratamento não pode exceder 8 horas')
     }
     
@@ -114,11 +118,17 @@ export class TreatmentService {
     if (!restriction) return { isAppropriate: true }
     
     if (restriction.min && patientAge < restriction.min) {
-      return { isAppropriate: false, reason: restriction.reason }
+      return {
+        isAppropriate: false,
+        reason: restriction.reason ?? 'Idade abaixo do recomendado para este tratamento'
+      }
     }
     
     if (restriction.max && patientAge > restriction.max) {
-      return { isAppropriate: false, reason: 'Idade acima do recomendado para este tratamento' }
+      return {
+        isAppropriate: false,
+        reason: restriction.reason ?? 'Idade acima do recomendado para este tratamento'
+      }
     }
     
     return { isAppropriate: true }

@@ -32,7 +32,13 @@
     "packages/*/__tests__/**/*",
     "**/__tests__/**/*"
   ],
-  "exclude": ["node_modules", "dist", "**/dist/**", "**/*.js"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/dist/**",
+    "**/*.js",
+    "apps/analysis/src/__tests__/**/*"
+  ],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"

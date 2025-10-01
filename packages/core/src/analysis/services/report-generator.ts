@@ -3,7 +3,7 @@
  * Generates analysis reports in various formats
  */
 
-import type { AnalysisResult } from '../types/package-analysis'
+import type { PackageAnalysis } from '../types/package-analysis'
 
 export interface ReportOptions {
   includeRecommendations?: boolean
@@ -29,7 +29,7 @@ export class ReportGenerator {
    * Generate a report for an analysis
    */
   async generateReport(
-    analysis: AnalysisResult,
+    analysis: PackageAnalysis,
     reportType: string,
     format: string = 'json',
     includeRecommendations: boolean = true,
@@ -62,7 +62,7 @@ export class ReportGenerator {
   /**
    * Generate chart data for reports
    */
-  private generateChartData(analysis: AnalysisResult): any[] {
+  private generateChartData(analysis: PackageAnalysis): any[] {
     return [
       {
         type: 'health-score',
@@ -95,5 +95,42 @@ export class ReportGenerator {
    */
   getSupportedFormats(): string[] {
     return ['json', 'html', 'pdf']
+  }
+}
+
+// Simple report generator for basic clinic analysis
+export class SimpleReportGenerator {
+  /**
+   * Generate a simple report for clinic analysis
+   */
+  static generate(data: {
+    name: string;
+    lgpdIssues: number;
+    mobileScore: number;
+    bookingIssues: number;
+    paymentIssues: number;
+    findings: any[];
+  }) {
+    return {
+      clinicName: data.name,
+      summary: {
+        lgpdIssues: data.lgpdIssues,
+        mobileScore: data.mobileScore,
+        bookingIssues: data.bookingIssues,
+        paymentIssues: data.paymentIssues,
+        totalIssues: data.lgpdIssues + data.bookingIssues + data.paymentIssues
+      },
+      roi: {
+        monthlySavings: data.lgpdIssues * 5000 + data.bookingIssues * 2000 + data.paymentIssues * 3000,
+        implementationCost: 15000,
+        paybackMonths: Math.ceil(15000 / (data.lgpdIssues * 5000 + data.bookingIssues * 2000 + data.paymentIssues * 3000))
+      },
+      recommendations: data.findings.slice(0, 5).map((finding: any) => ({
+        title: finding.description,
+        priority: finding.severity,
+        impact: finding.impact
+      })),
+      generatedAt: new Date().toISOString()
+    };
   }
 }

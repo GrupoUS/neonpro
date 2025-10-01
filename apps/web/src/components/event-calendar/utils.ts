@@ -6,6 +6,10 @@
 import { addDays, format, isSameDay, isWithinInterval, parseISO, subDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
+function assertUnreachable(_value: never): never {
+  throw new Error('Unsupported export format')
+}
+
 export interface CalendarEvent {
   id: string
   title: string
@@ -164,15 +168,6 @@ export function getEventColor(event: CalendarEvent): string {
     blocker: '#EF4444', // red
   }
 
-  const statusModifiers = {
-    scheduled: '',
-    confirmed: '',
-    in_progress: 'opacity-75',
-    completed: 'opacity-50',
-    cancelled: 'line-through',
-    no_show: 'bg-gray-300',
-  }
-
   const baseColor = typeColors[event.type] || '#6B7280'
 
   // Return base color (CSS classes would handle modifiers in actual component)
@@ -309,7 +304,7 @@ export function exportCalendarEvents(
     case 'ical':
       return eventsToICal(events)
     default:
-      throw new Error(`Unsupported export format: ${format}`)
+      return assertUnreachable(format)
   }
 }
 
@@ -394,7 +389,7 @@ export function parseDate(dateInput: string | Date): Date {
     'yyyy-MM-dd',
   ]
 
-  for (const formatString of formats) {
+  for (const _formatString of formats) {
     try {
       // Note: In a real implementation, you'd use a library that supports custom date parsing
       // For now, we'll rely on the Date constructor and hope for the best

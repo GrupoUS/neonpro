@@ -192,7 +192,6 @@ export {
 } from './types/solution';
 
 // Implementation strategy exports
-export from './types/solution';
 
 // Risk management exports
 export {
