@@ -8,7 +8,7 @@ management for any domain or complexity.
 
 ## Purpose
 
-Orchestrate comprehensive research operations with Context7 → Tavily → Exa intelligence chains,
+Orchestrate comprehensive research operations with Context7 intelligence chains,
 automated knowledge synthesis, and intelligent knowledge base management, ensuring accurate,
 current, and actionable insights with long-term knowledge preservation.
 
@@ -21,86 +21,6 @@ current, and actionable insights with long-term knowledge preservation.
   compilation
 - **Healthcare Compliance**: LGPD/ANVISA/CFM research and regulatory compliance validation
 - **Technology Research**: Framework comparison, best practices, implementation patterns
-
-## Research & Knowledge Execution Pattern
-
-- **ALWAYS USE APEX Research**: [`.ruler/agents/apex-researcher.md`](/.ruler/agents/apex-researcher.md)
-
-```bash
-@apex-researcher "pesquisar [tecnologia/padrão/regulamentação]"
-```
-
-### 1. Research Strategy & Planning
-
-```bash
-# Determine research scope and knowledge management needs
-RESEARCH_TOPIC="$1"
-DEPTH_LEVEL="${2:-deep}"
-SOURCE_STRATEGY="${3:-mixed}"
-KNOWLEDGE_ACTION="${4:-synthesize}"
-
-echo "🔍 Initializing research and knowledge management..."
-
-# Assess research complexity and knowledge requirements
-case $DEPTH_LEVEL in
-    "surface"|"quick")
-        RESEARCH_TIME="15-30min"
-        SOURCES_COUNT="3-5"
-        KNOWLEDGE_DEPTH="basic"
-        ;;
-    "deep"|"standard")
-        RESEARCH_TIME="1-3hrs"
-        SOURCES_COUNT="8-15"
-        KNOWLEDGE_DEPTH="comprehensive"
-        ;;
-    "comprehensive"|"exhaustive")
-        RESEARCH_TIME="4-8hrs"
-        SOURCES_COUNT="20+"
-        KNOWLEDGE_DEPTH="expert"
-        ;;
-esac
-```
-
-### 2. Multi-Source Intelligence Chain
-
-```bash
-echo "🧠 Executing MCP intelligence chain..."
-
-# Phase 1: Context7 Technical Research
-execute_context7_research() {
-    echo "📚 Context7: Official documentation and technical research"
-    # Technical documentation and library research
-    # Framework best practices and implementation patterns
-    # API documentation and integration guidelines
-    # Official specifications and standards
-}
-
-# Phase 2: Tavily Real-Time Intelligence
-execute_tavily_research() {
-    echo "🌐 Tavily: Real-time web search and community insights"
-    # Current information, trends, and real-time data
-    # News, community discussions, expert opinions
-    # Industry reports and market analysis
-    # Recent developments and updates
-}
-
-# Phase 3: Archon (L5+ complexity)
-execute_archon_research() {
-    echo "🎯 Archon: Deep research database"
-    # Rag research Archon database queries
-    # In-depth technical analysis of tech stack official docs
-
-}
-
-# Phase 4: Sequential Synthesis
-execute_sequential_synthesis() {
-    echo "🧩 Sequential Thinking: Multi-perspective analysis"
-    # Critical evaluation and bias assessment
-    # Pattern recognition and trend identification
-    # Logical reasoning and conclusion formation
-    # Knowledge organization and structuring
-}
-```
 
 ## Knowledge Management System
 
@@ -243,16 +163,6 @@ technical_research:
   - "Security standards and compliance requirement research"
 ```
 
-### Tavily (Real-Time Intelligence)
-
-```yaml
-community_research:
-  - "Current industry trends and community insights"
-  - "Real-time news and development updates"
-  - "Community discussions and expert opinion aggregation"
-  - "Market analysis and competitive intelligence gathering"
-```
-
 ### Sequential Thinking (Analysis & Synthesis)
 
 ```yaml
@@ -296,20 +206,6 @@ knowledge_operations:
 - **Official Best Practices**: [Verified implementation recommendations]
 - **Security & Performance**: [Guidelines and optimization strategies]
 - **Configuration & Setup**: [Step-by-step implementation guidance]
-
-### Tavily (Community & Market Intelligence)
-
-- **Industry Trends**: [Current practices and emerging patterns]
-- **Community Solutions**: [Validated community-driven approaches]
-- **Recent Developments**: [Latest updates and considerations]
-- **Market Positioning**: [Competitive analysis and differentiation]
-
-## Healthcare Compliance Analysis (When Applicable)
-
-- **LGPD Requirements**: [Specific data protection and privacy obligations]
-- **ANVISA Regulations**: [Health surveillance and safety requirements]
-- **CFM Standards**: [Medical practice and digital health guidelines]
-- **Security Implementation**: [Technical security and audit requirements]
 
 ## Knowledge Base Integration
 
