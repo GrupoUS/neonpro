@@ -27,7 +27,7 @@ export const architectureRouter = createTRPCRouter({
     }))
     .query(async ({ input }) => {
       try {
-        const config = await getArchitectureConfig(input.environment, {})
+        const config = await getArchitectureConfig(input.environment, 'development')
         return {
           success: true,
           data: config,
@@ -43,7 +43,7 @@ export const architectureRouter = createTRPCRouter({
   // Create architecture configuration
   createConfig: protectedProcedure
     .input(ArchitectureConfigSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }: any) => {
       try {
         const config = await createArchitectureConfig(ctx.supabase, input)
         return {
@@ -109,7 +109,7 @@ export const architectureRouter = createTRPCRouter({
         }).optional(),
       }),
     }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }: any) => {
       try {
         const config = await updateArchitectureConfig(ctx.supabase, input.id, input.update)
         return {
@@ -129,7 +129,7 @@ export const architectureRouter = createTRPCRouter({
     .input(z.object({
       id: z.string().uuid(),
     }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }: any) => {
       try {
         await deleteArchitectureConfig(ctx.supabase, input.id)
         return {
@@ -210,7 +210,7 @@ export const architectureRouter = createTRPCRouter({
     }))
     .query(async ({ input }) => {
       try {
-        const config = await getArchitectureConfig(input.environment, {})
+        const config = await getArchitectureConfig(input.environment, 'development')
 
         if (!config) {
           return {

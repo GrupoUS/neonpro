@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { createFetchHandler } from '@trpc/server/adapters/fetch'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import { appRouter } from './trpc/router'
 import { createContext } from './trpc/context'
 
@@ -21,10 +21,12 @@ app.get('/health', (c) =>
 )
 
 app.use('/trpc/*', async (c) =>
-  createFetchHandler({
+  fetchRequestHandler({
+    endpoint: '/trpc',
+    req: c.req.raw,
     router: appRouter,
     createContext,
-  })(c.req.raw),
+  }),
 )
 
 export default app

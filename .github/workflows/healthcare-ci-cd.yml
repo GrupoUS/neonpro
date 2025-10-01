@@ -37,7 +37,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 
@@ -96,7 +96,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 
@@ -151,7 +151,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 
@@ -209,7 +209,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 
@@ -259,7 +259,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 
@@ -311,7 +311,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 
@@ -511,7 +511,7 @@ jobs:
         cache: 'bun'
 
     - name: Setup Bun
-      uses: antonybudianto/setup-bun@v1
+      uses: oven-sh/setup-bun@v1
       with:
         bun-version: ${{ env.BUN_VERSION }}
 

@@ -1,48 +1,47 @@
-# NeonPro Healthcare Platform
+# NeonPro: Healthcare Compliance & Performance Platform
 
-A modern, high-performance healthcare platform for Brazilian clinics, built with a hybrid architecture combining Bun, Vercel Edge, and Supabase Functions.
+## Overview
+
+NeonPro is a comprehensive healthcare compliance and performance platform built with a hybrid architecture combining Bun, Vercel Edge, and Supabase Functions. It provides a secure, compliant environment for healthcare professionals to manage patient data, appointments, and clinical workflows while maintaining strict compliance with healthcare regulations.
 
 ## Architecture
 
-### Hybrid Architecture
+### Hybrid Architecture: Bun + Vercel Edge + Supabase Functions
 
-Our platform uses a hybrid architecture that combines:
+NeonPro leverages a hybrid architecture to optimize performance and compliance:
 
-- **Bun**: A modern JavaScript runtime and package manager for improved performance
-- **Vercel Edge**: Edge functions for low-latency, global deployment
-- **Supabase Functions**: Serverless functions with real-time capabilities
+- **Bun**: High-performance JavaScript runtime for server-side operations
+- **Vercel Edge**: Global edge network for low-latency user interactions
+- **Supabase Functions**: Serverless backend with real-time capabilities
 
-### Healthcare Compliance
+### Healthcare Compliance: LGPD, ANVISA, CFM
 
-The platform is fully compliant with Brazilian healthcare regulations:
+The platform is designed to meet strict healthcare compliance requirements:
 
-- **LGPD**: Lei Geral de Proteção de Dados (General Data Protection Law)
-- **ANVISA**: Agência Nacional de Vigilância Sanitária (National Health Surveillance Agency)
-- **CFM**: Conselho Federal de Medicina (Federal Council of Medicine)
-- **WCAG**: Web Content Accessibility Guidelines (2.1 AA+)
+- **LGPD** (Lei Geral de Proteção de Dados): Brazilian data protection law
+- **ANVISA** (Agência Nacional de Vigilância Sanitária): Brazilian health regulatory agency
+- **CFM** (Conselho Federal de Medicina): Brazilian Federal Medical Council
 
-## Performance
+## Features
 
-Our platform delivers exceptional performance:
+### Core Functionality
 
-- **Package Installation**: 3-5x faster with Bun
-- **Build Times**: 3-5x faster with Bun
-- **Bundle Size**: 20% reduction
-- **Edge TTFB**: ≤ 150ms
-- **Cache Hit Rate**: ≥ 80%
-- **Cold Start Frequency**: ≤ 5%
-- **UI Patch Time**: ≤ 1.5s
-- **Connection Latency**: ≤ 200ms
-- **Message Delivery Time**: ≤ 100ms
-- **Copilot Tool Roundtrip**: ≤ 2s
-- **Model Inference Time**: ≤ 1s
-- **Response Generation Time**: ≤ 500ms
-- **Uptime**: ≥ 99.9%
-- **Memory Usage**: ≤ 80%
-- **CPU Usage**: ≤ 70%
-- **Disk Usage**: ≤ 80%
+- **Patient Management**: Secure patient data handling with compliance
+- **Appointment Scheduling**: Real-time appointment management
+- **Clinical Workflows**: Streamlined clinical processes
+- **Professional Compliance**: Verification and monitoring of professional credentials
+- **AI Clinical Support**: AI-powered assistance for clinical decision making
+- **Real-time Communication**: Secure messaging and collaboration
 
-## Getting Started
+### Performance & Monitoring
+
+- **Performance Metrics**: Comprehensive monitoring of system performance
+- **Compliance Status Tracking**: Real-time compliance monitoring
+- **Migration State Management**: Tracking of system migrations and updates
+- **Architecture Configuration**: Flexible architecture management
+- **Package Manager Optimization**: Performance optimization for package management
+
+## Installation
 
 ### Prerequisites
 
@@ -50,121 +49,289 @@ Our platform delivers exceptional performance:
 - Supabase account
 - Vercel account (for deployment)
 
-### Installation
+### Setup
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/neonpro/healthcare-platform.git
-   cd healthcare-platform
-   ```
+```bash
+git clone https://github.com/neonpro/neonpro.git
+cd neonpro
+```
 
 2. Install dependencies:
-   ```bash
-   bun install
-   ```
+```bash
+bun install
+```
 
 3. Set up environment variables:
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your configuration
-   ```
+```bash
+cp .env.example .env.local
+# Edit .env.local with your configuration
+```
 
-4. Set up the database:
-   ```bash
-   bun packages/database/scripts/setup.ts
-   ```
+4. Set up Supabase:
+```bash
+supabase init
+supabase start
+```
 
-5. Run the development server:
-   ```bash
-   bun dev
-   ```
+5. Run migrations:
+```bash
+supabase db push
+```
+
+6. Start the development server:
+```bash
+bun dev
+```
+
+## Environment Variables
+
+### Database Configuration
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
+
+### Authentication
+
+```
+NEXTAUTH_URL=your_nextauth_url
+NEXTAUTH_SECRET=your_nextauth_secret
+```
+
+### Application Configuration
+
+```
+NODE_ENV=development
+LOG_LEVEL=info
+```
 
 ## Development
 
-### Scripts
+### Project Structure
 
-- `bun dev`: Start the development server
-- `bun build`: Build the application for production
-- `bun test`: Run the test suite
-- `bun lint`: Run the linter
-- `bun typecheck`: Run type checking
+```
+neonpro/
+├── apps/
+│   ├── api/          # API application
+│   └── web/          # Web application
+├── packages/
+│   ├── database/     # Database models and utilities
+│   ├── types/        # TypeScript type definitions
+│   └── ui/           # UI components
+├── tests/            # Test suites
+└── docs/             # Documentation
+```
 
-### Testing
+### Running Tests
 
-We use a comprehensive testing strategy:
-
-- **Contract Tests**: Test API contracts in `tests/contract/`
-- **Unit Tests**: Test individual components in `tests/unit/`
-- **Performance Tests**: Test performance benchmarks in `tests/performance/`
-
-To run all tests:
 ```bash
+# Run all tests
 bun test
+
+# Run specific test suite
+bun test packages/database
+
+# Run tests with coverage
+bun test --coverage
 ```
 
-To run specific test suites:
-```bash
-bun test tests/contract
-bun test tests/unit
-bun test tests/performance
-```
+### Code Quality
 
-### Validation
-
-To validate the Bun migration and ensure all success criteria are met:
 ```bash
-bun scripts/validate-bun-migration.ts
+# Lint code
+bun lint
+
+# Format code
+bun format
+
+# Type check
+bun type-check
 ```
 
 ## Deployment
 
-### Vercel
+### Vercel Deployment
 
-1. Install the Vercel CLI:
-   ```bash
-   bun i -g vercel
-   ```
+1. Install Vercel CLI:
+```bash
+bun i -g vercel
+```
 
 2. Deploy to Vercel:
-   ```bash
-   vercel
-   ```
+```bash
+vercel --prod
+```
 
-### Supabase
+### Supabase Deployment
 
-1. Create a new Supabase project
-2. Run the database setup script:
-   ```bash
-   bun packages/database/scripts/setup.ts
-   ```
+1. Link to Supabase project:
+```bash
+supabase link --project-ref your_project_ref
+```
 
-3. Configure environment variables for Supabase
+2. Deploy changes:
+```bash
+supabase db push
+supabase functions deploy
+```
 
-## Documentation
+## Performance Monitoring
 
-- [Architecture Overview](docs/architecture/overview.md)
-- [Bun Migration](docs/architecture/bun-migration.md)
-- [Bun Migration Summary](docs/architecture/bun-migration-summary.md)
-- [API Documentation](docs/api/README.md)
-- [Database Schema](docs/database/README.md)
-- [Deployment Guide](docs/deployment/README.md)
+### Key Metrics
+
+- **Edge TTFB**: Time to first byte at edge locations
+- **Real-time UI Patch**: Time to update UI in real-time
+- **Copilot Tool Roundtrip**: Time for AI tool interactions
+- **Build Time**: Time to build the application
+- **Bundle Size**: Size of application bundles
+- **Uptime**: System availability
+
+### Monitoring Tools
+
+- Supabase Dashboard
+- Vercel Analytics
+- Custom performance metrics dashboard
+
+## Compliance Monitoring
+
+### Key Compliance Areas
+
+- **Data Protection**: Encryption, access control, audit trails
+- **Professional Credentials**: Verification and monitoring
+- **Patient Privacy**: Consent management, data minimization
+- **Accessibility**: WCAG compliance for all users
+
+### Compliance Tools
+
+- Automated compliance checks
+- Regular audits and reporting
+- Compliance status dashboard
+
+## API Documentation
+
+### Authentication
+
+Most API endpoints require authentication. Include your API token in the Authorization header:
+
+```
+Authorization: Bearer your_api_token
+```
+
+### Architecture Configuration
+
+#### Get Architecture Configuration
+
+```http
+GET /api/trpc/architecture.getConfig
+```
+
+#### Create Architecture Configuration
+
+```http
+POST /api/trpc/architecture.createConfig
+```
+
+#### Update Architecture Configuration
+
+```http
+PUT /api/trpc/architecture.updateConfig
+```
+
+### Package Manager Configuration
+
+#### Get Package Manager Configuration
+
+```http
+GET /api/trpc/packageManager.getConfig
+```
+
+#### Create Package Manager Configuration
+
+```http
+POST /api/trpc/packageManager.createConfig
+```
+
+#### Update Package Manager Configuration
+
+```http
+PUT /api/trpc/packageManager.updateConfig
+```
+
+### Migration State
+
+#### Get Migration State
+
+```http
+GET /api/trpc/migration.getState
+```
+
+#### Create Migration State
+
+```http
+POST /api/trpc/migration.createState
+```
+
+#### Update Migration State
+
+```http
+PUT /api/trpc/migration.updateState
+```
+
+### Performance Metrics
+
+#### Get Performance Metrics
+
+```http
+GET /api/trpc/performanceMetrics.getMetrics
+```
+
+#### Create Performance Metrics
+
+```http
+POST /api/trpc/performanceMetrics.createMetrics
+```
+
+#### Update Performance Metrics
+
+```http
+PUT /api/trpc/performanceMetrics.updateMetrics
+```
+
+### Compliance Status
+
+#### Get Compliance Status
+
+```http
+GET /api/trpc/complianceStatus.getStatus
+```
+
+#### Create Compliance Status
+
+```http
+POST /api/trpc/complianceStatus.createStatus
+```
+
+#### Update Compliance Status
+
+```http
+PUT /api/trpc/complianceStatus.updateStatus
+```
 
 ## Contributing
 
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Development Workflow
+
 1. Fork the repository
-2. Create a feature branch:
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m 'Add some amazing feature'
-   ```
-4. Push to the branch:
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. Open a pull request
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
 
 ## License
 
@@ -172,13 +339,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-For support, please contact support@neonpro.com or create an issue in the repository.
+For support, please contact:
+
+- Email: support@neonpro.com
+- Documentation: https://docs.neonpro.com
+- Issues: https://github.com/neonpro/neonpro/issues
 
 ## Acknowledgments
 
-- [Bun](https://bun.sh/) for the modern JavaScript runtime
-- [Vercel](https://vercel.com/) for the edge functions platform
-- [Supabase](https://supabase.com/) for the backend services
-- [tRPC](https://trpc.io/) for the end-to-end type-safe APIs
-- [React](https://reactjs.org/) for the UI framework
-- [TypeScript](https://www.typescriptlang.org/) for the type system
+- Supabase for the backend infrastructure
+- Vercel for the edge network
+- Bun for the high-performance runtime
+- The healthcare community for guidance and feedback
