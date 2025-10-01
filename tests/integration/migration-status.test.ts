@@ -188,7 +188,7 @@ describe('Migration Status API Integration Tests', () => {
       
       // Verify phase tracking
       expect(status).toHaveProperty('phases')
-      expect(Array.isArray(status.phases))
+      expect(Array.isArray(status.phases)
       expect(status.phases.length).toBe(5)
       
       // Verify completed phases
@@ -303,47 +303,47 @@ describe('Migration Status API Integration Tests', () => {
       // Verify metrics structure
       expect(metrics).toHaveProperty('id')
       expect(metrics).toHaveProperty('migrationId', 'migration-status-001')
-      expect(metrics).toHaveProperty('timestamp'))
+      expect(metrics).toHaveProperty('timestamp')
       expect(metrics).toHaveProperty('environment', 'development')
       expect(metrics).toHaveProperty('phase', 'configuration')
       expect(metrics).toHaveProperty('status', 'in_progress')
-      expect(metrics).toHaveProperty('progress', 45))
+      expect(metrics).toHaveProperty('progress', 45)
       
       // Verify performance metrics
-      expect(metrics).toHaveProperty('performanceMetrics'))
-      expect(metrics.performanceMetrics).toHaveProperty('baseline'))
-      expect(metrics.performanceMetrics).toHaveProperty('current'))
-      expect(metrics.performanceMetrics).toHaveProperty('targets'))
+      expect(metrics).toHaveProperty('performanceMetrics')
+      expect(metrics.performanceMetrics).toHaveProperty('baseline')
+      expect(metrics.performanceMetrics).toHaveProperty('current')
+      expect(metrics.performanceMetrics).toHaveProperty('targets')
       
       // Verify baseline metrics
       expect(metrics.performanceMetrics.baseline).toHaveProperty('buildTime', 120)
       expect(metrics.performanceMetrics.baseline).toHaveProperty('installTime', 180)
-      expect(metrics.performanceMetrics.baseline).toHaveProperty('memoryUsage', 1024))
-      expect(metrics.performanceMetrics.baseline).toHaveProperty('cpuUsage', 50))
+      expect(metrics.performanceMetrics.baseline).toHaveProperty('memoryUsage', 1024)
+      expect(metrics.performanceMetrics.baseline).toHaveProperty('cpuUsage', 50)
       
       // Verify current metrics (improvement tracking)
-      expect(metrics.performanceMetrics.current).toHaveProperty('buildTime', 66))
-      expect(metrics.performanceMetrics.current).toHaveProperty('installTime', 90))
-      expect(metrics.performanceMetrics.current).toHaveProperty('memoryUsage', 800))
-      expect(metrics.performanceMetrics.current).toHaveProperty('cpuUsage', 40))
+      expect(metrics.performanceMetrics.current).toHaveProperty('buildTime', 66)
+      expect(metrics.performanceMetrics.current).toHaveProperty('installTime', 90)
+      expect(metrics.performanceMetrics.current).toHaveProperty('memoryUsage', 800)
+      expect(metrics.performanceMetrics.current).toHaveProperty('cpuUsage', 40)
       
       // Verify targets and improvements
       expect(metrics.performanceMetrics.targets.buildTimeImprovement).toBeCloseTo(66.7, 1)
-      expect(metrics.performanceMetrics.targets.memoryUsageReduction).toBeCloseTo(22, 0))
-      expect(metrics.performanceMetrics.targets).toHaveProperty('performanceImprovement', 300))
+      expect(metrics.performanceMetrics.targets.memoryUsageReduction).toBeCloseTo(22, 0)
+      expect(metrics.performanceMetrics.targets).toHaveProperty('performanceImprovement', 300)
       
       // Verify healthcare metrics
-      expect(metrics).toHaveProperty('healthcareMetrics'))
-      expect(metrics.healthcareMetrics.lgpdCompliance).toHaveProperty('dataAccessTime', 25))
-      expect(metrics.healthcareMetrics.anvisaCompliance).toHaveProperty('validationTime', 100))
-      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('medicalRecordAccessTime', 30))
-      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('auditTrailTime', 20))
+      expect(metrics).toHaveProperty('healthcareMetrics')
+      expect(metrics.healthcareMetrics.lgpdCompliance).toHaveProperty('dataAccessTime', 25)
+      expect(metrics.healthcareMetrics.anvisaCompliance).toHaveProperty('validationTime', 100)
+      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('medicalRecordAccessTime', 30)
+      expect(metrics.healthcareMetrics.cfmCompliance).toHaveProperty('auditTrailTime', 20)
       
       // Verify system metrics
-      expect(metrics).toHaveProperty('metrics'))
-      expect(metrics.metrics).toHaveProperty('lastCheck'))
-      expect(metrics.metrics).toHaveProperty('uptime'))
-      expect(metrics.metrics).toHaveProperty('activeConnections'))
+      expect(metrics).toHaveProperty('metrics')
+      expect(metrics.metrics).toHaveProperty('lastCheck')
+      expect(metrics.metrics).toHaveProperty('uptime')
+      expect(metrics.metrics).toHaveProperty('activeConnections')
       
       // Verify timestamp consistency
       expect(metrics.timestamp).toBe(metrics.metrics.lastCheck)
@@ -361,7 +361,7 @@ describe('Migration Status API Integration Tests', () => {
       const config = await response.json()
       
       // The configuration should reference database connectivity features
-      expect(config).toHaveProperty('optimization'))
+      expect(config).toHaveProperty('optimization')
       expect(config.optimization.queryCaching).toBe(true)
       expect(config.optimization.connectionPooling).toBe(true)
       expect(config.optimization.performanceMonitoring).toBe(true)
@@ -376,7 +376,7 @@ describe('Migration Status API Integration Tests', () => {
       if (status === 200) {
         const config = await response.json()
         // Should show healthy status even with database issues
-        expect(config).toHaveProperty('optimization'))
+        expect(config).toHaveProperty('optimization')
         expect(config.optimization).toHaveProperty('performanceMonitoring', true)
       }
     })

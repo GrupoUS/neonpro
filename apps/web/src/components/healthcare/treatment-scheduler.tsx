@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { format, addDays, isSameDay, parseISO } from 'date-fns'
+import { format, addDays, isSameDay } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
 import { cn } from '@/lib/utils.js'

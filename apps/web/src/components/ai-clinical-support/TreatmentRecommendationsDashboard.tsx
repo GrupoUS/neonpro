@@ -56,7 +56,6 @@ import { Badge } from '@/components/ui/badge.js'
 import { Button } from '@/components/ui/button.js'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { apiClient as api } from '@/lib/api.js'
 import { TreatmentRecommendation } from '@/types/ai-clinical-support.js'
 import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
@@ -126,7 +125,7 @@ export function TreatmentRecommendationsDashboard({
 }: TreatmentRecommendationsDashboardProps) {
   const [selectedRecommendations, setSelectedRecommendations] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState('recommended')
-  const [showAlternatives] = useState(false)
+  const [_showAlternatives] = useState(false)
 
   // Fetch treatment recommendations - temporarily disabled for build stability
   const { data: recommendations, isLoading, error } = useQuery({

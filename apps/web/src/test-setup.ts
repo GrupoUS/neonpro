@@ -172,22 +172,22 @@ if (typeof global !== 'undefined') {
   if (!global.URL) {
     // Use a more complete URL mock
     global.URL = class URL {
-      static createObjectURL(obj: Blob | MediaSource): string {
+      static createObjectURL(_obj: Blob | MediaSource): string {
         return 'mock-url'
       }
-      static revokeObjectURL(url: string): void {
+      static revokeObjectURL(_url: string): void {
         // Mock implementation
       }
-      static canParse(url: string | URL, base?: string | URL): boolean {
+      static canParse(_url: string | URL, _base?: string | URL): boolean {
         try {
-          new URL(url, base)
+          new URL(_url, _base)
           return true
         } catch {
           return false
         }
       }
-      static parse(url: string | URL, base?: string | URL): URL {
-        return new URL(url, base)
+      static parse(_url: string | URL, _base?: string | URL): URL {
+        return new URL(_url, _base)
       }
       // Instance properties
       hash = ''
@@ -202,7 +202,7 @@ if (typeof global !== 'undefined') {
       search = ''
       searchParams = new URLSearchParams()
       username = ''
-      constructor(url: string | URL, base?: string | URL) {
+      constructor(_url: string | URL, _base?: string | URL) {
         // Mock constructor
       }
       toJSON(): string {
@@ -217,31 +217,31 @@ if (typeof global !== 'undefined') {
 
 // Mock performance API with complete interface
 if (typeof global !== 'undefined') {
-  const performance = global.performance || {}
-  global.performance = {
-    ...performance,
-    now: () => Date.now(),
-    clearMarks: () => {},
-    clearMeasures: () => {},
-    mark: (markName: string, markOptions?: PerformanceMarkOptions) => {
-      return { name: markName, entryType: 'mark', startTime: Date.now(), duration: 0 } as PerformanceMark
-    },
-    measure: (measureName: string, _startMark?: string, _endMark?: string) => {
-      return { name: measureName, entryType: 'measure', startTime: Date.now(), duration: 0 } as PerformanceMeasure
-    },
-    getEntriesByName: () => [],
-    getEntriesByType: () => [],
-    getEntries: () => [],
-    setResourceTimingBufferSize: () => {},
-    toJSON: () => ({}),
-    addEventListener: () => {},
-    removeEventListener: () => {},
-    dispatchEvent: () => false,
-    timeOrigin: Date.now(),
-    onresourcetimingbufferfull: null,
-    clearResourceTimings: () => {},
-    eventCounts: new Map(),
-  } as Performance
+  const performanceInstance = (global.performance as Performance | undefined) ?? ({} as Performance)
+
+  performanceInstance.now = () => Date.now()
+  performanceInstance.clearMarks = () => {}
+  performanceInstance.clearMeasures = () => {}
+  performanceInstance.mark = (markName: string, _markOptions?: PerformanceMarkOptions) => {
+    return { name: markName, entryType: 'mark', startTime: Date.now(), duration: 0 } as PerformanceMark
+  }
+  performanceInstance.measure = (measureName: string, _startMark?: string, _endMark?: string) => {
+    return { name: measureName, entryType: 'measure', startTime: Date.now(), duration: 0 } as PerformanceMeasure
+  }
+  performanceInstance.getEntriesByName = () => []
+  performanceInstance.getEntriesByType = () => []
+  performanceInstance.getEntries = () => []
+  performanceInstance.setResourceTimingBufferSize = () => {}
+  performanceInstance.toJSON = () => ({})
+  performanceInstance.addEventListener = () => {}
+  performanceInstance.removeEventListener = () => {}
+  performanceInstance.dispatchEvent = () => false
+  performanceInstance.timeOrigin = Date.now()
+  performanceInstance.onresourcetimingbufferfull = null
+  performanceInstance.clearResourceTimings = () => {}
+  performanceInstance.eventCounts = new Map()
+
+  global.performance = performanceInstance
 }
 
 // Mock WebSocket for AGUI protocol testing
@@ -278,7 +278,7 @@ global.WebSocket = class MockWebSocket {
     }, 0)
   }
 
-  send = (data: string | ArrayBufferLike | Blob | ArrayBufferView) => {
+  send = (_data: string | ArrayBufferLike | Blob | ArrayBufferView) => {
     // Mock send method
   }
 
@@ -290,15 +290,15 @@ global.WebSocket = class MockWebSocket {
   }
 
   // Required WebSocket methods for interface compliance
-  addEventListener(type: string, listener: EventListener): void {
+  addEventListener(_type: string, _listener: EventListener): void {
     // Mock addEventListener
   }
 
-  removeEventListener(type: string, listener: EventListener): void {
+  removeEventListener(_type: string, _listener: EventListener): void {
     // Mock removeEventListener
   }
 
-  dispatchEvent(event: Event): boolean {
+  dispatchEvent(_event: Event): boolean {
     // Mock dispatchEvent
     return true
   }

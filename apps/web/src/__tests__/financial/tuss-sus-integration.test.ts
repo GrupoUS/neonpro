@@ -1,6 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { fireEvent, waitFor } from '@testing-library/react'
-
 // Mock financial and healthcare services
 vi.mock('@/lib/financial-service', () => ({
   FinancialService: {

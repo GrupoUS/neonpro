@@ -1,6 +1,6 @@
 // Hook for managing appointments in aesthetic clinic
 import { useState, useEffect } from 'react'
-import { Appointment, AppointmentStatus } from '../types'
+import type { Appointment, AppointmentStatus } from '../../../../types/src/healthcare.js'
 import { AppointmentService } from '../services'
 
 interface UseAppointmentsOptions {

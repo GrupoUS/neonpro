@@ -111,11 +111,12 @@ export const createClient = (
     },
   }
 
-  // Use appropriate key based on environment
+  // Use appropriate key based on environment and availability
+  // Service key takes precedence when provided, with correct operator precedence
   const key = validatedConfig.serviceKey ||
-      (validatedConfig.anonKey && validatedConfig.environment !== 'production')
-    ? validatedConfig.anonKey
-    : null
+    (validatedConfig.anonKey && validatedConfig.environment !== 'production' 
+      ? validatedConfig.anonKey 
+      : null)
 
   return createSupabaseClientOriginal(
     validatedConfig.url,

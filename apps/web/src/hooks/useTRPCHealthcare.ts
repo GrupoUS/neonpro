@@ -188,7 +188,7 @@ export function useHealthcareMutation<T extends keyof trpc['mutation']>(
       // Invalidate related queries
       const invalidatePaths = getInvalidatePaths(String(mutationKey))
       invalidatePaths.forEach(path => {
-        queryClient.invalidateQueries({ queryKey: [path] })
+        void queryClient.invalidateQueries({ queryKey: [path] })
       })
 
       options?.onSuccess?.(data)
@@ -370,7 +370,7 @@ export function useHealthcareCache() {
 
   const invalidateHealthcareData = (paths: string[]) => {
     paths.forEach(path => {
-      queryClient.invalidateQueries({ queryKey: [path] })
+      void queryClient.invalidateQueries({ queryKey: [path] })
     })
 
     logOperation('CACHE_INVALIDATE', 'healthcare', {

@@ -77,7 +77,7 @@ export function RecoveryPlanning({
       return await (api as any).aestheticScheduling.createRecoveryPlan(plan)
     },
     onSuccess: () => {
-      refetch()
+      void refetch()
       _setIsCreatingPlan(false)
     },
   })
@@ -172,7 +172,7 @@ export function RecoveryPlanning({
         <div className='flex items-center gap-2'>
           <Button
             variant='outline'
-            onClick={() => refetch()}
+            onClick={() => void refetch()}
             className='flex items-center gap-2'
           >
             <RefreshCw className='h-4 w-4' />

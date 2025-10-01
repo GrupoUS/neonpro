@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { vi } from 'vitest'
+import { vi, describe, it, test } from 'vitest'
 import { cleanup } from '@testing-library/react'
 import { beforeAll, afterAll, afterEach } from 'vitest'
 import { setupDOMEnvironment } from './setup/environment'
@@ -354,10 +354,7 @@ global.test = test
 global.vi = vi
 
 // Setup global test timeout for healthcare operations
-vi.setConfig({
-  testTimeout: 15000,
-  hookTimeout: 15000,
-})
+// Note: Test timeout is configured in vitest.config.ts
 
 // Cleanup after each test to prevent cross-test contamination
 afterEach(() => {

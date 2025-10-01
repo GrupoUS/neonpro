@@ -192,6 +192,107 @@ export const aestheticAI = {
 - **Accessibility**: WCAG 2.1 AA compliance with screen reader support
 - **Security**: Row-level security, input validation, data encryption
 
+### TypeScript Strict Enforcement
+
+**Mandatory Strict Mode Configuration**
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true
+  }
+}
+```
+
+**Key Learnings from TypeScript Fixes**
+
+1. **Always Use Export * in Barrels**
+   ```typescript
+   // ✅ CORRECT: Comprehensive barrel exports
+   // packages/core/src/appointments/types/index.ts
+   export * from './appointment-types';
+   export * from './service-types';
+   export * from './validation-types';
+   
+   // ❌ AVOID: Selective exports that cause import issues
+   export { Appointment, PatientData } from './appointment-types';
+   ```
+
+2. **Type Guards for Healthcare Optionals**
+   ```typescript
+   // ✅ CORRECT: Safe handling of optional healthcare data
+   export function isValidPatientData(data: unknown): data is PatientData {
+     return (
+       typeof data === 'object' &&
+       data !== null &&
+       'id' in data &&
+       'lgpd_consent' in data &&
+       typeof data.id === 'string' &&
+       typeof data.lgpd_consent === 'boolean'
+     );
+   }
+   
+   // Usage with LGPD compliance
+   const patientData = getPatientData(appointmentId);
+   if (isValidPatientData(patientData)) {
+     // Safe to use patientData with full type safety
+     processPatientData(patientData);
+   }
+   ```
+
+3. **Database Client Factory Pattern**
+   ```typescript
+   // ✅ CORRECT: Type-safe database client creation
+   export function createDatabaseClient(config: DatabaseConfig): DatabaseClient {
+     validateConfig(config);
+     return new DatabaseClientImpl(config);
+   }
+   
+   // With proper validation for healthcare compliance
+   function validateConfig(config: DatabaseConfig): void {
+     if (!config.url.includes('ssl=true')) {
+       throw new Error('SSL required for healthcare data compliance');
+     }
+   }
+   ```
+
+4. **Explicit Null Handling for LGPD**
+   ```typescript
+   // ✅ CORRECT: Explicit null handling for healthcare compliance
+   export class AppointmentService {
+     getPatientData(appointmentId: string): PatientData | null {
+       const appointment = this.findAppointment(appointmentId);
+       
+       // Explicit null for undefined patient data (LGPD requirement)
+       if (!appointment?.patientId) {
+         return null;
+       }
+       
+       return this.patientRepository.findById(appointment.patientId);
+     }
+   }
+   ```
+
+**Type Safety Enforcement Rules**
+
+- **No Implicit Any**: All parameters must have explicit types
+- **Strict Null Checks**: Optional properties must be explicitly handled
+- **Type Guards Required**: Runtime validation for healthcare data
+- **Barrel Exports**: Use `export *` for consistent module resolution
+- **Database Types**: All database operations must be typed
+
+**Benefits for Healthcare Compliance**
+
+- **Compile-time Error Prevention**: Catches data handling issues before deployment
+- **LGPD Compliance**: Explicit handling of optional patient data
+- **Audit Trail**: Type-safe logging of all data access
+- **Security**: Type guards prevent unauthorized data access
+
 ## Mobile & Accessibility
 
 ### Mobile-First Implementation

@@ -116,7 +116,7 @@ export class AppointmentService {
       newDate.setHours(hours, 0, 0, 0)
 
       // LGPD compliance: log when date operations are performed
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         console.log(`[LGPD-AUDIT] Date hours set to ${hours} for date ${date.toISOString()}`)
       }
 
@@ -128,7 +128,7 @@ export class AppointmentService {
       newDate.setHours(currentHour, 0, 0, 0)
 
       // LGPD compliance: log when default is used
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         console.log(`[LGPD-AUDIT] Using default hour ${currentHour} for date ${date.toISOString()}`)
       }
 
