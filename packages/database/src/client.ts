@@ -341,10 +341,6 @@ export const trackMigrationMetrics = async (
     // Insert migration metrics into tracking table
     await client
       .from('migration_metrics')
-      // The project's Database type currently doesn't include `migration_metrics`,
-      // causing Postgrest generics to resolve to `never`. Cast the payload to `any`
-      // to preserve runtime behavior while avoiding a compile error. Replace with
-      // a properly typed payload once `migration_metrics` is added to the Database types.
       .insert({
         migration_id: migrationId,
         timestamp,
@@ -361,7 +357,7 @@ export const trackMigrationMetrics = async (
           anvisa_compliant: true,
           cfm_compliant: true,
         },
-      } as unknown as any)
+      })
   } catch (error) {
     console.error('Failed to track migration metrics:', error)
     // Don't throw error - migration tracking is not critical

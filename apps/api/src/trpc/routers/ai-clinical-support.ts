@@ -22,10 +22,7 @@ import {
   TreatmentOutcomePredictor,
   ClinicalGuideline,
   EmergencyProtocol,
-  TreatmentRecommendationInput,
-  ContraindicationAnalysisInput,
-  ProgressMonitoringInput,
-  OutcomePredictionInput
+  ProgressMonitoringInput
 } from '@neonpro/types'
 
 // Type-safe interfaces are now imported from @neonpro/types
@@ -233,7 +230,7 @@ export const aiClinicalSupportRouter = router({
         }
 
         // Get or create progress monitoring record
-        const { data: existingMonitoring, error: monitoringError } = await ctx.supabase
+        const { data: existingMonitoring, error: _monitoringError } = await ctx.supabase
           .from('treatment_progress_monitoring')
           .select('*')
           .eq('patient_id', input.patientId)
@@ -361,7 +358,7 @@ export const aiClinicalSupportRouter = router({
       patientProfile: PatientProfileSchema.optional(),
     }))
     .use(rlsGuard)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx: _ctx, input }) => {
       try {
         // Get relevant clinical guidelines
         const guidelines = await getClinicalGuidelines(
@@ -430,10 +427,10 @@ export const aiClinicalSupportRouter = router({
 // Helper functions (mock implementations - would integrate with actual AI services)
 async function generateTreatmentRecommendations(
   patient: PatientProfile,
-  concerns: string[],
-  goals: string[],
-  budget?: BudgetRange,
-  timeCommitment?: string
+  _concerns: string[],
+  _goals: string[],
+  _budget?: BudgetRange,
+  _timeCommitment?: string
 ): Promise<TreatmentRecommendation[]> {
   // Mock AI recommendation generation
   const recommendations: TreatmentRecommendation[] = [
@@ -472,8 +469,8 @@ async function generateTreatmentRecommendations(
 async function performContraindicationAnalysis(
   patient: PatientProfile,
   proposedTreatment: string,
-  products?: string[],
-  protocolDetails?: Record<string, unknown>
+  _products?: string[],
+  _protocolDetails?: Record<string, unknown>
 ): Promise<ContraindicationAnalysis> {
   // Mock contraindication analysis
   return {
@@ -506,9 +503,9 @@ async function performContraindicationAnalysis(
 }
 
 async function generateProgressInsights(
-  treatment: ProgressMonitoring,
-  monitoring: ProgressMonitoring,
-  currentData: ProgressMonitoringInput
+  _treatment: ProgressMonitoring,
+  _monitoring: ProgressMonitoring,
+  _currentData: ProgressMonitoringInput
 ): Promise<{
   progressPercentage: number;
   expectedVsActual: string;
@@ -573,8 +570,8 @@ async function generateTreatmentOutcomePrediction(
 
 async function getClinicalGuidelines(
   treatmentType: string,
-  condition?: string,
-  patientProfile?: PatientProfile
+  _condition?: string,
+  _patientProfile?: PatientProfile
 ): Promise<ClinicalGuideline[]> {
   // Mock clinical guidelines
   return [
@@ -603,7 +600,7 @@ async function getClinicalGuidelines(
 async function getEmergencyProtocol(
   situation: string,
   severity: 'low' | 'moderate' | 'high' | 'critical',
-  patientId?: string
+  _patientId?: string
 ): Promise<EmergencyProtocol> {
   // Mock emergency protocol
   return {
@@ -629,7 +626,7 @@ async function getEmergencyProtocol(
   }
 }
 
-async function getEmergencyContacts(clinicId: string): Promise<Array<{
+async function getEmergencyContacts(_clinicId: string): Promise<Array<{
   name: string;
   phone: string;
   role?: string;

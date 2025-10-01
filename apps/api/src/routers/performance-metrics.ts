@@ -13,8 +13,6 @@ import {
   BuildPerformanceSchema,
   SystemPerformanceSchema,
   PerformanceMetricsSchema,
-  type PerformanceMetrics,
-  type MetricType,
   createPerformanceMetrics,
   getPerformanceMetrics,
   updatePerformanceMetrics,

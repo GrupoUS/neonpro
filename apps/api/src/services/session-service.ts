@@ -183,7 +183,7 @@ export class SessionService {
     return mockSessions[sessionId] || null
   }
 
-  private async getActiveSessionsForUser(userId: string): Promise<HealthcareSession[]> {
+  private async getActiveSessionsForUser(_userId: string): Promise<HealthcareSession[]> {
     // Mock implementation - in real implementation, this would query active sessions for a user
     return [
       {

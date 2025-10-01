@@ -21,12 +21,12 @@ import { MonorepoAnalysisContext } from '../../src/types/analysis'
 describe('T008 - Contract Test: Code Duplication Detection with jscpd', () => {
   let detector: JscpdDetector
   let healthcareAnalyzer: HealthcareDuplicationAnalyzer
-  let context: MonorepoAnalysisContext
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     detector = new JscpdDetector()
     healthcareAnalyzer = new HealthcareDuplicationAnalyzer()
-    context = {
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'healthcare-compliance',
       thresholds: {

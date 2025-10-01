@@ -18,8 +18,6 @@ import {
   validateHealthcareCompliance,
   validatePerformanceTargets,
   validateBunCompatibility,
-  type ArchitectureConfig,
-  type ArchitectureConfigUpdate,
 } from '@neonpro/database'
 
 // Input schemas
@@ -378,7 +376,7 @@ export const architectureRouter = createTRPCRouter({
         const environment = input?.environment || ctx.environment
 
         // Get audit logs for this environment
-        const { data: auditLogs, error } = await ctx.supabase
+        const { data: _auditLogs, error } = await ctx.supabase
           .from('audit_logs')
           .select('*')
           .eq('clinic_id', ctx.clinicId)

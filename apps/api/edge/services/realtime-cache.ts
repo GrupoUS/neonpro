@@ -97,7 +97,7 @@ class RealtimeCacheService {
         clinicId,
         channel,
         unsubscribe: () => {
-          channel.unsubscribe()
+          void channel.unsubscribe()
         }
       }
 
@@ -168,7 +168,7 @@ class RealtimeCacheService {
     payload: any
   ): void {
     try {
-      const { event, new: newRecord, old: oldRecord } = payload
+      const { event, new: _newRecord, old: _oldRecord } = payload
 
       console.log(`Realtime event: ${event} on ${table} for clinic ${this.maskSensitiveId(clinicId)}`)
 

@@ -218,7 +218,7 @@ async function validateCFMCompliance(
 }
 
 // Helper functions
-async function checkPatientConsent(ctx: Context): Promise<boolean> {
+async function checkPatientConsent(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check actual consent records
   return true
 }
@@ -253,47 +253,47 @@ function getNecessaryFields(url: string): string[] {
   return []
 }
 
-async function getDataRetentionPeriod(clinicId: string): Promise<number> {
+async function getDataRetentionPeriod(_clinicId: string): Promise<number> {
   // Mock implementation - would fetch from clinic settings
   return 365 // 1 year default
 }
 
-async function checkMedicalDeviceCompliance(ctx: Context): Promise<boolean> {
+async function checkMedicalDeviceCompliance(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check device registration and compliance
   return true
 }
 
-async function checkAdverseEventReporting(ctx: Context): Promise<boolean> {
+async function checkAdverseEventReporting(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check if adverse event reporting is configured
   return true
 }
 
-async function checkQualityManagementSystem(ctx: Context): Promise<boolean> {
+async function checkQualityManagementSystem(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check QMS certification
   return true
 }
 
-async function checkMedicalDocumentation(ctx: Context): Promise<boolean> {
+async function checkMedicalDocumentation(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check documentation standards
   return true
 }
 
-async function validateProfessionalLicense(ctx: Context): Promise<boolean> {
+async function validateProfessionalLicense(_ctx: Context): Promise<boolean> {
   // Mock implementation - would validate with council database
   return true
 }
 
-async function validateEthicalStandards(ctx: Context): Promise<boolean> {
+async function validateEthicalStandards(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check ethical compliance
   return true
 }
 
-async function validateRecordKeeping(ctx: Context): Promise<boolean> {
+async function validateRecordKeeping(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check record keeping standards
   return true
 }
 
-async function validateConfidentiality(ctx: Context): Promise<boolean> {
+async function validateConfidentiality(_ctx: Context): Promise<boolean> {
   // Mock implementation - would check confidentiality measures
   return true
 }

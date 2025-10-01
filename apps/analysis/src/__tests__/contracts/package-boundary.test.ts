@@ -27,14 +27,14 @@ import { MonorepoAnalysisContext } from '../../src/types/analysis'
 describe('T010 - Contract Test: Package Boundary Validation', () => {
   let boundaryValidator: PackageBoundaryValidator
   let healthcareSegregationValidator: HealthcareDataSegregationValidator
-  let monorepoAnalyzer: MonorepoArchitectureAnalyzer
-  let context: MonorepoAnalysisContext
+  let _monorepoAnalyzer: MonorepoArchitectureAnalyzer
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     boundaryValidator = new PackageBoundaryValidator()
     healthcareSegregationValidator = new HealthcareDataSegregationValidator()
-    monorepoAnalyzer = new MonorepoArchitectureAnalyzer()
-    context = {
+    _monorepoAnalyzer = new MonorepoArchitectureAnalyzer()
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'package-boundary-compliance',
       thresholds: {
@@ -165,7 +165,7 @@ describe('T010 - Contract Test: Package Boundary Validation', () => {
       // WHEN: Analyzing patient data flow across packages
       // THEN: Should ensure proper patient data segregation and protection
       
-      const lgpDataSegregationAnalysis = await healthcareSegregationValidator.validateLGPDSegregation({
+      const lgpdDataSegregationAnalysis = await healthcareSegregationValidator.validateLGPDSegregation({
         patientDataPackages: [
           'packages/database/src/models/patient',
           'packages/core/src/patient',

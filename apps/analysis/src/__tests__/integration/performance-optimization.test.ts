@@ -34,14 +34,14 @@ describe('T014 - Integration Test: Performance Optimization Validation', () => {
   let oxlintAnalyzer: OXLintPerformanceAnalyzer
   let healthcarePerformanceValidator: HealthcarePerformanceValidator
   let mobilePerformanceAnalyzer: MobilePerformanceAnalyzer
-  let context: MonorepoAnalysisContext
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     performanceValidator = new PerformanceOptimizationValidator()
     oxlintAnalyzer = new OXLintPerformanceAnalyzer()
     healthcarePerformanceValidator = new HealthcarePerformanceValidator()
     mobilePerformanceAnalyzer = new MobilePerformanceAnalyzer()
-    context = {
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'performance-optimization-validation',
       thresholds: {

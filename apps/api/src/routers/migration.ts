@@ -23,8 +23,6 @@ import {
   getRollbackPlan,
   validateMigrationState,
   validateMigrationStateUpdate,
-  type MigrationState,
-  type MigrationStateUpdate,
 } from '@neonpro/database'
 
 // Input schemas

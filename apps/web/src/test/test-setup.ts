@@ -1,12 +1,12 @@
-import * as React from 'react'
-import { vi, describe, it, test } from 'vitest'
 import { cleanup } from '@testing-library/react'
-import { beforeAll, afterAll, afterEach } from 'vitest'
-import { setupDOMEnvironment } from './setup/environment'
+import * as React from 'react'
+import { vi } from 'vitest'
+import { afterAll, afterEach, beforeAll } from 'vitest'
 import { setupMockApi } from './mocks/handlers'
+import { setupDOMEnvironment } from './setup/environment'
 
 // Setup DOM environment for tests
-const { dom } = setupDOMEnvironment()
+const { dom: _dom } = setupDOMEnvironment()
 
 import '@testing-library/jest-dom'
 
@@ -21,18 +21,16 @@ global.console = {
 // Mock window.matchMedia for responsive design tests
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query: string): MediaQueryList =>
-    ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(), // deprecated
-      removeListener: vi.fn(), // deprecated
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    } as unknown as MediaQueryList)
-  ),
+  value: vi.fn().mockImplementation((query: string): MediaQueryList => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  } as unknown as MediaQueryList)),
 })
 
 // Mock IntersectionObserver for scroll and visibility tests
@@ -57,66 +55,86 @@ let mockApiCleanup: (() => void) | null = null
 
 beforeAll(() => {
   console.warn('🧪 Test environment setup complete - Healthcare compliance enabled')
-  
+
   // Setup simplified mock API server
   const { cleanup } = setupMockApi()
   mockApiCleanup = cleanup
   console.warn('🌐 Mock API server started (simplified approach)')
 
   // Mock performance API for healthcare timing measurements
-  global.performance = {
-    ...global.performance,
-    now: vi.fn(() => Date.now()),
-    mark: vi.fn(),
-    measure: vi.fn(),
-    getEntriesByName: vi.fn(() => []),
-    getEntriesByType: vi.fn(() => []),
+  if (global.performance) {
+    // Define/override individual methods without replacing the Performance prototype
+    Object.defineProperty(global.performance, 'now', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(() => Date.now()),
+    })
+    Object.defineProperty(global.performance, 'mark', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(),
+    })
+    Object.defineProperty(global.performance, 'measure', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(),
+    })
+    Object.defineProperty(global.performance, 'getEntriesByName', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(() => []),
+    })
+    Object.defineProperty(global.performance, 'getEntriesByType', {
+      configurable: true,
+      writable: true,
+      value: vi.fn(() => []),
+    })
+  } else {
+    // If no global.performance exists (unlikely in JSDOM), create a minimal one
+    Object.defineProperty(global, 'performance', {
+      configurable: true,
+      writable: true,
+      value: {
+        now: vi.fn(() => Date.now()),
+        mark: vi.fn(),
+        measure: vi.fn(),
+        getEntriesByName: vi.fn(() => []),
+        getEntriesByType: vi.fn(() => []),
+      } as unknown as Performance,
+    })
   }
 
   // Mock crypto API for healthcare data encryption
+  const mockCrypto = {
+    getRandomValues: vi.fn(arr => arr),
+    randomUUID: vi.fn(() =>
+      'test-uuid-1234-5678-9abc-def012345678' as `${string}-${string}-${string}-${string}-${string}`
+    ),
+    subtle: {
+      digest: vi.fn(),
+      encrypt: vi.fn(),
+      decrypt: vi.fn(),
+      deriveBits: vi.fn(),
+      deriveKey: vi.fn(),
+      exportKey: vi.fn(),
+      generateKey: vi.fn(),
+      importKey: vi.fn(),
+      sign: vi.fn(),
+      unwrapKey: vi.fn(),
+      verify: vi.fn(),
+      wrapKey: vi.fn(),
+    },
+  }
+
   if (global.crypto) {
     // Use defineProperty to override the getter
     Object.defineProperty(global, 'crypto', {
-      value: {
-        getRandomValues: vi.fn(arr => arr),
-        randomUUID: vi.fn(() => '12345678-1234-1234-1234-123456789abc'),
-        subtle: {
-          digest: vi.fn(),
-          encrypt: vi.fn(),
-          decrypt: vi.fn(),
-          deriveBits: vi.fn(),
-          deriveKey: vi.fn(),
-          exportKey: vi.fn(),
-          generateKey: vi.fn(),
-          importKey: vi.fn(),
-          sign: vi.fn(),
-          unwrapKey: vi.fn(),
-          verify: vi.fn(),
-          wrapKey: vi.fn(),
-        },
-      },
+      value: mockCrypto,
       writable: true,
       configurable: true,
     })
   } else {
-    global.crypto = {
-      getRandomValues: vi.fn(arr => arr),
-      randomUUID: vi.fn(() => 'test-uuid'),
-      subtle: {
-        digest: vi.fn(),
-        encrypt: vi.fn(),
-        decrypt: vi.fn(),
-        deriveBits: vi.fn(),
-        deriveKey: vi.fn(),
-        exportKey: vi.fn(),
-        generateKey: vi.fn(),
-        importKey: vi.fn(),
-        sign: vi.fn(),
-        unwrapKey: vi.fn(),
-        verify: vi.fn(),
-        wrapKey: vi.fn(),
-      },
-    }
+    global.crypto = mockCrypto
   }
 
   // Setup healthcare-specific global mocks
@@ -130,7 +148,19 @@ beforeAll(() => {
   // Mock healthcare audit trail
   global.AuditTrail = {
     log: vi.fn((event: unknown) => {
-      console.warn(`🏥 Audit: ${event}`)
+      // Safely convert unknown event to string for logging
+      const serialized = (() => {
+        try {
+          if (typeof event === 'string') return event
+          if (typeof event === 'number' || typeof event === 'boolean' || event == null) {
+            return String(event)
+          }
+          return JSON.stringify(event)
+        } catch {
+          return String(event)
+        }
+      })()
+      console.warn('🏥 Audit: ' + serialized)
     }),
     getEvents: vi.fn(() => []),
     clear: vi.fn(),
@@ -146,7 +176,10 @@ vi.mock('@supabase/supabase-js', () => ({
       getUser: vi.fn(() => ({ data: { user: null }, error: null })),
       signIn: vi.fn(() => ({ data: { user: null }, error: null })),
       signOut: vi.fn(() => ({ error: null })),
-      onAuthStateChange: vi.fn(() => ({ data: { subscription: { unsubscribe: vi.fn() } }, error: null })),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+        error: null,
+      })),
     },
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -175,13 +208,24 @@ vi.mock('@trpc/react-query', () => ({
   createTRPCReact: vi.fn(() => ({
     Provider: ({ children }: { children: React.ReactNode }) => children,
     useQuery: vi.fn(() => ({ data: null, isLoading: false, error: null, isPending: false })),
-    useMutation: vi.fn(() => ({ mutate: vi.fn(), isLoading: false, isPending: false, error: null })),
-    useInfiniteQuery: vi.fn(() => ({ data: null, isLoading: false, error: null, fetchNextPage: vi.fn() })),
+    useMutation: vi.fn(() => ({
+      mutate: vi.fn(),
+      isLoading: false,
+      isPending: false,
+      error: null,
+    })),
+    useInfiniteQuery: vi.fn(() => ({
+      data: null,
+      isLoading: false,
+      error: null,
+      fetchNextPage: vi.fn(),
+    })),
   })),
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) => React.createElement('a', props, children),
+  Link: ({ children, ...props }: { children: React.ReactNode; [key: string]: unknown }) =>
+    React.createElement('a', props, children),
   useNavigate: vi.fn(() => vi.fn()),
   useLocation: vi.fn(() => ({ pathname: '/' })),
   useSearch: vi.fn(() => ({})),
@@ -189,14 +233,16 @@ vi.mock('@tanstack/react-router', () => ({
   createRoute: vi.fn(),
   createRouter: vi.fn(),
   createRootRoute: vi.fn(),
-  createMemoryRouter: vi.fn((routes) => ({
+  createMemoryRouter: vi.fn(routes => ({
     routes,
     state: { location: { pathname: '/' }, matches: [] },
     subscribe: vi.fn(),
     navigate: vi.fn(),
   })),
-  RouterProvider: ({ router, children }: { router?: unknown; children: React.ReactNode }) =>
-    React.createElement('div', { 'data-testid': 'router-provider' }, children),
+  // Changed to destructure incoming `router` prop into local `_router` to avoid unused param warning
+  RouterProvider: (
+    { router: _router, children }: { router?: unknown; children: React.ReactNode },
+  ) => React.createElement('div', { 'data-testid': 'router-provider' }, children),
   createFileRoute: vi.fn(),
   createLazyRoute: vi.fn(),
   createLazyFileRoute: vi.fn(),
@@ -219,10 +265,16 @@ vi.mock('@tanstack/react-query', () => ({
     invalidateQueries: vi.fn(),
     refetchQueries: vi.fn(),
   })),
-  QueryClientProvider: ({ children }: { children: React.ReactNode }) => React.createElement(React.Fragment, null, children),
+  QueryClientProvider: ({ children }: { children: React.ReactNode }) =>
+    React.createElement(React.Fragment, null, children),
   useQuery: vi.fn(() => ({ data: null, isLoading: false, isPending: false, error: null })),
   useMutation: vi.fn(() => ({ mutate: vi.fn(), isLoading: false, isPending: false, error: null })),
-  useInfiniteQuery: vi.fn(() => ({ data: null, isLoading: false, error: null, fetchNextPage: vi.fn() })),
+  useInfiniteQuery: vi.fn(() => ({
+    data: null,
+    isLoading: false,
+    error: null,
+    fetchNextPage: vi.fn(),
+  })),
 }))
 
 vi.mock('react-hook-form', () => ({
@@ -237,7 +289,8 @@ vi.mock('react-hook-form', () => ({
     reset: vi.fn(),
     trigger: vi.fn(),
   })),
-  Controller: ({ render }: { render: (props: unknown) => React.ReactNode }) => render({ field: {} }),
+  Controller: ({ render }: { render: (props: unknown) => React.ReactNode }) =>
+    render({ field: {} }),
 }))
 
 vi.mock('sonner', () => ({
@@ -348,65 +401,35 @@ vi.mock('@/utils/healthcare', () => ({
 }))
 
 // Setup global test utilities following tools/tests patterns
-global.describe = describe
-global.it = it
-global.test = test
-global.vi = vi
+beforeAll(() => {
+  Object.assign(global, {
+    describe: vi.fn(),
+    it: vi.fn(),
+    test: vi.fn(),
+  })
+})
 
 // Setup global test timeout for healthcare operations
 // Note: Test timeout is configured in vitest.config.ts
 
 // Cleanup after each test to prevent cross-test contamination
 afterEach(() => {
+  // Remove DOM rendered nodes and cleanup side-effects from @testing-library/react
   cleanup()
+
+  // Clear mocks created with vitest to avoid cross-test leakage
   vi.clearAllMocks()
-  vi.resetAllMocks()
 })
 
-// Cleanup mock API server after all tests
+// Ensure any started mock servers are stopped after the whole suite
 afterAll(() => {
   if (mockApiCleanup) {
-    mockApiCleanup()
-    console.warn('🌐 Mock API server stopped')
+    try {
+      mockApiCleanup()
+    } catch {
+      /* ignore cleanup errors */
+    } finally {
+      mockApiCleanup = null
+    }
   }
-})
-
-// Export for use in test files
-export const createMockQueryClient = () => {
-  return {
-    getQueryData: vi.fn(),
-    setQueryData: vi.fn(),
-    removeQueries: vi.fn(),
-    invalidateQueries: vi.fn(),
-    refetchQueries: vi.fn(),
-  }
-}
-
-export const createMockHealthcareData = () => ({
-  patient: {
-    id: 'patient-123',
-    fullName: 'Test Patient',
-    phonePrimary: '+55 11 9999-8888',
-    email: 'test@example.com',
-    birthDate: '1990-01-01',
-    gender: 'F',
-    isActive: true,
-    lgpdConsentGiven: true,
-  },
-  appointment: {
-    id: 'appointment-123',
-    patientId: 'patient-123',
-    professionalId: 'prof-123',
-    startTime: '2024-01-20T14:00:00Z',
-    endTime: '2024-01-20T15:00:00Z',
-    status: 'SCHEDULED',
-    title: 'Consulta de Avaliação',
-  },
-  professional: {
-    id: 'prof-123',
-    fullName: 'Dr. Carlos Mendes',
-    specialty: 'Dermatologia',
-    crm: 'CRM SP 123456',
-    isActive: true,
-  },
 })

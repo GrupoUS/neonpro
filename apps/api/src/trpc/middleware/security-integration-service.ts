@@ -202,7 +202,7 @@ export class SecurityIntegrationService {
     this.config = updatedConfig
   }
 
-  private async checkUserPermission(userId: string, resource: string, action: string): Promise<boolean> {
+  private async checkUserPermission(_userId: string, _resource: string, _action: string): Promise<boolean> {
     // Simplified permission check - in real implementation, this would check against a database
     return true // For testing purposes
   }

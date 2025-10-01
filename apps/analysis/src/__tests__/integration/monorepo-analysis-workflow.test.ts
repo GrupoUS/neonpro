@@ -29,7 +29,7 @@ describe('T011 - Integration Test: Complete Monorepo Analysis Workflow', () => {
   let brazilianUXValidator: BrazilianClinicUXValidator
   let performanceEngine: PerformanceOptimizationEngine
   let summaryGenerator: ExecutiveSummaryGenerator
-  let context: MonorepoAnalysisContext
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     workflow = new MonorepoAnalysisWorkflow()
@@ -37,7 +37,7 @@ describe('T011 - Integration Test: Complete Monorepo Analysis Workflow', () => {
     brazilianUXValidator = new BrazilianClinicUXValidator()
     performanceEngine = new PerformanceOptimizationEngine()
     summaryGenerator = new ExecutiveSummaryGenerator()
-    context = {
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'comprehensive-monorepo',
       thresholds: {

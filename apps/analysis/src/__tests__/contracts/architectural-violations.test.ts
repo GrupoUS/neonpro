@@ -31,13 +31,13 @@ describe('T009 - Contract Test: Architectural Violation Analysis', () => {
   let architecturalAnalyzer: ArchitecturalViolationAnalyzer
   let solidValidator: SOLIDPrinciplesValidator
   let healthcareValidator: HealthcareArchitectureValidator
-  let context: MonorepoAnalysisContext
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     architecturalAnalyzer = new ArchitecturalViolationAnalyzer()
     solidValidator = new SOLIDPrinciplesValidator()
     healthcareValidator = new HealthcareArchitectureValidator()
-    context = {
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'architectural-compliance',
       thresholds: {

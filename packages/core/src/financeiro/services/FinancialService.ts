@@ -1,6 +1,5 @@
 // Financial service for aesthetic clinic billing and payments
 import { Invoice, Transaction, PaymentMethod, InvoiceStatus } from '../types'
-import { formatCurrency } from '../../common/utils'
 
 export class FinancialService {
   // Generate invoice for aesthetic treatment
