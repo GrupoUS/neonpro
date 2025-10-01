@@ -1,231 +1,232 @@
 /**
- * NeonPro Bun Runtime Configuration
- * Optimized for healthcare compliance and performance
- *
- * Features:
- * - Healthcare compliance monitoring
- * - Performance optimization for Brazilian aesthetic clinics
- * - LGPD/ANVISA/CFM compliance support
- * - Edge runtime compatibility
+ * NeonPro Bun Configuration
+ * Healthcare Compliance: LGPD, ANVISA, CFM
+ * Performance: Optimized for healthcare workloads
  */
 
 export default {
   // Target environment
   target: 'bun',
 
-  // Entry points for different environments
-  entrypoints: {
-    // API server entry point
-    api: './apps/api/src/index.ts',
-    // Web application entry point
-    web: './apps/web/src/main.tsx',
-    // Database scripts entry point
-    database: './packages/database/src/index.ts',
-  },
+  // Entry points
+  entrypoints: [
+    './apps/api/src/index.ts',
+    './apps/web/src/index.tsx'
+  ],
 
   // Output configuration
   outdir: './dist',
-
-  // Format configuration
   format: 'esm',
-
-  // Minification for production
-  minify: {
-    whitespace: true,
-    identifiers: true,
-    syntax: true,
-  },
-
-  // Source maps for debugging
   sourcemap: true,
 
-  // External dependencies (don't bundle)
+  // TypeScript configuration
+  tsconfig: './tsconfig.json',
+
+  // External dependencies (not bundled)
   external: [
-    // Node.js built-ins
-    'fs',
-    'path',
-    'crypto',
-    'util',
-    'stream',
-    'buffer',
-    'events',
-    'http',
-    'https',
-    'net',
-    'tls',
-    'dns',
-    'child_process',
-
-    // Healthcare-specific external dependencies
-    '@supabase/supabase-js',
-    'supabase',
-    'prisma',
-    '@prisma/client',
-
-    // React ecosystem
     'react',
     'react-dom',
-    'react-router-dom',
-
-    // Development tools
-    'vitest',
-    'playwright',
-    'typescript',
+    '@supabase/supabase-js',
+    '@trpc/server',
+    '@trpc/client'
   ],
 
-  // Define global constants
+  // Optimization settings
+  minify: {
+    syntax: true,
+    whitespace: true,
+  },
+
+  // Healthcare compliance settings
   define: {
-    // Environment-specific constants
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-    'process.env.BUN_VERSION': JSON.stringify(process.env.BUN_VERSION),
+    // Ensure compliance flags are available at build time
+    HEALTHCARE_COMPLIANCE: JSON.stringify(process.env.HEALTHCARE_COMPLIANCE || 'true'),
+    LGPD_MODE: JSON.stringify(process.env.LGPD_MODE || 'true'),
+    DATA_RESIDENCY: JSON.stringify(process.env.DATA_RESIDENCY || 'local'),
+    AUDIT_LOGGING: JSON.stringify(process.env.AUDIT_LOGGING || 'true'),
 
-    // Healthcare compliance flags
-    'process.env.LGPD_COMPLIANCE': JSON.stringify(process.env.LGPD_COMPLIANCE || 'enabled'),
-    'process.env.HEALTHCARE_AUDIT': JSON.stringify(process.env.HEALTHCARE_AUDIT || 'enabled'),
-    'process.env.ANVISA_COMPLIANCE': JSON.stringify(process.env.ANVISA_COMPLIANCE || 'enabled'),
-    'process.env.CFM_COMPLIANCE': JSON.stringify(process.env.CFM_COMPLIANCE || 'enabled'),
-
-    // Performance optimization flags
-    'process.env.EDGE_RUNTIME': JSON.stringify(process.env.EDGE_RUNTIME || 'bun'),
-    'process.env.BUN_PERFORMANCE': JSON.stringify(process.env.BUN_PERFORMANCE || 'optimized'),
+    // Environment-specific settings
+    NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+    BUN_RUNTIME: JSON.stringify(process.env.BUN_RUNTIME || 'true'),
+    VERCEL_ENV: JSON.stringify(process.env.VERCEL_ENV || 'development'),
+    EDGE_RUNTIME: JSON.stringify(process.env.EDGE_RUNTIME || 'false'),
   },
 
   // Plugin configuration
   plugins: [
-    // TypeScript support
+    // Healthcare compliance plugin
     {
-      name: 'typescript',
+      name: 'healthcare-compliance',
       setup(build) {
-        // TypeScript configuration handling
-        build.onLoad({ filter: /\.tsx?$/ }, async (args) => {
-          // Handle TypeScript compilation with healthcare compliance
-          return {
-            contents: await Bun.file(args.path).text(),
-            loader: 'ts',
-          };
+        // Log all build operations for compliance
+        build.onStart(() => {
+          console.log('[HEALTHCARE-AUDIT] Build started with compliance mode:', process.env.HEALTHCARE_COMPLIANCE);
         });
-      },
-    },
+
+        build.onEnd((result) => {
+          console.log('[HEALTHCARE-AUDIT] Build completed:', result);
+        });
+      }
+    }
   ],
 
-  // Loader configuration for different file types
+  // Loader configuration
   loader: {
     '.ts': 'ts',
     '.tsx': 'tsx',
     '.js': 'js',
     '.jsx': 'jsx',
     '.json': 'json',
-    '.wasm': 'wasm',
-    '.sql': 'text',
-    '.md': 'text',
+    '.css': 'css',
+    '.svg': 'file',
+    '.png': 'file',
+    '.jpg': 'file',
+    '.jpeg': 'file',
+    '.gif': 'file',
+    '.webp': 'file',
   },
 
-  // Optimizations
-  optimization: {
-    // Enable dead code elimination
-    eliminateDeadCode: true,
-
-    // Optimize for healthcare data processing
-    optimizeHealthcareData: true,
-
-    // Enable performance monitoring
-    performanceMonitoring: true,
-
-    // Memory optimization for large datasets
-    memoryOptimization: {
-      maxHeapSize: '2GB',
-      gcOptimization: true,
+  // Path resolution
+  resolve: {
+    alias: {
+      '@': './src',
+      '@/components': './src/components',
+      '@/lib': './src/lib',
+      '@/hooks': './src/hooks',
+      '@/contexts': './src/contexts',
+      '@/utils': './src/utils',
+      '@/types': './src/types',
+      '@/assets': './src/assets',
     },
+  },
+
+  // Environment variables
+  env: {
+    // Healthcare compliance environment variables
+    HEALTHCARE_COMPLIANCE: process.env.HEALTHCARE_COMPLIANCE || 'true',
+    LGPD_MODE: process.env.LGPD_MODE || 'true',
+    DATA_RESIDENCY: process.env.DATA_RESIDENCY || 'local',
+    AUDIT_LOGGING: process.env.AUDIT_LOGGING || 'true',
+
+    // Database configuration
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+    SUPABASE_SERVICE_KEY: process.env.SUPABASE_SERVICE_KEY,
+    DATABASE_URL: process.env.DATABASE_URL,
+
+    // API configuration
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+
+    // Runtime configuration
+    NODE_ENV: process.env.NODE_ENV || 'development',
+    BUN_RUNTIME: process.env.BUN_RUNTIME || 'true',
+    VERCEL_ENV: process.env.VERCEL_ENV || 'development',
+    EDGE_RUNTIME: process.env.EDGE_RUNTIME || 'false',
+    CI: process.env.CI || 'false',
+
+    // Performance configuration
+    BUN_PERFORMANCE: process.env.BUN_PERFORMANCE || 'true',
   },
 
   // Development server configuration
-  development: {
-    // Hot module replacement for development
-    hot: true,
+  dev: {
+    port: 3000,
+    hostname: '0.0.0.0',
+    https: false,
 
-    // Enable development logging
-    logging: {
-      level: 'info',
-      healthcareCompliance: true,
-      performanceMetrics: true,
+    // Hot module replacement
+    hmr: {
+      enabled: true,
     },
+
+    // Development middleware
+    middleware: [
+      // Healthcare compliance middleware
+      (req, res, next) => {
+        // Log all requests for compliance
+        console.log('[HEALTHCARE-AUDIT] Request:', {
+          method: req.method,
+          url: req.url,
+          timestamp: new Date().toISOString(),
+          compliance: {
+            lgpd: process.env.LGPD_MODE || 'true',
+            healthcare: process.env.HEALTHCARE_COMPLIANCE || 'true',
+          }
+        });
+
+        // Continue with request
+        next();
+      }
+    ]
   },
 
-  // Production configuration
-  production: {
-    // Strict mode for production
-    strict: true,
+  // Build configuration
+  build: {
+    // Target runtime
+    target: 'bun',
 
-    // Healthcare compliance validation
-    healthcareCompliance: {
-      lgpdValidation: true,
-      auditLogging: true,
-      dataResidency: 'brazil',
+    // Output directory
+    outdir: './dist',
+
+    // Source maps
+    sourcemap: true,
+
+    // Minification
+    minify: {
+      syntax: true,
+      whitespace: true,
     },
 
-    // Performance optimization
-    performance: {
-      bundleAnalysis: true,
-      compressionEnabled: true,
-      edgeOptimization: true,
+    // Dead code elimination
+    deadCodeElimination: true,
+
+    // Tree shaking
+    treeShaking: true,
+
+    // Splitting
+    splitting: true,
+
+    // Chunking
+    chunking: {
+      strategy: 'auto',
     },
+
+    // Metafile for analysis
+    metafile: true,
   },
 
-  // Testing configuration
+  // Test configuration
   test: {
-    // Test runner configuration
-    runner: 'bun:test',
+    // Test environment
+    env: 'jsdom',
+
+    // Test setup files
+    setupFiles: [
+      './src/test/setup.ts'
+    ],
 
     // Coverage configuration
     coverage: {
       enabled: true,
-      threshold: 90,
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.{ts,tsx}', 'src/**/*.spec.{ts,tsx}'],
+      reporter: ['text', 'json', 'html'],
+      threshold: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+      },
     },
 
-    // Healthcare compliance testing
-    healthcareTesting: {
-      lgpdCompliance: true,
-      securityValidation: true,
-      accessibilityTesting: true,
-    },
-  },
-
-  // Security configuration
-  security: {
-    // Enable security headers
-    headers: {
-      'X-Content-Type-Options': 'nosniff',
-      'X-Frame-Options': 'DENY',
-      'X-XSS-Protection': '1; mode=block',
-      'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';",
-    },
-
-    // Healthcare data protection
-    healthcareProtection: {
-      dataEncryption: true,
-      auditLogging: true,
-      accessControl: true,
-    },
-  },
-
-  // Monitoring configuration
-  monitoring: {
-    // Performance monitoring
-    performance: {
-      enabled: true,
-      metricsCollection: true,
-      realTimeMonitoring: true,
-    },
-
-    // Healthcare compliance monitoring
-    healthcareCompliance: {
-      enabled: true,
-      auditTrail: true,
-      dataResidencyMonitoring: true,
-      lgpdCompliance: true,
+    // Healthcare compliance test configuration
+    globals: {
+      HEALTHCARE_COMPLIANCE: true,
+      LGPD_MODE: true,
+      DATA_RESIDENCY: 'local',
+      AUDIT_LOGGING: true,
     },
   },
 };

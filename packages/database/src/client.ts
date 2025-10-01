@@ -1,9 +1,9 @@
 /**
  * Supabase Database Client with Bun Optimization
- * 
+ *
  * This client provides optimized database connections for the NeonPro platform,
  * specifically designed for Bun runtime with healthcare compliance features.
- * 
+ *
  * Key features:
  * - Bun runtime optimization
  * - Healthcare compliance (LGPD/ANVISA/CFM)
@@ -18,7 +18,7 @@ import { z } from 'zod'
 
 // Re-export SupabaseClient type for external use
 export type { SupabaseClient } from '@supabase/supabase-js'
-export type { Database as NeonProDatabase } = Database
+export type { Database as NeonProDatabase } from '@neonpro/types'
 
 // Configuration schema for database client
 export const DatabaseClientConfigSchema = z.object({
@@ -70,7 +70,7 @@ const DEFAULT_CONFIG: Partial<DatabaseClientConfig> = {
 // Create optimized Supabase client
 export const createClient = (config: Partial<DatabaseClientConfig> = {}): SupabaseClient<NeonProDatabase> => {
   const validatedConfig = DatabaseClientSchema.parse({ ...DEFAULT_CONFIG, ...config })
-  
+
   const clientConfig = {
     auth: {
       persistSession: true,
@@ -105,7 +105,7 @@ export const createClient = (config: Partial<DatabaseClientConfig> = {}): Supaba
   }
 
   // Use appropriate key based on environment
-  const key = validatedConfig.serviceKey || 
+  const key = validatedConfig.serviceKey ||
     (validatedConfig.anonKey && validatedConfig.environment !== 'production') ? validatedConfig.anonKey : null
 
   return createSupabaseClient<NeonProDatabase>(
@@ -120,7 +120,7 @@ export const createServiceClient = (config: Partial<DatabaseClientConfig> = {}):
   return createClient({
     ...config,
     // Service client always uses service key for server operations
-    serviceKey: config.serviceKey || process.env.SUPABASE_SERVICE_ROLE_KEY,
+    serviceKey: config.serviceKey || process.env['SUPABASE_SERVICE_ROLE_KEY'],
     environment: config.environment || 'development',
     optimization: {
       ...DEFAULT_CONFIG.optimization,
@@ -164,11 +164,11 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
   }
 }> => {
   const timestamp = new Date().toISOString()
-  
+
   try {
     // If no client provided, create a temporary one for health check
     const healthClient = client || createClient()
-    
+
     // Basic connectivity test
     const startTime = Date.now()
     const { data, error } = await healthClient
@@ -176,19 +176,19 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
       .select('id')
       .limit(1)
       .single()
-    
+
     const latency = Date.now() - startTime
-    
+
     const healthStatus = error ? 'error' : 'connected'
     const isHealthy = healthStatus === 'connected' && !error
-    
+
     // Performance metrics (if available)
     const performance = {
       queryCacheHitRate: client ? 0.85 : undefined,
       connectionPoolSize: client ? 10 : undefined,
       averageResponseTime: latency
     }
-    
+
     // Healthcare compliance status
     const healthcare = {
       lgpdCompliant: true,
@@ -197,18 +197,18 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
       auditTrailEnabled: true,
       dataEncryptionEnabled: true
     }
-    
+
     // System metrics
     const metrics = {
       lastCheck: timestamp,
       uptime: process.uptime(),
       activeConnections: 1
     }
-    
+
     return {
       healthy: isHealthy,
       timestamp,
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env['NODE_ENV'] || 'development',
       runtime: 'bun',
       connection: {
         status: healthStatus,
@@ -219,12 +219,12 @@ export const checkDatabaseHealth = async (client?: SupabaseClient<NeonProDatabas
       healthcare,
       metrics
     }
-    
+
   } catch (error) {
     return {
       healthy: false,
       timestamp,
-      environment: process.env.NODE_ENV || 'development',
+      environment: process.env['NODE_ENV'] || 'development',
       runtime: 'bun',
       connection: {
         status: 'error',
@@ -266,7 +266,7 @@ export const trackMigrationMetrics = async (
 ): Promise<void> => {
   try {
     const timestamp = new Date().toISOString()
-    
+
     // Insert migration metrics into tracking table
     await client
       .from('migration_metrics')
@@ -280,14 +280,14 @@ export const trackMigrationMetrics = async (
         memory_usage: metrics.memoryUsage,
         error_count: metrics.errorCount || 0,
         runtime: 'bun',
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env['NODE_ENV'] || 'development',
         healthcare_compliance: {
           lgpd_compliant: true,
           anvisa_compliant: true,
           cfm_compliant: true
         }
       })
-      
+
   } catch (error) {
     console.error('Failed to track migration metrics:', error)
     // Don't throw error - migration tracking is not critical
@@ -321,11 +321,11 @@ export const setupPerformanceMonitoring = (
     timestamp: string
     metadata?: Record<string, unknown>
   }> = []
-  
+
   const startMonitoring = async (): Promise<void> => {
     // Start collecting performance metrics
     console.log('📊 Starting performance monitoring for database operations')
-    
+
     // Set up periodic metrics collection
     setInterval(async () => {
       const start = Date.now()
@@ -336,9 +336,9 @@ export const setupPerformanceMonitoring = (
           .select('id')
           .limit(1)
           .single()
-        
+
         const queryTime = Date.now() - start
-        
+
         // Record query performance
         await recordMetric({
           type: 'database_query_time',
@@ -348,7 +348,7 @@ export const setupPerformanceMonitoring = (
             table: 'performance_metrics'
           }
         })
-        
+
       } catch (error) {
         await recordMetric({
           type: 'database_error',
@@ -359,44 +359,44 @@ export const setupPerformanceMonitoring = (
         })
       }
     }, 30000) // Every 30 seconds
-    
+
     console.log('✅ Performance monitoring started')
   }
-  
+
   const stopMonitoring = async (): Promise<void> => {
     console.log('📊 Stopping performance monitoring')
     // In a real implementation, this would stop the monitoring intervals
   }
-  
+
   const recordMetric = async (metric: {
     type: string
     value: number
     metadata?: Record<string, unknown>
   }): Promise<void> => {
     const timestamp = new Date().toISOString()
-    
+
     metrics.push({
       ...metric,
       timestamp,
       metadata: metric.metadata || {}
     })
-    
+
     // Keep only last 1000 metrics to prevent memory issues
     if (metrics.length > 1000) {
       metrics.splice(0, metrics.length - 1000)
     }
-    
+
     // Log metric for debugging
     console.log(`📊 Metric recorded: ${metric.type} = ${metric.value}ms`, metric.metadata)
   }
-  
+
   const getMetrics = async () => {
     return {
       timestamp: new Date().toISOString(),
       metrics: [...metrics]
     }
   }
-  
+
   return {
     startMonitoring,
     stopMonitoring,
@@ -414,8 +414,8 @@ export const closeDatabaseConnections = async (): Promise<void> => {
 
 // Health check for edge runtime compatibility
 export const checkEdgeCompatibility = (): boolean => {
-  return typeof EdgeRuntime !== 'undefined' && 
-         process.versions.bun && 
+  return typeof EdgeRuntime !== 'undefined' &&
+         process.versions.bun &&
          process.versions.bun >= '1.1.0'
 }
 
@@ -424,7 +424,7 @@ export const optimizeForBun = (client: SupabaseClient<NeonProDatabase>): void =>
   // Enable Bun-specific optimizations
   if (typeof Bun !== 'undefined') {
     console.log('⚡ Applying Bun runtime optimizations to database client')
-    
+
     // Bun-specific optimizations would go here
     // - Native HTTP client usage
     // - Optimized JSON parsing

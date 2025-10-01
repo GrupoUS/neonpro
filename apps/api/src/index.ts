@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { createFetchHandler } from '@trpc/server/adapters/fetch'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 import { appRouter } from './trpc/router'
 import { createContext } from './trpc/context'
 
@@ -15,16 +15,18 @@ app.use('*', cors({
 app.get('/health', (c) =>
   c.json({
     status: 'ok',
-    region: process.env.VERCEL_REGION ?? 'local',
+    region: process.env['VERCEL_REGION'] ?? 'local',
     timestamp: Date.now(),
   }),
 )
 
 app.use('/trpc/*', async (c) =>
-  createFetchHandler({
+  fetchRequestHandler({
+    endpoint: '/trpc',
+    req: c.req.raw,
     router: appRouter,
     createContext,
-  })(c.req.raw),
+  }),
 )
 
 export default app

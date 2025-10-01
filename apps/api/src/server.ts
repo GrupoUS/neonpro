@@ -5,11 +5,12 @@
  * providing end-to-end type safety and healthcare compliance features.
  */
 
-import { trpcServer } from '@trpc/server/adapters/hono'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { appRouter, createContext } from './router'
+import { appRouter } from './trpc/router'
+import { createContext } from './trpc/context'
+import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 
 // Create Hono app
 const app = new Hono()
@@ -34,30 +35,16 @@ app.get('/health', (c) => {
 })
 
 // tRPC middleware
-{
-	// replace unsafe any-call with a function-typed cast to avoid "Unsafe call of a(n) `any` typed value"
-	const trpcHandler = (trpcServer as unknown as (opts: {
-		router: typeof appRouter,
-		createContext: (opts: unknown) => Promise<unknown> | unknown
-	}) => unknown)({
-		router: appRouter,
-		createContext: (opts: unknown) => {
-			// Hono adapter passes an object like { req: Request }. Cast to the expected shape.
-			return createContext(opts as { req?: Request })
-		}
-	})
-
-	// Add a thin wrapper middleware that forwards to the tRPC adapter.
-	// This keeps types happy (we define a Hono-compatible middleware) while
-	// only casting inside the wrapper where necessary.
-	const trpcMiddleware = async (c: Parameters<typeof app['fetch']>[0], next?: any) => {
-		// Forward to the trpc handler. adapter may not have precise TS types, so cast locally.
-		return await (trpcHandler as unknown as (arg: any, next?: any) => Promise<Response>)(c, next)
-	}
-
-	// Use the wrapper instead of passing the untyped handler directly.
-	app.use('/trpc/*', trpcMiddleware)
-}
+app.use('/trpc/*', async (c) => {
+  return fetchRequestHandler({
+    endpoint: '/trpc',
+    req: c.req.raw,
+    router: appRouter,
+    createContext: (opts) => {
+      return createContext({ req: opts.req })
+    }
+  })
+})
 
 // Architecture Configuration API endpoints (T016)
 app.get('/api/architecture/config', (c) => {
@@ -983,59 +970,46 @@ app.post('/api/compliance/audit', async (c) => {
 
 // API info endpoint
 app.get('/api/info', (c) => {
+  // Optional: check authentication and return filtered view
+  const isAuthenticated = c.get('user') !== undefined
+
   return c.json({
     name: 'NeonPro API',
     description: 'Healthcare platform for aesthetic clinics in Brazil',
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development',
-    endpoints: {
-      health: '/health',
-      trpc: '/trpc',
-      architecture: '/trpc/architecture',
-      migration: '/trpc/migration',
-      system: '/trpc/system',
-      status: '/trpc/status',
-      performance: {
-        build: '/api/performance/build',
-        runtime: '/api/performance/runtime',
-        edge: '/api/performance/edge',
-        memory: '/api/performance/memory',
-        benchmarks: '/api/performance/healthcare-benchmarks'
-      },
-      compliance: {
-        lgpd: '/api/compliance/lgpd',
-        anvisa: '/api/compliance/anvisa',
-        cfm: '/api/compliance/cfm',
-        residency: '/api/compliance/data-residency',
-        audit: '/api/compliance/security-audit',
-        protection: '/api/compliance/healthcare-data-protection'
-      },
-      analysis: {
-        start: '/trpc/analysis.startAnalysis',
-        status: '/trpc/analysis.getAnalysisStatus',
-        results: '/trpc/analysis.getAnalysisResults',
-        list: '/trpc/analysis.listAnalyses',
-        delete: '/trpc/analysis.deleteAnalysis'
+    ...(isAuthenticated && {
+      endpoints: {
+        health: '/health',
+        trpc: '/trpc',
+        architecture: '/trpc/architecture',
+        migration: '/trpc/migration',
+        system: '/trpc/system',
+        status: '/trpc/status',
+        performance: {
+          build: '/api/performance/build',
+          runtime: '/api/performance/runtime',
+          edge: '/api/performance/edge',
+          memory: '/api/performance/memory',
+          benchmarks: '/api/performance/healthcare-benchmarks'
+        },
+        compliance: {
+          lgpd: '/api/compliance/lgpd',
+          anvisa: '/api/compliance/anvisa',
+          cfm: '/api/compliance/cfm',
+          residency: '/api/compliance/data-residency',
+          audit: '/api/compliance/security-audit',
+          protection: '/api/compliance/healthcare-data-protection'
+        },
+        analysis: {
+          start: '/trpc/analysis.startAnalysis',
+          status: '/trpc/analysis.getAnalysisStatus',
+          results: '/trpc/analysis.getAnalysisResults',
+          list: '/trpc/analysis.listAnalyses',
+          delete: '/trpc/analysis.deleteAnalysis'
+        }
       }
-    },
-    features: {
-      healthcare_compliance: ['lgpd', 'anvisa', 'cfm'],
-      real_time: true,
-      edge_optimization: true,
-      performance_monitoring: true,
-      audit_trail: true,
-      code_analysis: {
-        hono_trpc_analysis: true,
-        supabase_integration_analysis: true,
-        architectural_violation_detection: true,
-        healthcare_compliance_validation: true,
-        performance_benchmarking: true,
-        type_safety_analysis: true,
-        edge_optimization_analysis: true,
-        mobile_optimization: true,
-        brazilian_healthcare_focus: true
-      }
-    }
+    })
   })
 })
 

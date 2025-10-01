@@ -3,7 +3,7 @@
  * Integrates TanStack Query with Supabase Realtime for automatic data synchronization
  */
 
-import { useQuery, useQueryClient, type QueryKey, type UseQueryOptions } from '@tanstack/react-query'
+import { useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { useEffect, useRef } from 'react'
 import { supabase } from '../../lib/supabase'
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js'
@@ -68,6 +68,15 @@ export function useRealtimeQuery<TData = unknown, TError = Error>(
   // Standard TanStack Query
   const query = useQuery(queryOptions)
 
+  const getRecordId = (record: Record<string, unknown> | null | undefined) => {
+    if (!record || typeof record !== 'object') {
+      return undefined
+    }
+
+    const value = record['id']
+    return typeof value === 'string' || typeof value === 'number' ? String(value) : undefined
+  }
+
   // Set up Supabase realtime subscription
   useEffect(() => {
     if (!table || !queryOptions.queryKey) return
@@ -93,12 +102,16 @@ export function useRealtimeQuery<TData = unknown, TError = Error>(
           // Handle different event types
           if (invalidateOn.includes(payload.eventType)) {
             // Invalidate queries to trigger refetch
-            queryClient.invalidateQueries({ queryKey: queryOptions.queryKey })
+            const invalidatePromise = queryClient.invalidateQueries({ queryKey: queryOptions.queryKey })
+            invalidatePromise.catch((error) => {
+              console.error('Failed to invalidate queries for realtime update', error)
+            })
+            void invalidatePromise
           }
 
           // Optimistic updates for specific operations
           if (enableOptimisticUpdates && payload.eventType === 'INSERT' && payload.new) {
-            queryClient.setQueryData(queryOptions.queryKey, (oldData: any) => {
+            queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
               if (Array.isArray(oldData)) {
                 return [payload.new, ...oldData]
               }
@@ -107,20 +120,28 @@ export function useRealtimeQuery<TData = unknown, TError = Error>(
           }
 
           if (enableOptimisticUpdates && payload.eventType === 'UPDATE' && payload.new) {
-            queryClient.setQueryData(queryOptions.queryKey, (oldData: any) => {
-              if (Array.isArray(oldData)) {
-                return oldData.map((item: any) => 
-                  item.id === payload.new?.id ? payload.new : item
-                )
+            const updatedRecordId = getRecordId(payload.new as Record<string, unknown>)
+
+            queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+              if (Array.isArray(oldData) && updatedRecordId) {
+                return oldData.map((item: Record<string, unknown>) => {
+                  const itemId = getRecordId(item)
+                  return itemId === updatedRecordId ? payload.new : item
+                })
               }
               return oldData
             })
           }
 
           if (enableOptimisticUpdates && payload.eventType === 'DELETE' && payload.old) {
-            queryClient.setQueryData(queryOptions.queryKey, (oldData: any) => {
-              if (Array.isArray(oldData)) {
-                return oldData.filter((item: any) => item.id !== payload.old?.id)
+            const deletedRecordId = getRecordId(payload.old as Record<string, unknown>)
+
+            queryClient.setQueryData(queryOptions.queryKey, (oldData) => {
+              if (Array.isArray(oldData) && deletedRecordId) {
+                return oldData.filter((item: Record<string, unknown>) => {
+                  const itemId = getRecordId(item)
+                  return itemId !== deletedRecordId
+                })
               }
               return oldData
             })
@@ -132,7 +153,11 @@ export function useRealtimeQuery<TData = unknown, TError = Error>(
     // Cleanup subscription on unmount
     return () => {
       if (channelRef.current) {
-        supabase.removeChannel(channelRef.current)
+        const removePromise = supabase.removeChannel(channelRef.current)
+        removePromise.catch((error) => {
+          console.error('Failed to remove realtime channel', error)
+        })
+        void removePromise
         channelRef.current = null
       }
     }

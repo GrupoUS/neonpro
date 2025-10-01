@@ -32,6 +32,14 @@ class RealtimeCacheService {
   }
 
   /**
+   * Mask sensitive IDs for logging
+   */
+  private maskSensitiveId(id: string): string {
+    if (!id || id.length < 8) return '***'
+    return id.substring(0, 4) + '***' + id.substring(id.length - 4)
+  }
+
+  /**
    * Initialize realtime service
    */
   async initialize(): Promise<void> {
@@ -77,9 +85,9 @@ class RealtimeCacheService {
         )
         .subscribe((status) => {
           if (status === 'SUBSCRIBED') {
-            console.log(`Subscribed to ${table} changes for clinic ${clinicId}`)
+            console.log(`Subscribed to ${table} changes for clinic ${this.maskSensitiveId(clinicId)}`)
           } else if (status === 'CHANNEL_ERROR') {
-            console.error(`Failed to subscribe to ${table} for clinic ${clinicId}`)
+            console.error(`Failed to subscribe to ${table} for clinic ${this.maskSensitiveId(clinicId)}`)
             this.unsubscribeFromTable(table, clinicId)
           }
         })
@@ -95,7 +103,7 @@ class RealtimeCacheService {
 
       this.subscriptions.set(subscriptionKey, subscription)
     } catch (error) {
-      console.error(`Failed to subscribe to ${table} for clinic ${clinicId}:`, error)
+      console.error(`Failed to subscribe to ${table} for clinic ${this.maskSensitiveId(clinicId)}:`, error)
     }
   }
 
@@ -110,9 +118,9 @@ class RealtimeCacheService {
       try {
         subscription.unsubscribe()
         this.subscriptions.delete(subscriptionKey)
-        console.log(`Unsubscribed from ${table} changes for clinic ${clinicId}`)
+        console.log(`Unsubscribed from ${table} changes for clinic ${this.maskSensitiveId(clinicId)}`)
       } catch (error) {
-        console.error(`Failed to unsubscribe from ${table} for clinic ${clinicId}:`, error)
+        console.error(`Failed to unsubscribe from ${table} for clinic ${this.maskSensitiveId(clinicId)}:`, error)
       }
     }
   }
@@ -162,7 +170,7 @@ class RealtimeCacheService {
     try {
       const { event, new: newRecord, old: oldRecord } = payload
 
-      console.log(`Realtime event: ${event} on ${table} for clinic ${clinicId}`)
+      console.log(`Realtime event: ${event} on ${table} for clinic ${this.maskSensitiveId(clinicId)}`)
 
       // Invalidate cache based on table and event
       switch (table) {
@@ -186,10 +194,10 @@ class RealtimeCacheService {
           invalidateCacheByPattern(table, clinicId)
       }
 
-      // Log cache invalidation for audit
+      // Log cache invalidation for audit (without sensitive data)
       console.log(`Cache invalidated for ${table} due to ${event} event`, {
         table,
-        clinicId,
+        clinicId: this.maskSensitiveId(clinicId),
         event,
         timestamp: new Date().toISOString()
       })

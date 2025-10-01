@@ -21,7 +21,7 @@ export class JWTService {
   private algorithm: jwt.Algorithm = 'HS256'
 
   constructor() {
-    this.secret = process.env.JWT_SECRET || 'default-secret-key-change-in-production'
+    this.secret = process.env['JWT_SECRET'] || 'default-secret-key-change-in-production'
   }
 
   async validateToken(token: string): Promise<JWTValidationResult> {
@@ -101,7 +101,7 @@ export class JWTService {
   private parseExpiration(expiresIn: string): number {
     const unit = expiresIn.slice(-1)
     const value = parseInt(expiresIn.slice(0, -1))
-    
+
     switch (unit) {
       case 's':
         return value

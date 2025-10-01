@@ -4,6 +4,18 @@ export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
 export { Input, MedicalInput, PatientDataInput, SensitiveInput, DateOfBirthInput, PhoneNumberInput, EmailInput, HealthcareIdInput, type InputProps } from './input'
 export { Alert, AlertDescription, AlertTitle, EmergencyAlert, MedicalAlert, LgpdAlert, alertVariants } from './alert'
 export { MobileHealthcareButton, EmergencyButton, MedicalActionButton, type MobileHealthcareButtonProps } from './mobile-healthcare-button'
+export { Progress } from './progress'
+export { Avatar, AvatarFallback, AvatarImage } from './avatar'
+export { Badge, badgeVariants } from './badge'
+
+// NEONPRO Premium UI Components - Aesthetic Clinic Optimized
+export { GradientButton, type GradientButtonProps } from './gradient-button/gradient-button'
+export { HoverBorderGradientButton, type HoverBorderGradientButtonProps } from './hover-border-gradient-button/hover-border-gradient-button'
+export { MagicCard, type MagicCardProps } from './magic-card/magic-card'
+export { ShineBorder, type ShineBorderProps } from './shine-border/shine-border'
+export { Sidebar, type SidebarProps } from './sidebar/sidebar'
+export { AnimatedThemeToggler, type AnimatedThemeTogglerProps } from './theme-toggler/animated-theme-toggler'
+export { TiltedCard, type TiltedCardProps } from './tilted-card/tilted-card'
 
 // Healthcare-specific components  
 export { EmergencyAlertManager, type EmergencyAlertProps } from '../healthcare/emergency-alert'

@@ -1,2 +1,5 @@
 // Professionals hooks
-// TODO: Implement useProfessionals hook when needed
+export const useProfessionals = () => {
+  // TODO: Implement useProfessionals hook when needed
+  return null
+}

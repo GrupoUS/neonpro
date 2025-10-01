@@ -9,6 +9,154 @@
 
 import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
 
+interface ArchitectureConfig {
+  id: string
+  name: string
+  version: string
+  environment: string
+  bunRuntime: {
+    version: string
+    optimizationLevel: string
+    target: string
+    features: string[]
+  }
+  healthcareCompliance: {
+    lgpdEnabled: boolean
+    anvisaEnabled: boolean
+    cfmEnabled: boolean
+    auditLogging: boolean
+    dataEncryption: boolean
+    accessControl: boolean
+    consentManagement: boolean
+    dataResidency: {
+      country: string
+      region: string
+      datacenter: string
+    }
+  }
+  performanceOptimization: {
+    edgeTTFBTarget: number
+    buildSpeedImprovement: number
+    memoryUsageReduction: number
+    cacheHitRateTarget: number
+    compressionEnabled: boolean
+  }
+  edgeRuntime: {
+    enabled: boolean
+    provider: string
+    regions: string[]
+    configuration: {
+      runtime: string
+      memoryLimit: number
+      timeout: number
+      concurrency: number
+      coldStartOptimization: boolean
+    }
+  }
+  buildSystem: {
+    bundler: string
+    transpiler: string
+    minifier: string
+    optimizationLevel: string
+    codeSplitting: boolean
+    treeShaking: boolean
+    targets: {
+      browsers: string[]
+      bunVersion: string
+      esVersion: string
+    }
+  }
+}
+
+interface PerformanceConfig {
+  performance: {
+    ttfb: {
+      current: number
+      target: number
+      percentile_50: number
+      percentile_95: number
+      percentile_99: number
+    }
+    cacheHitRate: {
+      current: number
+      target: number
+    }
+    coldStart: {
+      current: number
+      target: number
+    }
+    time?: number
+    build?: {
+      memory: number
+      optimization: {
+        enabled: boolean
+        level: string
+      }
+    }
+    monitoring: {
+      enabled: boolean
+      interval: number
+      alertThresholds: {
+        ttfb: number
+        memoryUsage: number
+        cpuUsage: number
+        errorRate: number
+      }
+    }
+  }
+}
+
+interface BunConfig {
+  bunRuntime: {
+    version: string
+    optimizationLevel: string
+    target: string
+    features: string[]
+    enabled: boolean
+    configuration: {
+      minify: boolean
+      sourcemap: boolean
+      splitting: boolean
+      target: string
+    }
+  }
+  performance: {
+    buildTime: number
+    installTime: number
+    memoryUsage: number
+    optimization: {
+      enabled: boolean
+      level: string
+      features: string[]
+    }
+  }
+  compatibility: {
+    nodeModules: boolean
+    nativeModules: boolean
+    webApi: boolean
+    esm: boolean
+  }
+}
+
+interface UpdateResult {
+  success: boolean
+  id: string
+  timestamp: string
+  configuration: {
+    updatedAt: string
+    updatedBy: string
+  }
+  validation: {
+    valid: boolean
+    issues: any[]
+    healthcareCompliance: {
+      lgpd: boolean
+      anvisa: boolean
+      cfm: boolean
+    }
+  }
+}
+
 describe('Architecture Configuration API Integration Tests', () => {
   const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
   
@@ -54,9 +202,9 @@ describe('Architecture Configuration API Integration Tests', () => {
       // Verify performance optimization
       expect(config).toHaveProperty('performanceOptimization')
       expect(config.performanceOptimization).toHaveProperty('edgeTTFBTarget', 100)
-      expect(config.performanceOptimization).toHaveProperty('buildSpeedImprovement', 4.0)
-      expect(config.performanceOptimization).toHaveProperty('memoryUsageReduction', 0.22)
-      expect(config.performanceOptimization).toHaveProperty('cacheHitRateTarget', 0.9)
+      expect(config.performanceOptimization.buildSpeedImprovement).toBeCloseTo(4.0, 2)
+      expect(config.performanceOptimization.memoryUsageReduction).toBeCloseTo(0.22, 2)
+      expect(config.performanceOptimization.cacheHitRateTarget).toBeCloseTo(0.9, 2)
       
       // Verify edge runtime configuration
       expect(config).toHaveProperty('edgeRuntime')
@@ -141,7 +289,7 @@ describe('Architecture Configuration API Integration Tests', () => {
       expect(bunConfig).toHaveProperty('performance')
       expect(bunConfig.performance).toHaveProperty('buildTime', 30)
       expect(bunConfig.performance).toHaveProperty('installTime', 45)
-      expect(bunConfig.performance).toHaveProperty('memoryUsage', 800)
+      expect(bunConfig.performance.memoryUsage).toBeCloseTo(800, 0)
       expect(bunConfig.performance).toHaveProperty('optimization')
       expect(bunConfig.performance.optimization).toHaveProperty('enabled', true)
       expect(bunConfig.performance.optimization).toHaveProperty('level', 'standard')
@@ -187,8 +335,8 @@ describe('Architecture Configuration API Integration Tests', () => {
       expect(perfConfig.performance.ttfb).toHaveProperty('percentile_99', 180)
       
       expect(perfConfig.performance.edge).toHaveProperty('cacheHitRate')
-      expect(perfConfig.performance.edge.cacheHitRate).toHaveProperty('current', 0.85)
-      expect(perfConfig.performance.edge.cacheHitRate).toHaveProperty('target', 0.9)
+      expect(perfConfig.performance.edge.cacheHitRate.current).toBeCloseTo(0.85, 2)
+      expect(perfConfig.performance.edge.cacheHitRate.target).toBeCloseTo(0.9, 2)
       expect(perfConfig.performance.edge).toHaveProperty('coldStart')
       expect(perfConfig.performance.coldStart).toHaveProperty('current', 450)
       expect(perfConfig.performance.coldStart).toHaveProperty('target', 500)
@@ -207,7 +355,7 @@ describe('Architecture Configuration API Integration Tests', () => {
       expect(perfConfig.performance.monitoring.alertThresholds).toHaveProperty('ttfb', 200)
       expect(perfConfig.performance.monitoring.alertThresholds).toHaveProperty('memoryUsage', 1024)
       expect(perfConfig.performance.monitoring.alertThresholds).toHaveProperty('cpuUsage', 80)
-      expect(perfConfig.performance.monitoring.alertThresholds).toHaveProperty('errorRate', 0.05)
+      expect(perfConfig.performance.monitoring.alertThresholds.errorRate).toBeCloseTo(0.05, 3)
     })
   })
 

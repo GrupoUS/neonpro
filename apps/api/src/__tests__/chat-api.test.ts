@@ -5,7 +5,6 @@
  */
 
 import { describe, it, expect, beforeEach, beforeAll, afterAll } from 'vitest'
-import { createTRPCMsw } from 'trpc-openapi/msw'
 import { appRouter } from '../trpc/router'
 import { createTestContext, createMockSupabaseClient } from './utils/test-helpers'
 
@@ -15,16 +14,7 @@ const mockUserId = '123e4567-e89b-12d3-a456-426614174001'
 const mockPatientId = '123e4567-e89b-12d3-a456-426614174002'
 
 describe('Chat API', () => {
-  let msw: ReturnType<typeof createTRPCMsw>
   let mockSupabase: any
-
-  beforeAll(() => {
-    msw = createTRPCMsw({ router: appRouter })
-  })
-
-  afterAll(() => {
-    msw.close()
-  })
 
   beforeEach(() => {
     mockSupabase = createMockSupabaseClient()
@@ -750,7 +740,7 @@ describe('Chat API', () => {
       })
 
       const result = await msw.chat.sendMessage.mutate(maliciousInput)
-      
+
       // Message should be stored but potentially sanitized
       expect(result.success).toBe(true)
       // In real implementation, XSS prevention would be handled

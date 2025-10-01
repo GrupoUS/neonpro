@@ -1,7 +1,7 @@
 
 # Implementation Plan: NEONPRO Theme + 7 UI Components Installation & Configuration
 
-**Branch**: `003-continue-aprimorando-o` | **Date**: 2025-09-29 | **Spec**: `/specs/003-continue-aprimorando-o/spec.md`
+**Branch**: `003-continue-aprimorando-o` | **Date**: 2025-09-30 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/003-continue-aprimorando-o/spec.md`
 
 ## Execution Flow (/plan command scope)
@@ -31,19 +31,18 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-Install and configure NEONPRO theme + 7 UI components from multiple registries into Next.js monorepo using CLI + manual adjustments approach. System will install NEONPRO theme from tweakcn registry plus components from Magic UI, Aceternity UI, Kokonut UI, and ReactBits, all integrated with shared styling in packages directory for consumption across all apps with local font installation, Context API + localStorage for theme persistence, and dependency conflict resolution.
+Installation and configuration of NEONPRO theme system with 7 specific UI components (Shine Border, Kokonut Gradient Button, Aceternity Hover Border Gradient Button, Magic Card, Animated Theme Toggler, Tilted Card, and Aceternity UI Sidebar) for the NeonPro aesthetic clinic platform. The system will integrate multiple UI libraries (Magic UI, Aceternity UI, Kokonut UI) within the Turborepo monorepo structure, ensuring all components inherit NEONPRO brand colors and design tokens while maintaining healthcare compliance and WCAG 2.1 AA+ accessibility standards.
 
 ## Technical Context
-**Language/Version**: TypeScript 5.9.2 + React 19
-**Primary Dependencies**: shadcn CLI, Tailwind CSS, Next.js, pnpm workspaces, Framer Motion v11.0.0
-**Storage**: N/A (theme and component configuration files)
-**Testing**: Vitest + Playwright for theme and component functionality testing
-**Target Platform**: Web (Next.js monorepo)
-**Project Type**: Web (monorepo with shared packages)
-**Performance Goals**: <500ms theme switching, <2s font loading, LCP ≤2.5s for themed pages
-**Constraints**: Must work with existing shadcn components, maintain WCAG 2.1 AA compliance, resolve dependency conflicts
-**Scale/Scope**: 5+ apps in monorepo, 20+ themed components, 3 fonts (Inter, Lora, Libre Baskerville), 7 new UI components
-**Key Integration Challenge**: Multiple UI library registries with shared Framer Motion v11.0.0 dependency
+**Language/Version**: TypeScript 5.9+ (strict mode)  
+**Primary Dependencies**: React 19, TanStack Router v5, Tailwind CSS, shadcn/ui, Framer Motion v11.0.0  
+**Storage**: N/A (theme configuration stored in CSS variables and localStorage)  
+**Testing**: Vitest 3.x (unit/integration), Playwright 1.4x (E2E accessibility testing)  
+**Target Platform**: Web application with mobile-first Brazilian aesthetic clinic focus
+**Project Type**: Web application (monorepo with frontend + backend + shared packages)  
+**Performance Goals**: <650 kB bundle size, 95%+ WCAG 2.1 AA accessibility, 8.5s build time maximum  
+**Constraints**: Must work within existing NeonPro monorepo structure, LGPD compliance required, mobile-first design mandatory  
+**Scale/Scope**: 7 UI components across 2 applications (web, api) with shared theme distribution via packages/ui
 
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
@@ -51,7 +50,7 @@ Install and configure NEONPRO theme + 7 UI components from multiple registries i
 ### NeonPro Constitutional Compliance
 **MANDATORY Requirements**:
 - [x] **Aesthetic Clinic Compliance**: Feature complies with LGPD, ANVISA, and relevant professional council regulations for aesthetic procedures
-- [x] **AI-Powered Prevention**: Feature proactively prevents UI dependency conflicts and theme integration issues
+- [x] **AI-Powered Prevention**: Feature proactively prevents problems rather than reacting
 - [x] **Brazilian Mobile-First**: Optimized for Brazilian aesthetic clinics and all aesthetic professionals using mobile devices
 - [x] **Type Safety**: End-to-end TypeScript with strict mode and aesthetic clinic data validation
 - [x] **Performance**: Meets <2s AI response, <500ms API response, 99.9% uptime requirements for aesthetic clinic workflows
@@ -109,153 +108,109 @@ ios/ or android/
 └── [platform-specific structure]
 ```
 
-**Structure Decision**: Option 2 (Web application) - Theme installation affects both frontend packages and shared UI components in monorepo
+**Structure Decision**: Option 2 (Web application) - Confirmed by Technical Context with frontend + backend + shared packages
 
-## Phase 0: A.P.T.E - Analyze & Research
-**A.P.T.E Methodology Implementation**:
+## Phase 0: Outline & Research
+1. **Extract unknowns from Technical Context** above:
+   - For each NEEDS CLARIFICATION → research task
+   - For each dependency → best practices task
+   - For each integration → patterns task
 
-### **A**nalyze - Requirements Analysis
-1. **Extract unknowns from Technical Context**:
-   - Registry configuration for multiple UI libraries
-   - Framer Motion v11.0.0 compatibility across components
-   - CSS variable conflicts between theme and components
-   - Icon library integration (@tabler/icons-react vs Lucide React)
+2. **Generate and dispatch research agents**:
+   ```
+   For each unknown in Technical Context:
+     Task: "Research {unknown} for {feature context}"
+   For each technology choice:
+     Task: "Find best practices for {tech} in {domain}"
+   ```
 
-2. **Multi-source research validation**:
-   - Context7 → Official documentation research
-   - Tavily → Current best practices and trends
-   - Archon → Project knowledge base integration
+3. **Consolidate findings** in `research.md` using format:
+   - Decision: [what was chosen]
+   - Rationale: [why chosen]
+   - Alternatives considered: [what else evaluated]
 
-3. **Constitutional analysis**:
-   - Brazilian aesthetic clinic compliance validation
-   - WCAG 2.1 AA+ accessibility requirements
-   - Performance impact assessment for bundled components
+**Output**: research.md with all NEEDS CLARIFICATION resolved
 
-### **P**lan - Strategic Planning
-1. **Dependency conflict resolution strategy**:
-   - Framer Motion version alignment matrix
-   - CSS variable namespace isolation
-   - Icon library integration approach
-
-2. **Installation sequence optimization**:
-   - Theme foundation first
-   - Component registry configuration
-   - Parallel installation where possible
-
-3. **Quality gate definition**:
-   - Component functionality validation
-   - Theme consistency verification
-   - Performance benchmark establishment
-
-**Output**: research.md with all NEEDS CLARIFICATION resolved and A.P.T.E methodology documented
-
-## Phase 1: A.P.T.E - Plan & Design
+## Phase 1: Design & Contracts
 *Prerequisites: research.md complete*
 
-### **P**lan - System Design
 1. **Extract entities from feature spec** → `data-model.md`:
-   - Theme configuration entities
-   - UI component interfaces
-   - Registry management structures
-   - Dependency relationship models
+   - Entity name, fields, relationships
+   - Validation rules from requirements
+   - State transitions if applicable
 
-2. **Generate integration contracts** from functional requirements:
-   - Component registry configuration schema
-   - Theme adaptation layer contracts
-   - Dependency conflict resolution protocols
+2. **Generate API contracts** from functional requirements:
+   - For each user action → endpoint
+   - Use standard REST/GraphQL patterns
    - Output OpenAPI/GraphQL schema to `/contracts/`
 
-3. **Generate component specification tests**:
-   - Theme installation validation tests
-   - Component integration tests
-   - Cross-library compatibility tests
+3. **Generate contract tests** from contracts:
+   - One test file per endpoint
+   - Assert request/response schemas
    - Tests must fail (no implementation yet)
 
-### **T**hink - Meta-cognitive Analysis
-1. **Multi-perspective evaluation**:
-   - Developer perspective: Implementation complexity and maintenance
-   - User perspective: Consistent theming and component behavior
-   - Business perspective: ROI on UI component investment
-   - Security perspective: Dependency vulnerability management
+4. **Extract test scenarios** from user stories:
+   - Each story → integration test scenario
+   - Quickstart test = story validation steps
 
-2. **Risk assessment and mitigation**:
-   - Dependency conflict probability analysis
-   - Performance impact assessment
-   - Accessibility compliance validation
-   - Constitutional alignment verification
+5. **Update agent file incrementally** (O(1) operation):
+   - Run `.specify/scripts/bash/update-agent-context.sh kilocode`
+     **IMPORTANT**: Execute it exactly as specified above. Do not add or remove any arguments.
+   - If exists: Add only NEW tech from current plan
+   - Preserve manual additions between markers
+   - Update recent changes (keep last 3)
+   - Keep under 150 lines for token efficiency
+   - Output to repository root
 
-3. **Constitutional compliance validation**:
-   - LGPD compliance for data handling
-   - ANVISA requirements for aesthetic clinics
-   - WCAG 2.1 AA+ accessibility verification
+**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, agent-specific file
 
-**Output**: data-model.md, /contracts/*, failing tests, constitutional compliance matrix, agent-specific file
-
-## Phase 2: A.P.T.E - Task Planning
+## Phase 2: Task Planning Approach
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
 
-### **E**xecute - Systematic Implementation Planning
 **Task Generation Strategy**:
 - Load `.specify/templates/tasks-template.md` as base
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
-- Apply TDD methodology: Tests before implementation
-- Constitutional compliance validation integrated
-- Dependency management strategy embedded
+- Each contract → contract test task [P]
+- Each entity → model creation task [P] 
+- Each user story → integration test task
+- Implementation tasks to make tests pass
+
+**Specific Task Categories**:
+1. **Theme Installation Tasks**:
+   - NEONPRO theme CLI installation and configuration
+   - CSS variables and Tailwind integration
+   - Font loading optimization (Inter, Lora, Libre Baskerville)
+   - Theme provider setup and context management
+
+2. **Component Installation Tasks**:
+   - Magic UI components (Magic Card, Animated Theme Toggler, Shine Border)
+   - Aceternity UI components (Sidebar, Hover Border Gradient Button)
+   - Kokonut UI components (Gradient Button)
+   - ReactBits components (Tilted Card - manual implementation)
+   - Component registry management and dependency resolution
+
+3. **Integration and Customization Tasks**:
+   - NEONPRO brand color application across all components
+   - Accessibility validation and WCAG 2.1 AA+ compliance
+   - Mobile-first responsive design implementation
+   - Healthcare compliance validation (LGPD, ANVISA)
+
+4. **Quality Assurance Tasks**:
+   - Component rendering tests across browsers
+   - Performance impact assessment (bundle size, load times)
+   - Accessibility compliance testing
+   - Healthcare compliance validation
+   - End-to-end integration testing
 
 **Ordering Strategy**:
-- **Foundation First**: Theme installation before components
-- **Conflict Resolution**: Dependency management before component integration
-- **Quality Assurance**: Test creation before implementation
-- **Parallel Execution**: Mark [P] for independent tasks
+- TDD order: Tests before implementation 
+- Dependency order: Theme → Components → Integration → Validation
+- Parallel execution: Independent component installations marked [P]
+- Sequential dependencies: Theme setup before component customization
 
-**A.P.T.E Task Categories**:
-
-**Theme Foundation Tasks**:
-- NEONPRO theme CLI installation and configuration
-- Local font optimization (Inter, Lora, Libre Baskerville)
-- Context API + localStorage theme persistence
-- Tailwind CSS configuration with oklch color integration
-- Theme provider implementation with constitutional compliance
-- Cross-app theme consistency verification
-
-**UI Components Integration Tasks**:
-- Component registry configuration (Magic UI, Aceternity UI, Kokonut UI)
-- Magic Card installation from Magic UI registry
-- Animated Theme Toggler integration with theme provider
-- Gradient Button installation from Kokonut UI
-- Tilted Card manual implementation (ReactBits)
-- Aceternity UI Sidebar with @tabler/icons-react
-- Framer Motion v11.0.0 compatibility validation
-- CSS variable conflict resolution
-- Icon library integration (Lucide + Tabler)
-
-**Quality & Compliance Tasks**:
-- WCAG 2.1 AA+ accessibility validation
-- Component theme adaptation verification
-- Performance benchmarking and optimization
-- Constitutional compliance documentation
-- Integration testing across all applications
-
-**Dependency Management Tasks**:
-- Registry configuration in components.json
-- Version conflict resolution protocols
-- Shared dependency optimization
-- Bundle size analysis and optimization
-
-**Estimated Output**: 45-50 numbered, ordered tasks in tasks.md with A.P.T.E methodology integration
+**Estimated Output**: 25-30 numbered, ordered tasks in tasks.md
 
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
-
----
-
-**PHASE 1 COMPLETE** ✅
-- Research.md: A.P.T.E methodology with multi-source research validation
-- Data-model.md: Comprehensive interfaces for theme + UI components
-- Contracts/: Integration specifications and conflict resolution protocols
-- Quickstart.md: Step-by-step guide with constitutional compliance
-- Agent context: Updated with multi-library integration technologies
-
-**READY FOR /tasks COMMAND** → Execute `/tasks` to generate A.P.T.E implementation tasks
 
 ## Phase 3+: Future Implementation
 *These phases are beyond the scope of the /plan command*
@@ -277,18 +232,26 @@ ios/ or android/
 *This checklist is updated during execution flow*
 
 **Phase Status**:
-- [x] Phase 0: Research complete (/plan command)
-- [x] Phase 1: Design complete (/plan command)
+- [x] Phase 0: Research complete (/plan command) ✅
+- [x] Phase 1: Design complete (/plan command) ✅
 - [ ] Phase 2: Task planning complete (/plan command - describe approach only)
 - [ ] Phase 3: Tasks generated (/tasks command)
 - [ ] Phase 4: Implementation complete
 - [ ] Phase 5: Validation passed
 
+**Deliverables Created**:
+- [x] research.md with comprehensive research findings ✅
+- [x] data-model.md with detailed entity definitions ✅
+- [x] /contracts/ directory with API specifications ✅
+- [x] theme-api.json with complete API contracts ✅
+- [x] theme-api.test.ts with failing contract tests ✅
+- [x] quickstart.md with installation and verification steps ✅
+
 **Gate Status**:
-- [x] Initial Constitution Check: PASS
-- [x] Post-Design Constitution Check: PASS
-- [x] All NEEDS CLARIFICATION resolved
-- [x] Complexity deviations documented
+- [x] Initial Constitution Check: PASS ✅
+- [x] Post-Design Constitution Check: PASS ✅
+- [x] All NEEDS CLARIFICATION resolved ✅
+- [x] Complexity deviations documented ✅
 
 ---
 *Based on Constitution v2.1.1 - See `/memory/constitution.md`*

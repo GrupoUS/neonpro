@@ -1,378 +1,145 @@
 /**
  * Performance Metrics Model
- *
- * This model defines the performance metrics for the NeonPro platform,
- * specifically tracking edge TTFB (Time To First Byte) and Bun optimization metrics.
- *
- * Key features:
- * - Edge performance tracking
- * - TTFB monitoring
- * - Bun optimization metrics
- * - Healthcare compliance performance
- * - Real-time monitoring
+ * Hybrid Architecture: Bun + Vercel Edge + Supabase Functions
+ * Healthcare Compliance: LGPD, ANVISA, CFM
  */
 
 import { z } from 'zod'
 
-// Performance metric type enumeration
-export const MetricType = z.enum([
-  'ttfb',
-  'cold_start',
-  'warm_start',
-  'build_time',
-  'install_time',
-  'test_time',
-  'memory_usage',
-  'cpu_usage',
-  'disk_usage',
-  'network_latency',
-  'database_query_time',
-  'api_response_time'
-])
-
-export type MetricTypeType = z.infer<typeof MetricType>
-
-// Performance unit enumeration
-export const MetricUnit = z.enum([
-  'milliseconds',
-  'seconds',
-  'bytes',
-  'kilobytes',
-  'megabytes',
-  'percentage',
-  'count',
-  'requests_per_second'
-])
-
-export type MetricUnitType = z.infer<typeof MetricUnit>
-
-// Base performance metrics schema
-export const PerformanceMetricsSchema = z.object({
-  // Basic configuration
-  id: z.string().uuid(),
-  name: z.string().min(1),
-  description: z.string().optional(),
-  version: z.string().min(1),
-  environment: z.enum(['development', 'staging', 'production']),
-
-  // Edge performance metrics
-  edge: z.object({
-    enabled: z.boolean(),
-    provider: z.enum(['vercel', 'cloudflare', 'aws', 'azure']),
-    regions: z.array(z.string()),
-    metrics: z.object({
-      ttfb: z.object({
-        current: z.number().min(0), // milliseconds
-        baseline: z.number().min(0), // milliseconds
-        target: z.number().min(0), // milliseconds
-        percentile_50: z.number().min(0),
-        percentile_95: z.number().min(0),
-        percentile_99: z.number().min(0)
-      }),
-      cold_start: z.object({
-        current: z.number().min(0), // milliseconds
-        baseline: z.number().min(0), // milliseconds
-        target: z.number().min(0), // milliseconds
-        frequency: z.number().min(0).max(1) // percentage
-      }),
-      warm_start: z.object({
-        current: z.number().min(0), // milliseconds
-        baseline: z.number().min(0), // milliseconds
-        target: z.number().min(0) // milliseconds
-      }),
-      cache_hit_rate: z.object({
-        current: z.number().min(0).max(1),
-        target: z.number().min(0).max(1)
-      })
-    })
-  }),
-
-  // Bun performance metrics
-  bun: z.object({
-    enabled: z.boolean(),
-    version: z.string(),
-    optimization_level: z.enum(['basic', 'standard', 'aggressive']),
-    metrics: z.object({
-      build_time: z.object({
-        current: z.number().min(0), // seconds
-        baseline: z.number().min(0), // seconds
-        target: z.number().min(0), // seconds
-        improvement_percentage: z.number()
-      }),
-      install_time: z.object({
-        current: z.number().min(0), // seconds
-        baseline: z.number().min(0), // seconds
-        target: z.number().min(0), // seconds
-        improvement_percentage: z.number()
-      }),
-      memory_usage: z.object({
-        current: z.number().min(0), // MB
-        baseline: z.number().min(0), // MB
-        target: z.number().min(0), // MB
-        reduction_percentage: z.number()
-      }),
-      bundle_size: z.object({
-        current: z.number().min(0), // KB
-        baseline: z.number().min(0), // KB
-        target: z.number().min(0), // KB
-        reduction_percentage: z.number()
-      })
-    })
-  }),
-
-  // Application performance metrics
-  application: z.object({
-    metrics: z.object({
-      database_query_time: z.object({
-        current: z.number().min(0), // milliseconds
-        baseline: z.number().min(0), // milliseconds
-        target: z.number().min(0) // milliseconds
-      }),
-      api_response_time: z.object({
-        current: z.number().min(0), // milliseconds
-        baseline: z.number().min(0), // milliseconds
-        target: z.number().min(0) // milliseconds
-      }),
-      cpu_usage: z.object({
-        current: z.number().min(0).max(100), // percentage
-        baseline: z.number().min(0).max(100), // percentage
-        target: z.number().min(0).max(100) // percentage
-      }),
-      memory_usage: z.object({
-        current: z.number().min(0), // MB
-        baseline: z.number().min(0), // MB
-        target: z.number().min(0) // MB
-      })
-    })
-  }),
-
-  // Healthcare compliance performance
-  healthcare: z.object({
-    compliance: z.object({
-      lgpd: z.object({
-        data_access_time: z.object({
-          current: z.number().min(0), // milliseconds
-          target: z.number().min(0) // milliseconds
-        }),
-        audit_log_time: z.object({
-          current: z.number().min(0), // milliseconds
-          target: z.number().min(0) // milliseconds
-        }),
-        encryption_overhead: z.object({
-          current: z.number().min(0).max(100), // percentage
-          target: z.number().min(0).max(100) // percentage
-        })
-      }),
-      anvisa: z.object({
-        validation_time: z.object({
-          current: z.number().min(0), // milliseconds
-          target: z.number().min(0) // milliseconds
-        }),
-        documentation_time: z.object({
-          current: z.number().min(0), // milliseconds
-          target: z.number().min(0) // milliseconds
-        })
-      }),
-      cfm: z.object({
-        medical_record_access_time: z.object({
-          current: z.number().min(0), // milliseconds
-          target: z.number().min(0) // milliseconds
-        }),
-        audit_trail_time: z.object({
-          current: z.number().min(0), // milliseconds
-          target: z.number().min(0) // milliseconds
-        })
-      })
-    })
-  }),
-
-  // Monitoring configuration
-  monitoring: z.object({
-    enabled: z.boolean(),
-    interval: z.number().min(1), // seconds
-    retention_period: z.number().min(0), // days
-    alert_thresholds: z.object({
-      ttfb: z.number().min(0), // milliseconds
-      cold_start: z.number().min(0), // milliseconds
-      memory_usage: z.number().min(0), // MB
-      cpu_usage: z.number().min(0).max(100), // percentage
-      error_rate: z.number().min(0).max(1) // percentage
-    }),
-    notifications: z.object({
-      email: z.boolean(),
-      slack: z.boolean(),
-      pagerduty: z.boolean()
-    })
-  }),
-
-  // Historical data
-  history: z.array(z.object({
-    timestamp: z.string().datetime(),
-    metric_type: MetricType,
-    value: z.number(),
-    unit: MetricUnit,
-    region: z.string().optional(),
-    metadata: z.record(z.unknown()).optional()
-  })),
-
-  // Metadata
-  metadata: z.object({
-    created_at: z.string().datetime(),
-    updated_at: z.string().datetime(),
-    created_by: z.string(),
-    updated_by: z.string().optional(),
-    tags: z.array(z.string()),
-    notes: z.string().optional()
-  })
+// Edge Performance Schema
+export const EdgePerformanceSchema = z.object({
+  ttfb: z.number().max(150, 'Edge TTFB must be ≤ 150ms'),
+  cacheHitRate: z.number().min(0).max(100, 'Cache hit rate must be between 0 and 100'),
+  coldStartFrequency: z.number().min(0, 'Cold start frequency must be non-negative'),
+  regionLatency: z.record(z.string(), z.number().min(0, 'Region latency must be non-negative')),
+  timestamp: z.date(),
 })
 
-// Export types
-export type PerformanceMetrics = z.infer<typeof PerformanceMetricsSchema>
+// Realtime Performance Schema
+export const RealtimePerformanceSchema = z.object({
+  uiPatchTime: z.number().max(1.5, 'Realtime UI patch must be ≤ 1.5s'),
+  connectionLatency: z.number().min(0, 'Connection latency must be non-negative'),
+  messageDeliveryTime: z.number().min(0, 'Message delivery time must be non-negative'),
+  subscriptionSetupTime: z.number().min(0, 'Subscription setup time must be non-negative'),
+  timestamp: z.date(),
+})
 
-// Default configuration values
-export const DEFAULT_PERFORMANCE_METRICS: Partial<PerformanceMetrics> = {
-  environment: 'development',
-  edge: {
-    enabled: true,
-    provider: 'vercel',
-    regions: ['gru1', 'gso1', 'cpt1'],
-    metrics: {
-      ttfb: {
-        current: 150,
-        baseline: 200,
-        target: 100,
-        percentile_50: 120,
-        percentile_95: 180,
-        percentile_99: 250
-      },
-      cold_start: {
-        current: 800,
-        baseline: 1200,
-        target: 500,
-        frequency: 0.1
-      },
-      warm_start: {
-        current: 50,
-        baseline: 100,
-        target: 30
-      },
-      cache_hit_rate: {
-        current: 0.85,
-        target: 0.9
-      }
-    }
+// AI Performance Schema
+export const AIPerformanceSchema = z.object({
+  copilotToolRoundtrip: z.number().max(2, 'Copilot tool roundtrip must be ≤ 2s'),
+  modelInferenceTime: z.number().min(0, 'Model inference time must be non-negative'),
+  responseGenerationTime: z.number().min(0, 'Response generation time must be non-negative'),
+  timestamp: z.date(),
+})
+
+// Build Performance Schema
+export const BuildPerformanceSchema = z.object({
+  buildTime: z.number().min(0, 'Build time must be positive'),
+  installTime: z.number().min(0, 'Install time must be positive'),
+  bundleSize: z.object({
+    main: z.number().min(0, 'Main bundle size must be positive'),
+    vendor: z.number().min(0, 'Vendor bundle size must be positive'),
+    total: z.number().min(0, 'Total bundle size must be positive'),
+  }),
+  cacheHitRate: z.number().min(0).max(100, 'Cache hit rate must be between 0 and 100'),
+  timestamp: z.date(),
+})
+
+// System Performance Schema
+export const SystemPerformanceSchema = z.object({
+  uptime: z.number().min(99.9, 'Uptime must be ≥ 99.9%'),
+  memoryUsage: z.number().min(0).max(100, 'Memory usage must be between 0 and 100'),
+  cpuUsage: z.number().min(0).max(100, 'CPU usage must be between 0 and 100'),
+  diskUsage: z.number().min(0).max(100, 'Disk usage must be between 0 and 100'),
+  timestamp: z.date(),
+})
+
+// Performance Metrics Schema
+export const PerformanceMetricsSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string().min(1, 'Name is required'),
+  environment: z.enum(['development', 'staging', 'production']),
+  edgePerformance: EdgePerformanceSchema,
+  realtimePerformance: RealtimePerformanceSchema,
+  aiPerformance: AIPerformanceSchema,
+  buildPerformance: BuildPerformanceSchema,
+  systemPerformance: SystemPerformanceSchema,
+  metadata: z.record(z.string(), z.unknown()).optional(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
+// Performance Metrics Update Schema
+export const PerformanceMetricsUpdateSchema = z.object({
+  name: z.string().min(1, 'Name is required').optional(),
+  edgePerformance: EdgePerformanceSchema.optional(),
+  realtimePerformance: RealtimePerformanceSchema.optional(),
+  aiPerformance: AIPerformanceSchema.optional(),
+  buildPerformance: BuildPerformanceSchema.optional(),
+  systemPerformance: SystemPerformanceSchema.optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
+})
+
+// Types
+export type EdgePerformance = z.infer<typeof EdgePerformanceSchema>
+export type RealtimePerformance = z.infer<typeof RealtimePerformanceSchema>
+export type AIPerformance = z.infer<typeof AIPerformanceSchema>
+export type BuildPerformance = z.infer<typeof BuildPerformanceSchema>
+export type SystemPerformance = z.infer<typeof SystemPerformanceSchema>
+export type PerformanceMetrics = z.infer<typeof PerformanceMetricsSchema>
+export type PerformanceMetricsUpdate = z.infer<typeof PerformanceMetricsUpdateSchema>
+
+// Default values
+export const defaultEdgePerformance: EdgePerformance = {
+  ttfb: 150,
+  cacheHitRate: 80,
+  coldStartFrequency: 0,
+  regionLatency: {},
+  timestamp: new Date(),
+}
+
+export const defaultRealtimePerformance: RealtimePerformance = {
+  uiPatchTime: 1.5,
+  connectionLatency: 100,
+  messageDeliveryTime: 50,
+  subscriptionSetupTime: 200,
+  timestamp: new Date(),
+}
+
+export const defaultAIPerformance: AIPerformance = {
+  copilotToolRoundtrip: 2,
+  modelInferenceTime: 500,
+  responseGenerationTime: 300,
+  timestamp: new Date(),
+}
+
+export const defaultBuildPerformance: BuildPerformance = {
+  buildTime: 0,
+  installTime: 0,
+  bundleSize: {
+    main: 0,
+    vendor: 0,
+    total: 0,
   },
-  bun: {
-    enabled: true,
-    version: '>=1.1.0',
-    optimization_level: 'standard',
-    metrics: {
-      build_time: {
-        current: 30,
-        baseline: 120,
-        target: 30,
-        improvement_percentage: 75
-      },
-      install_time: {
-        current: 45,
-        baseline: 180,
-        target: 45,
-        improvement_percentage: 75
-      },
-      memory_usage: {
-        current: 800,
-        baseline: 1024,
-        target: 800,
-        reduction_percentage: 22
-      },
-      bundle_size: {
-        current: 450,
-        baseline: 500,
-        target: 450,
-        reduction_percentage: 10
-      }
-    }
-  },
-  application: {
-    metrics: {
-      database_query_time: {
-        current: 50,
-        baseline: 80,
-        target: 50
-      },
-      api_response_time: {
-        current: 100,
-        baseline: 150,
-        target: 100
-      },
-      cpu_usage: {
-        current: 40,
-        baseline: 50,
-        target: 40
-      },
-      memory_usage: {
-        current: 512,
-        baseline: 768,
-        target: 512
-      }
-    }
-  },
-  healthcare: {
-    compliance: {
-      lgpd: {
-        data_access_time: {
-          current: 25,
-          target: 30
-        },
-        audit_log_time: {
-          current: 15,
-          target: 20
-        },
-        encryption_overhead: {
-          current: 5,
-          target: 10
-        }
-      },
-      anvisa: {
-        validation_time: {
-          current: 100,
-          target: 150
-        },
-        documentation_time: {
-          current: 50,
-          target: 75
-        }
-      },
-      cfm: {
-        medical_record_access_time: {
-          current: 30,
-          target: 40
-        },
-        audit_trail_time: {
-          current: 20,
-          target: 25
-        }
-      }
-    }
-  },
-  monitoring: {
-    enabled: true,
-    interval: 60, // 1 minute
-    retention_period: 30, // 30 days
-    alert_thresholds: {
-      ttfb: 200,
-      cold_start: 1000,
-      memory_usage: 1024,
-      cpu_usage: 80,
-      error_rate: 0.05
-    },
-    notifications: {
-      email: true,
-      slack: true,
-      pagerduty: false
-    }
-  },
-  history: []
+  cacheHitRate: 0,
+  timestamp: new Date(),
+}
+
+export const defaultSystemPerformance: SystemPerformance = {
+  uptime: 99.9,
+  memoryUsage: 50,
+  cpuUsage: 30,
+  diskUsage: 40,
+  timestamp: new Date(),
+}
+
+export const defaultPerformanceMetrics: Omit<PerformanceMetrics, 'id' | 'name' | 'environment' | 'createdAt' | 'updatedAt'> = {
+  edgePerformance: defaultEdgePerformance,
+  realtimePerformance: defaultRealtimePerformance,
+  aiPerformance: defaultAIPerformance,
+  buildPerformance: defaultBuildPerformance,
+  systemPerformance: defaultSystemPerformance,
+  metadata: {},
 }
 
 // Validation functions
@@ -380,208 +147,358 @@ export const validatePerformanceMetrics = (metrics: unknown): PerformanceMetrics
   return PerformanceMetricsSchema.parse(metrics)
 }
 
-export const isValidPerformanceMetrics = (metrics: unknown): boolean => {
-  return PerformanceMetricsSchema.safeParse(metrics).success
+export const validatePerformanceMetricsUpdate = (update: unknown): PerformanceMetricsUpdate => {
+  return PerformanceMetricsUpdateSchema.parse(update)
 }
 
-// Utility functions
-export const createPerformanceMetrics = (overrides: Partial<PerformanceMetrics> = {}): PerformanceMetrics => {
-  const now = new Date().toISOString()
-
-  return validatePerformanceMetrics({
-    id: crypto.randomUUID(),
-    name: 'NeonPro Performance Metrics',
-    description: 'NeonPro platform performance metrics with edge TTFB tracking',
-    version: '1.0.0',
-    environment: 'development',
-    ...DEFAULT_PERFORMANCE_METRICS,
-    ...overrides,
-    metadata: {
-      created_at: now,
-      updated_at: now,
-      created_by: 'system',
-      tags: ['performance', 'edge', 'ttfb', 'bun', 'healthcare'],
-      ...overrides.metadata
-    }
-  })
+export const validateEdgePerformance = (performance: unknown): EdgePerformance => {
+  return EdgePerformanceSchema.parse(performance)
 }
 
-export const updatePerformanceMetrics = (
-  metrics: PerformanceMetrics,
-  updates: Partial<PerformanceMetrics>
-): PerformanceMetrics => {
-  // Ensure we get a fresh timestamp that's always different
-  const now = new Date()
-  // Add milliseconds to ensure uniqueness if timestamps are the same
-  now.setMilliseconds(now.getMilliseconds() + 1)
-
-  return validatePerformanceMetrics({
-    ...metrics,
-    ...updates,
-    metadata: {
-      ...metrics.metadata,
-      updated_at: now.toISOString(),
-      updated_by: updates.metadata?.updated_by || metrics.metadata.updated_by,
-      ...updates.metadata
-    }
-  })
+export const validateRealtimePerformance = (performance: unknown): RealtimePerformance => {
+  return RealtimePerformanceSchema.parse(performance)
 }
 
-// Metric recording
-export const recordMetric = (
-  metrics: PerformanceMetrics,
-  metricType: MetricTypeType,
-  value: number,
-  unit: MetricUnitType,
-  options: {
-    region?: string
-    metadata?: Record<string, unknown>
-  } = {}
-): PerformanceMetrics => {
-  const newEntry = {
-    timestamp: new Date().toISOString(),
-    metric_type: metricType,
-    value,
-    unit,
-    region: options.region,
-    metadata: options.metadata
-  }
+export const validateAIPerformance = (performance: unknown): AIPerformance => {
+  return AIPerformanceSchema.parse(performance)
+}
 
-  return updatePerformanceMetrics(metrics, {
-    history: [...metrics.history, newEntry]
-  })
+export const validateBuildPerformance = (performance: unknown): BuildPerformance => {
+  return BuildPerformanceSchema.parse(performance)
+}
+
+export const validateSystemPerformance = (performance: unknown): SystemPerformance => {
+  return SystemPerformanceSchema.parse(performance)
 }
 
 // Performance validation
-export const validateTTFBTarget = (metrics: PerformanceMetrics): boolean => {
-  return metrics.edge.metrics.ttfb.current <= metrics.edge.metrics.ttfb.target
+export const validatePerformanceTargets = (metrics: PerformanceMetrics): boolean => {
+  return (
+    metrics.edgePerformance.ttfb <= 150 &&
+    metrics.realtimePerformance.uiPatchTime <= 1.5 &&
+    metrics.aiPerformance.copilotToolRoundtrip <= 2 &&
+    metrics.systemPerformance.uptime >= 99.9
+  )
 }
 
-export const validateColdStartTarget = (metrics: PerformanceMetrics): boolean => {
-  return metrics.edge.metrics.cold_start.current <= metrics.edge.metrics.cold_start.target
-}
-
+// Bun performance validation
 export const validateBunPerformance = (metrics: PerformanceMetrics): boolean => {
-  const { build_time, install_time, memory_usage } = metrics.bun.metrics
-
-  return build_time.current <= build_time.target &&
-         install_time.current <= install_time.target &&
-         memory_usage.current <= memory_usage.target
-}
-
-export const validateHealthcarePerformance = (metrics: PerformanceMetrics): boolean => {
-  const { lgpd, anvisa, cfm } = metrics.healthcare.compliance
-
-  return lgpd.data_access_time.current <= lgpd.data_access_time.target &&
-         lgpd.audit_log_time.current <= lgpd.audit_log_time.target &&
-         anvisa.validation_time.current <= anvisa.validation_time.target &&
-         cfm.medical_record_access_time.current <= cfm.medical_record_access_time.target
-}
-
-// Performance analysis
-export const getPerformanceSummary = (metrics: PerformanceMetrics) => {
-  return {
-    edge: {
-      ttfb_status: validateTTFBTarget(metrics) ? 'on_target' : 'needs_improvement',
-      ttfb_improvement: ((metrics.edge.metrics.ttfb.baseline - metrics.edge.metrics.ttfb.current) / metrics.edge.metrics.ttfb.baseline) * 100,
-      cold_start_status: validateColdStartTarget(metrics) ? 'on_target' : 'needs_improvement',
-      cache_hit_rate_status: metrics.edge.metrics.cache_hit_rate.current >= metrics.edge.metrics.cache_hit_rate.target ? 'on_target' : 'needs_improvement'
-    },
-    bun: {
-      status: validateBunPerformance(metrics) ? 'on_target' : 'needs_improvement',
-      build_improvement: metrics.bun.metrics.build_time.improvement_percentage,
-      install_improvement: metrics.bun.metrics.install_time.improvement_percentage,
-      memory_reduction: metrics.bun.metrics.memory_usage.reduction_percentage
-    },
-    healthcare: {
-      status: validateHealthcarePerformance(metrics) ? 'compliant' : 'non_compliant',
-      lgpd_compliant: metrics.healthcare.compliance.lgpd.data_access_time.current <= metrics.healthcare.compliance.lgpd.data_access_time.target,
-      anvisa_compliant: metrics.healthcare.compliance.anvisa.validation_time.current <= metrics.healthcare.compliance.anvisa.validation_time.target,
-      cfm_compliant: metrics.healthcare.compliance.cfm.medical_record_access_time.current <= metrics.healthcare.compliance.cfm.medical_record_access_time.target
-    }
-  }
-}
-
-// Alert checking
-export const checkAlerts = (metrics: PerformanceMetrics) => {
-  const alerts: string[] = []
-  const { alert_thresholds } = metrics.monitoring
-
-  if (metrics.edge.metrics.ttfb.current > alert_thresholds.ttfb) {
-    alerts.push(`TTFB (${metrics.edge.metrics.ttfb.current}ms) exceeds threshold (${alert_thresholds.ttfb}ms)`)
-  }
-
-  if (metrics.edge.metrics.cold_start.current > alert_thresholds.cold_start) {
-    alerts.push(`Cold start (${metrics.edge.metrics.cold_start.current}ms) exceeds threshold (${alert_thresholds.cold_start}ms)`)
-  }
-
-  if (metrics.application.metrics.memory_usage.current > alert_thresholds.memory_usage) {
-    alerts.push(`Memory usage (${metrics.application.metrics.memory_usage.current}MB) exceeds threshold (${alert_thresholds.memory_usage}MB)`)
-  }
-
-  if (metrics.application.metrics.cpu_usage.current > alert_thresholds.cpu_usage) {
-    alerts.push(`CPU usage (${metrics.application.metrics.cpu_usage.current}%) exceeds threshold (${alert_thresholds.cpu_usage}%)`)
-  }
-
-  return alerts
-}
-
-// History cleanup
-export const cleanupHistory = (metrics: PerformanceMetrics, retentionDays: number = 30): PerformanceMetrics => {
-  const cutoffDate = new Date()
-  cutoffDate.setDate(cutoffDate.getDate() - retentionDays)
-
-  const filteredHistory = metrics.history.filter(entry =>
-    new Date(entry.timestamp) >= cutoffDate
+  // Bun should provide 3-5x improvement in build/dev times
+  // This is a simplified check - in a real implementation, we would compare with baseline
+  return (
+    metrics.buildPerformance.buildTime > 0 &&
+    metrics.buildPerformance.cacheHitRate >= 80
   )
-
-  return updatePerformanceMetrics(metrics, {
-    history: filteredHistory
-  })
 }
 
-// Regional performance analysis
-export const getRegionalPerformance = (metrics: PerformanceMetrics, region: string) => {
-  const regionalHistory = metrics.history.filter(entry => entry.region === region)
+// Edge performance validation
+export const validateEdgePerformance = (performance: EdgePerformance): boolean => {
+  return (
+    performance.ttfb <= 150 &&
+    performance.cacheHitRate >= 80 &&
+    performance.coldStartFrequency <= 5
+  )
+}
 
-  if (regionalHistory.length === 0) {
-    return null
+// Realtime performance validation
+export const validateRealtimePerformance = (performance: RealtimePerformance): boolean => {
+  return (
+    performance.uiPatchTime <= 1.5 &&
+    performance.connectionLatency <= 200 &&
+    performance.messageDeliveryTime <= 100
+  )
+}
+
+// AI performance validation
+export const validateAIPerformance = (performance: AIPerformance): boolean => {
+  return (
+    performance.copilotToolRoundtrip <= 2 &&
+    performance.modelInferenceTime <= 1000 &&
+    performance.responseGenerationTime <= 500
+  )
+}
+
+// Build performance validation
+export const validateBuildPerformance = (performance: BuildPerformance): boolean => {
+  return (
+    performance.buildTime > 0 &&
+    performance.cacheHitRate >= 80
+  )
+}
+
+// System performance validation
+export const validateSystemPerformance = (performance: SystemPerformance): boolean => {
+  return (
+    performance.uptime >= 99.9 &&
+    performance.memoryUsage <= 80 &&
+    performance.cpuUsage <= 70 &&
+    performance.diskUsage <= 80
+  )
+}
+
+// Database operations
+export const createPerformanceMetrics = async (
+  supabase: any,
+  metrics: Omit<PerformanceMetrics, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<PerformanceMetrics> => {
+  const now = new Date()
+  const newMetrics = {
+    ...metrics,
+    id: crypto.randomUUID(),
+    createdAt: now,
+    updatedAt: now,
   }
 
-  const latestMetrics = regionalHistory.reduce((latest, current) =>
-    new Date(current.timestamp) > new Date(latest.timestamp) ? current : latest
-  )
+  const { data, error } = await supabase
+    .from('performance_metrics')
+    .insert(newMetrics)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to create performance metrics: ${error.message}`)
+  }
+
+  return validatePerformanceMetrics(data)
+}
+
+export const getPerformanceMetrics = async (
+  supabase: any,
+  environment: string
+): Promise<PerformanceMetrics | null> => {
+  const { data, error } = await supabase
+    .from('performance_metrics')
+    .select('*')
+    .eq('environment', environment)
+    .order('createdAt', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error) {
+    if (error.code === 'PGRST116') {
+      return null // Not found
+    }
+    throw new Error(`Failed to get performance metrics: ${error.message}`)
+  }
+
+  return validatePerformanceMetrics(data)
+}
+
+export const updatePerformanceMetrics = async (
+  supabase: any,
+  id: string,
+  update: PerformanceMetricsUpdate
+): Promise<PerformanceMetrics> => {
+  const now = new Date()
+  const updatedMetrics = {
+    ...update,
+    updatedAt: now,
+  }
+
+  const { data, error } = await supabase
+    .from('performance_metrics')
+    .update(updatedMetrics)
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to update performance metrics: ${error.message}`)
+  }
+
+  return validatePerformanceMetrics(data)
+}
+
+export const deletePerformanceMetrics = async (
+  supabase: any,
+  id: string
+): Promise<void> => {
+  const { error } = await supabase
+    .from('performance_metrics')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    throw new Error(`Failed to delete performance metrics: ${error.message}`)
+  }
+}
+
+// Performance tracking
+export const trackEdgePerformance = async (
+  supabase: any,
+  metricsId: string,
+  performance: EdgePerformance
+): Promise<void> => {
+  const { error } = await supabase
+    .from('edge_performance_logs')
+    .insert({
+      metrics_id: metricsId,
+      ttfb: performance.ttfb,
+      cache_hit_rate: performance.cacheHitRate,
+      cold_start_frequency: performance.coldStartFrequency,
+      region_latency: performance.regionLatency,
+      timestamp: performance.timestamp,
+    })
+
+  if (error) {
+    throw new Error(`Failed to track edge performance: ${error.message}`)
+  }
+}
+
+export const trackRealtimePerformance = async (
+  supabase: any,
+  metricsId: string,
+  performance: RealtimePerformance
+): Promise<void> => {
+  const { error } = await supabase
+    .from('realtime_performance_logs')
+    .insert({
+      metrics_id: metricsId,
+      ui_patch_time: performance.uiPatchTime,
+      connection_latency: performance.connectionLatency,
+      message_delivery_time: performance.messageDeliveryTime,
+      subscription_setup_time: performance.subscriptionSetupTime,
+      timestamp: performance.timestamp,
+    })
+
+  if (error) {
+    throw new Error(`Failed to track realtime performance: ${error.message}`)
+  }
+}
+
+export const trackAIPerformance = async (
+  supabase: any,
+  metricsId: string,
+  performance: AIPerformance
+): Promise<void> => {
+  const { error } = await supabase
+    .from('ai_performance_logs')
+    .insert({
+      metrics_id: metricsId,
+      copilot_tool_roundtrip: performance.copilotToolRoundtrip,
+      model_inference_time: performance.modelInferenceTime,
+      response_generation_time: performance.responseGenerationTime,
+      timestamp: performance.timestamp,
+    })
+
+  if (error) {
+    throw new Error(`Failed to track AI performance: ${error.message}`)
+  }
+}
+
+export const trackBuildPerformance = async (
+  supabase: any,
+  metricsId: string,
+  performance: BuildPerformance
+): Promise<void> => {
+  const { error } = await supabase
+    .from('build_performance_logs')
+    .insert({
+      metrics_id: metricsId,
+      build_time: performance.buildTime,
+      install_time: performance.installTime,
+      bundle_size: performance.bundleSize,
+      cache_hit_rate: performance.cacheHitRate,
+      timestamp: performance.timestamp,
+    })
+
+  if (error) {
+    throw new Error(`Failed to track build performance: ${error.message}`)
+  }
+}
+
+export const trackSystemPerformance = async (
+  supabase: any,
+  metricsId: string,
+  performance: SystemPerformance
+): Promise<void> => {
+  const { error } = await supabase
+    .from('system_performance_logs')
+    .insert({
+      metrics_id: metricsId,
+      uptime: performance.uptime,
+      memory_usage: performance.memoryUsage,
+      cpu_usage: performance.cpuUsage,
+      disk_usage: performance.diskUsage,
+      timestamp: performance.timestamp,
+    })
+
+  if (error) {
+    throw new Error(`Failed to track system performance: ${error.message}`)
+  }
+}
+
+// Get performance history
+export const getPerformanceHistory = async (
+  supabase: any,
+  metricsId: string,
+  limit: number = 10
+): Promise<PerformanceMetrics[]> => {
+  const { data, error } = await supabase
+    .from('performance_metrics')
+    .select('*')
+    .eq('id', metricsId)
+    .order('createdAt', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    throw new Error(`Failed to get performance history: ${error.message}`)
+  }
+
+  return data.map((metrics: any) => validatePerformanceMetrics(metrics))
+}
+
+// Compare performance with baseline
+export const comparePerformanceWithBaseline = async (
+  supabase: any,
+  metricsId: string,
+  currentMetrics: PerformanceMetrics
+): Promise<{
+  edgeTTFBImprovement: number
+  realtimeUIPatchImprovement: number
+  aiCopilotToolRoundtripImprovement: number
+  buildTimeImprovement: number
+  uptimeImprovement: number
+}> => {
+  // Get baseline metrics (first recorded metrics)
+  const history = await getPerformanceHistory(supabase, metricsId, 1)
+
+  if (history.length === 0) {
+    return {
+      edgeTTFBImprovement: 0,
+      realtimeUIPatchImprovement: 0,
+      aiCopilotToolRoundtripImprovement: 0,
+      buildTimeImprovement: 0,
+      uptimeImprovement: 0,
+    }
+  }
+
+  const baseline = history[0]
+
+  // Calculate improvements
+  const edgeTTFBImprovement = baseline.edgePerformance.ttfb > 0
+    ? ((baseline.edgePerformance.ttfb - currentMetrics.edgePerformance.ttfb) / baseline.edgePerformance.ttfb) * 100
+    : 0
+
+  const realtimeUIPatchImprovement = baseline.realtimePerformance.uiPatchTime > 0
+    ? ((baseline.realtimePerformance.uiPatchTime - currentMetrics.realtimePerformance.uiPatchTime) / baseline.realtimePerformance.uiPatchTime) * 100
+    : 0
+
+  const aiCopilotToolRoundtripImprovement = baseline.aiPerformance.copilotToolRoundtrip > 0
+    ? ((baseline.aiPerformance.copilotToolRoundtrip - currentMetrics.aiPerformance.copilotToolRoundtrip) / baseline.aiPerformance.copilotToolRoundtrip) * 100
+    : 0
+
+  const buildTimeImprovement = baseline.buildPerformance.buildTime > 0
+    ? ((baseline.buildPerformance.buildTime - currentMetrics.buildPerformance.buildTime) / baseline.buildPerformance.buildTime) * 100
+    : 0
+
+  const uptimeImprovement = currentMetrics.systemPerformance.uptime - baseline.systemPerformance.uptime
 
   return {
-    region,
-    latest_metrics: latestMetrics,
-    data_points: regionalHistory.length,
-    average_ttfb: regionalHistory
-      .filter(m => m.metric_type === 'ttfb')
-      .reduce((sum, m, _, arr) => sum + m.value / arr.length, 0)
+    edgeTTFBImprovement,
+    realtimeUIPatchImprovement,
+    aiCopilotToolRoundtripImprovement,
+    buildTimeImprovement,
+    uptimeImprovement,
   }
 }
-
-// Bun optimization recommendations
-export const getBunOptimizationRecommendations = (metrics: PerformanceMetrics) => {
-  const recommendations: string[] = []
-
-  if (!validateBunPerformance(metrics)) {
-    if (metrics.bun.metrics.build_time.current > metrics.bun.metrics.build_time.target) {
-      recommendations.push('Consider enabling aggressive build optimization level')
-      recommendations.push('Review build configuration for unused dependencies')
-    }
-
-    if (metrics.bun.metrics.memory_usage.current > metrics.bun.metrics.memory_usage.target) {
-      recommendations.push('Enable memory profiling to identify memory leaks')
-      recommendations.push('Optimize bundle size and enable tree shaking')
-    }
-  }
-
-  if (metrics.bun.optimization_level !== 'aggressive') {
-    recommendations.push('Consider upgrading to aggressive optimization level for better performance')
-  }
-
-  return recommendations
-}
-
