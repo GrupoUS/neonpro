@@ -31,14 +31,14 @@ import { MonorepoAnalysisContext } from '../../src/types/analysis'
 describe('T013 - Integration Test: TanStack Router v5 Code Splitting Analysis', () => {
   let routerAnalyzer: TanStackRouterAnalyzer
   let healthcareRouterValidator: HealthcareRouterValidator
-  let mobileRouterAnalyzer: MobileRouterPerformanceAnalyzer
-  let context: MonorepoAnalysisContext
+  let _mobileRouterAnalyzer: MobileRouterPerformanceAnalyzer
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     routerAnalyzer = new TanStackRouterAnalyzer()
     healthcareRouterValidator = new HealthcareRouterValidator()
-    mobileRouterAnalyzer = new MobileRouterPerformanceAnalyzer()
-    context = {
+    _mobileRouterAnalyzer = new MobileRouterPerformanceAnalyzer()
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'tanstack-router-v5-analysis',
       thresholds: {

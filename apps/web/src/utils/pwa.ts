@@ -345,13 +345,15 @@ export class PWAOfflineSync {
 // PWA Status Manager
 export class PWAStatus {
   private static instance: PWAStatus
-  private online = navigator.onLine
+  private online = typeof navigator !== 'undefined' ? navigator.onLine : true
   private installPromptAvailable = false
   private isInstalled = false
   private listeners: Map<string, Set<Function>> = new Map()
 
   private constructor() {
-    this.init()
+    if (typeof window !== 'undefined') {
+      this.init()
+    }
   }
 
   static getInstance(): PWAStatus {
@@ -362,6 +364,8 @@ export class PWAStatus {
   }
 
   private init(): void {
+    if (typeof window === 'undefined') return
+    
     // Online/offline status
     window.addEventListener('online', () => this.updateStatus('online', true))
     window.addEventListener('offline', () => this.updateStatus('online', false))
@@ -376,7 +380,7 @@ export class PWAStatus {
     })
 
     // Check if already installed
-    this.isInstalled = window.matchMedia('(display-mode: standalone)').matches
+    this.isInstalled = typeof window !== 'undefined' ? window.matchMedia('(display-mode: standalone)').matches : false
   }
 
   subscribe(event: string, callback: Function): () => void {

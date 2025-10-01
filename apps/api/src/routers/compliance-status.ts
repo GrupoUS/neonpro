@@ -7,16 +7,9 @@
 import { z } from 'zod'
 import { createTRPCRouter, publicProcedure, protectedProcedure } from '../trpc.js'
 import {
-  ComplianceCheckSchema,
-  ComplianceIssueSchema,
   ComplianceFrameworkSchema,
   WCAGComplianceSchema,
   ComplianceStatusSchema,
-  type ComplianceCheck,
-  type ComplianceIssue,
-  type ComplianceFramework,
-  type WCAGCompliance,
-  type ComplianceStatus,
   createComplianceStatus,
   getComplianceStatus,
   updateComplianceStatus,

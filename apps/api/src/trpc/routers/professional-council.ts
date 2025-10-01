@@ -265,7 +265,7 @@ export const professionalCouncilRouter = router({
   // Check professional status (public endpoint for quick verification)
   checkProfessionalStatus: procedure
     .input(CheckProfessionalStatusSchema)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx: _ctx, input }) => {
       try {
         const statusResult = await checkCouncilStatus(input)
 

@@ -382,8 +382,8 @@ export class ComplianceService {
   private checkSecurityRule(): boolean { return true }
   private checkBreachNotification(): boolean { return true }
   private checkHITECHAct(): boolean { return true }
-  private checkPatientDataRetention(currentTime: Date): boolean { return true }
-  private checkFinancialDataRetention(currentTime: Date): boolean { return true }
+  private checkPatientDataRetention(_currentTime: Date): boolean { return true }
+  private checkFinancialDataRetention(_currentTime: Date): boolean { return true }
   private checkEncryptionStandards(): boolean { return true }
   private checkAccessControls(): boolean { return true }
   private checkNetworkSecurity(): boolean { return true }

@@ -1,6 +1,7 @@
 // Treatments domain types for aesthetic procedures catalog
 import { z } from 'zod'
 import { BaseEntity } from '../../common/types'
+import type { ProfessionalSpecialty } from '../../profissionais/types'
 
 export interface Treatment extends BaseEntity {
   clinic_id: string
@@ -29,14 +30,6 @@ export enum TreatmentCategory {
   THREAD_LIFT = 'thread_lift',
   HAIR_TREATMENTS = 'hair_treatments',
   WELLNESS = 'wellness'
-}
-
-export enum ProfessionalSpecialty {
-  DERMATOLOGIST = 'dermatologist',
-  PLASTIC_SURGEON = 'plastic_surgeon',
-  AESTHETIC_PHYSICIAN = 'aesthetic_physician',
-  BEAUTY_THERAPIST = 'beauty_therapist',
-  NURSE_AESTHETICIAN = 'nurse_aesthetician'
 }
 
 export interface TreatmentPhoto {

@@ -18182,6 +18182,51 @@ export interface Database {
         }
         Relationships: []
       }
+      migration_metrics: {
+        Row: {
+          build_time: number | null
+          environment: string
+          error_count: number
+          healthcare_compliance: Json | null
+          id: string
+          memory_usage: number | null
+          migration_id: string
+          phase: string
+          progress: number
+          runtime: string
+          status: string
+          timestamp: string
+        }
+        Insert: {
+          build_time?: number | null
+          environment: string
+          error_count?: number
+          healthcare_compliance?: Json | null
+          id?: string
+          memory_usage?: number | null
+          migration_id: string
+          phase: string
+          progress: number
+          runtime?: string
+          status: string
+          timestamp?: string
+        }
+        Update: {
+          build_time?: number | null
+          environment?: string
+          error_count?: number
+          healthcare_compliance?: Json | null
+          id?: string
+          memory_usage?: number | null
+          migration_id?: string
+          phase?: string
+          progress?: number
+          runtime?: string
+          status?: string
+          timestamp?: string
+        }
+        Relationships: []
+      }
       personalization_rules: {
         Row: {
           actions: Json

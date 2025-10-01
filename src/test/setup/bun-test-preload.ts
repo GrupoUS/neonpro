@@ -1,17 +1,17 @@
 /**
  * NeonPro Bun Test Preload
  * Healthcare Compliance: LGPD, ANVISA, CFM
- * 
+ *
  * This file is preloaded before running tests with Bun
  * It sets up the test environment and global configurations
  */
 
 // Set up test environment
-process.env.NODE_ENV = 'test'
-process.env.LGPD_MODE = 'true'
-process.env.HEALTHCARE_COMPLIANCE = 'true'
-process.env.AUDIT_LOGGING = 'true'
-process.env.DATA_RESIDENCY = 'local'
+process.env['NODE_ENV'] = 'test'
+process.env['LGPD_MODE'] = 'true'
+process.env['HEALTHCARE_COMPLIANCE'] = 'true'
+process.env['AUDIT_LOGGING'] = 'true'
+process.env['DATA_RESIDENCY'] = 'local'
 
 // Mock console methods for cleaner test output
 global.console = {
@@ -61,7 +61,7 @@ global.testUtils = {
     phone: '+5511999999999',
     ...overrides,
   }),
-  
+
   // Helper to create mock appointment data
   createMockAppointment: (overrides = {}) => ({
     id: 'test-appointment-id',

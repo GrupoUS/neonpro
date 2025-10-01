@@ -611,7 +611,7 @@ app.get('/api/performance/healthcare-benchmarks', (c) => {
 })
 
 app.post('/api/performance/benchmark', async (c) => {
-  const body = await c.req.json()
+  const _body = await c.req.json()
   return c.json({
     success: true,
     benchmarkId: `benchmark-${Date.now()}`,
@@ -933,7 +933,7 @@ app.get('/api/compliance/healthcare-data-protection', (c) => {
 })
 
 app.post('/api/compliance/audit', async (c) => {
-  const body = await c.req.json()
+  const _body = await c.req.json()
   return c.json({
     success: true,
     auditId: `audit-${Date.now()}`,

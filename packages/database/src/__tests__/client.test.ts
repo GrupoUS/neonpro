@@ -449,7 +449,7 @@ describe('Database Client', () => {
 
       // Mock createSupabaseClientOriginal to capture the key parameter
       const createSupabaseClientOriginalSpy = vi.fn(() => ({}));
-      vi.mocked(createSupabaseClientOriginalSpy).mockImplementation((url, key, config) => ({ url, key, config }));
+      (createSupabaseClientOriginalSpy as any).mockImplementation((url: string, key: string, config: any) => ({ url, key, config }));
 
       // Temporarily replace the import
       const { createClient } = require('../client');

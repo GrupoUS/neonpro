@@ -35,14 +35,14 @@ describe('T015 - Integration Test: Executive Summary Generation', () => {
   let brazilianInsightsGenerator: BrazilianHealthcareInsightsGenerator
   let roiEngine: ROIAnalysisEngine
   let stakeholderEngine: StakeholderRecommendationsEngine
-  let context: MonorepoAnalysisContext
+  let _context: MonorepoAnalysisContext
 
   beforeEach(() => {
     summaryGenerator = new ExecutiveSummaryGenerator()
     brazilianInsightsGenerator = new BrazilianHealthcareInsightsGenerator()
     roiEngine = new ROIAnalysisEngine()
     stakeholderEngine = new StakeholderRecommendationsEngine()
-    context = {
+    _context = {
       projectRoot: '/home/vibecode/neonpro',
       analysisMode: 'executive-summary-generation',
       thresholds: {

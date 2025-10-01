@@ -191,8 +191,9 @@ export const validateBunPerformance = (metrics: PerformanceMetrics): boolean => 
   )
 }
 
-// Edge performance validation
-export const validateEdgePerformance = (performance: EdgePerformance): boolean => {
+
+// Performance validation functions (return boolean)
+export const checkEdgePerformance = (performance: EdgePerformance): boolean => {
   return (
     performance.ttfb <= 150 &&
     performance.cacheHitRate >= 80 &&
@@ -200,8 +201,7 @@ export const validateEdgePerformance = (performance: EdgePerformance): boolean =
   )
 }
 
-// Realtime performance validation
-export const validateRealtimePerformance = (performance: RealtimePerformance): boolean => {
+export const checkRealtimePerformance = (performance: RealtimePerformance): boolean => {
   return (
     performance.uiPatchTime <= 1.5 &&
     performance.connectionLatency <= 200 &&
@@ -209,8 +209,7 @@ export const validateRealtimePerformance = (performance: RealtimePerformance): b
   )
 }
 
-// AI performance validation
-export const validateAIPerformance = (performance: AIPerformance): boolean => {
+export const checkAIPerformance = (performance: AIPerformance): boolean => {
   return (
     performance.copilotToolRoundtrip <= 2 &&
     performance.modelInferenceTime <= 1000 &&
@@ -218,16 +217,14 @@ export const validateAIPerformance = (performance: AIPerformance): boolean => {
   )
 }
 
-// Build performance validation
-export const validateBuildPerformance = (performance: BuildPerformance): boolean => {
+export const checkBuildPerformance = (performance: BuildPerformance): boolean => {
   return (
     performance.buildTime > 0 &&
     performance.cacheHitRate >= 80
   )
 }
 
-// System performance validation
-export const validateSystemPerformance = (performance: SystemPerformance): boolean => {
+export const checkSystemPerformance = (performance: SystemPerformance): boolean => {
   return (
     performance.uptime >= 99.9 &&
     performance.memoryUsage <= 80 &&
@@ -476,23 +473,23 @@ export const comparePerformanceWithBaseline = async (
   const baseline = history[0]
 
   // Calculate improvements
-  const edgeTTFBImprovement = baseline.edgePerformance.ttfb > 0
+  const edgeTTFBImprovement = baseline?.edgePerformance?.ttfb && baseline.edgePerformance.ttfb > 0
     ? ((baseline.edgePerformance.ttfb - currentMetrics.edgePerformance.ttfb) / baseline.edgePerformance.ttfb) * 100
     : 0
 
-  const realtimeUIPatchImprovement = baseline.realtimePerformance.uiPatchTime > 0
+  const realtimeUIPatchImprovement = baseline?.realtimePerformance?.uiPatchTime && baseline.realtimePerformance.uiPatchTime > 0
     ? ((baseline.realtimePerformance.uiPatchTime - currentMetrics.realtimePerformance.uiPatchTime) / baseline.realtimePerformance.uiPatchTime) * 100
     : 0
 
-  const aiCopilotToolRoundtripImprovement = baseline.aiPerformance.copilotToolRoundtrip > 0
+  const aiCopilotToolRoundtripImprovement = baseline?.aiPerformance?.copilotToolRoundtrip && baseline.aiPerformance.copilotToolRoundtrip > 0
     ? ((baseline.aiPerformance.copilotToolRoundtrip - currentMetrics.aiPerformance.copilotToolRoundtrip) / baseline.aiPerformance.copilotToolRoundtrip) * 100
     : 0
 
-  const buildTimeImprovement = baseline.buildPerformance.buildTime > 0
+  const buildTimeImprovement = baseline?.buildPerformance?.buildTime && baseline.buildPerformance.buildTime > 0
     ? ((baseline.buildPerformance.buildTime - currentMetrics.buildPerformance.buildTime) / baseline.buildPerformance.buildTime) * 100
     : 0
 
-  const uptimeImprovement = currentMetrics.systemPerformance.uptime - baseline.systemPerformance.uptime
+  const uptimeImprovement = currentMetrics.systemPerformance.uptime - (baseline?.systemPerformance?.uptime || 0)
 
   return {
     edgeTTFBImprovement,

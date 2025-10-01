@@ -188,7 +188,7 @@ describe('Migration Status API Integration Tests', () => {
       
       // Verify phase tracking
       expect(status).toHaveProperty('phases')
-      expect(Array.isArray(status.phases)
+      expect(Array.isArray(status.phases)).toBe(true)
       expect(status.phases.length).toBe(5)
       
       // Verify completed phases
@@ -349,7 +349,6 @@ describe('Migration Status API Integration Tests', () => {
       expect(metrics.timestamp).toBe(metrics.metrics.lastCheck)
     })
   })
-})
 
   describe('Database Integration', () => {
     it('should connect to database with configuration', async () => {
