@@ -3,10 +3,6 @@
   "version": "1.0.0",
   "description": "NeonPro: Healthcare Compliance & Performance Platform",
   "packageManager": "bun@1.2.22",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "main": "index.js",
   "scripts": {
     "dev": "bun run --hot apps/api/src/server.ts",
