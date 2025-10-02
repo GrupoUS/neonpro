@@ -825,30 +825,23 @@ optimized_vercel_deploy() {
 
     # Try prebuilt deployment first (fastest)
     log_info "Attempting prebuilt deployment for $app_name..."
-    local deploy_json
+    local deploy_output
     local deploy_url
 
     if run_vercel_cli build --cwd "$app_path" --yes >/dev/null 2>&1; then
         log_success "Prebuilt assets ready for $app_name"
-        deploy_json=$(run_vercel_cli deploy --json "${deploy_args[@]}" --prebuilt 2>/dev/null || echo "{}")
+        deploy_output=$(run_vercel_cli deploy "${deploy_args[@]}" --prebuilt 2>&1 || echo "")
     else
         log_info "Prebuilt not available - using remote build for $app_name"
-        deploy_json=$(run_vercel_cli deploy --json "${deploy_args[@]}" 2>/dev/null || echo "{}")
+        deploy_output=$(run_vercel_cli deploy "${deploy_args[@]}" 2>&1 || echo "")
     fi
 
     # Extract deployment URL with multiple fallback strategies
-    deploy_url=$(echo "$deploy_json" | tr -d '\n' | sed -E 's/.*"url":"([^"]+)".*/\1/' 2>/dev/null || echo "")
-
-    if [ -z "$deploy_url" ] || [ "$deploy_url" = "$deploy_json" ]; then
-        log_warning "JSON parsing failed for $app_name - trying alternative extraction"
-        deploy_url=$(echo "$deploy_json" | grep -oE 'https://[^"]*\.vercel\.app' | head -n1 || echo "")
-    fi
+    deploy_url=$(echo "$deploy_output" | grep -oE 'https://[^[:space:]]*\.vercel\.app' | head -n1 || echo "")
 
     if [ -z "$deploy_url" ]; then
-        log_warning "URL extraction failed for $app_name - querying recent deployments"
-        deploy_url=$(run_vercel_cli ls --cwd "$app_path" --json 2>/dev/null |
-                    jq -r '.[0].url // empty' 2>/dev/null ||
-                    run_vercel_cli ls --cwd "$app_path" 2>/dev/null |
+        log_warning "URL extraction via stdout failed for $app_name - querying recent deployments"
+        deploy_url=$(run_vercel_cli ls --cwd "$app_path" 2>/dev/null |
                     grep -oE 'https://[^[:space:]]*\.vercel\.app' | head -n1 || echo "")
     fi
 

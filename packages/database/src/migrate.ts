@@ -46,7 +46,17 @@ class DataMigration {
   private log(level: string, message: string, data?: unknown) {
     const levels = ['debug', 'info', 'warn', 'error']
     if (levels.indexOf(level) >= levels.indexOf(this.options.logLevel)) {
-      console.log(`[${level.toUpperCase()}] ${message}`, data || '')
+      // Serialize data safely for logging
+      const payload = data === undefined
+        ? ''
+        : ` ${typeof data === 'string' ? data : JSON.stringify(data)}`
+      const output = `[${level.toUpperCase()}] ${message}${payload}`
+      if (level === 'error') {
+        console.error(output)
+      } else {
+        // Use warn for debug/info/warn to comply with lint rule that only allows warn/error
+        console.warn(output)
+      }
     }
   }
 
@@ -66,7 +76,7 @@ class DataMigration {
 
     if (this.options.dryRun) {
       this.log('info', 'DRY RUN: Would migrate clinics', clinics)
-      return result
+      return result as MigrationResult
     }
 
     for (const clinic of clinics) {
@@ -105,7 +115,7 @@ class DataMigration {
       `Clinic migration complete: ${result.migratedCount} success, ${result.failedCount} failed`,
     )
 
-    return result
+    return result as MigrationResult
   }
 
   /**
@@ -124,7 +134,7 @@ class DataMigration {
 
     if (this.options.dryRun) {
       this.log('info', 'DRY RUN: Would migrate users', users)
-      return result
+      return result as MigrationResult
     }
 
     for (const user of users) {
@@ -162,7 +172,7 @@ class DataMigration {
       `User migration complete: ${result.migratedCount} success, ${result.failedCount} failed`,
     )
 
-    return result
+    return result as MigrationResult
   }
 
   /**
@@ -181,7 +191,7 @@ class DataMigration {
 
     if (this.options.dryRun) {
       this.log('info', 'DRY RUN: Would migrate user-clinic relationships', userClinics)
-      return result
+      return result as MigrationResult
     }
 
     for (const uc of userClinics) {
@@ -215,7 +225,7 @@ class DataMigration {
       `User-clinic migration complete: ${result.migratedCount} success, ${result.failedCount} failed`,
     )
 
-    return result
+    return result as MigrationResult
   }
 
   /**
@@ -234,7 +244,7 @@ class DataMigration {
 
     if (this.options.dryRun) {
       this.log('info', 'DRY RUN: Would migrate appointments', appointments)
-      return result
+      return result as MigrationResult
     }
 
     for (const appointment of appointments) {
@@ -274,7 +284,7 @@ class DataMigration {
       `Appointment migration complete: ${result.migratedCount} success, ${result.failedCount} failed`,
     )
 
-    return result
+    return result as MigrationResult
   }
 
   /**
@@ -317,7 +327,7 @@ export async function executeFullMigration(
 ) {
   const migration = new DataMigration(supabaseUrl, serviceRoleKey, options)
 
-  console.log('Starting full migration...')
+  console.warn('Starting full migration...')
 
   // Step 1: Migrate clinics
   const clinicsResult = await migration.migrateClinics(data.clinics)
@@ -361,7 +371,7 @@ export async function executeFullMigration(
     }
   }
 
-  console.log('Full migration completed successfully')
+  console.warn('Full migration completed successfully')
 
   return {
     success: true,

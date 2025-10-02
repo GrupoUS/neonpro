@@ -89,6 +89,13 @@ export interface ComplianceScore {
   nextAssessment: string
 }
 
+type ComplianceCheckResult = {
+  compliant: boolean
+  score: number
+  issues: string[]
+  recommendations: string[]
+}
+
 export class HealthcareComplianceService {
   private readonly ENCRYPTION_KEY: string
   private readonly CONSENT_RETENTION_DAYS = 2555 // 7 years
@@ -506,21 +513,27 @@ export class HealthcareComplianceService {
   }
 
   // Complete Healthcare Compliance Assessment
-  async assessOverallCompliance(patientData?: PatientData, 
-                              device?: MedicalDevice,
-                              license?: ProfessionalLicense): Promise<{
+  async assessOverallCompliance(
+    patientData?: PatientData,
+    device?: MedicalDevice,
+    license?: ProfessionalLicense
+  ): Promise<{
     overallCompliant: boolean
     complianceScore: ComplianceScore
-    lgpd: any,
-    anvisa: device ? any : null,
-    cfm: license ? any : null
+    lgpd: ComplianceCheckResult | null
+    anvisa: ComplianceCheckResult | null
+    cfm: ComplianceCheckResult | null
     recommendations: string[]
     requiredActions: string[]
   }> {
-    const results = {
-      lgpd: null as any,
-      anvisa: null as any,
-      cfm: null as any
+    const results: {
+      lgpd: ComplianceCheckResult | null
+      anvisa: ComplianceCheckResult | null
+      cfm: ComplianceCheckResult | null
+    } = {
+      lgpd: null,
+      anvisa: null,
+      cfm: null
     }
 
     // Run all compliance checks

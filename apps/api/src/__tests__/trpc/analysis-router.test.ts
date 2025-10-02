@@ -91,7 +91,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
       
       // RED: Test fails initially, implementation needed to fix
       expect(validationResult.success).toBe(false)
-      expect(validationResult.error?.issues[0].message).toBe('Invalid package name format')
+      expect(validationResult.success ? undefined : validationResult.error?.issues?.[0]?.message).toBe('Invalid package name format')
     })
 
     it('should enforce healthcare service requirements', () => {
@@ -110,7 +110,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
       const validationResult = HealthcareServicesSchema.safeParse(invalidHealthcareRequest)
       
       expect(validationResult.success).toBe(false)
-      expect(validationResult.error?.issues[0].message).toBe('At least one healthcare compliance service is required')
+      expect(validationResult.success ? undefined : validationResult.error?.issues?.[0]?.message).toBe('At least one healthcare compliance service is required')
     })
   })
 
@@ -205,7 +205,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
             content: JSON.stringify({
               summary: analysis.summary,
               healthScore: analysis.healthScore,
-              recommendations: analysis.recommendations.filter(r => r.healthcare === true)
+              recommendations: analysis.recommendations.filter((r: any) => r.healthcare === true)
             }, null, 2),
             format: 'json'
           })
@@ -257,7 +257,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
             true
           )
 
-          return visualizations.map(viz => ({
+          return visualizations.map((viz: any) => ({
             ...viz,
             healthcareCompliant: true,
             dataProtectionMasked: viz.data.patientId ? `${viz.data.patientId.substring(0, 4)}***` : null
@@ -354,7 +354,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
       }> = []
 
       const analysisController = {
-        async getAnalysisResults(analysisId: string, format: string) {
+        async getAnalysisResults(_analysisId: string, format: string) {
           // Log healthcare audit trail
           auditLog.push({
             action: 'analysis_results_access',
@@ -371,16 +371,16 @@ describe('Analysis Router - Healthcare Compliance', () => {
       await analysisController.getAnalysisResults('analysis-123', 'json')
       
       expect(auditLog).toHaveLength(1)
-      expect(auditLog[0].action).toBe('analysis_results_access')
-      expect(auditLog[0].sensitiveDataAccessed).toBe(false)
-      expect(auditLog[0].userId).toBe('usr_123')
+      expect(auditLog[0]?.action).toBe('analysis_results_access')
+      expect(auditLog[0]?.sensitiveDataAccessed).toBe(false)
+      expect(auditLog[0]?.userId).toBe('usr_123')
     })
 
     it('should detect sensitive data access patterns', async () => {
       let sensitiveAccessCount = 0
 
       const analysisController = {
-        async getAnalysisResults(analysisId: string, format: string) {
+        async getAnalysisResults(_analysisId: string, format: string) {
           // Detect sensitive data access
           if (format === 'pdf' || format === 'excel') {
             sensitiveAccessCount++

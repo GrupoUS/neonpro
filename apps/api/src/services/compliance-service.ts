@@ -266,11 +266,10 @@ export class ComplianceService {
   private async validateDataRetention(): Promise<ComplianceCheck> {
     try {
       // Mock data retention validation
-      const currentTime = new Date()
       const retentionChecks = [
-        this.checkPatientDataRetention(currentTime),
-        this.checkFinancialDataRetention(currentTime),
-        this.checkAuditLogRetention(currentTime)
+        this.checkPatientDataRetention(),
+        this.checkFinancialDataRetention(),
+        this.checkAuditLogRetention()
       ]
 
       const allPassed = retentionChecks.every(check => check)
@@ -382,15 +381,15 @@ export class ComplianceService {
   private checkSecurityRule(): boolean { return true }
   private checkBreachNotification(): boolean { return true }
   private checkHITECHAct(): boolean { return true }
-  private checkPatientDataRetention(_currentTime: Date): boolean { return true }
-  private checkFinancialDataRetention(_currentTime: Date): boolean { return true }
+  private checkPatientDataRetention(_currentTime?: Date): boolean { return true }
+  private checkFinancialDataRetention(_currentTime?: Date): boolean { return true }
   private checkEncryptionStandards(): boolean { return true }
   private checkAccessControls(): boolean { return true }
   private checkNetworkSecurity(): boolean { return true }
   private checkVulnerabilityManagement(): boolean { return true }
   private checkAuditLogCompleteness(): boolean { return true }
   private checkAuditLogIntegrity(): boolean { return true }
-  private checkAuditLogRetention(): boolean { return true }
+  private checkAuditLogRetention(_currentTime?: Date): boolean { return true }
   private checkDataEncryption(): boolean { return true }
   private checkDataBackup(): boolean { return true }
   private checkIncidentResponse(): boolean { return true }

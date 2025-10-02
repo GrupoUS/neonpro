@@ -27,6 +27,10 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'),
       '@trpc/server/unstable-core-do-not-import': '@trpc/server',
+      '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
+      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
+      '@neonpro/core': path.resolve(__dirname, '../../packages/core/src'),
     },
   },
   define: {
@@ -92,6 +96,10 @@ export default defineConfig({
       'class-variance-authority',
       '@copilotkit/react-core',
       '@copilotkit/react-ui',
+      '@neonpro/ui',
+      '@neonpro/types',
+      '@neonpro/database',
+      '@neonpro/core',
     ],
   },
 })

@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { useCallback } from 'react'
 
 export interface SchedulingSubmission {
   scheduleMutation: {

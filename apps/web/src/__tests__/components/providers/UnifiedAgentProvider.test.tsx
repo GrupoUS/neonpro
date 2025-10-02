@@ -3,7 +3,7 @@
  * These tests are designed to FAIL initially, demonstrating the import error
  */
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { UnifiedAgentProvider } from '@/components/copilotkit/UnifiedAgentProvider'
 
