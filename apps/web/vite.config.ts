@@ -23,6 +23,7 @@ export default defineConfig({
   publicDir: 'public',
   resolve: {
     preserveSymlinks: true,
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
