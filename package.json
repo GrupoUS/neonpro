@@ -47,6 +47,7 @@
     "@neonpro/ui": "workspace:*",
     "@supabase/supabase-js": "^2.38.0",
     "@trpc/server": "^10.44.0",
+    "superjson": "^2.2.1",
     "zod": "^3.22.4",
     "hono": "^3.11.0",
     "jsonwebtoken": "^9.0.2",

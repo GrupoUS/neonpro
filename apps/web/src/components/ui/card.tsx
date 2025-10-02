@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react'
 import { cn } from '../../lib/utils'
 
 const Card = React.forwardRef<
@@ -11,9 +11,9 @@ const Card = React.forwardRef<
   }
 >(({ className, variant = 'default', ...props }, ref) => {
   const variantClasses = {
-    default: "rounded-lg border bg-card text-card-foreground shadow-sm",
-    neonpro: "rounded-lg border bg-card text-card-foreground neonpro-neumorphic",
-    glass: "rounded-lg border neonpro-glass"
+    default: 'rounded-lg border bg-card text-card-foreground shadow-sm',
+    neonpro: 'rounded-lg border bg-card text-card-foreground neonpro-neumorphic',
+    glass: 'rounded-lg border neonpro-glass',
   }
 
   return (
@@ -24,7 +24,7 @@ const Card = React.forwardRef<
     />
   )
 })
-Card.displayName = "Card"
+Card.displayName = 'Card'
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
@@ -32,26 +32,35 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
+    className={cn('flex flex-col space-y-1.5 p-6', className)}
     {...props}
   />
 ))
-CardHeader.displayName = "CardHeader"
+CardHeader.displayName = 'CardHeader'
 
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h3
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
-    )}
-    {...props}
-  />
-))
-CardTitle.displayName = "CardTitle"
+  React.PropsWithChildren<
+    React.HTMLAttributes<HTMLHeadingElement> & { 'aria-label'?: string }
+  >
+>(({ className, children, 'aria-label': ariaLabel, ...props }, ref) => {
+  // Avoid rendering an empty heading: prefer children, then aria-label (screen-reader only).
+  if (!children && !ariaLabel) return null
+
+  return (
+    <h3
+      ref={ref}
+      className={cn(
+        'text-2xl font-semibold leading-none tracking-tight',
+        className,
+      )}
+      {...props}
+    >
+      {children ?? <span className='sr-only'>{ariaLabel}</span>}
+    </h3>
+  )
+})
+CardTitle.displayName = 'CardTitle'
 
 const CardDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -59,19 +68,19 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ))
-CardDescription.displayName = "CardDescription"
+CardDescription.displayName = 'CardDescription'
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
+  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
 ))
-CardContent.displayName = "CardContent"
+CardContent.displayName = 'CardContent'
 
 const CardFooter = React.forwardRef<
   HTMLDivElement,
@@ -79,10 +88,10 @@ const CardFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
+    className={cn('flex items-center p-6 pt-0', className)}
     {...props}
   />
 ))
-CardFooter.displayName = "CardFooter"
+CardFooter.displayName = 'CardFooter'
 
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }

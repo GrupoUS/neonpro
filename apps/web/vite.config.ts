@@ -26,7 +26,6 @@ export default defineConfig({
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@trpc/server/unstable-core-do-not-import': '@trpc/server',
     },
   },
   define: {
@@ -55,7 +54,7 @@ export default defineConfig({
           query: ['@tanstack/react-query'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
           copilot: ['@copilotkit/react-core', '@copilotkit/react-ui'],
-          forms: ['react-hook-form', 'zod', 'valibot'],
+          forms: ['react-hook-form', 'zod'],
           utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
         },
         chunkFileNames: chunkInfo => {
@@ -82,7 +81,6 @@ export default defineConfig({
       'superjson',
       'react-hook-form',
       'zod',
-      'valibot',
       'clsx',
       'tailwind-merge',
       'lucide-react',

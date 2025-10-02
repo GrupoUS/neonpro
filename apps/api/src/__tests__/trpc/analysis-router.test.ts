@@ -57,7 +57,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
           depth: z.number().min(1).max(10).default(3),
           includeRecommendations: z.boolean().default(true),
           performanceOnly: z.boolean().default(false)
-        }).default({})
+        }).default({ depth: 3, includeRecommendations: true, performanceOnly: false })
       })
 
       // Valid case - GREEN: Test should pass
@@ -110,7 +110,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
       const validationResult = HealthcareServicesSchema.safeParse(invalidHealthcareRequest)
       
       expect(validationResult.success).toBe(false)
-      expect(validationResult.error?.errors[0].message).toBe('At least one healthcare compliance service is required')
+      expect(validationResult.error?.issues[0].message).toBe('At least one healthcare compliance service is required')
     })
   })
 

@@ -1,24 +1,38 @@
 // Core UI Components - Healthcare Optimized
 export { Button, buttonVariants, type ButtonProps } from './button'
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card'
-export { Input, MedicalInput, PatientDataInput, SensitiveInput, DateOfBirthInput, PhoneNumberInput, EmailInput, HealthcareIdInput, type InputProps } from './input'
-export { Alert, AlertDescription, AlertTitle, EmergencyAlert, MedicalAlert, LgpdAlert, alertVariants } from './alert'
-export { MobileHealthcareButton, EmergencyButton, MedicalActionButton, type MobileHealthcareButtonProps } from './mobile-healthcare-button'
+export { Input, type InputProps } from './input'
+export { Alert, AlertDescription, AlertTitle } from './alert'
+export { MobileHealthcareButton, type MobileHealthcareButtonProps } from './mobile-healthcare-button'
 export { Progress } from './progress'
 export { Avatar, AvatarFallback, AvatarImage } from './avatar'
 export { Badge, badgeVariants } from './badge'
+export { Label, type LabelProps } from './label'
+export { Checkbox, CheckboxIndicator, type CheckboxProps, type CheckboxIndicatorProps } from './checkbox'
+export {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton
+} from './select'
 
 // NEONPRO Premium UI Components - Aesthetic Clinic Optimized
-export { GradientButton, type GradientButtonProps } from './gradient-button/gradient-button'
-export { HoverBorderGradientButton, type HoverBorderGradientButtonProps } from './hover-border-gradient-button/hover-border-gradient-button'
-export { MagicCard, type MagicCardProps } from './magic-card/magic-card'
-export { ShineBorder, type ShineBorderProps } from './shine-border/shine-border'
-export { Sidebar, type SidebarProps } from './sidebar/sidebar'
-export { AnimatedThemeToggler, type AnimatedThemeTogglerProps } from './theme-toggler/animated-theme-toggler'
-export { TiltedCard, type TiltedCardProps } from './tilted-card/tilted-card'
+export { GradientButton } from './gradient-button/gradient-button'
+export { HoverBorderGradientButton } from './hover-border-gradient-button/hover-border-gradient-button'
+export { MagicCard } from './magic-card/magic-card'
+export { ShineBorder } from './shine-border/shine-border'
+export { Sidebar } from './sidebar/sidebar'
+export { AnimatedThemeToggler } from './theme-toggler/animated-theme-toggler'
+export { TiltedCard } from './tilted-card/tilted-card'
 
-// Healthcare-specific components  
-export { EmergencyAlertManager, type EmergencyAlertProps } from '../healthcare/emergency-alert'
+// Healthcare-specific components
+export { EmergencyAlert } from '../healthcare/emergency-alert'
 
 // Accessibility components
 export { 

@@ -1,6 +1,8 @@
 import * as React from "react"
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
+import { getTRPCClient, trpc, useTRPCHealthcare } from '@/lib/trpc'
+
 interface TRPCProviderProps {
   children: React.ReactNode
 }
@@ -15,9 +17,15 @@ const queryClient = new QueryClient({
 })
 
 export function TRPCProvider({ children }: TRPCProviderProps) {
+  const trpcClient = React.useMemo(() => getTRPCClient(queryClient), [])
+
   return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+    <trpc.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    </trpc.Provider>
   )
 }
+
+export { trpc, useTRPCHealthcare }

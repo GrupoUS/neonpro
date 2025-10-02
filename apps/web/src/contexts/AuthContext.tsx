@@ -9,7 +9,7 @@
  * Compliance: LGPD, ANVISA, CFM, WCAG 2.1 AA
  */
 
-import supabase from '@/integrations/supabase/client.ts'
+import supabase from '@/integrations/supabase/client'
 import type {
   AuthCredentials,
   AuthError,
@@ -142,12 +142,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Inicializar autenticação seguindo as guidelines
   useEffect(() => {
-    // Obter sessão inicial
-    supabase.auth.getSession().then(
-      ({ data: { session } }: { data: { session: SupabaseSession | null } }) => {
-        updateAuthState(session)
-      },
-    )
+    let isMounted = true
+    ;(async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        if (isMounted) {
+          updateAuthState(session)
+        }
+      } catch (error) {
+        console.error('Failed to get initial session:', error)
+        if (isMounted) {
+          setAuthState(prev => ({ ...prev, isLoading: false }))
+        }
+      }
+    })()
 
     // Escutar mudanças na autenticação
     const {
@@ -175,7 +186,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       },
     )
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   // Implementar funções de autenticação nativas Supabase
@@ -220,10 +234,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {}
     } catch (err) {
+      console.error('SignUp error:', err)
       return {
         error: {
           code: 'SIGNUP_ERROR',
           message: 'Erro interno durante o cadastro',
+          details: err instanceof Error ? err.message : String(err),
         },
       }
     } finally {
@@ -252,10 +268,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {}
     } catch (err) {
+      console.error('SignIn error:', err)
       return {
         error: {
           code: 'SIGNIN_ERROR',
           message: 'Erro interno durante o login',
+          details: err instanceof Error ? err.message : String(err),
         },
       }
     } finally {
@@ -278,10 +296,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {}
     } catch (err) {
+      console.error('SignOut error:', err)
       return {
         error: {
           code: 'SIGNOUT_ERROR',
           message: 'Erro interno durante o logout',
+          details: err instanceof Error ? err.message : String(err),
         },
       }
     }
@@ -311,10 +331,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {}
     } catch (err) {
+      console.error('OAuth signIn error:', err)
       return {
         error: {
           code: 'OAUTH_ERROR',
           message: 'Erro interno durante login OAuth',
+          details: err instanceof Error ? err.message : String(err),
         },
       }
     }
@@ -338,10 +360,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return {}
     } catch (err) {
+      console.error('ResetPassword error:', err)
       return {
         error: {
           code: 'RESET_PASSWORD_ERROR',
           message: 'Erro interno durante recuperação de senha',
+          details: err instanceof Error ? err.message : String(err),
         },
       }
     }
