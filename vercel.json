@@ -4,8 +4,9 @@
   "regions": ["gru1"],
   "framework": "vite",
   "installCommand": "bun install",
-  "buildCommand": "bun run build",
+  "buildCommand": "cd apps/web && bun run build",
   "outputDirectory": "apps/web/dist",
+  "ignoreCommand": "exit 0",
 
   "rewrites": [
     {
