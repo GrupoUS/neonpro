@@ -3,16 +3,16 @@
  * Main calendar component for healthcare scheduling
  */
 
-export { default as CalendarHeader } from './CalendarHeader.js'
-export { default as DayView } from './DayView.js'
-export { default as EventCalendar } from './EventCalendar.js'
-export { default as EventForm } from './EventForm.js'
-export { default as EventModal } from './EventModal.js'
-export { default as MonthView } from './MonthView.js'
-export { default as WeekView } from './WeekView.js'
+export { default as CalendarHeader } from './CalendarHeader.ts'
+export { default as DayView } from './DayView.ts'
+export { default as EventCalendar } from './EventCalendar.ts'
+export { default as EventForm } from './EventForm.ts'
+export { default as EventModal } from './EventModal.ts'
+export { default as MonthView } from './MonthView.ts'
+export { default as WeekView } from './WeekView.ts'
 
 // Utility exports
-export * from './utils.js'
+export * from './utils.ts'
 
 // Type exports
 export type {
@@ -42,4 +42,4 @@ export type {
   ResponsiveCalendarProps,
   SyncResult,
   WeekViewProps,
-} from '../../types/event-calendar.js'
+} from '../../types/event-calendar.ts'

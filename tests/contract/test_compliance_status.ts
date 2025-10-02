@@ -4,7 +4,7 @@
  * Healthcare Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test'
+import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { createTestClient } from './helpers/test-client'
 
 describe('Compliance Status API', () => {

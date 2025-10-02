@@ -23,8 +23,14 @@ export default defineConfig({
   publicDir: 'public',
   resolve: {
     preserveSymlinks: true,
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@trpc/server/unstable-core-do-not-import': '@trpc/server',
+      '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
+      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
+      '@neonpro/core': path.resolve(__dirname, '../../packages/core/src'),
     },
   },
   define: {
@@ -53,7 +59,7 @@ export default defineConfig({
           query: ['@tanstack/react-query'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
           copilot: ['@copilotkit/react-core', '@copilotkit/react-ui'],
-          forms: ['react-hook-form', 'zod', 'valibot'],
+          forms: ['react-hook-form', 'zod'],
           utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
         },
         chunkFileNames: chunkInfo => {
@@ -74,9 +80,12 @@ export default defineConfig({
       'react-dom',
       '@tanstack/react-router',
       '@tanstack/react-query',
+      '@trpc/server',
+      '@trpc/client',
+      '@trpc/react-query',
+      'superjson',
       'react-hook-form',
       'zod',
-      'valibot',
       'clsx',
       'tailwind-merge',
       'lucide-react',
@@ -87,6 +96,10 @@ export default defineConfig({
       'class-variance-authority',
       '@copilotkit/react-core',
       '@copilotkit/react-ui',
+      '@neonpro/ui',
+      '@neonpro/types',
+      '@neonpro/database',
+      '@neonpro/core',
     ],
   },
 })

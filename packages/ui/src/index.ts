@@ -14,12 +14,31 @@ export type { BadgeProps } from "./components/ui/badge";
 export { Input } from "./components/ui/input";
 export type { InputProps } from "./components/ui/input";
 
+export { Label } from "./components/ui/label";
+export type { LabelProps } from "./components/ui/label";
+
+export {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
+} from "./components/ui/select";
+
+export { Checkbox, CheckboxIndicator } from "./components/ui/checkbox";
+export type { CheckboxProps, CheckboxIndicatorProps } from "./components/ui/checkbox";
+
 export { AccessibilityInput } from "./components/ui/accessibility-input";
 export type { AccessibilityInputProps } from "./components/ui/accessibility-input";
 
 // Healthcare-specific components
 export { EmergencyAlert } from "./components/healthcare/emergency-alert";
-export type { EmergencyAlertProps, EmergencyAlertType, EmergencySeverity } from "./components/healthcare/emergency-alert";
+export type { EmergencyAlertProps } from "./components/healthcare/emergency-alert";
 
 export { MobileHealthcareButton } from "./components/ui/mobile-healthcare-button";
 export type { MobileHealthcareButtonProps, MedicalActionType } from "./components/ui/mobile-healthcare-button";

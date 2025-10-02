@@ -12,7 +12,7 @@
  * - Healthcare performance benchmarks
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 // Type definitions for the contract test
 interface BuildPerformanceMetrics {
@@ -163,7 +163,7 @@ interface HealthcarePerformanceBenchmarks {
 }
 
 describe('Performance Metrics API Contract Tests', () => {
-  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
+  const API_BASE_URL = process.env['API_BASE_URL'] || 'http://localhost:3000'
 
   beforeAll(async () => {
     // Ensure API is available for testing

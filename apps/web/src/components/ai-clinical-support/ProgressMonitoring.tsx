@@ -1,23 +1,23 @@
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Input } from '@/components/ui/input.js'
-import { Label } from '@/components/ui/label.js'
-import { Progress } from '@/components/ui/progress.js'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import { Progress } from '@/components/ui/progress.tsx'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { Textarea } from '@/components/ui/textarea.js'
-import { apiClient as api } from '@/lib/api.js'
-import { ProgressUpdate } from '@/types/ai-clinical-support.js'
+} from '@/components/ui/select.tsx'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
+import { Textarea } from '@/components/ui/textarea.tsx'
+import { apiClient as api } from '@/lib/api.ts'
+import { ProgressUpdate } from '@/types/ai-clinical-support.ts'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'

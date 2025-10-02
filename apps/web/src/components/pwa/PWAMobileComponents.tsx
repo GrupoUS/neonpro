@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils.js'
+import { cn } from '@/lib/utils.ts'
 import * as React from 'react'
 
 export interface PWATouchActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

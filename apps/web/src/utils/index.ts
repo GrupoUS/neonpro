@@ -2,15 +2,15 @@
 // Centralized exports for all web utility modules
 
 // PWA (Progressive Web App) utilities
-export type { OfflineData as IndexedDBConfig } from './pwa.js';
-export { pwaIndexedDB, pwaOfflineSync, pwaPushManager, pwaStatus } from './pwa.js';
+export type { OfflineData as IndexedDBConfig } from './pwa.ts';
+export { pwaIndexedDB, pwaOfflineSync, pwaPushManager, pwaStatus } from './pwa.ts';
 
 // Lite PWA utilities
-export type { OfflineData } from './pwa-lite.js';
-export type { OfflineData as OfflineDataType } from './pwa-lite.js';
+export type { OfflineData } from './pwa-lite.ts';
+export type { OfflineData as OfflineDataType } from './pwa-lite.ts';
 
 // Import the actual values for local use
-import { pwaIndexedDB, pwaOfflineSync, pwaPushManager, pwaStatus } from './pwa.js';
+import { pwaIndexedDB, pwaOfflineSync, pwaPushManager, pwaStatus } from './pwa.ts';
 
 // Utility collections for easy import
 export const PWAUtils = {
@@ -22,5 +22,5 @@ export const PWAUtils = {
 };
 
 // Common utility exports for web applications
-export type * from './pwa.js';
-export * from './pwa-lite.js';
+export type * from './pwa.ts';
+export * from './pwa-lite.ts';

@@ -66,7 +66,10 @@ export const defaultPackageManager: PackageManager = {
   scopes: [],
 }
 
-export const defaultPackageManagerConfig: Omit<PackageManagerConfig, 'id' | 'name' | 'environment' | 'createdAt' | 'updatedAt'> = {
+export const defaultPackageManagerConfig: Omit<
+  PackageManagerConfig,
+  'id' | 'name' | 'environment' | 'createdAt' | 'updatedAt'
+> = {
   packageManager: defaultPackageManager,
   buildPerformance: defaultBuildPerformance,
 }
@@ -109,7 +112,7 @@ export const validatePackageManagerCompatibility = (manager: PackageManager): bo
 // Database operations
 export const createPackageManagerConfig = async (
   supabase: any,
-  config: Omit<PackageManagerConfig, 'id' | 'createdAt' | 'updatedAt'>
+  config: Omit<PackageManagerConfig, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<PackageManagerConfig> => {
   const now = new Date()
   const newConfig = {
@@ -134,7 +137,7 @@ export const createPackageManagerConfig = async (
 
 export const getPackageManagerConfig = async (
   supabase: any,
-  environment: string
+  environment: string,
 ): Promise<PackageManagerConfig | null> => {
   const { data, error } = await supabase
     .from('package_manager_configs')
@@ -155,7 +158,7 @@ export const getPackageManagerConfig = async (
 export const updatePackageManagerConfig = async (
   supabase: any,
   id: string,
-  update: PackageManagerConfigUpdate
+  update: PackageManagerConfigUpdate,
 ): Promise<PackageManagerConfig> => {
   const now = new Date()
   const updatedConfig = {
@@ -179,7 +182,7 @@ export const updatePackageManagerConfig = async (
 
 export const deletePackageManagerConfig = async (
   supabase: any,
-  id: string
+  id: string,
 ): Promise<void> => {
   const { error } = await supabase
     .from('package_manager_configs')
@@ -195,7 +198,7 @@ export const deletePackageManagerConfig = async (
 export const trackBuildPerformance = async (
   supabase: any,
   configId: string,
-  performance: BuildPerformance
+  performance: BuildPerformance,
 ): Promise<void> => {
   const { error } = await supabase
     .from('build_performance_logs')
@@ -217,7 +220,7 @@ export const trackBuildPerformance = async (
 export const getPerformanceHistory = async (
   supabase: any,
   configId: string,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<BuildPerformance[]> => {
   const { data, error } = await supabase
     .from('build_performance_logs')
@@ -230,20 +233,22 @@ export const getPerformanceHistory = async (
     throw new Error(`Failed to get performance history: ${error.message}`)
   }
 
-  return data.map((log: any) => validateBuildPerformance({
-    buildTime: log.build_time,
-    installTime: log.install_time,
-    bundleSize: log.bundle_size,
-    cacheHitRate: log.cache_hit_rate,
-    timestamp: log.timestamp,
-  }))
+  return data.map((log: any) =>
+    validateBuildPerformance({
+      buildTime: log.build_time,
+      installTime: log.install_time,
+      bundleSize: log.bundle_size,
+      cacheHitRate: log.cache_hit_rate,
+      timestamp: log.timestamp,
+    })
+  )
 }
 
 // Compare performance with baseline
 export const comparePerformanceWithBaseline = async (
   supabase: any,
   configId: string,
-  currentPerformance: BuildPerformance
+  currentPerformance: BuildPerformance,
 ): Promise<{
   buildTimeImprovement: number
   installTimeImprovement: number
@@ -263,6 +268,15 @@ export const comparePerformanceWithBaseline = async (
   }
 
   const baseline = history[0]
+
+  if (!baseline) {
+    return {
+      buildTimeImprovement: 0,
+      installTimeImprovement: 0,
+      bundleSizeReduction: 0,
+      cacheHitRateImprovement: 0,
+    }
+  }
 
   // Calculate improvements
   const buildTimeImprovement = baseline.buildTime > 0

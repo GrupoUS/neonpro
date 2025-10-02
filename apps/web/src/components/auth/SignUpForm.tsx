@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useSignUp } from '@/hooks/useAuth.js'
+import { useSignUp } from '@/hooks/useAuth.ts'
 import {
   Button,
   Input,

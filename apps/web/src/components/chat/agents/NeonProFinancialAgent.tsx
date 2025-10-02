@@ -11,10 +11,10 @@
  */
 
 import React, { useCallback } from 'react'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Alert, AlertDescription } from '@/components/ui/alert.js'
-import { useNeonProChat } from '../NeonProChatProvider.js'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
+import { useNeonProChat } from '../NeonProChatProvider.ts'
 import { Shield, DollarSign, FileText, TrendingUp } from 'lucide-react'
 
 interface PaymentMethod {

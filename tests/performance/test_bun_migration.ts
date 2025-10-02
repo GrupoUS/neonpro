@@ -4,7 +4,7 @@
  * Healthcare Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { describe, it, expect, beforeEach } from 'vitest'
 import { execSync } from 'child_process'
 import { readFileSync, writeFileSync, unlinkSync } from 'fs'
 import { join } from 'path'

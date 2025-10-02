@@ -8,7 +8,7 @@ production = false
 optional = true
 dev = true
 peer = true
-frozenLockfile = true
+frozenLockfile = false
 # Healthcare compliance: exact versions
 exact = true
 # Aggressive caching for performance

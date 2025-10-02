@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
-import { api } from '@/lib/api.js'
-import type { ProfessionalSchedule } from '@/types/aesthetic-scheduling.js'
+import { api } from '@/lib/api.ts'
+import type { ProfessionalSchedule } from '@/types/aesthetic-scheduling.ts'
 
 export function useProfessionalSelection() {
   const [selectedProfessional, setSelectedProfessional] = useState<ProfessionalSchedule | null>(null)

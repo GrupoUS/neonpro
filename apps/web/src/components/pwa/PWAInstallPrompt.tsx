@@ -1,8 +1,8 @@
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent } from '@/components/ui/card.js'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent } from '@/components/ui/card.tsx'
 import { Toaster } from '@/components/ui/toaster'
-import { usePWA } from '@/hooks/usePWA.js'
+import { usePWA } from '@/hooks/usePWA.ts'
 import {
   AlertCircle,
   CheckCircle,

@@ -303,14 +303,16 @@ export class AnalysisOrchestrator {
           componentsDuplicated: cluster.typescriptAnalysis?.typeComplexity > 0 ? 1 : 0
         }
       },
-      healthcareData: cluster.healthcareContext ? {
-        patientDataInvolved: cluster.healthcareContext.patientDataInvolved,
-        clinicalLogicInvolved: cluster.healthcareContext.clinicalLogic,
-        validationLogicInvolved: cluster.healthcareContext.validationLogic,
-        businessLogicInvolved: cluster.healthcareContext.businessLogic,
-        regulatoryRelevance: cluster.healthcareContext.regulatoryRelevance,
-        riskLevel: cluster.healthcareContext.riskLevel
-      },
+      healthcareData: cluster.healthcareContext
+        ? {
+            patientDataInvolved: cluster.healthcareContext.patientDataInvolved,
+            clinicalLogicInvolved: cluster.healthcareContext.clinicalLogic,
+            validationLogicInvolved: cluster.healthcareContext.validationLogic,
+            businessLogicInvolved: cluster.healthcareContext.businessLogic,
+            regulatoryRelevance: cluster.healthcareContext.regulatoryRelevance,
+            riskLevel: cluster.healthcareContext.riskLevel
+          }
+        : undefined,
       // OXLint integration if available
       oxlintData: cluster.typescriptAnalysis?.oxlintIntegration ? {
         ruleId: 'duplication-detection',
@@ -327,9 +329,14 @@ export class AnalysisOrchestrator {
   private calculateMaintenanceCost(cluster: any): number {
     // Base cost depends on complexity and files involved
     const baseCost = cluster.lines * 2; // 2 hours per 100 lines of duplicated code
-    const complexityMultiplier = cluster.typescriptAnalysis?.typeComplexity === 'high' ? 3 : 
-                           cluster.typescriptAnalysis?.typeComplexity === 'medium' ? 2 : 1.5 :
-                           cluster.typescriptAnalysis?.typeComplexity === 'low' ? 1 : 0.5;
+    const complexityMultiplier =
+      cluster.typescriptAnalysis?.typeComplexity === 'high'
+        ? 3
+        : cluster.typescriptAnalysis?.typeComplexity === 'medium'
+          ? 2
+          : cluster.typescriptAnalysis?.typeComplexity === 'low'
+            ? 1
+            : 1.5;
     
     // Healthcare cost multiplier
     let healthcareMultiplier = 1;

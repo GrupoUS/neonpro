@@ -1,28 +1,9 @@
-/**
- * T010 - Contract Test: Package Boundary Validation
- * 
- * RED PHASE: These tests MUST FAIL before implementation
- * 
- * This test suite validates comprehensive package boundary validation
- * for NeonPro monorepo with strict healthcare data segregation requirements.
- * 
- * Healthcare Package Boundaries:
- * - LGPD data segregation (Brazilian data protection law)
- * - Clinical data isolation (ANVISA medical device standards)
- * - Patient data protection (CFM medical ethics standards)
- * - Security boundary enforcement (CNEP cybersecurity requirements)
- * 
- * Monorepo Architecture:
- * - apps/: User-facing applications (web, api)
- * - packages/: Shared libraries and utilities
- * - config/: Build and development configuration
- */
 
 import { describe, it, expect, beforeEach } from 'vitest'
-import { PackageBoundaryValidator } from '../../src/analyzers/package-boundary-validator'
-import { HealthcareDataSegregationValidator } from '../../src/analyzers/healthcare-data-segregation-validator'
-import { MonorepoArchitectureAnalyzer } from '../../src/analyzers/monorepo-architecture-analyzer'
-import { MonorepoAnalysisContext } from '../../src/types/analysis'
+import { PackageBoundaryValidator } from '../../analyzers/package-boundary-validator'
+import { HealthcareDataSegregationValidator } from '../../analyzers/healthcare-data-segregation-validator'
+import { MonorepoArchitectureAnalyzer } from '../../analyzers/monorepo-architecture-analyzer'
+import { MonorepoAnalysisContext } from '../../types/analysis'
 
 describe('T010 - Contract Test: Package Boundary Validation', () => {
   let boundaryValidator: PackageBoundaryValidator

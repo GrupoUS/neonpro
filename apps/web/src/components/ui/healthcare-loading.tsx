@@ -52,7 +52,7 @@
 
 import * as React from 'react'
 import { useTranslation } from '@/lib/i18n/use-translation'
-import { cn } from '@/lib/utils.js'
+import { cn } from '@/lib/utils.ts'
 
 /**
  * Props interface for HealthcareLoading component

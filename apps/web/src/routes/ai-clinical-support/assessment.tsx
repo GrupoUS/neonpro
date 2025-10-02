@@ -1,8 +1,8 @@
 import { PatientAssessmentForm } from '@/components/ai-clinical-support/PatientAssessmentForm'
-import { apiClient as api } from '@/lib/api.js'
+import { apiClient as api } from '@/lib/api.ts'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import { logger } from '@/utils/logger.js'
+import { logger } from '@/utils/logger.ts'
 
 
 // Define loader data type

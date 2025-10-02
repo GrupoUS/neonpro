@@ -11,8 +11,8 @@
 
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext.js'
-import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index.js'
+import { useAuth } from '@/contexts/AuthContext.tsx'
+import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index.ts'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,

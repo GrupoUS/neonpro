@@ -33,10 +33,10 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
 
   beforeEach(() => {
     // Reset environment variables
-    process.env.JWT_SECRET = 'test-secret'
-    process.env.SESSION_TIMEOUT = '3600'
-    process.env.MAX_CONCURRENT_SESSIONS = '5'
-    process.env.SECURITY_LEVEL = 'high'
+    process.env['JWT_SECRET'] = 'test-secret'
+    process.env['SESSION_TIMEOUT'] = '3600'
+    process.env['MAX_CONCURRENT_SESSIONS'] = '5'
+    process.env['SECURITY_LEVEL'] = 'high'
 
     // Reset all mocks
     vi.clearAllMocks()
@@ -120,7 +120,7 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
           enableSessionManagement: true,
           enableHealthcareCompliance: true,
           // Missing required properties
-        } as SecurityConfig)
+        } as any)
       }).toThrow()
     })
 
@@ -254,7 +254,7 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       
       expect(result.isCompliant).toBe(true)
       expect(result.checks).toHaveLength(3)
-      expect(result.checks[0].name).toBe('lgpd')
+      expect(result.checks[0]?.name).toBe('lgpd')
       expect(mockComplianceService.validateCompliance).toHaveBeenCalled()
     })
 
@@ -271,8 +271,8 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       const result = await securityIntegrationService.validateHealthcareCompliance()
       
       expect(result.isCompliant).toBe(false)
-      expect(result.checks[0].passed).toBe(false)
-      expect(result.checks[0].error).toBe('Data retention policy violated')
+      expect(result.checks[0]?.passed).toBe(false)
+      expect(result.checks[0]?.error).toBe('Data retention policy violated')
     })
   })
 
@@ -285,7 +285,7 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       expect(tokenResult.isValid).toBe(true)
       
       // Get session
-      const sessionResult = await securityIntegrationService.getSession(tokenResult.payload.sessionId)
+      const sessionResult = await securityIntegrationService.getSession(tokenResult.payload?.sessionId || 'default')
       expect(sessionResult.session).toBeDefined()
       
       // Validate compliance
@@ -295,8 +295,8 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       // Log successful authentication
       const logResult = await securityIntegrationService.logSecurityEvent({
         type: 'authentication_success',
-        userId: tokenResult.payload.userId,
-        sessionId: tokenResult.payload.sessionId,
+        userId: tokenResult.payload?.userId || 'unknown',
+        sessionId: tokenResult.payload?.sessionId || 'unknown',
         timestamp: new Date(),
         details: { method: 'jwt' }
       })
@@ -352,12 +352,12 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       
       const sessionResult = await securityIntegrationService.getSession(sessionId)
       expect(sessionResult.session).toBeDefined()
-      expect(sessionResult.session.isActive).toBe(false)
+      expect(sessionResult.session?.isActive).toBe(false)
       
       // Log session timeout event
       const logResult = await securityIntegrationService.logSecurityEvent({
         type: 'session_timeout',
-        userId: sessionResult.session?.userId,
+        userId: sessionResult.session?.userId || 'unknown',
         sessionId: sessionId,
         timestamp: new Date(),
         details: { reason: 'Session expired' }
@@ -533,18 +533,18 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       const result = await securityIntegrationService.validateToken(emergencyToken)
       
       expect(result.isValid).toBe(true)
-      expect(result.payload.emergencyAccess).toBe(true)
-      expect(result.payload.reason).toBe('life_threatening_situation')
+      expect(result.payload?.emergencyAccess).toBe(true)
+      expect(result.payload?.reason).toBe('life_threatening_situation')
       
       // Should log emergency access with special handling
       const logResult = await securityIntegrationService.logSecurityEvent({
         type: 'emergency_access',
-        userId: result.payload.userId,
-        sessionId: result.payload.sessionId,
+        userId: result.payload?.userId || 'unknown',
+        sessionId: result.payload?.sessionId || 'unknown',
         timestamp: new Date(),
         details: {
           emergencyAccess: true,
-          reason: result.payload.reason,
+          reason: result.payload?.reason || 'unknown',
           bypassedNormalChecks: true
         }
       })

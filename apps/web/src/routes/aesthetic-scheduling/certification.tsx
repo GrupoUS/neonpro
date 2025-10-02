@@ -1,8 +1,8 @@
 import { CertificationValidator } from '@/components/aesthetic-scheduling/CertificationValidator'
-import { apiClient as api } from '@/lib/api.js'
+import { apiClient as api } from '@/lib/api.ts'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { logger } from '@/utils/logger.js'
+import { logger } from '@/utils/logger.ts'
 
 
 export const Route = createFileRoute('/aesthetic-scheduling/certification')({

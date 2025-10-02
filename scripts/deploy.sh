@@ -29,6 +29,23 @@ log_script_start() { echo "=== Starting $(basename "$0") ===" >&2; }
 log_script_end() { local exit_code="${1:-0}"; echo "=== Script ended with code $exit_code ===" >&2; }
 source "$SCRIPT_DIR/utils/validation.sh"
 
+is_vercel_offline() {
+    [[ "${VERCEL_OFFLINE_MODE:-false}" == "true" ]]
+}
+
+run_vercel_cli() {
+    if is_vercel_offline; then
+        log_warning "Offline mode active - skipping Vercel CLI command: vercel $*"
+        return 0
+    fi
+
+    if [ -n "${VERCEL_TOKEN:-}" ]; then
+        npx vercel "$@" --token "$VERCEL_TOKEN"
+    else
+        npx vercel "$@"
+    fi
+}
+
 # ==============================================
 # GLOBAL CONFIGURATION
 # ==============================================
@@ -144,27 +161,57 @@ validate_environment() {
     log_step "Linking to Vercel project"
     require_command "npx" "Install npx (comes with Node.js)"
 
-    if ! npx vercel whoami >/dev/null 2>&1; then
-        log_error "Vercel login required"
-        exit 1
+    local vercel_auth_args=()
+    if [ -n "${VERCEL_TOKEN:-}" ]; then
+        vercel_auth_args+=(--token "$VERCEL_TOKEN")
     fi
 
-    # Environment-based Vercel configuration
-    if [ -z "${VERCEL_ORG_ID:-}" ]; then
-        log_warning "VERCEL_ORG_ID not set. Using automatic project detection."
-        npx vercel link --yes
-        npx vercel link --cwd apps/web --yes
+    if ! npx vercel whoami "${vercel_auth_args[@]}" >/dev/null 2>&1; then
+        if [ -n "${VERCEL_TOKEN:-}" ]; then
+            log_error "Failed to authenticate with Vercel using provided token"
+            exit 1
+        fi
+
+        if [[ "${ALLOW_VERCEL_OFFLINE:-false}" == "true" ]]; then
+            log_warning "Vercel authentication unavailable - continuing in offline mode (no remote deploys will be executed)"
+            export VERCEL_OFFLINE_MODE="true"
+        else
+            log_error "Vercel login required. Run 'npx vercel login' or set VERCEL_TOKEN. Set ALLOW_VERCEL_OFFLINE=true to bypass for dry runs."
+            exit 1
+        fi
     else
-        log_info "Using configured Vercel organization: $VERCEL_ORG_ID"
-        export VERCEL_ORG_ID
-        npx vercel link --cwd apps/web --yes
+        export VERCEL_OFFLINE_MODE="false"
+        log_success "Authenticated with Vercel CLI"
     fi
-    log_success "Linked to Vercel project: $PROJECT_NAME"
 
-    # Pull production environment variables from Vercel
-    [ -f apps/web/.env.local ] && rm apps/web/.env.local
-    npx vercel env pull .env.local --environment=production --yes --cwd apps/web
-    source apps/web/.env.local
+    if ! is_vercel_offline; then
+        # Environment-based Vercel configuration
+        if [ -z "${VERCEL_ORG_ID:-}" ]; then
+            log_warning "VERCEL_ORG_ID not set. Using automatic project detection."
+            run_vercel_cli link --yes
+            run_vercel_cli link --cwd apps/web --yes
+        else
+            log_info "Using configured Vercel organization: $VERCEL_ORG_ID"
+            export VERCEL_ORG_ID
+            run_vercel_cli link --cwd apps/web --yes
+        fi
+        log_success "Linked to Vercel project: $PROJECT_NAME"
+
+        # Pull production environment variables from Vercel
+        [ -f apps/web/.env.local ] && rm apps/web/.env.local
+        run_vercel_cli env pull .env.local --environment=production --yes --cwd apps/web
+        if [ -f apps/web/.env.local ]; then
+            source apps/web/.env.local
+        fi
+    else
+        log_warning "Skipping Vercel project link in offline mode"
+        if [ -f apps/web/.env.local ]; then
+            log_info "Using existing apps/web/.env.local for configuration"
+            source apps/web/.env.local
+        else
+            log_warning "apps/web/.env.local not found - relying on placeholder environment variables"
+        fi
+    fi
 
     # Provide safe placeholders when sensitive env vars are absent (local staging runs)
     export DATABASE_URL="${DATABASE_URL:-postgres://placeholder.local/db}"
@@ -470,6 +517,11 @@ deploy_single_chunk() {
     
     log_step "Deploying chunk $chunk_number/$total_chunks: $chunk"
     
+    if is_vercel_offline; then
+        log_warning "Offline mode active - skipping deployment for chunk $chunk_number/$total_chunks"
+        return 0
+    fi
+    
     # Create temporary vercel.json for this chunk
     local temp_vercel_config="/tmp/vercel-chunk-${chunk_number}.json"
     
@@ -502,7 +554,8 @@ EOF
     
     # Deploy to Vercel
     local deployment_result
-    if deployment_result=$(npx vercel deploy --prod --yes --local-config "$temp_vercel_config" 2>&1); then
+    local deploy_cmd=(deploy --prod --yes --local-config "$temp_vercel_config")
+    if deployment_result=$(run_vercel_cli "${deploy_cmd[@]}" 2>&1); then
         local deployment_url=$(echo "$deployment_result" | grep -E 'https://[^\s]+\.vercel\.app' | head -1)
         log_success "Chunk $chunk_number deployed: $deployment_url"
     else
@@ -518,6 +571,11 @@ EOF
 # Enhanced Vercel deployment with intelligent chunking
 enhanced_vercel_deployment() {
     log_step "Enhanced Vercel Deployment with Intelligent Chunking"
+    
+    if is_vercel_offline; then
+        log_warning "Offline mode active - skipping enhanced Vercel deployment"
+        return 0
+    fi
     
     # Detect affected packages first
     local affected_packages=$(detect_affected_packages)
@@ -748,6 +806,12 @@ optimized_vercel_deploy() {
 
     log_step "Optimized Vercel deployment for $app_name"
 
+    if is_vercel_offline; then
+        log_warning "Offline mode active - skipping deployment for $app_name"
+        echo "${LOCAL_DEVELOPMENT_HOST:-http://localhost:3000}"
+        return 0
+    fi
+
     # Create deployment monitoring flag
     touch "/tmp/deployment_${app_name}_running"
 
@@ -756,35 +820,28 @@ optimized_vercel_deploy() {
     local monitor_pid=$!
 
     # Optimize for Vercel deployment
-    local deploy_args="--cwd $app_path --yes"
-    [ "$is_production" = "true" ] && deploy_args="$deploy_args --prod"
+    local deploy_args=(--cwd "$app_path" --yes)
+    [ "$is_production" = "true" ] && deploy_args+=(--prod)
 
     # Try prebuilt deployment first (fastest)
     log_info "Attempting prebuilt deployment for $app_name..."
-    local deploy_json
+    local deploy_output
     local deploy_url
 
-    if npx vercel build --cwd "$app_path" --yes >/dev/null 2>&1; then
+    if run_vercel_cli build --cwd "$app_path" --yes >/dev/null 2>&1; then
         log_success "Prebuilt assets ready for $app_name"
-        deploy_json=$(npx vercel deploy $deploy_args --prebuilt --json 2>/dev/null || echo "{}")
+        deploy_output=$(run_vercel_cli deploy "${deploy_args[@]}" --prebuilt 2>&1 || echo "")
     else
         log_info "Prebuilt not available - using remote build for $app_name"
-        deploy_json=$(npx vercel deploy $deploy_args --json 2>/dev/null || echo "{}")
+        deploy_output=$(run_vercel_cli deploy "${deploy_args[@]}" 2>&1 || echo "")
     fi
 
     # Extract deployment URL with multiple fallback strategies
-    deploy_url=$(echo "$deploy_json" | tr -d '\n' | sed -E 's/.*"url":"([^"]+)".*/\1/' 2>/dev/null || echo "")
-
-    if [ -z "$deploy_url" ] || [ "$deploy_url" = "$deploy_json" ]; then
-        log_warning "JSON parsing failed for $app_name - trying alternative extraction"
-        deploy_url=$(echo "$deploy_json" | grep -oE 'https://[^"]*\.vercel\.app' | head -n1 || echo "")
-    fi
+    deploy_url=$(echo "$deploy_output" | grep -oE 'https://[^[:space:]]*\.vercel\.app' | head -n1 || echo "")
 
     if [ -z "$deploy_url" ]; then
-        log_warning "URL extraction failed for $app_name - querying recent deployments"
-        deploy_url=$(npx vercel ls --cwd "$app_path" --json 2>/dev/null |
-                    jq -r '.[0].url // empty' 2>/dev/null ||
-                    npx vercel ls --cwd "$app_path" 2>/dev/null |
+        log_warning "URL extraction via stdout failed for $app_name - querying recent deployments"
+        deploy_url=$(run_vercel_cli ls --cwd "$app_path" 2>/dev/null |
                     grep -oE 'https://[^[:space:]]*\.vercel\.app' | head -n1 || echo "")
     fi
 
@@ -826,6 +883,16 @@ deploy_application() {
             exit 1
             ;;
     esac
+
+    if is_vercel_offline; then
+        log_warning "Vercel CLI offline mode - skipping remote deployment steps"
+        DEPLOY_URL="${LOCAL_DEVELOPMENT_HOST:-http://localhost:3000}"
+        API_DEPLOY_URL="${API_DEPLOY_URL:-$DEPLOY_URL}"
+        export DEPLOY_URL
+        export API_DEPLOY_URL
+        log_info "Offline deployment placeholder URL: $DEPLOY_URL"
+        return 0
+    fi
 
     # Deploy Web Application (Chunk 1)
     log_step "Deploying Web Application (Chunk 1/2)"
@@ -926,6 +993,11 @@ check_healthcare_compliance() {
 
 post_deployment_checks() {
     log_step "Post-deployment Validation"
+
+    if is_vercel_offline; then
+        log_warning "Offline mode active - skipping post-deployment validation"
+        return 0
+    fi
 
     local deployment_target="${1:-"staging"}"
     local WEB_TARGET_URL=""

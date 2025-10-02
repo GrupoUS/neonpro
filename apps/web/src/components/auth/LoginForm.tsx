@@ -47,12 +47,12 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react'
-import { useLogin } from '@/hooks/useAuth.js'
+import { useLogin } from '@/hooks/useAuth.ts'
 import type { AuthError } from '@neonpro/types'
-import { AccessibilityButton } from '@/components/ui/accessibility-button.js'
-import { AccessibilityInput } from '@/components/ui/accessibility-input.js'
-import { Alert, AlertDescription } from '@/components/ui/alert.js'
-import { cn } from '@/lib/utils.js'
+import { AccessibilityButton } from '@/components/ui/accessibility-button.tsx'
+import { AccessibilityInput } from '@/components/ui/accessibility-input.tsx'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
+import { cn } from '@/lib/utils.ts'
 
 /**
  * Props interface for LoginForm component

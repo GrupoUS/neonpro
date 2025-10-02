@@ -10,7 +10,7 @@ export interface FormValidationResult {
   warnings: FormFieldError[];
 }
 
-import { PatientData, HealthcareValidationLevel, BrazilianState } from './healthcare.js'
+import { PatientData, HealthcareValidationLevel, BrazilianState } from './healthcare.ts'
 
 // Type-safe form validation
 export class HealthcareFormValidator {

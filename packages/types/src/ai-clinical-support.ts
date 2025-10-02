@@ -467,14 +467,6 @@ export interface FollowUpSchedule {
   measurements: boolean[];
 }
 
-export interface EmergencyProtocol {
-  situation: string;
-  immediateAction: string;
-  secondaryAction: string;
-  whenToSeekHelp: string;
-  contactInformation: string;
-}
-
 export interface EvidenceLevel {
   level: 'IA' | 'IB' | 'IIA' | 'IIB' | 'III' | 'IV';
   description: string;

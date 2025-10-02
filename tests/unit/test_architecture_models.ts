@@ -4,7 +4,7 @@
  * Healthcare Compliance: LGPD, ANVISA, CFM
  */
 
-import { describe, it, expect, beforeEach } from 'bun:test'
+import { describe, it, expect, beforeEach } from 'vitest'
 import {
   ArchitectureConfig,
   ArchitectureConfigSchema,

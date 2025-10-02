@@ -441,12 +441,13 @@ export function calculatePackageHealthScore(analysis: PackageAnalysis): number {
     healthcareCompliance: 0.1
   };
   
-  const score = (
-    (analysis.health.maintainabilityIndex * weights.maintainabilityIndex) +
-    (100 - analysis.health.complexityScore) * weights.complexityScore +
-    (analysis.healthcareCompliance.overallScore * weights.healthcareCompliance)
-    (analysis.metrics.testCoverage / 100) * weights.testCoverage)
-  ) / 100;
+  const score =
+    (
+      (analysis.health.maintainabilityIndex * weights.maintainabilityIndex) +
+      ((100 - analysis.health.complexityScore) * weights.complexityScore) +
+      (analysis.healthcareCompliance.overallScore * weights.healthcareCompliance) +
+      ((analysis.metrics.testCoverage / 100) * weights.testCoverage)
+    ) / 100;
   
   return Math.min(100, Math.round(score * 100) / 100);
 }
@@ -649,6 +650,11 @@ export function generatePackageAnalysisSummary(analysis: PackageAnalysis): strin
   const criticalIssues = analysis.violations.filter(v => v.severity === 'critical' || v.severity === 'high').length;
   const highIssues = analysis.violations.filter(v => v.severity === 'high').length;
   
+  const topRecommendations = analysis.recommendations
+    .slice(0, 5)
+    .map(r => `- **${r.title}**: ${r.description}`)
+    .join('\n')
+
   return `
 # Package Analysis Summary: ${analysis.metadata.name}
 
@@ -658,16 +664,16 @@ export function generatePackageAnalysisSummary(analysis: PackageAnalysis): strin
 - **Dependencies**: ${analysis.metrics.dependencies.totalDependencies} total (${analysis.dependencies.metrics.outdatedDependencies} outdated)
 - **Circular Dependencies**: ${analysis.dependencies.metrics.circularDependencies} violations
 - **Code Quality**: ${analysis.metrics.quality.overallScore}/100
-- **Test Coverage**: ${analysis.metrics.testCoverage}% (${QualityThresholds.MIN_TEST_COVERAGE}% target: ${QualityThresholds.MIN_TEST_COVERAGE}%)
+- **Test Coverage**: ${analysis.metrics.testCoverage}% (target: ${QualityThresholds.MIN_TEST_COVERAGE}%)
 - **Performance**: ${analysis.metrics.performance.metrics.buildTime}ms (target: <${QualityThresholds.MAX_BUILD_TIME_MS}ms)
 - **Bundle Size**: ${analysis.metrics.performance.bundle.size}KB (target: <${QualityThresholds.MAX_BUNDLE_SIZE_KB}KB)
   
 ### Dependencies Analysis
 - **Total Dependencies**: ${analysis.metrics.dependencies.totalDependencies}
 - **Circular Dependencies**: ${analysis.dependencies.metrics.circularDependencies} violations
-- **Outdated Dependencies**: ${analysis.dependencies.metrics.outdatedDependencies} (${analysis.dependencies.metrics.outdatedDependencies.length} total dependencies)
-- **Vulnerable Dependencies**: ${analysis.dependencies.metrics.vulnerableDependencies} (${analysis.dependencies.vulnerableDependencies.length} total dependencies)
-- **Duplicate Dependencies**: ${analysis.dependencies.metrics.duplicateDependencies} (${analysis.metrics.duplicateDependencies.length} total dependencies)
+- **Outdated Dependencies**: ${analysis.dependencies.metrics.outdatedDependencies}
+- **Vulnerable Dependencies**: ${analysis.dependencies.metrics.vulnerableDependencies}
+- **Duplicate Dependencies**: ${analysis.dependencies.metrics.duplicateDependencies}
 
 ### Healthcare Compliance
 - **Overall Compliance**: ${analysis.healthcareCompliance.overallScore}/100
@@ -688,10 +694,7 @@ export function generatePackageAnalysisSummary(analysis: PackageAnalysis): strin
 - **Regulatory Risk**: ${analysis.riskAssessment.regulatoryRisk}/100
 
 ### Top Recommendations
-${analysis.recommendations
-  .slice(0, 5)
-  .map(r => `- **${r.title}: ${r.description}`)\n`)
-  .join('\n')}).
+${topRecommendations}
 
 ### Next Steps
 1. Address all critical and high priority violations

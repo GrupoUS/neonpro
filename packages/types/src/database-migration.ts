@@ -4,6 +4,12 @@
  */
 
 // Base Migration Types
+export interface MigrationOptions {
+  dryRun?: boolean;
+  batchSize?: number;
+  logLevel?: 'debug' | 'info' | 'warn' | 'error';
+}
+
 export interface MigrationData {
   clinics: ClinicData[];
   users: UserData[];

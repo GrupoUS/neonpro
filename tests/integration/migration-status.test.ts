@@ -7,7 +7,7 @@
  * T024: Create integration tests for API endpoints
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 interface MigrationStatus {
   id: string
@@ -157,7 +157,7 @@ interface ProgressUpdate {
 }
 
 describe('Migration Status API Integration Tests', () => {
-  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
+  const API_BASE_URL = process.env['API_BASE_URL'] || 'http://localhost:3000'
   
   beforeAll(async () => {
     console.log('🧪 Setting up migration status integration tests...')

@@ -5,16 +5,17 @@ export interface SchedulingSubmission {
     error: Error | null
   }
   isSubmitting: boolean
-  handleSubmit: (data: any) => Promise<void>
+  handleSubmit: (data: SchedulingSubmissionPayload) => Promise<void>
 }
 
+export type SchedulingSubmissionPayload = Record<string, unknown>
+
 export function useSchedulingSubmission(
-  patientId: string,
+  _patientId: string,
   onSuccess?: () => void,
   onError?: (error: Error) => void
 ): SchedulingSubmission {
-
-  const handleSubmit = useCallback(async (data: any) => {
+  const handleSubmit = useCallback(async (_data: SchedulingSubmissionPayload) => {
     try {
       // LGPD Compliant: Removed console.log with personal data (patientId)
       // Use secure audit logging from @neonpro/security for production monitoring
@@ -29,7 +30,7 @@ export function useSchedulingSubmission(
       onError?.(error as Error)
       throw error
     }
-  }, [patientId, onSuccess, onError])
+  }, [onSuccess, onError])
 
   return {
     scheduleMutation: {
@@ -37,41 +38,5 @@ export function useSchedulingSubmission(
     },
     isSubmitting: false,
     handleSubmit
-  }
-}
-
-export interface SchedulingData {
-  proceduresData: any[]
-  professionalsData: any[]
-  proceduresLoading: boolean
-  professionalsLoading: boolean
-}
-
-export function useSchedulingData(): SchedulingData {
-  // Mock data for now - replace with actual data fetching
-  return {
-    proceduresData: [],
-    professionalsData: [],
-    proceduresLoading: false,
-    professionalsLoading: false
-  }
-}
-
-export function useSchedulingForm(onSuccess?: () => void, onError?: (error: Error) => void) {
-  const handleSubmitForm = useCallback(async (e: React.FormEvent, data: any) => {
-    try {
-      // Process form data
-      return {
-        ...data,
-        submittedAt: new Date().toISOString()
-      }
-    } catch (error) {
-      onError?.(error as Error)
-      throw error
-    }
-  }, [onError])
-
-  return {
-    handleSubmitForm
   }
 }

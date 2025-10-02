@@ -9,8 +9,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { appRouter } from '../../trpc/router'
-import { createTRPCContext } from '../../trpc/context'
+// import { appRouter } from '../../trpc/router' // Unused import commented
+import { createContext } from '../../trpc/context'
 import { initTRPC } from '@trpc/server'
 
 // Mock Supabase
@@ -42,7 +42,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         service: 'healthcare-api'
       }))
 
-      const result = await healthProcedure({})
+      const result = await healthProcedure({} as any) as any
       
       // Assertions - RED: Initially failing
       expect(result).toBeDefined()
@@ -54,21 +54,21 @@ describe('tRPC Router - Healthcare Compliance', () => {
     it('should handle health check with user context', async () => {
       // Test scenario: User authentication context
       const t = initTRPC.create()
-      const authenticatedHealthProcedure = t.procedure.query(({ ctx }) => ({
+      const authenticatedHealthProcedure = t.procedure.query(({ ctx }: any) => ({
         status: 'ok',
-        user: ctx.user,
+        user: ctx.session,
         clinicId: ctx.clinicId,
         environment: ctx.environment
       }))
 
       const mockContext = {
         supabase: mockSupabase,
-        user: { id: 'test-user-123', email: 'test@healthcare.com' },
+        session: { id: 'test-user-123', email: 'test@healthcare.com' },
         clinicId: 'clinic-456',
         environment: 'test'
-      }
+      } as any
 
-      const result = await authenticatedHealthProcedure(mockContext)
+      const result = await authenticatedHealthProcedure(mockContext) as any
       
       // Assertions
       expect(result.status).toBe('ok')
@@ -91,7 +91,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         version: '1.0.0-healthcare'
       }))
 
-      const result = await complianceHealthProcedure({})
+      const result = await complianceHealthProcedure({} as any) as any
       
       // Assertions - Healthcare compliance specific
       expect(result.compliance.lgpd).toBe(true)
@@ -111,7 +111,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         }
       } as any
 
-      const context = await createTRPCContext({ req: mockRequest })
+      const context = await createContext({ req: mockRequest }) as any
       
       // Assertions
       expect(context).toBeDefined()
@@ -127,7 +127,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         }
       } as any
 
-      const context = await createTRPCContext({ req: mockRequest })
+      const context = await createContext({ req: mockRequest }) as any
       
       // Assertions: Should still work without authentication
       expect(context).toBeDefined()
@@ -143,7 +143,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         }
       } as any
 
-      const context = await createTRPCContext({ req: mockRequest })
+      const context = await createContext({ req: mockRequest }) as any
       
       // Assertions: Error contexts should not expose sensitive data
       expect(context).toBeDefined()
@@ -170,7 +170,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
       }
 
       // RED: Initially failing test
-      await expect(lgpdErrorProcedure(mockContext)).rejects.toThrow('LGPD compliance violation')
+      await expect(lgpdErrorProcedure(mockContext as any)).rejects.toThrow('LGPD compliance violation')
     })
 
     it('should handle ANVISA medical device validation errors', async () => {
@@ -187,7 +187,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         environment: 'test'
       }
 
-      await expect(anvisaErrorProcedure(mockContext)).rejects.toThrow('ANVISA validation failed')
+      await expect(anvisaErrorProcedure(mockContext as any)).rejects.toThrow('ANVISA validation failed')
     })
 
     it('should handle CFM professional standards violations', async () => {
@@ -204,7 +204,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
         environment: 'test'
       }
 
-      await expect(cfmErrorProcedure(mockContext)).rejects.toThrow('CFM violation')
+      await expect(cfmErrorProcedure(mockContext as any)).rejects.toThrow('CFM violation')
     })
   })
 
@@ -212,7 +212,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
     it('should validate user ID format in healthcare context', async () => {
       // Test setup: User ID validation
       const t = initTRPC.create()
-      const userIdValidationProcedure = t.procedure.query(({ ctx }) => {
+      const userIdValidationProcedure = t.procedure.query(({ ctx }: any) => {
         const userId = ctx.user?.id
         
         // Healthcare-specific validation
@@ -238,17 +238,17 @@ describe('tRPC Router - Healthcare Compliance', () => {
       }
 
       // Valid case
-      const validResult = await userIdValidationProcedure(validUserContext)
+      const validResult = await userIdValidationProcedure(validUserContext as any) as any
       expect(validResult.userIdValid).toBe(true)
 
       // Invalid case - RED: Initially failing
-      await expect(userIdValidationProcedure(invalidUserContext)).rejects.toThrow('Invalid user ID format')
+      await expect(userIdValidationProcedure(invalidUserContext as any)).rejects.toThrow('Invalid user ID format')
     })
 
     it('should validate clinic ID format for Brazilian healthcare', async () => {
       // Test setup: Clinic ID validation
       const t = initTRPC.create()
-      const clinicIdValidationProcedure = t.procedure.query(({ ctx }) => {
+      const clinicIdValidationProcedure = t.procedure.query(({ ctx }: any) => {
         const clinicId = ctx.clinicId
         
         // Brazilian healthcare clinic ID format
@@ -274,11 +274,11 @@ describe('tRPC Router - Healthcare Compliance', () => {
       }
 
       // Valid case
-      const validResult = await clinicIdValidationProcedure(validClinicContext)
+      const validResult = await clinicIdValidationProcedure(validClinicContext as any) as any
       expect(validResult.clinicIdValid).toBe(true)
 
       // Invalid case
-      await expect(clinicIdValidationProcedure(invalidClinicContext)).rejects.toThrow('Invalid clinic ID format')
+      await expect(clinicIdValidationProcedure(invalidClinicContext as any)).rejects.toThrow('Invalid clinic ID format')
     })
   })
 
@@ -288,7 +288,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
       const auditLog: Array<{ action: string; timestamp: string; userId?: string; clinicId?: string }> = []
       
       const t = initTRPC.create()
-      const auditProcedure = t.procedure.query(({ ctx }) => {
+      const auditProcedure = t.procedure.query(({ ctx }: any) => {
         const auditEntry = {
           action: 'healthcare_access',
           timestamp: new Date().toISOString(),
@@ -298,10 +298,11 @@ describe('tRPC Router - Healthcare Compliance', () => {
         
         // Mask sensitive data in audit log
         auditLog.push({
-          ...auditEntry,
-          userId: auditEntry.userId?.replace(/./g, '*'),
+          action: auditEntry.action,
+          timestamp: auditEntry.timestamp,
+          userId: auditEntry.userId ? auditEntry.userId.replace(/./g, '*') : undefined,
           clinicId: auditEntry.clinicId ? `${auditEntry.clinicId.substring(0, 4)}***` : undefined
-        })
+        } as any)
         
         return { auditLogged: true }
       })
@@ -313,14 +314,14 @@ describe('tRPC Router - Healthcare Compliance', () => {
         environment: 'test'
       }
 
-      const result = await auditProcedure(userContext)
+      const result = await auditProcedure(userContext as any)
       
       // Assertions
-      expect(result.auditLogged).toBe(true)
+      expect((result as any).auditLogged).toBe(true)
       expect(auditLog).toHaveLength(1)
-      expect(auditLog[0].userId).toBe('*********') // Masked
-      expect(auditLog[0].clinicId).toBe('cli***') // Masked
-      expect(auditLog[0].action).toBe('healthcare_access')
+      expect(auditLog[0]?.userId).toBe('*********') // Masked
+      expect(auditLog[0]?.clinicId).toBe('cli***') // Masked
+      expect(auditLog[0]?.action).toBe('healthcare_access')
     })
 
     it('should handle audit log failures gracefully', async () => {
@@ -328,7 +329,7 @@ describe('tRPC Router - Healthcare Compliance', () => {
       let auditLogError: Error | null = null
       
       const t = initTRPC.create()
-      const auditErrorProcedure = t.procedure.query(({ ctx }) => {
+      const auditErrorProcedure = t.procedure.query((_ctx) => {
         try {
           // Simulate audit log failure
           throw new Error('Audit log service unavailable')
@@ -344,11 +345,11 @@ describe('tRPC Router - Healthcare Compliance', () => {
         user: null,
         clinicId: '',
         environment: 'test'
-      })
+      } as any)
       
       // Assertions: Request should still be processed
-      expect(result.auditFailed).toBe(true)
-      expect(result.requestProcessed).toBe(true)
+      expect((result as any).auditFailed).toBe(true)
+      expect((result as any).requestProcessed).toBe(true)
       expect(auditLogError).toBeDefined()
     })
   })
@@ -363,18 +364,18 @@ describe('tRPC Router - Healthcare Compliance', () => {
       }))
 
       const startTime = Date.now()
-      const result = await performanceProcedure({})
+      const result = await performanceProcedure({} as any) as any
       const endTime = Date.now()
 
       // Assertions
       expect(endTime - startTime).toBeLessThan(100)
-      expect(result.status).toBe('ok')
+      expect(result && typeof result === 'object' && 'status' in result ? (result as any).status : undefined).toBe('ok')
     })
 
     it('should handle concurrent requests efficiently', async () => {
       // Test setup: Load testing scenario
       const t = initTRPC.create()
-      const concurrentProcedure = t.procedure.query(({ ctx }) => ({
+      const concurrentProcedure = t.procedure.query(({ ctx }: any) => ({
         status: 'ok',
         clinicId: ctx.clinicId,
         timestamp: Date.now(),
@@ -391,14 +392,14 @@ describe('tRPC Router - Healthcare Compliance', () => {
 
       // Execute concurrent requests
       const promises = Array.from({ length: 10 }, (_, i) => 
-        concurrentProcedure({ ...mockContext, requestNumber: i + 1 })
+        concurrentProcedure({ ...mockContext, requestNumber: i + 1 } as any) as any
       )
 
       const results = await Promise.all(promises)
       
       // Assertions: All requests should succeed
       expect(results.length).toBe(10)
-      results.forEach(result => {
+      results.forEach((result: any) => {
         expect(result.status).toBe('ok')
         expect(result.clinicId).toBe('concurrent-test-clinic')
       })

@@ -1,6 +1,6 @@
 // Healthcare components export index
 export { EmergencyAlert } from './emergency-alert'
-export type { EmergencyAlertProps, EmergencyAlertType, EmergencySeverity } from './emergency-alert'
+export type { EmergencyAlertProps } from './emergency-alert'
 
 export { HealthcareThemeProvider, useHealthcareTheme } from './healthcare-theme-provider'
 export type { HealthcareThemeProviderProps, HealthcareThemeContextType } from './healthcare-theme-provider'
