@@ -56,7 +56,7 @@ interface ServerData {
   data: Record<string, unknown>
 }
 
-import { logger } from '@/utils/logger.js'
+import { logger } from '@/utils/logger.ts'
 
 export class PWAOfflineManager {
   private static instance: PWAOfflineManager

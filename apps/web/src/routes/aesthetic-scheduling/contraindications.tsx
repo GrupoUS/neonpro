@@ -2,7 +2,7 @@ import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 // import { useQuery } from "@tanstack/react-query";
 // import { api } from "@/lib/api";
 import { ContraindicationAnalysis } from '@/components/ai-clinical-support/ContraindicationAnalysis'
-import { logger } from '@/utils/logger.js'
+import { logger } from '@/utils/logger.ts'
 
 
 // Define loader data type

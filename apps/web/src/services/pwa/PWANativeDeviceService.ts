@@ -106,7 +106,7 @@ interface NotificationOptions {
   actions?: NotificationAction[]
 }
 
-import { logger } from '@/utils/logger.js'
+import { logger } from '@/utils/logger.ts'
 
 export class PWANativeDeviceService {
   private static instance: PWANativeDeviceService

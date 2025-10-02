@@ -13,13 +13,13 @@
  * - TTFB <150ms target
  */
 
+import { zValidator } from '@hono/zod-validator'
+import type { Database } from '@neonpro/types'
+import { createClient } from '@supabase/supabase-js'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
-import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@neonpro/types'
 import { createCacheMiddleware } from './middleware/cache'
 import { ttfbLogger } from './middleware/ttfb-logger'
 import { initializeRealtimeCacheService } from './services/realtime-cache'
@@ -33,14 +33,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Initialize realtime cache service
-let realtimeCacheService: Awaited<ReturnType<typeof initializeRealtimeCacheService>> | null = null
-
-// Initialize realtime service asynchronously
-initializeRealtimeCacheService(supabaseUrl, supabaseAnonKey).then(service => {
-  realtimeCacheService = service
-}).catch(error => {
-  console.error('Failed to initialize realtime cache service:', error)
-})
+let realtimeCacheService: Awaited<ReturnType<typeof initializeRealtimeCacheService>> | null = null // Initialize realtime service asynchronously
+;(async () => {
+  try {
+    realtimeCacheService = await initializeRealtimeCacheService(supabaseUrl, supabaseAnonKey)
+  } catch (error) {
+    console.error('Failed to initialize realtime cache service:', error)
+  }
+})()
 
 // Create Hono app for Edge runtime
 const app = new Hono<{
@@ -54,12 +54,15 @@ const app = new Hono<{
 
 // Middleware
 app.use('*', logger())
-app.use('*', cors({
-  origin: ['http://localhost:3000', 'https://neonpro.vercel.app'],
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}))
+app.use(
+  '*',
+  cors({
+    origin: ['http://localhost:3000', 'https://neonpro.vercel.app'],
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  }),
+)
 
 // Request timing middleware
 app.use('*', async (c, next) => {
@@ -77,7 +80,7 @@ app.use('*', async (c, next) => {
   const token = authHeader.substring(7)
   const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     global: {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     },
     auth: {
       persistSession: false,
@@ -106,24 +109,27 @@ app.use('*', async (c, next) => {
       realtimeCacheService.subscribeToClinic(clinicId)
     }
 
-    await next()
+    return await next()
   } catch {
     return c.json({ error: 'Authentication failed' }, 401)
   }
 })
 
 // Caching middleware for GET requests (after authentication)
-app.use('*', createCacheMiddleware({
-  ttl: 60, // 60 seconds cache
-  skipMethods: ['POST', 'PUT', 'DELETE', 'PATCH'],
-  skipPaths: ['/migration/start']
-}))
+app.use(
+  '*',
+  createCacheMiddleware({
+    ttl: 60, // 60 seconds cache
+    skipMethods: ['POST', 'PUT', 'DELETE', 'PATCH'],
+    skipPaths: ['/migration/start'],
+  }),
+)
 
 // TTFB logging middleware (final, after all processing)
-app.use('*', ttfbLogger(supabaseUrl, supabaseAnonKey))
+app.use('*', ttfbLogger())
 
 // Health check endpoint (Edge optimized)
-app.get('/health', (c) => {
+app.get('/health', c => {
   const startTime = c.get('startTime')
 
   return c.json({
@@ -137,7 +143,7 @@ app.get('/health', (c) => {
 })
 
 // Realtime status endpoint
-app.get('/realtime/status', (c) => {
+app.get('/realtime/status', c => {
   const startTime = c.get('startTime')
 
   if (!realtimeCacheService) {
@@ -158,7 +164,7 @@ app.get('/realtime/status', (c) => {
 })
 
 // Architecture config endpoint (Edge read)
-app.get('/architecture/config', async (c) => {
+app.get('/architecture/config', async c => {
   const startTime = c.get('startTime')
   const clinicId = c.get('clinicId')
 
@@ -168,14 +174,14 @@ app.get('/architecture/config', async (c) => {
     const { data, error } = await supabase
       .from('architecture_configs')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('clinic_id', clinicId!)
       .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
         return c.json({
           error: 'Architecture configuration not found',
-          responseTime: Date.now() - startTime
+          responseTime: Date.now() - startTime,
         }, 404)
       }
       throw error
@@ -186,19 +192,19 @@ app.get('/architecture/config', async (c) => {
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: !isFirstRequest
+      cached: !isFirstRequest,
     })
   } catch (error) {
     console.error('Error fetching architecture config:', error)
     return c.json({
       error: 'Failed to fetch architecture configuration',
-      responseTime: Date.now() - startTime
+      responseTime: Date.now() - startTime,
     }, 500)
   }
 })
 
 // Performance metrics endpoint (Edge read)
-app.get('/performance/metrics', async (c) => {
+app.get('/performance/metrics', async c => {
   const startTime = c.get('startTime')
   const clinicId = c.get('clinicId')
 
@@ -208,7 +214,7 @@ app.get('/performance/metrics', async (c) => {
     const { data, error } = await supabase
       .from('performance_metrics')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('clinic_id', clinicId!)
       .order('created_at', { ascending: false })
       .limit(100)
 
@@ -221,19 +227,19 @@ app.get('/performance/metrics', async (c) => {
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: !isFirstRequest
+      cached: !isFirstRequest,
     })
   } catch (error) {
     console.error('Error fetching performance metrics:', error)
     return c.json({
       error: 'Failed to fetch performance metrics',
-      responseTime: Date.now() - startTime
+      responseTime: Date.now() - startTime,
     }, 500)
   }
 })
 
 // Compliance status endpoint (Edge read)
-app.get('/compliance/status', async (c) => {
+app.get('/compliance/status', async c => {
   const startTime = c.get('startTime')
   const clinicId = c.get('clinicId')
 
@@ -243,14 +249,14 @@ app.get('/compliance/status', async (c) => {
     const { data, error } = await supabase
       .from('compliance_status')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('clinic_id', clinicId!)
       .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
         return c.json({
           error: 'Compliance status not found',
-          responseTime: Date.now() - startTime
+          responseTime: Date.now() - startTime,
         }, 404)
       }
       throw error
@@ -261,19 +267,19 @@ app.get('/compliance/status', async (c) => {
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: !isFirstRequest
+      cached: !isFirstRequest,
     })
   } catch (error) {
     console.error('Error fetching compliance status:', error)
     return c.json({
       error: 'Failed to fetch compliance status',
-      responseTime: Date.now() - startTime
+      responseTime: Date.now() - startTime,
     }, 500)
   }
 })
 
 // Migration state endpoint (Edge read)
-app.get('/migration/state', async (c) => {
+app.get('/migration/state', async c => {
   const startTime = c.get('startTime')
   const clinicId = c.get('clinicId')
 
@@ -283,7 +289,7 @@ app.get('/migration/state', async (c) => {
     const { data, error } = await supabase
       .from('migration_states')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('clinic_id', clinicId!)
       .order('created_at', { ascending: false })
       .limit(1)
       .single()
@@ -292,7 +298,7 @@ app.get('/migration/state', async (c) => {
       if (error.code === 'PGRST116') {
         return c.json({
           error: 'Migration state not found',
-          responseTime: Date.now() - startTime
+          responseTime: Date.now() - startTime,
         }, 404)
       }
       throw error
@@ -303,19 +309,19 @@ app.get('/migration/state', async (c) => {
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: !isFirstRequest
+      cached: !isFirstRequest,
     })
   } catch (error) {
     console.error('Error fetching migration state:', error)
     return c.json({
       error: 'Failed to fetch migration state',
-      responseTime: Date.now() - startTime
+      responseTime: Date.now() - startTime,
     }, 500)
   }
 })
 
 // Package manager config endpoint (Edge read)
-app.get('/package-manager/config', async (c) => {
+app.get('/package-manager/config', async c => {
   const startTime = c.get('startTime')
   const clinicId = c.get('clinicId')
 
@@ -325,14 +331,14 @@ app.get('/package-manager/config', async (c) => {
     const { data, error } = await supabase
       .from('package_manager_configs')
       .select('*')
-      .eq('clinic_id', clinicId)
+      .eq('clinic_id', clinicId!)
       .single()
 
     if (error) {
       if (error.code === 'PGRST116') {
         return c.json({
           error: 'Package manager configuration not found',
-          responseTime: Date.now() - startTime
+          responseTime: Date.now() - startTime,
         }, 404)
       }
       throw error
@@ -343,13 +349,13 @@ app.get('/package-manager/config', async (c) => {
       success: true,
       data,
       responseTime: Date.now() - startTime,
-      cached: !isFirstRequest
+      cached: !isFirstRequest,
     })
   } catch (error) {
     console.error('Error fetching package manager config:', error)
     return c.json({
       error: 'Failed to fetch package manager configuration',
-      responseTime: Date.now() - startTime
+      responseTime: Date.now() - startTime,
     }, 500)
   }
 })
@@ -360,11 +366,11 @@ const startMigrationSchema = z.object({
   options: z.object({
     dry_run: z.boolean().default(false),
     force: z.boolean().default(false),
-    skip_validation: z.boolean().default(false)
-  }).optional()
+    skip_validation: z.boolean().default(false),
+  }).optional(),
 })
 
-app.post('/migration/start', zValidator('json', startMigrationSchema), async (c) => {
+app.post('/migration/start', zValidator('json', startMigrationSchema), async c => {
   const startTime = c.get('startTime')
   const userId = c.get('userId')
   const clinicId = c.get('clinicId')
@@ -379,12 +385,12 @@ app.post('/migration/start', zValidator('json', startMigrationSchema), async (c)
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': authHeader || '',
+        Authorization: authHeader || '',
       },
       body: JSON.stringify({
         id: body.migrationId,
-        options: body.options
-      })
+        options: body.options,
+      }),
     })
 
     let result: { success?: boolean; [key: string]: unknown }
@@ -401,14 +407,14 @@ app.post('/migration/start', zValidator('json', startMigrationSchema), async (c)
         migrationId: body.migrationId,
         options: body.options,
         timestamp: new Date().toISOString(),
-        result: 'failed'
+        result: 'failed',
       })
 
       return c.json({
         error: 'Failed to start migration',
         details: errorData,
-        responseTime: Date.now() - startTime
-      }, response.status as any)
+        responseTime: Date.now() - startTime,
+      }, 500)
     }
 
     result = await response.json() as { success?: boolean; [key: string]: unknown }
@@ -421,14 +427,14 @@ app.post('/migration/start', zValidator('json', startMigrationSchema), async (c)
       migrationId: body.migrationId,
       options: body.options,
       timestamp: new Date().toISOString(),
-      result: isSuccess ? 'success' : 'failed'
+      result: isSuccess ? 'success' : 'failed',
     })
 
     return c.json({
       success: true,
       data: result,
       responseTime: Date.now() - startTime,
-      forwarded: true
+      forwarded: true,
     })
   } catch (error) {
     console.error('Error forwarding migration start:', error)
@@ -440,12 +446,12 @@ app.post('/migration/start', zValidator('json', startMigrationSchema), async (c)
       migrationId: body.migrationId,
       options: body.options,
       timestamp: new Date().toISOString(),
-      result: 'failed'
+      result: 'failed',
     })
 
     return c.json({
       error: 'Failed to start migration',
-      responseTime: Date.now() - startTime
+      responseTime: Date.now() - startTime,
     }, 500)
   }
 })
@@ -459,10 +465,10 @@ app.onError((err, c) => {
   if (err.name === 'ZodError') {
     const zodError = err as { message?: string; errors?: Array<{ message?: string }> }
     const errorMessage = zodError.message ||
-                        (zodError.errors?.map(e => e.message).join(', ')) ||
-                        'Invalid input'
+      (zodError.errors?.map(e => e.message).join(', ')) ||
+      'Invalid input'
     return c.json({
-      error: `validation: ${errorMessage}`
+      error: `validation: ${errorMessage}`,
     }, 400)
   }
 
@@ -471,13 +477,13 @@ app.onError((err, c) => {
       message: err.message || 'Internal Server Error',
       status: 500,
       timestamp: new Date().toISOString(),
-      responseTime: Date.now() - startTime
-    }
+      responseTime: Date.now() - startTime,
+    },
   }, 500)
 })
 
 // Not found middleware
-app.notFound((c) => {
+app.notFound(c => {
   const startTime = c.get('startTime')
 
   return c.json({
@@ -485,8 +491,8 @@ app.notFound((c) => {
       message: 'Edge endpoint not found',
       status: 404,
       timestamp: new Date().toISOString(),
-      responseTime: Date.now() - startTime
-    }
+      responseTime: Date.now() - startTime,
+    },
   }, 404)
 })
 

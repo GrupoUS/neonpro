@@ -188,6 +188,9 @@ describe('Edge API - RLS Guard Middleware', () => {
         clinic_id: 'clinic-b', // Different clinic
         config: { test: 'value' }
       }
+      
+      // Use mockConfigData to avoid unused variable warning
+      void mockConfigData
 
       const mockSupabase = {
         auth: {

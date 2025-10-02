@@ -6,7 +6,7 @@ import {
   Input, Progress
 } from '@/components/ui/index.js'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { apiClient as api } from '@/lib/api.js'
+import { apiClient as api } from '@/lib/api.ts'
 import {
   type Room,
   type RoomAllocation,

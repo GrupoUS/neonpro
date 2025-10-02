@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { api } from '@/lib/api.js'
+import { api } from '@/lib/api.ts'
 import type { ProfessionalSchedule } from '@/types/aesthetic-scheduling.js'
 
 export function useProfessionalSelection() {

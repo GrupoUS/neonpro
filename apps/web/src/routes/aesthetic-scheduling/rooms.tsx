@@ -1,8 +1,8 @@
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
 // import { useQuery } from "@tanstack/react-query";
 import { RoomAllocation } from '@/components/aesthetic-scheduling/RoomAllocation'
-import { apiClient as api } from '@/lib/api.js'
-import { logger } from '@/utils/logger.js'
+import { apiClient as api } from '@/lib/api.ts'
+import { logger } from '@/utils/logger.ts'
 
 
 // Define loader data type
