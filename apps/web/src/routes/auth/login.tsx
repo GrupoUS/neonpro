@@ -12,7 +12,7 @@
 import { createFileRoute, Navigate } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext.ts'
-import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index.ts'
+import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index.tsx'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,

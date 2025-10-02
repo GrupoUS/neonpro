@@ -1,6 +1,6 @@
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent } from '@/components/ui/card.ts'
-import { Progress } from '@/components/ui/progress.ts'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent } from '@/components/ui/card.tsx'
+import { Progress } from '@/components/ui/progress.tsx'
 import { usePWA } from '@/hooks/usePWA.ts'
 import {
   ArrowRight,

@@ -49,9 +49,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useLogin } from '@/hooks/useAuth.ts'
 import type { AuthError } from '@neonpro/types'
-import { AccessibilityButton } from '@/components/ui/accessibility-button.ts'
-import { AccessibilityInput } from '@/components/ui/accessibility-input.ts'
-import { Alert, AlertDescription } from '@/components/ui/alert.ts'
+import { AccessibilityButton } from '@/components/ui/accessibility-button.tsx'
+import { AccessibilityInput } from '@/components/ui/accessibility-input.tsx'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
 import { cn } from '@/lib/utils.ts'
 
 /**

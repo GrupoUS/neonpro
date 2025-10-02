@@ -26,14 +26,14 @@ import {
   Stethoscope,
   User,
 } from 'lucide-react'
-import { Alert, AlertDescription } from '@/components/ui/alert.ts'
-import { Badge } from '@/components/ui/badge.ts'
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
-import { Input } from '@/components/ui/input.ts'
-import { Label } from '@/components/ui/label.ts'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.ts'
-import { Textarea } from '@/components/ui/textarea.ts'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'
+import { Textarea } from '@/components/ui/textarea.tsx'
 import { NeonProMessage, NeonProPatientDataCard } from '../NeonProChatComponents.ts'
 import { useNeonProChat } from '../NeonProChatProvider.ts'
 

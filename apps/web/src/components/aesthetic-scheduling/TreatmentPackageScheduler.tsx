@@ -3,11 +3,11 @@
  * Brazilian healthcare compliant aesthetic treatment package scheduling interface
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.ts'
-import { Badge } from '@/components/ui/badge.ts'
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.ts'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import { useHealthcareQuery, useHealthcareMutation } from '@/hooks/useTRPCHealthcare.ts'
 import {
   type TreatmentPackage,

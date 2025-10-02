@@ -23,21 +23,21 @@
  * - Integrates with tRPC for type-safe API communication
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.ts'
-import { Badge } from '@/components/ui/badge.ts'
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.ts'
-import { Input } from '@/components/ui/input.ts'
-import { Label } from '@/components/ui/label.ts'
-import { Progress } from '@/components/ui/progress.ts'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Input } from '@/components/ui/input.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import { Progress } from '@/components/ui/progress.tsx'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select.ts'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+} from '@/components/ui/select.tsx'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import { trpc } from '@/lib/trpc.ts'
 import {
   type PatientAssessment,

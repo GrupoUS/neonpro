@@ -49,12 +49,12 @@
  * - Continuous monitoring of AI system performance and accuracy
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert.ts'
-import { Badge } from '@/components/ui/badge.ts'
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
-import { Progress } from '@/components/ui/progress.ts'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Progress } from '@/components/ui/progress.tsx'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import { createClient } from '@/integrations/supabase/client'
 import { useCoAgent, useCopilotAction } from '@copilotkit/react-core'
 import {

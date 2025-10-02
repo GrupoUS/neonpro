@@ -1,6 +1,6 @@
-import { Badge } from '@/components/ui/badge.ts'
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { usePWA } from '@/hooks/usePWA.ts'
 import {
   AlertCircle,

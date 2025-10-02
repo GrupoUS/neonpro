@@ -74,8 +74,8 @@ import {
 } from '../../../types/healthcare'
 import { HealthcareFormValidator } from '@/types/validation'
 
-import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer.ts'
-import { useKeyboardNavigation } from '@/components/ui/keyboard-navigation.ts'
+import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer.tsx'
+import { useKeyboardNavigation } from '@/components/ui/keyboard-navigation.tsx'
 import { useTranslation } from '@/lib/i18n/use-translation.ts'
 
 /**

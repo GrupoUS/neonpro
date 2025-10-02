@@ -8,7 +8,7 @@ import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
   Input
-} from '@/components/ui/index.ts'
+} from '@/components/ui/index.tsx'
 // Switch component not available in current UI kit - using simple toggle instead
 import { trpc } from '@/lib/trpc.ts'
 import {

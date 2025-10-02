@@ -11,9 +11,9 @@
  */
 
 import React, { useCallback } from 'react'
-import { Button } from '@/components/ui/button.ts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
-import { Alert, AlertDescription } from '@/components/ui/alert.ts'
+import { Button } from '@/components/ui/button.tsx'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
 import { useNeonProChat } from '../NeonProChatProvider.ts'
 import { Shield, DollarSign, FileText, TrendingUp } from 'lucide-react'
 

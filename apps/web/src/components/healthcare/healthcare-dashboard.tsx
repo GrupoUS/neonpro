@@ -53,12 +53,12 @@ import { format, startOfDay, endOfDay, subDays, isToday, isThisWeek } from 'date
 import { ptBR } from 'date-fns/locale'
 
 import { cn } from '@/lib/utils.ts'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
-import { Badge } from '@/components/ui/badge.ts'
-import { Button } from '@/components/ui/button.ts'
-import { Progress } from '@/components/ui/progress.ts'
-import { Alert, AlertDescription } from '@/components/ui/alert.ts'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
+import { Badge } from '@/components/ui/badge.tsx'
+import { Button } from '@/components/ui/button.tsx'
+import { Progress } from '@/components/ui/progress.tsx'
+import { Alert, AlertDescription } from '@/components/ui/alert.tsx'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import { AccessibilityButton } from '@/components/ui/accessibility-button'
 import { HealthcareFormGroup } from '@/components/ui/healthcare-form-group'
 

@@ -7,10 +7,10 @@ import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
   Input
-} from '@/components/ui/index.ts'
-import { Label } from '@/components/ui/label.ts'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.ts'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+} from '@/components/ui/index.tsx'
+import { Label } from '@/components/ui/label.tsx'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.tsx'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import {
   type AestheticProcedure,
   type AestheticSchedulingResponse,
