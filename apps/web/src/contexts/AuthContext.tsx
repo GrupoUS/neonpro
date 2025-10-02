@@ -9,7 +9,7 @@
  * Compliance: LGPD, ANVISA, CFM, WCAG 2.1 AA
  */
 
-import supabase from '@/integrations/supabase/client'
+import supabase from '@/integrations/supabase/client.ts'
 import type {
   AuthCredentials,
   AuthError,
@@ -19,9 +19,13 @@ import type {
   OAuthConfig,
   PasswordResetRequest,
   SignUpData,
-  UseAuthReturn
+  UseAuthReturn,
 } from '@neonpro/types'
-import type { AuthChangeEvent, Session as SupabaseSession, User as SupabaseUser } from '@supabase/supabase-js'
+import type {
+  AuthChangeEvent,
+  Session as SupabaseSession,
+  User as SupabaseUser,
+} from '@supabase/supabase-js'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
 // Criar contexto de autenticação
@@ -100,7 +104,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // Timestamps
       createdAt: new Date(supabaseUser.created_at),
       updatedAt: new Date(supabaseUser.updated_at || supabaseUser.created_at),
-      lastLoginAt: supabaseUser.last_sign_in_at ? new Date(supabaseUser.last_sign_in_at) : undefined,
+      lastLoginAt: supabaseUser.last_sign_in_at
+        ? new Date(supabaseUser.last_sign_in_at)
+        : undefined,
     }
   }
 
@@ -137,33 +143,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Inicializar autenticação seguindo as guidelines
   useEffect(() => {
     // Obter sessão inicial
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: SupabaseSession | null } }) => {
-      updateAuthState(session)
-    })
+    supabase.auth.getSession().then(
+      ({ data: { session } }: { data: { session: SupabaseSession | null } }) => {
+        updateAuthState(session)
+      },
+    )
 
     // Escutar mudanças na autenticação
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event: AuthChangeEvent, session: SupabaseSession | null) => {
-      // Log para auditoria LGPD
-      if (event === 'SIGNED_IN' && session?.user) {
-        // Criar registro de audit log
-        try {
-          await supabase.from('audit_logs').insert({
-            table_name: 'auth.users',
-            record_id: session.user.id,
-            action: 'SIGN_IN',
-            user_id: session.user.id,
-            phi_accessed: false,
-          })
-        } catch (error) {
-          console.error('Failed to create audit log:', error)
+    } = supabase.auth.onAuthStateChange(
+      async (event: AuthChangeEvent, session: SupabaseSession | null) => {
+        // Log para auditoria LGPD
+        if (event === 'SIGNED_IN' && session?.user) {
+          // Criar registro de audit log
+          try {
+            await supabase.from('audit_logs').insert({
+              table_name: 'auth.users',
+              record_id: session.user.id,
+              action: 'SIGN_IN',
+              user_id: session.user.id,
+              phi_accessed: false,
+            })
+          } catch (error) {
+            console.error('Failed to create audit log:', error)
+          }
+        } else if (event === 'SIGNED_OUT') {
         }
-      } else if (event === 'SIGNED_OUT') {
-      }
 
-      updateAuthState(session)
-    })
+        updateAuthState(session)
+      },
+    )
 
     return () => subscription.unsubscribe()
   }, [])
@@ -203,8 +213,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           error: {
             code: error.message,
             message: error.message,
-            details: error.status?.toString()
-          }
+            details: error.status?.toString(),
+          },
         }
       }
 
@@ -213,8 +223,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {
         error: {
           code: 'SIGNUP_ERROR',
-          message: 'Erro interno durante o cadastro'
-        }
+          message: 'Erro interno durante o cadastro',
+        },
       }
     } finally {
       setAuthState(prev => ({ ...prev, isLoading: false }))
@@ -235,8 +245,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           error: {
             code: error.message,
             message: error.message,
-            details: error.status?.toString()
-          }
+            details: error.status?.toString(),
+          },
         }
       }
 
@@ -245,8 +255,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {
         error: {
           code: 'SIGNIN_ERROR',
-          message: 'Erro interno durante o login'
-        }
+          message: 'Erro interno durante o login',
+        },
       }
     } finally {
       setAuthState(prev => ({ ...prev, isLoading: false }))
@@ -261,8 +271,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return {
           error: {
             code: error.message,
-            message: error.message
-          }
+            message: error.message,
+          },
         }
       }
 
@@ -271,8 +281,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {
         error: {
           code: 'SIGNOUT_ERROR',
-          message: 'Erro interno durante o logout'
-        }
+          message: 'Erro interno durante o logout',
+        },
       }
     }
   }
@@ -294,8 +304,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           error: {
             code: error.message,
             message: error.message,
-            details: error.status?.toString()
-          }
+            details: error.status?.toString(),
+          },
         }
       }
 
@@ -304,8 +314,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {
         error: {
           code: 'OAUTH_ERROR',
-          message: 'Erro interno durante login OAuth'
-        }
+          message: 'Erro interno durante login OAuth',
+        },
       }
     }
   }
@@ -321,8 +331,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return {
           error: {
             code: error.message,
-            message: error.message
-          }
+            message: error.message,
+          },
         }
       }
 
@@ -331,17 +341,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return {
         error: {
           code: 'RESET_PASSWORD_ERROR',
-          message: 'Erro interno durante recuperação de senha'
-        }
+          message: 'Erro interno durante recuperação de senha',
+        },
       }
     }
   }
 
   // Implementações placeholder para outras funções
-  const updatePassword = async () => ({ error: { code: 'NOT_IMPLEMENTED', message: 'Atualização de senha não implementada ainda' } })
-  const resendEmailVerification = async () => ({ error: { code: 'NOT_IMPLEMENTED', message: 'Reenvio de verificação não implementado ainda' } })
-  const updateProfile = async () => ({ error: { code: 'NOT_IMPLEMENTED', message: 'Atualização de perfil não implementada ainda' } })
-  const deleteAccount = async () => ({ error: { code: 'NOT_IMPLEMENTED', message: 'Exclusão de conta não implementada ainda' } })
+  const updatePassword = async () => ({
+    error: { code: 'NOT_IMPLEMENTED', message: 'Atualização de senha não implementada ainda' },
+  })
+  const resendEmailVerification = async () => ({
+    error: { code: 'NOT_IMPLEMENTED', message: 'Reenvio de verificação não implementado ainda' },
+  })
+  const updateProfile = async () => ({
+    error: { code: 'NOT_IMPLEMENTED', message: 'Atualização de perfil não implementada ainda' },
+  })
+  const deleteAccount = async () => ({
+    error: { code: 'NOT_IMPLEMENTED', message: 'Exclusão de conta não implementada ainda' },
+  })
 
   const value: UseAuthReturn = {
     // State
