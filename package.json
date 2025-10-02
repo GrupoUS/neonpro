@@ -2,6 +2,7 @@
   "name": "neonpro",
   "version": "1.0.0",
   "description": "NeonPro: Healthcare Compliance & Performance Platform",
+  "packageManager": "bun@1.2.22",
   "main": "index.js",
   "scripts": {
     "dev": "bun run --hot apps/api/src/server.ts",
@@ -41,7 +42,6 @@
   "author": "NeonPro Team",
   "license": "MIT",
   "dependencies": {
-    "@neonpro/ai-quality": "workspace:*",
     "@neonpro/database": "workspace:*",
     "@neonpro/types": "workspace:*",
     "@neonpro/ui": "workspace:*",
@@ -77,7 +77,7 @@
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
     "prettier": "^3.1.0",
-    "typescript": "^5.3.2",
+    "typescript": "^5.9.2",
     "vercel": "^32.7.2",
     "supabase": "^1.127.0"
   },

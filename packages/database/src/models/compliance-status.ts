@@ -267,7 +267,7 @@ export const updateComplianceStatus = async (
 // Add compliance check
 export const addComplianceCheck = async (
   supabase: any,
-  statusId: string,
+  _statusId: string,
   check: Omit<ComplianceCheck, 'id'>
 ): Promise<ComplianceCheck> => {
   const newCheck = {

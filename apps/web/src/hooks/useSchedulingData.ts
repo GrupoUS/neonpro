@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react'
 
+import { useEffect, useState } from 'react'
+
+import type { AestheticProcedure, ProfessionalDetails } from '../types/aesthetic-scheduling'
+
 export interface UseSchedulingDataReturn {
-  proceduresData: any[] | null
-  professionalsData: any[] | null
+  proceduresData: AestheticProcedure[] | null
+  professionalsData: ProfessionalDetails[] | null
   proceduresLoading: boolean
   professionalsLoading: boolean
   error: string | null
 }
 
 export function useSchedulingData(): UseSchedulingDataReturn {
-  const [proceduresData, setProceduresData] = useState<any[] | null>(null)
-  const [professionalsData, setProfessionalsData] = useState<any[] | null>(null)
+  const [proceduresData, setProceduresData] = useState<AestheticProcedure[] | null>(null)
+  const [professionalsData, setProfessionalsData] = useState<ProfessionalDetails[] | null>(null)
   const [proceduresLoading, setProceduresLoading] = useState(false)
   const [professionalsLoading, setProfessionalsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

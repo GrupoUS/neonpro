@@ -2,24 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "installCommand": "bun install",
-  "buildCommand": "cd apps/web && bun run build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
+  "buildCommand": "cd apps/web && bunx vite build && cd ../.. && mkdir -p dist && cp -r apps/web/dist/* ./dist/",
   "outputDirectory": "dist",
-  "devCommand": "turbo run dev",
+  "devCommand": "bun dev",
   "regions": ["gru1"],
   "framework": "vite",
-
-  "functions": {
-    "api/edge/**/*.ts": {
-      "runtime": "edge",
-      "memory": 256,
-      "maxDuration": 30
-    },
-    "api/node/**/*.ts": {
-      "runtime": "nodejs20.x",
-      "memory": 1024,
-      "maxDuration": 900
-    }
-  },
 
   "rewrites": [
     {

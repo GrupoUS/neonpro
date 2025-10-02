@@ -1,0 +1,18 @@
+{
+  "name": "@neonpro/analysis",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bunx vitest run",
+    "lint": "bunx oxlint -c ../../.oxlintrc.json",
+    "format": "bunx dprint fmt",
+    "format:check": "bunx dprint check"
+  },
+  "devDependencies": {
+    "dprint": "^0.45.0",
+    "oxlint": "^0.2.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

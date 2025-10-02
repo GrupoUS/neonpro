@@ -11,8 +11,8 @@ export type ComplianceIssue = ComplianceCheck
 
 // Mock implementations for missing functions
 export const runComplianceCheck = async (
-  framework: ComplianceFramework,
-  environment: string = 'development'
+  _framework: ComplianceFramework,
+  _environment: string = 'development'
 ): Promise<{
   passed: boolean;
   issues: ComplianceIssue[];
@@ -65,8 +65,8 @@ export const recordMetric = async (
 }
 
 export const getMetricsHistory = async (
-  type: MetricType,
-  limit: number = 10
+  _type: MetricType,
+  _limit: number = 10
 ): Promise<Array<{
   timestamp: Date;
   value: number;

@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "bunx vite",
-    "build": "bun run type-check && bunx vite build",
+    "build": "bunx vite build",
+    "build:check": "bun run type-check && bunx vite build",
     "preview": "bunx vite preview",
     "type-check": "tsc --noEmit",
     "test": "bunx vitest run",

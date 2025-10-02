@@ -23,12 +23,9 @@
     "prefer-template": "error",
     "unicorn/no-empty-file": "error",
     "unicorn/no-array-for-each": "error",
-    "unicorn/no-array-for-each": "error",
     "unicorn/no-hexadecimal-number": "error",
     "unicorn/no-unsafe-regexp": "error",
     "unicorn/no-useless-filename": "error",
-    
-    // TypeScript Safety (Healthcare Critical)
     "typescript/prefer-optional-chain": "error",
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/no-unsafe-assignment": "error",
@@ -36,8 +33,6 @@
     "typescript/no-unsafe-call": "error",
     "typescript/no-unsafe-return": "error",
     "typescript/no-explicit-any": "error",
-    
-    // React Healthcare UI Compliance
     "react/jsx-no-target-blank": "error",
     "react/jsx-curly-brace-presence": ["error", { "props": "never", "children": "never" }],
     "react/no-unescaped-entities": "error",
@@ -46,8 +41,6 @@
     "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "error",
-    
-    // WCAG 2.1 AA+ Accessibility (ANVISA Requirement)
     "jsx-a11y/alt-text": "error",
     "jsx-a11y/anchor-is-valid": "error",
     "jsx-a11y/aria-props": "error",
@@ -68,25 +61,25 @@
     "jsx-a11y/no-redundant-roles": "error",
     "jsx-a11y/scope": "error",
     "jsx-a11y/tabindex-no-positive": "error",
-    
-    // Import Organization
     "import/order": [
       "error",
       {
         "groups": [
-        "builtin", "external", "internal", "parent", "sibling", "index"
-      ],
-      "newlines-between": "always"
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
     ],
     "import/namespace": "warn",
-    
-    // Promise Handling (Healthcare API Compliance)
     "promise/prefer-await-to-then": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",
     "promise/catch-or-return": "error",
-    
-    // Documentation (CFM Compliance)
     "jsdoc/require-jsdoc": ["warn", {
       "contexts": [
         "FunctionExpression",
@@ -95,8 +88,6 @@
         "MethodDefinition"
       ]
     }],
-    
-    // Security (LGPD Compliance)
     "no-eval": "error",
     "no-implied-eval": "error",
     "no-restricted-imports": ["error", {
@@ -111,62 +102,12 @@
         }
       ]
     }],
-    
-    // Code Quality
     "no-warning-comments": ["warn", {
       "terms": ["todo", "fixme", "hack", "temporary", "temp"],
       "location": "start"
-    }],
-    
-    // Logging Infrastructure (Relaxed for Healthcare)
-    {
-      "files": [
-        "**/logger/**/*.{ts,js}",
-        "**/console-manager.ts",
-        "**/logging/**/*.{ts,js}",
-        "**/healthcare-logger.ts"
-      ],
-      "rules": {
-        "no-console": "off"
-      }
-    },
-    
-    // Build Tools & Scripts
-    {
-      "files": [
-        "**/scripts/**/*.{js,ts}",
-        "**/tools/**/*.{ts,js}",
-        "**/build-*.sh",
-        "**/deploy*.sh"
-      ],
-      "rules": {
-        "no-console": "off",
-        "no-unused-vars": "warn",
-        "no-warning-comments": "off"
-      }
-    },
-    
-    // API & Services (Strict Security)
-    {
-      "files": [
-        "**/services/**/*.{ts,js}",
-        "**/trpc/**/*.{ts,js}",
-        "**/middleware/**/*.{ts,js}"
-      ],
-      "rules": {
-        "typescript/no-explicit-any": "error",
-        "typescript/no-unsafe-assignment": "error",
-        "typescript/no-unsafe-member-access": "error",
-        "typescript/no-unsafe-call": "error",
-        "typescript/no-unsafe-return": "error",
-        "promise/prefer-await-to-then": "error",
-        "jsdoc/require-jsdoc": "error",
-        "no-console": "error"
-      }
-    }
+    }]
   },
   "overrides": [
-    // Test Files (Relaxed Rules)
     {
       "files": ["**/*.test.{ts,tsx,js,jsx}", "**/*.spec.{ts,tsx,js,jsx}"],
       "rules": {
@@ -179,8 +120,6 @@
         "jsx-a11y/click-events-have-key-events": "off"
       }
     },
-    
-    // Configuration Files (Relaxed Rules)
     {
       "files": [
         "**/*.config.{js,ts}",
@@ -195,8 +134,6 @@
         "jsdoc/require-jsdoc": "off"
       }
     },
-    
-    // Healthcare Compliance Critical Areas
     {
       "files": [
         "**/compliance/**/*.{ts,tsx}",
@@ -218,8 +155,6 @@
         "no-warning-comments": "error"
       }
     },
-    
-    // UI Components (Strict Accessibility)
     {
       "files": [
         "**/components/**/*.{tsx,ts}",
@@ -238,8 +173,6 @@
         "react/no-unescaped-entities": "error"
       }
     },
-    
-    // Logging Infrastructure (Relaxed)
     {
       "files": [
         "**/logger/**/*.{ts,js}",
@@ -252,7 +185,6 @@
       }
     },
     
-    // API & Services (Strict Security)
     {
       "files": [
         "**/services/**/*.{ts,js}",
