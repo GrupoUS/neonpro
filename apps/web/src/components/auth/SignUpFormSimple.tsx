@@ -76,62 +76,141 @@ export const SignUpFormSimple: React.FC<SignUpFormProps> = ({
     firstNameRef.current?.focus()
   }, [])
 
-  // Enhanced validation with field-specific errors
+  // Enhanced healthcare-compliant validation with sanitization and security
   const validateForm = (): boolean => {
     const errors: FormErrors = {}
 
+    // Healthcare compliance: Input sanitization and XSS prevention
+    const sanitizeInput = (input: string): string => {
+      // Remove potential XSS and injection characters
+      return input
+        .replace(/[<>\"'`&]/g, '') // Remove dangerous characters
+        .trim()
+    }
+
+    // Validate first name with healthcare compliance
     if (!formData.firstName.trim()) {
       errors.firstName = 'Nome é obrigatório'
     } else if (formData.firstName.trim().length < 2) {
       errors.firstName = 'Nome deve ter pelo menos 2 caracteres'
+    } else if (formData.firstName.trim().length > 50) {
+      errors.firstName = 'Nome muito longo'
+    } else {
+      // Sanitize input and validate for healthcare context
+      const sanitizedFirstName = sanitizeInput(formData.firstName)
+      if (!/^[A-Za-zÀ-ÿ\s'-]+$/.test(sanitizedFirstName)) {
+        errors.firstName = 'Nome contém caracteres inválidos'
+      }
+      // Ensure it matches Brazilian healthcare naming patterns
+      if (!/^[A-ZÀ-ÿ]/.test(sanitizedFirstName)) {
+        errors.firstName = 'Nome deve começar com letra maiúscula'
+      }
     }
 
+    // Validate last name with healthcare compliance
     if (!formData.lastName.trim()) {
       errors.lastName = 'Sobrenome é obrigatório'
     } else if (formData.lastName.trim().length < 2) {
       errors.lastName = 'Sobrenome deve ter pelo menos 2 caracteres'
+    } else if (formData.lastName.trim().length > 80) {
+      errors.lastName = 'Sobrenome muito longo'
+    } else {
+      const sanitizedLastName = sanitizeInput(formData.lastName)
+      if (!/^[A-Za-zÀ-ÿ\s'-]+$/.test(sanitizedLastName)) {
+        errors.lastName = 'Sobrenome contém caracteres inválidos'
+      }
+      if (!/^[A-ZÀ-ÿ]/.test(sanitizedLastName)) {
+        errors.lastName = 'Sobrenome deve começar com letra maiúscula'
+      }
     }
 
+    // Enhanced email validation with healthcare compliance
     if (!formData.email.trim()) {
       errors.email = 'Email é obrigatório'
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(formData.email)) {
         errors.email = 'Email inválido'
+      } else if (formData.email.length > 100) {
+        errors.email = 'Email muito longo'
+      } else {
+        // Validate email domain for healthcare institutions
+        const emailDomain = formData.email.split('@')[1]?.toLowerCase()
+        const healthcareDomains = ['hospital', 'clinica', 'medico', 'dentista', 'saude', 'neonpro.com']
+        if (healthcareDomains.some(domain => emailDomain?.includes(domain))) {
+          errors.email = 'Por favor, use um email pessoal para cadastro'
+        }
       }
     }
 
+    // Enhanced profession validation for healthcare roles
+    const validProfessions = [
+      'admin', 'recepcionista', 'medico', 'dentista', 'enfermeiro', 
+      'fisioterapeuta', 'psicologo', 'nutricionista', 'esteticista',
+      'assistente_medico', 'coordenador_clinico', 'tecnico_saude'
+    ]
+    
     if (!formData.profession) {
       errors.profession = 'Profissão é obrigatória'
+    } else if (!validProfessions.includes(formData.profession)) {
+      errors.profession = 'Profissão inválida para o sistema'
     }
 
-    // License validation for healthcare professionals
+    // Enhanced license validation for healthcare compliance
     if (formData.profession !== 'admin' && formData.profession !== 'recepcionista') {
       if (!formData.license.trim()) {
         errors.license = 'Registro profissional é obrigatório'
       } else if (formData.license.trim().length < 3) {
         errors.license = 'Registro profissional inválido'
+      } else if (formData.license.trim().length > 50) {
+        errors.license = 'Registro profissional muito longo'
+      } else {
+        // Enhanced license validation based on profession
+        const sanitizedLicense = sanitizeInput(formData.license)
+        if (!/^[A-Z0-9\s\.\-\,\/]+$/.test(sanitizedLicense)) {
+          errors.license = 'Registro profissional contém caracteres inválidos'
+        }
+        
+        // Healthcare-specific license patterns
+        if (formData.profession === 'medico' && !/CRM/i.test(formData.license)) {
+          errors.license = 'Registro médico deve conter CRM'
+        }
+        if (formData.profession === 'dentista' && !/CRO/i.test(formData.license)) {
+          errors.license = 'Registro odontológico deve conter CRO'
+        }
+        if ((formData.profession === 'enfermeiro' || formData.profession === 'medico') 
+            && !/RENAVEM/i.test(formData.license)) {
+          errors.license = 'Registro profissional deve conter RENAVEM'
+        }
       }
     }
 
+    // Enhanced password validation for healthcare security
     if (!formData.password) {
       errors.password = 'Senha é obrigatória'
     } else if (formData.password.length < 8) {
       errors.password = 'A senha deve ter pelo menos 8 caracteres'
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      errors.password = 'A senha deve conter letras maiúsculas, minúsculas e números'
+    } else if (formData.password.length > 128) {
+      errors.password = 'Senha muito longa'
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/.test(formData.password)) {
+      errors.password = 'A senha deve conter letras maiúsculas, minúsculas, números e caractere especial'
+    } else if (/\s/.test(formData.password)) {
+      errors.password = 'A senha não pode conter espaços'
     }
 
+    // Enhanced password confirmation validation
     if (!formData.confirmPassword) {
       errors.confirmPassword = 'Confirmação de senha é obrigatória'
     } else if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = 'As senhas não coincidem'
     }
 
+    // Enhanced LGPD agreement validation
     if (!agreements.lgpd) {
-      errors.lgpd = 'Aceite da LGPD é obrigatório'
+      errors.lgpd = 'Aceite da LGPD é obrigatório para processamento de dados'
     }
 
+    // Enhanced terms agreement validation
     if (!agreements.terms) {
       errors.terms = 'Aceite dos termos é obrigatório'
     }
