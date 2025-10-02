@@ -2,6 +2,19 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "regions": ["gru1"],
+  "framework": null,
+  "installCommand": "bun install",
+  "buildCommand": "bunx turbo build --filter=@neonpro/web",
+  "outputDirectory": "apps/web/dist",
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/static-build@2.6.4",
+      "config": {
+        "distDir": "apps/web/dist"
+      }
+    }
+  ],
 
   "rewrites": [
     {

@@ -14,6 +14,7 @@ import { z } from 'zod'
 // Mock service classes
 const mockAnalysisService = {
   startAnalysis: vi.fn(),
+  getAnalysis: vi.fn(),
   getAnalysisStatus: vi.fn(),
   getAnalysisResults: vi.fn(),
   listAnalyses: vi.fn()
@@ -90,7 +91,7 @@ describe('Analysis Router - Healthcare Compliance', () => {
       
       // RED: Test fails initially, implementation needed to fix
       expect(validationResult.success).toBe(false)
-      expect(validationResult.error?.errors[0].message).toBe('Invalid package name format')
+      expect(validationResult.error?.issues[0].message).toBe('Invalid package name format')
     })
 
     it('should enforce healthcare service requirements', () => {

@@ -1,7 +1,7 @@
 import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle
-} from '@/components/ui/index.tsx'
+} from '@/components/ui/index.ts'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import { apiClient as api } from '@/lib/api.ts'
 import { RecoveryPhase, RecoveryPlan } from '@/types/aesthetic-scheduling.ts'
