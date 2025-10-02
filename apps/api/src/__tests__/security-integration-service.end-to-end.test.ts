@@ -254,7 +254,7 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       
       expect(result.isCompliant).toBe(true)
       expect(result.checks).toHaveLength(3)
-      expect(result.checks[0].name).toBe('lgpd')
+      expect(result.checks[0]?.name).toBe('lgpd')
       expect(mockComplianceService.validateCompliance).toHaveBeenCalled()
     })
 
@@ -271,8 +271,8 @@ describe('SecurityIntegrationService End-to-End Tests', () => {
       const result = await securityIntegrationService.validateHealthcareCompliance()
       
       expect(result.isCompliant).toBe(false)
-      expect(result.checks[0].passed).toBe(false)
-      expect(result.checks[0].error).toBe('Data retention policy violated')
+      expect(result.checks[0]?.passed).toBe(false)
+      expect(result.checks[0]?.error).toBe('Data retention policy violated')
     })
   })
 
