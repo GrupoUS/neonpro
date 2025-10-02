@@ -12,10 +12,10 @@
  * - Build system configuration
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 describe('Architecture Configuration API Contract Tests', () => {
-  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
+  const API_BASE_URL = process.env['API_BASE_URL'] || 'http://localhost:3000'
 
   beforeAll(async () => {
     // Ensure API is available for testing

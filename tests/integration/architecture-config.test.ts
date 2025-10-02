@@ -7,7 +7,7 @@
  * T024: Create integration tests for API endpoints
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 
 interface ArchitectureConfig {
   id: string
@@ -158,7 +158,7 @@ interface UpdateResult {
 }
 
 describe('Architecture Configuration API Integration Tests', () => {
-  const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000'
+  const API_BASE_URL = process.env['API_BASE_URL'] || 'http://localhost:3000'
   
   beforeAll(async () => {
     console.log('🧪 Setting up architecture configuration integration tests...')

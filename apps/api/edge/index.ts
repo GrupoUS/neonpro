@@ -25,8 +25,8 @@ import { ttfbLogger } from './middleware/ttfb-logger'
 import { initializeRealtimeCacheService } from './services/realtime-cache'
 
 // Initialize Supabase client for Edge runtime (anon key only - no secrets)
-const supabaseUrl = process.env.SUPABASE_URL
-const supabaseAnonKey = process.env.SUPABASE_ANON_KEY
+const supabaseUrl = process.env['SUPABASE_URL']
+const supabaseAnonKey = process.env['SUPABASE_ANON_KEY']
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase configuration for Edge runtime')
@@ -93,7 +93,7 @@ app.use('*', async (c, next) => {
     }
 
     // Extract clinic_id from user metadata (required for RLS)
-    const clinicId = user.user_metadata?.clinic_id as string | undefined
+    const clinicId = user.user_metadata?.['clinic_id'] as string | undefined
     if (!clinicId) {
       return c.json({ error: 'Missing clinic_id in user metadata' }, 401)
     }
@@ -131,7 +131,7 @@ app.get('/health', (c) => {
     runtime: 'edge',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
-    region: process.env.VERCEL_REGION ?? 'local',
+    region: process.env['VERCEL_REGION'] ?? 'local',
     responseTime: Date.now() - startTime,
   })
 })
@@ -372,7 +372,7 @@ app.post('/migration/start', zValidator('json', startMigrationSchema), async (c)
 
   try {
     // Forward to Node tRPC endpoint
-    const nodeRpcUrl = process.env.NODE_TRPC_URL || 'http://localhost:3001/trpc'
+    const nodeRpcUrl = process.env['NODE_TRPC_URL'] || 'http://localhost:3001/trpc'
     const authHeader = c.req.header('Authorization')
 
     const response = await fetch(`${nodeRpcUrl}/migration.startMigration`, {
@@ -408,7 +408,7 @@ app.post('/migration/start', zValidator('json', startMigrationSchema), async (c)
         error: 'Failed to start migration',
         details: errorData,
         responseTime: Date.now() - startTime
-      }, response.status)
+      }, response.status as any)
     }
 
     result = await response.json() as { success?: boolean; [key: string]: unknown }

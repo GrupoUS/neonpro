@@ -2,18 +2,26 @@
  * Week View Component
  */
 
-import type { MouseEvent } from 'react'
+import type { KeyboardEvent, MouseEvent } from 'react'
 import type { WeekViewProps } from '../../types/event-calendar.js'
 import { getEventColor } from './utils.js'
 
 export function WeekView({
   date,
   events,
-  filters,
+  filters: _filters, // renamed to _filters to avoid unused parameter lint error
   onEventClick,
   onDateClick,
   workingHours,
 }: WeekViewProps) {
+  // helper to activate on Enter or Space
+  const handleKeyActivate = (e: KeyboardEvent, cb: () => void) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      cb()
+    }
+  }
+
   // Calculate week start and end
   const weekStart = new Date(date)
   weekStart.setDate(weekStart.getDate() - weekStart.getDay())
@@ -34,35 +42,40 @@ export function WeekView({
           <div className='time-header w-20 p-2 text-sm font-medium text-gray-500 border-r border-gray-200'>
             Hora
           </div>
-          {weekDays.map((day, index) => (
-            <div
-              key={index}
+          {weekDays.map(day => (
+            <button
+              // use stable, data-derived key
+              key={day.getTime()}
+              type="button"
               className={`day-header flex-1 p-2 text-center cursor-pointer hover:bg-gray-50 ${
                 day.toDateString() === new Date().toDateString() ? 'bg-blue-50' : ''
               }`}
               onClick={() => onDateClick(day)}
+              // keep keyboard handler for consistent behavior (buttons already activate on Enter/Space)
+              onKeyDown={e => handleKeyActivate(e, () => onDateClick(day))}
             >
               <div className='day-name text-sm font-medium text-gray-600'>
-                {dayNames[index]}
+                {dayNames[day.getDay()]}
               </div>
               <div className='day-number text-lg font-semibold'>
                 {day.getDate()}
               </div>
-            </div>
+            </button>
           ))}
         </div>
 
         {/* Time slots */}
-        {Array.from({ length: workingHours.end - workingHours.start }, (_, hour) => {
-          const currentHour = workingHours.start + hour
+        {Array.from({ length: workingHours.end - workingHours.start }, (_, hourIndex) => {
+          const currentHour = workingHours.start + hourIndex
 
           return (
-            <div key={hour} className='week-row flex border-b border-gray-100'>
+            // use a data-derived row key
+            <div key={`hour-${currentHour}`} className='week-row flex border-b border-gray-100'>
               <div className='time-label w-20 p-2 text-sm text-gray-500 border-r border-gray-200 text-right'>
                 {currentHour.toString().padStart(2, '0')}:00
               </div>
 
-              {weekDays.map((day, dayIndex) => {
+              {weekDays.map(day => {
                 const dayEvents = events.filter(event => {
                   const eventDate = new Date(event.start)
                   return (
@@ -74,47 +87,65 @@ export function WeekView({
                 })
 
                 return (
-                  <div
-                    key={dayIndex}
+                  <button
+                    // combine day + hour for stable unique key
+                    key={`${day.getTime()}-${currentHour}`}
+                    type="button"
                     className='time-slot flex-1 border-r border-gray-100 min-h-[60px] p-1 hover:bg-gray-50 cursor-pointer'
                     onClick={() => {
                       const clickDate = new Date(day)
                       clickDate.setHours(currentHour, 0, 0, 0)
                       onDateClick(clickDate)
                     }}
+                    // keep keyboard handler to explicitly control activation
+                    onKeyDown={e =>
+                      handleKeyActivate(e, () => {
+                        const clickDate = new Date(day)
+                        clickDate.setHours(currentHour, 0, 0, 0)
+                        onDateClick(clickDate)
+                      })}
                   >
-                    {dayEvents.map(event => (
-                      <div
-                        key={event.id}
-                        className={`event-card p-1 rounded text-xs mb-1 cursor-pointer hover:shadow-md transition-shadow ${
-                          event.status === 'cancelled' ? 'line-through opacity-50' : ''
-                        }`}
-                        style={{
-                          backgroundColor: getEventColor(event) + '20',
-                          borderLeft: `3px solid ${getEventColor(event)}`,
-                        }}
-                        onClick={(e: MouseEvent) => {
-                          e.stopPropagation()
-                          onEventClick(event)
-                        }}
-                      >
-                        <div className='event-title font-medium truncate'>
-                          {event.title}
-                        </div>
-                        <div className='event-time text-xs text-gray-600'>
-                          {new Date(event.start).toLocaleTimeString('pt-BR', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </div>
-                        {event.patientName && (
-                          <div className='event-patient text-xs text-gray-600 truncate'>
-                            {event.patientName}
+                    {dayEvents.map(event => {
+                      const color = getEventColor(event)
+                      return (
+                        <button
+                          key={event.id}
+                          type="button"
+                          className={`event-card p-1 rounded text-xs mb-1 cursor-pointer hover:shadow-md transition-shadow ${
+                            event.status === 'cancelled' ? 'line-through opacity-50' : ''
+                          }`}
+                          style={{
+                            backgroundColor: `${color}20`,
+                            borderLeft: `3px solid ${color}`,
+                          }}
+                          onClick={(e: MouseEvent) => {
+                            e.stopPropagation()
+                            onEventClick(event)
+                          }}
+                          // stop propagation on keyboard activation and invoke handler explicitly to avoid duplicate activations
+                          onKeyDown={(ke: KeyboardEvent) => {
+                            ke.stopPropagation()
+                            handleKeyActivate(ke, () => onEventClick(event))
+                          }}
+                        >
+                          <div className='event-title font-medium truncate'>
+                            {event.title}
                           </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                          <div className='event-time text-xs text-gray-600'>
+                            {new Date(event.start).toLocaleTimeString('pt-BR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </div>
+                          {event.patientName && (
+                            <div className='event-patient text-xs text-gray-600 truncate'>
+                              {event.patientName}
+                            </div>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </button>
                 )
               })}
             </div>
@@ -124,5 +155,4 @@ export function WeekView({
     </div>
   )
 }
-
 export default WeekView

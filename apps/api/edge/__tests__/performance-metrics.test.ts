@@ -414,7 +414,7 @@ describe('Edge API - GET /performance/metrics', () => {
   describe('Security', () => {
     it('should use anon client only (no service role key)', async () => {
       // This test verifies that the Edge runtime doesn't have access to service role keys
-      expect(process.env.SUPABASE_SERVICE_ROLE_KEY).toBeUndefined()
+      expect(process.env['SUPABASE_SERVICE_ROLE_KEY']).toBeUndefined()
 
       const mockQuery = {
         select: vi.fn().mockReturnThis(),

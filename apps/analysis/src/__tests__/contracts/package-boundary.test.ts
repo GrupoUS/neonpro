@@ -1,9 +1,9 @@
 
 import { describe, it, expect, beforeEach } from 'vitest'
-import { PackageBoundaryValidator } from '../../src/analyzers/package-boundary-validator'
-import { HealthcareDataSegregationValidator } from '../../src/analyzers/healthcare-data-segregation-validator'
-import { MonorepoArchitectureAnalyzer } from '../../src/analyzers/monorepo-architecture-analyzer'
-import { MonorepoAnalysisContext } from '../../src/types/analysis'
+import { PackageBoundaryValidator } from '../../analyzers/package-boundary-validator'
+import { HealthcareDataSegregationValidator } from '../../analyzers/healthcare-data-segregation-validator'
+import { MonorepoArchitectureAnalyzer } from '../../analyzers/monorepo-architecture-analyzer'
+import { MonorepoAnalysisContext } from '../../types/analysis'
 
 describe('T010 - Contract Test: Package Boundary Validation', () => {
   let boundaryValidator: PackageBoundaryValidator

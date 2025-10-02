@@ -6,10 +6,9 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { Hono } from 'hono'
 import { createClient } from '@supabase/supabase-js'
 import app from '../index'
-import { EdgeCache, invalidateCache, clearCacheForTesting } from '../middleware/cache'
+import { invalidateCache, clearCacheForTesting } from '../middleware/cache'
 
 // Mock Supabase client
 vi.mock('@supabase/supabase-js', () => ({
@@ -33,7 +32,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
       }
     }
 
-    mockCreateClient.mockImplementation((url, key, options) => {
+    mockCreateClient.mockImplementation((_url: string, _key: string, _options?: unknown) => {
       const supabaseMock = {
         auth: {
           getUser: vi.fn().mockResolvedValue({
@@ -190,6 +189,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           updated_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Simulate realtime subscription receiving event
       // (This would be handled by the realtime subscription handler)
@@ -252,6 +252,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           created_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Simulate realtime subscription receiving event
       const url = 'http://localhost/performance/metrics'
@@ -315,6 +316,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           updated_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Simulate realtime subscription receiving event
       const url = 'http://localhost/compliance/status'
@@ -378,6 +380,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           updated_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Simulate realtime subscription receiving event
       const url = 'http://localhost/migration/state'
@@ -441,6 +444,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           updated_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Simulate realtime subscription receiving event
       const url = 'http://localhost/package-manager/config'
@@ -504,6 +508,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           updated_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Don't invalidate cache for unrelated table (do nothing)
       // Cache should still be valid
@@ -563,6 +568,7 @@ describe('Edge API - Realtime Cache Invalidation', () => {
           updated_at: new Date().toISOString()
         }
       }
+      void realtimePayload
 
       // Don't invalidate cache for different clinic (do nothing)
       // Cache should still be valid

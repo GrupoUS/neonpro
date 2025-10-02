@@ -50,7 +50,7 @@ beforeEach(async () => {
   }
 
   // Mock createClient for both authentication and TTFB logging
-  mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+  mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
     // Always return the mock client with insert capability
     // This ensures that even new instances created within setTimeout get the mock
     const mockQuery = {
@@ -111,7 +111,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       }
 
       // Mock authentication
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -127,7 +127,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({
@@ -177,7 +177,6 @@ describe('Edge API - TTFB Logging Middleware', () => {
 
       mockSupabaseClient.from = vi.fn().mockReturnValue(mockQuery)
 
-      const startTime = Date.now()
       const response = await app.request('/architecture/config', {
         headers: {
           'Authorization': 'Bearer valid-token'
@@ -213,7 +212,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       }
 
       // Mock authentication
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -229,7 +228,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({
@@ -276,7 +275,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       }
 
       // Mock authentication
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -292,7 +291,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({
@@ -358,7 +357,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       }
 
       // Mock authentication
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -374,7 +373,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({
@@ -464,7 +463,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       }
 
       // Mock authentication
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -480,7 +479,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({
@@ -553,7 +552,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       // where clinic_id might not be available
 
       // Mock authentication without clinic_id
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -569,7 +568,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({
@@ -636,7 +635,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
       }
 
       // Mock authentication
-      mockCreateClient.mockImplementation((url: string, key: string, options: any) => {
+      mockCreateClient.mockImplementation((_url: string, _key: string, _options: any) => {
         const mockQuery = {
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
@@ -652,7 +651,7 @@ describe('Edge API - TTFB Logging Middleware', () => {
           insert: mockInsert
         }
 
-        if (options?.global?.headers?.Authorization) {
+        if (_options?.global?.headers?.Authorization) {
           return {
             auth: {
               getUser: vi.fn().mockResolvedValue({

@@ -137,9 +137,9 @@ describe('Edge API - Audit Forwarder', () => {
       global.fetch = vi.fn().mockResolvedValue(mockFetchResponse)
 
       // Mock console.error to capture audit logs
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation((...args) => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation((..._args) => {
         // Log the actual arguments being passed to console.error
-        console.log('console.error called with:', args)
+        console.log('console.error called with:', _args)
       })
 
       const requestBody = {
@@ -391,7 +391,7 @@ describe('Edge API - Audit Forwarder', () => {
 
       // Mock console.error to capture audit logs, then throw on second call
       let callCount = 0
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation((...args) => {
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation((..._args) => {
         callCount++
         if (callCount > 1) {
           throw new Error('Logging failed')
