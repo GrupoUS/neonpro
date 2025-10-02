@@ -26,6 +26,7 @@ export default defineConfig({
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@trpc/server/unstable-core-do-not-import': '@trpc/server',
     },
   },
   define: {
