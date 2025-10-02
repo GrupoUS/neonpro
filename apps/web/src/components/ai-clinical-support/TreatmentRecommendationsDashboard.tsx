@@ -51,15 +51,15 @@
 
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { TreatmentRecommendation } from '@/types/ai-clinical-support.js'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.ts'
+import { Badge } from '@/components/ui/badge.ts'
+import { Button } from '@/components/ui/button.ts'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+import { TreatmentRecommendation } from '@/types/ai-clinical-support.ts'
 import { useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
-// import { Progress } from '@/components/ui/progress.js';
+// import { Progress } from '@/components/ui/progress.ts';
 // import { Separator } from '@/components/ui/separator';
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'

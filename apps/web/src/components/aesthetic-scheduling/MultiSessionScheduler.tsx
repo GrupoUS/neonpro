@@ -7,27 +7,27 @@ import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
   Input
-} from '@/components/ui/index.js'
-import { Label } from '@/components/ui/label.js'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+} from '@/components/ui/index.ts'
+import { Label } from '@/components/ui/label.ts'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
 import {
   type AestheticProcedure,
   type AestheticSchedulingResponse,
   type PregnancyStatus,
-} from '@/types/aesthetic-scheduling.js'
+} from '@/types/aesthetic-scheduling.ts'
 import { AlertTriangle, Calendar, Loader2, User, XCircle } from 'lucide-react'
 import React, { useState } from 'react'
 
 // Custom hooks
-import { useDateManagement } from '@/hooks/useDateManagement.js'
-import { useMedicalHistory } from '@/hooks/useMedicalHistory.js'
-import { useProcedureSelection } from '@/hooks/useProcedureSelection.js'
-import { useProfessionalSelection } from '@/hooks/useProfessionalSelection.js'
-import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission.js'
-import { useSpecialRequirements } from '@/hooks/useSpecialRequirements.js'
-import { useSchedulingData } from '@/hooks/useSchedulingData.js'
-import { useSchedulingForm } from '@/hooks/useSchedulingForm.js'
+import { useDateManagement } from '@/hooks/useDateManagement.ts'
+import { useMedicalHistory } from '@/hooks/useMedicalHistory.ts'
+import { useProcedureSelection } from '@/hooks/useProcedureSelection.ts'
+import { useProfessionalSelection } from '@/hooks/useProfessionalSelection.ts'
+import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission.ts'
+import { useSpecialRequirements } from '@/hooks/useSpecialRequirements.ts'
+import { useSchedulingData } from '@/hooks/useSchedulingData.ts'
+import { useSchedulingForm } from '@/hooks/useSchedulingForm.ts'
 
 interface MultiSessionSchedulerProps {
   patientId: string

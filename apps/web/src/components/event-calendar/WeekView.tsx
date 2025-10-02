@@ -3,8 +3,8 @@
  */
 
 import type { KeyboardEvent, MouseEvent } from 'react'
-import type { WeekViewProps } from '../../types/event-calendar.js'
-import { getEventColor } from './utils.js'
+import type { WeekViewProps } from '../../types/event-calendar.ts'
+import { getEventColor } from './utils.ts'
 
 export function WeekView({
   date,

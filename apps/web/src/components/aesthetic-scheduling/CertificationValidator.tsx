@@ -8,15 +8,15 @@ import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle,
   Input
-} from '@/components/ui/index.js'
+} from '@/components/ui/index.ts'
 // Switch component not available in current UI kit - using simple toggle instead
-import { trpc } from '@/lib/trpc.js'
+import { trpc } from '@/lib/trpc.ts'
 import {
   type CertificationValidation,
   type ProfessionalDetails,
   type AestheticProcedure,
   type ProfessionalCertification,
-} from '@/types/aesthetic-scheduling.js'
+} from '@/types/aesthetic-scheduling.ts'
 
 // Export interfaces for direct use
 export type { CertificationValidation, ProfessionalDetails }

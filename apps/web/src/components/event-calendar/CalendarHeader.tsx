@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { CalendarHeaderProps, CalendarNavigationProps } from '../../types/event-calendar.js'
-import { formatCalendarDate } from './utils.js'
+import type { CalendarHeaderProps, CalendarNavigationProps } from '../../types/event-calendar.ts'
+import { formatCalendarDate } from './utils.ts'
 
 function CalendarNavigation({
   currentDate,

@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { EventModalProps } from '../../types/event-calendar.js'
-import { formatCalendarDate, formatCalendarTime } from './utils.js'
+import type { EventModalProps } from '../../types/event-calendar.ts'
+import { formatCalendarDate, formatCalendarTime } from './utils.ts'
 
 export function EventModal({
   event,

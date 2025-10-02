@@ -5,27 +5,27 @@
  * comparison tools, and Brazilian healthcare compliance information.
  */
 
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Input } from '@/components/ui/input.js'
-import { Label } from '@/components/ui/label.js'
+import { Badge } from '@/components/ui/badge.ts'
+import { Button } from '@/components/ui/button.ts'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { Input } from '@/components/ui/input.ts'
+import { Label } from '@/components/ui/label.ts'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select.js'
+} from '@/components/ui/select.ts'
 import { zodResolver } from '@hookform/resolvers/zod'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-// import { Textarea } from '@/components/ui/textarea.js';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-// import { Alert, AlertDescription } from '@/components/ui/alert.js';
-// import { Progress } from '@/components/ui/progress.js';
-import { cn } from '@/lib/utils.js'
+// import { Textarea } from '@/components/ui/textarea.ts';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+// import { Alert, AlertDescription } from '@/components/ui/alert.ts';
+// import { Progress } from '@/components/ui/progress.ts';
+import { cn } from '@/lib/utils.ts'
 import {
   AlertTriangle,
   // Users,

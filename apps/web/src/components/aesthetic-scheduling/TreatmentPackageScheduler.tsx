@@ -3,16 +3,16 @@
  * Brazilian healthcare compliant aesthetic treatment package scheduling interface
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
-import { useHealthcareQuery, useHealthcareMutation } from '@/hooks/useTRPCHealthcare.js'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.ts'
+import { Badge } from '@/components/ui/badge.ts'
+import { Button } from '@/components/ui/button.ts'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
+import { useHealthcareQuery, useHealthcareMutation } from '@/hooks/useTRPCHealthcare.ts'
 import {
   type TreatmentPackage,
   type TreatmentPackageResponse,
-} from '@/types/aesthetic-scheduling.js'
+} from '@/types/aesthetic-scheduling.ts'
 import { useQueryClient } from '@tanstack/react-query'
 import {
   Calendar,

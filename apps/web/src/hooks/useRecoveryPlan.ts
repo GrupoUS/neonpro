@@ -4,7 +4,7 @@
  */
 
 import { apiClient as api } from '@/lib/api.ts'
-import type { RecoveryPlan } from '@/types/aesthetic-scheduling.js'
+import type { RecoveryPlan } from '@/types/aesthetic-scheduling.ts'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 interface UseRecoveryPlanOptions {

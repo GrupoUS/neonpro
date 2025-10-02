@@ -13,11 +13,11 @@
 import React, { useCallback, useState } from 'react'
 import { Alert, AlertDescription } from '../ui/alert'
 import { Textarea } from '../ui/textarea'
-import { Badge } from '../ui/badge.js'
-import { Button } from '../ui/button.js'
-import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.js'
-import { Input } from '../ui/input.js'
-import { Label } from '../ui/label.js'
+import { Badge } from '../ui/badge.ts'
+import { Button } from '../ui/button.ts'
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card.ts'
+import { Input } from '../ui/input.ts'
+import { Label } from '../ui/label.ts'
 // Removed unused Select imports
 import {
   Shield,

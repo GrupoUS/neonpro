@@ -51,13 +51,13 @@ import * as React from 'react'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
-import { cn } from '@/lib/utils.js'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Badge } from '@/components/ui/badge.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+import { cn } from '@/lib/utils.ts'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { Badge } from '@/components/ui/badge.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
 import { AccessibilityButton } from '@/components/ui/accessibility-button'
 import { HealthcareFormGroup } from '@/components/ui/healthcare-form-group'
-import { Alert, AlertDescription } from '@/components/ui/alert.js'
+import { Alert, AlertDescription } from '@/components/ui/alert.ts'
 
 import type { 
   PatientData, 

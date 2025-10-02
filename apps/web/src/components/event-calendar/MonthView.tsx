@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { MonthViewProps } from '../../types/event-calendar.js'
-import { formatCalendarDate, getEventColor } from './utils.js'
+import type { MonthViewProps } from '../../types/event-calendar.ts'
+import { formatCalendarDate, getEventColor } from './utils.ts'
 
 export function MonthView({
   date,

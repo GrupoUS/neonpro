@@ -3,8 +3,8 @@
  */
 
 import React from 'react'
-import type { DayViewProps } from '../../types/event-calendar.js'
-import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils.js'
+import type { DayViewProps } from '../../types/event-calendar.ts'
+import { formatCalendarTime, generateTimeSlots, getEventColor, isTimeSlotAvailable } from './utils.ts'
 
 export function DayView({
   date,

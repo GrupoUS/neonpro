@@ -8,7 +8,7 @@
  * @author NeonPro Platform Team
  */
 
-import { useAuth } from '@/contexts/AuthContext.js'
+import { useAuth } from '@/contexts/AuthContext.ts'
 import { Navigate, useLocation } from '@tanstack/react-router'
 import { ReactNode } from 'react'
 

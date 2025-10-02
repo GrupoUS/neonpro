@@ -4,8 +4,8 @@ import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardHeader, CardTitle,
   Input, Progress
-} from '@/components/ui/index.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+} from '@/components/ui/index.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
 import { apiClient as api } from '@/lib/api.ts'
 import {
   type Room,
@@ -14,11 +14,11 @@ import {
   type OptimizationResult,
   type TimeSlot,
   type TimeSlotString,
-} from '@/types/aesthetic-scheduling.js'
+} from '@/types/aesthetic-scheduling.ts'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import React, { useState } from 'react'
-// import { Label } from '@/components/ui/label.js';
-// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.js';
+// import { Label } from '@/components/ui/label.ts';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select.ts';
 // import { Separator } from '@/components/ui/separator';
 import { addDays, addHours, format, isAfter, isBefore, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'

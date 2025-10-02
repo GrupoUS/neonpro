@@ -1,4 +1,4 @@
-import { useAuth } from '@/contexts/AuthContext.js'
+import { useAuth } from '@/contexts/AuthContext.ts'
 import type { AuthCredentials, SignUpData } from '@neonpro/types'
 
 // Re-export do hook principal

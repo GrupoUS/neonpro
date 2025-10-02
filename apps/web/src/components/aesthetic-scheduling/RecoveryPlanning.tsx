@@ -1,10 +1,10 @@
 import {
   Alert, AlertDescription, AlertTitle,
   Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle
-} from '@/components/ui/index.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+} from '@/components/ui/index.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
 import { apiClient as api } from '@/lib/api.ts'
-import { RecoveryPhase, RecoveryPlan } from '@/types/aesthetic-scheduling.js'
+import { RecoveryPhase, RecoveryPlan } from '@/types/aesthetic-scheduling.ts'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { format, parseISO } from 'date-fns'
 import { ptBR } from 'date-fns/locale'

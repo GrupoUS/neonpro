@@ -1,5 +1,5 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.js'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.ts'
 import { createFileRoute, Outlet } from '@tanstack/react-router'
 import {
   AlertTriangle,

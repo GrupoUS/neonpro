@@ -10,14 +10,14 @@ import type {
   CalendarState,
   CalendarView,
   TimeSlot,
-} from '../../types/event-calendar.js'
-import { CalendarHeader } from './CalendarHeader.js'
-import { DayView } from './DayView.js'
-import { EventForm } from './EventForm.js'
-import { EventModal } from './EventModal.js'
-import { MonthView } from './MonthView.js'
-import { formatCalendarDate } from './utils.js'
-import { WeekView } from './WeekView.js'
+} from '../../types/event-calendar.ts'
+import { CalendarHeader } from './CalendarHeader.ts'
+import { DayView } from './DayView.ts'
+import { EventForm } from './EventForm.ts'
+import { EventModal } from './EventModal.ts'
+import { MonthView } from './MonthView.ts'
+import { formatCalendarDate } from './utils.ts'
+import { WeekView } from './WeekView.ts'
 
 export function EventCalendar({
   events,

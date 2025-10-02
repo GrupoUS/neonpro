@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
-import { cn } from '@/lib/utils.js'
+import { cn } from '@/lib/utils.ts'
 
 // Mobile-optimized button variants for healthcare workflows (WCAG 2.1 AA+ compliant)
 const mobileButtonVariants = cva(

@@ -74,9 +74,9 @@ import {
 } from '../../../types/healthcare'
 import { HealthcareFormValidator } from '@/types/validation'
 
-import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer.js'
-import { useKeyboardNavigation } from '@/components/ui/keyboard-navigation.js'
-import { useTranslation } from '@/lib/i18n/use-translation.js'
+import { useScreenReaderAnnouncer, useFocusManagement } from '@/components/ui/screen-reader-announcer.ts'
+import { useKeyboardNavigation } from '@/components/ui/keyboard-navigation.ts'
+import { useTranslation } from '@/lib/i18n/use-translation.ts'
 
 /**
  * Type-safe form error tracking interface

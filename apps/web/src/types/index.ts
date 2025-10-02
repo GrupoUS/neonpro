@@ -1,1 +1,1 @@
-export * from './aesthetic-scheduling.js'
+export * from './aesthetic-scheduling.ts'

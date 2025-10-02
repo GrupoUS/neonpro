@@ -11,10 +11,10 @@
  */
 
 import React, { useCallback } from 'react'
-import { Button } from '@/components/ui/button.js'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.js'
-import { NeonProAppointmentCard } from '../NeonProChatComponents.js'
-import { useNeonProChat } from '../NeonProChatProvider.js'
+import { Button } from '@/components/ui/button.ts'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.ts'
+import { NeonProAppointmentCard } from '../NeonProChatComponents.ts'
+import { useNeonProChat } from '../NeonProChatProvider.ts'
 
 interface AppointmentSlot {
   id: string
