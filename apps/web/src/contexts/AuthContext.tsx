@@ -192,7 +192,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [])
 
-  // Implementar funções de autenticação nativas Supabase
+  /**
+   * Register new healthcare professional user with LGPD compliance
+   * Handles user registration with explicit consent tracking and audit logging
+   * 
+   * @healthcare-compliance LGPD: Explicit consent tracking and data collection
+   * @healthcare-compliance ANVISA: Professional registration validation
+   * @healthcare-compliance CFM: Medical professional verification
+   * 
+   * @param {SignUpData} data - User registration data including professional credentials
+   * @returns {Promise<{ error?: AuthError }>} Registration result with error information
+   * 
+   * @example
+   * ```typescript
+   * const result = await signUp({
+   *   email: 'doctor@clinic.com',
+   *   password: 'SecurePass123!',
+   *   firstName: 'John',
+   *   lastName: 'Doe',
+   *   profession: 'medico',
+   *   license: 'CRM 12345/SP'
+   * })
+   * ```
+   */
   const signUp = async (data: SignUpData): Promise<{ error?: AuthError }> => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }))
@@ -247,6 +269,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
+  /**
+   * Authenticate healthcare professional user with secure credentials
+   * Performs login with audit logging and security validation
+   * 
+   * @healthcare-compliance LGPD: Secure credential handling and audit logging
+   * @healthcare-compliance ANVISA: Access control and session management
+   * @healthcare-compliance Security: Password-based authentication
+   * 
+   * @param {AuthCredentials} credentials - User authentication credentials
+   * @returns {Promise<{ error?: AuthError }>} Login result with error information
+   * 
+   * @example
+   * ```typescript
+   * const result = await signIn({
+   *   email: 'doctor@clinic.com',
+   *   password: 'SecurePass123!'
+   * })
+   * ```
+   */
   const signIn = async (credentials: AuthCredentials): Promise<{ error?: AuthError }> => {
     try {
       setAuthState(prev => ({ ...prev, isLoading: true }))
@@ -281,6 +322,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
+  /**
+   * Securely terminate user session with audit logging
+   * Handles logout with proper cleanup and security measures
+   * 
+   * @healthcare-compliance LGPD: Session cleanup and data retention policies
+   * @healthcare-compliance Security: Secure session termination
+   * @healthcare-compliance Audit: Logout event logging for compliance
+   * 
+   * @returns {Promise<{ error?: AuthError }>} Logout result with error information
+   * 
+   * @example
+   * ```typescript
+   * const result = await signOut()
+   * ```
+   */
   const signOut = async (): Promise<{ error?: AuthError }> => {
     try {
       const { error } = await supabase.auth.signOut()
@@ -342,7 +398,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  // Recuperação de senha
+  /**
+   * Initiate secure password reset process for healthcare professionals
+   * Sends password reset email with secure token and validation
+   * 
+   * @healthcare-compliance LGPD: Secure communication and data handling
+   * @healthcare-compliance Security: One-time secure tokens for password reset
+   * @healthcare-compliance ANVISA: Access control and validation
+   * 
+   * @param {PasswordResetRequest} request - Password reset request containing user email
+   * @returns {Promise<{ error?: AuthError }>} Password reset result with error information
+   * 
+   * @example
+   * ```typescript
+   * const result = await resetPassword({
+   *   email: 'doctor@clinic.com'
+   * })
+   * ```
+   */
   const resetPassword = async (request: PasswordResetRequest): Promise<{ error?: AuthError }> => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(request.email, {
@@ -416,7 +489,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
-// Hook para usar o contexto de autenticação
+/**
+ * Custom hook for accessing authentication context in healthcare applications
+ * Provides comprehensive authentication state and actions for healthcare professionals
+ * 
+ * @healthcare-compliance LGPD: User authentication state management
+ * @healthcare-compliance ANVISA: Healthcare professional authentication tracking
+ * @healthcare-compliance Security: Secure authentication state management
+ * 
+ * @returns {UseAuthReturn} Authentication context with state and actions
+ * @throws {Error} When used outside of AuthProvider component
+ * 
+ * @example
+ * ```typescript
+ * const { 
+ *   user, 
+ *   isAuthenticated, 
+ *   signUp, 
+ *   signIn, 
+ *   signOut 
+ * } = useAuth()
+ * 
+ * if (isAuthenticated) {
+ *   // Render authenticated content
+ * }
+ * ```
+ * 
+ * @see AuthProvider
+ * @see UseAuthReturn
+ */
 export const useAuth = (): UseAuthReturn => {
   const context = useContext(AuthContext)
   if (context === undefined) {
