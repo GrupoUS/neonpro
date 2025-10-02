@@ -5,6 +5,8 @@
 !apps/
 !apps/web/
 !apps/web/**
+!packages/
+!packages/**
 
 # Essential config files
 !package.json
@@ -15,11 +17,11 @@
 
 # Ignore everything else in apps except web
 apps/api/
+apps/analysis/
 apps/*/
 !apps/web/
 
-# Ignore packages and other directories
-packages/
+# Ignore non-essential directories
 scripts/
 docs/
 supabase/
