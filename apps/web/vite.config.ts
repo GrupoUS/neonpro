@@ -52,6 +52,7 @@ export default defineConfig({
     target: 'esnext',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      external: ['@segment/analytics-node'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
@@ -101,5 +102,6 @@ export default defineConfig({
       '@neonpro/database',
       '@neonpro/core',
     ],
+    exclude: ['@segment/analytics-node'],
   },
 })

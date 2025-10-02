@@ -1,19 +1,19 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider } from '@tanstack/react-router'
 import * as React from 'react'
-import { AccessibilityProvider } from './components/providers/accessibility-provider.ts'
-import { PWAInstallPrompt } from './components/stubs/PWAInstallPrompt.ts'
-import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator.ts'
-import { router } from './router.ts'
+import { AccessibilityProvider } from './components/providers/accessibility-provider'
+import { PWAInstallPrompt } from './components/stubs/PWAInstallPrompt'
+import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator'
+import { router } from './router'
 import './styles/healthcare-colors.css'
 import './styles/healthcare-mobile.css'
 import './styles/ui-theme.css'
-import { ThemeProvider } from './theme-provider.tsx'
-import { TRPCProvider } from './components/providers/TRPCProvider.tsx'
-import { AuthProvider } from './contexts/AuthContext.tsx'
+import { ThemeProvider } from './theme-provider'
+import { TRPCProvider } from './components/providers/TRPCProvider'
+import { AuthProvider } from './contexts/AuthContext'
 
 // Add typed definitions for PWA event and app cleanup to avoid `any` usage
-type AppEventHandler = (this: Window, ev: Event) => any
+type AppEventHandler = (this: Window, ev: Event) => unknown
 
 interface AppCleanup {
   loadHandler?: AppEventHandler
@@ -165,15 +165,14 @@ function App() {
         aestheticClinicMode={true}
         lgpdCompliance={true}
         defaultTheme="system"
-        enableSystem
       >
         <AuthProvider>
           <TRPCProvider>
             <AccessibilityProvider>
               <div className='min-h-screen healthcare-bg-primary'>
                 {/* PWA Components */}
-                <PWAInstallPrompt className='fixed bottom-4 right-4 z-50' />
-                <PWAOfflineIndicator className='fixed top-4 right-4 z-50' />
+                <PWAInstallPrompt />
+                <PWAOfflineIndicator />
 
                 {/* Main Application Router */}
                 <RouterProvider router={router} />

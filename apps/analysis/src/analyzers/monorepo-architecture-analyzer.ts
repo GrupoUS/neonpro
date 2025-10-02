@@ -8,7 +8,7 @@ export interface MonorepoArchitectureSummary {
 export class MonorepoArchitectureAnalyzer {
   async summarizeArchitecture(): Promise<MonorepoArchitectureSummary> {
     return {
-      apps: ['apps/web', 'apps/api'],
+      apps: ['apps/web', 'apps/api', 'apps/analysis'],
       packages: [
         'packages/core',
         'packages/database',

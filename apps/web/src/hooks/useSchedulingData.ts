@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-
 import type { AestheticProcedure, ProfessionalDetails } from '../types/aesthetic-scheduling'
 
 export interface UseSchedulingDataReturn {
