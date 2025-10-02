@@ -2,6 +2,10 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "regions": ["gru1"],
+  "framework": "vite",
+  "installCommand": "bun install",
+  "buildCommand": "bun run build",
+  "outputDirectory": "apps/web/dist",
 
   "rewrites": [
     {

@@ -48,7 +48,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
     target: 'esnext',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
@@ -58,6 +58,7 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
+          trpc: ['@trpc/server', '@trpc/client', '@trpc/react-query'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
           copilot: ['@copilotkit/react-core', '@copilotkit/react-ui'],
           forms: ['react-hook-form', 'zod'],
