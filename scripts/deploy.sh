@@ -945,18 +945,72 @@ check_endpoint() {
 check_security_headers() {
     local url="$1"
     local path="${2:-}"
-    log_step "Checking security headers"
-    headers=$(curl -s -I "$url$path")
+    local target_url="$url$path"
+    log_step "Checking security headers for $target_url"
 
-    required_headers=("X-Content-Type-Options: nosniff" "X-Frame-Options: DENY" "X-XSS-Protection: 1; mode=block" "Content-Security-Policy" "Strict-Transport-Security")
+    local tmp_headers
+    tmp_headers=$(mktemp)
 
+    local curl_cmd=(curl -sS -I -D "$tmp_headers" -o /dev/null -w "%{http_code}" -L)
+
+    if [ -n "${VERCEL_PROTECTION_BYPASS:-}" ]; then
+        curl_cmd+=(-H "x-vercel-protection-bypass: ${VERCEL_PROTECTION_BYPASS}")
+    fi
+
+    if [ -n "${DEPLOY_VALIDATION_AUTH_HEADER:-}" ]; then
+        curl_cmd+=(-H "${DEPLOY_VALIDATION_AUTH_HEADER}")
+    fi
+
+    if [ -n "${DEPLOY_VALIDATION_EXTRA_HEADERS:-}" ]; then
+        while IFS= read -r extra_header; do
+            [ -n "$extra_header" ] || continue
+            curl_cmd+=(-H "$extra_header")
+        done <<< "${DEPLOY_VALIDATION_EXTRA_HEADERS}"
+    fi
+
+    curl_cmd+=("$target_url")
+
+    local status_code
+    status_code=$("${curl_cmd[@]}" 2>/dev/null || echo "000")
+    local headers
+    headers=$(cat "$tmp_headers" 2>/dev/null || true)
+    rm -f "$tmp_headers" 2>/dev/null || true
+
+    if [ "$status_code" = "000" ]; then
+        log_warning "Failed to retrieve headers for $target_url"
+        return 1
+    fi
+
+    if [ "$status_code" = "401" ] && [ -z "${VERCEL_PROTECTION_BYPASS:-}" ] && [ -z "${DEPLOY_VALIDATION_AUTH_HEADER:-}" ] && [ -z "${DEPLOY_VALIDATION_EXTRA_HEADERS:-}" ]; then
+        log_warning "Received 401 Unauthorized for $target_url; provide VERCEL_PROTECTION_BYPASS or DEPLOY_VALIDATION_AUTH_HEADER to enforce header validation."
+        return 0
+    fi
+
+    log_info "Security header status ($status_code)"
+
+    local required_headers=(
+        "X-Content-Type-Options: nosniff"
+        "X-Frame-Options: DENY"
+        "X-XSS-Protection: 1; mode=block"
+        "Content-Security-Policy"
+        "Strict-Transport-Security"
+    )
+
+    local missing=false
     for header in "${required_headers[@]}"; do
-        if echo "$headers" | grep -q "$header"; then
+        if echo "$headers" | grep -qi "$header"; then
             log_success "$header present"
         else
             log_warning "$header missing"
+            missing=true
         fi
     done
+
+    if [ "$missing" = true ]; then
+        return 1
+    fi
+
+    return 0
 }
 
 check_ssl() {
@@ -1518,6 +1572,9 @@ ENVIRONMENT VARIABLES:
     SUPABASE_ANON_KEY             Supabase anonymous key
     SUPABASE_SERVICE_ROLE_KEY     Supabase service role key
     VERCEL_TOKEN                  Vercel authentication token
+    VERCEL_PROTECTION_BYPASS      Optional token for x-vercel-protection-bypass header during validation
+    DEPLOY_VALIDATION_AUTH_HEADER Optional custom Authorization header for post-deployment checks
+    DEPLOY_VALIDATION_EXTRA_HEADERS Newline-separated extra headers to include in validation curl requests
     DEPLOYMENT_TIMEOUT            Deployment timeout in seconds
 EOF
 }

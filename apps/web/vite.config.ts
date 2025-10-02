@@ -48,15 +48,17 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false,
     target: 'esnext',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      external: ['@segment/analytics-node'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
+          trpc: ['@trpc/server', '@trpc/client', '@trpc/react-query'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
           copilot: ['@copilotkit/react-core', '@copilotkit/react-ui'],
           forms: ['react-hook-form', 'zod'],
@@ -101,5 +103,6 @@ export default defineConfig({
       '@neonpro/database',
       '@neonpro/core',
     ],
+    exclude: ['@segment/analytics-node'],
   },
 })

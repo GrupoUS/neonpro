@@ -258,18 +258,9 @@ export const comparePerformanceWithBaseline = async (
   // Get baseline performance (first recorded performance)
   const history = await getPerformanceHistory(supabase, configId, 1)
 
-  if (history.length === 0) {
-    return {
-      buildTimeImprovement: 0,
-      installTimeImprovement: 0,
-      bundleSizeReduction: 0,
-      cacheHitRateImprovement: 0,
-    }
-  }
-
   const baseline = history[0]
 
-  if (!baseline) {
+  if (!baseline || history.length === 0) {
     return {
       buildTimeImprovement: 0,
       installTimeImprovement: 0,

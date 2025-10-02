@@ -9,6 +9,17 @@ export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs'
 export { Slider } from './slider'
 export { Badge } from './badge'
 export { Alert, AlertDescription, AlertTitle } from './alert'
-
-// Re-export from packages/ui for compatibility
-export * from '@neonpro/ui'
+export { Label } from './label'
+export { Checkbox } from './checkbox'
+export {
+  Select,
+  SelectGroup,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectLabel,
+  SelectItem,
+  SelectSeparator,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
+} from './select'

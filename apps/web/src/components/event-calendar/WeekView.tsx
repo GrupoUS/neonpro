@@ -45,7 +45,7 @@ export function WeekView({
           {weekDays.map(day => (
             <button
               // use stable, data-derived key
-              key={day.getTime()}
+              key={day.toDateString()}
               type="button"
               className={`day-header flex-1 p-2 text-center cursor-pointer hover:bg-gray-50 ${
                 day.toDateString() === new Date().toDateString() ? 'bg-blue-50' : ''
@@ -87,10 +87,11 @@ export function WeekView({
                 })
 
                 return (
-                  <button
+                  <div
                     // combine day + hour for stable unique key
-                    key={`${day.getTime()}-${currentHour}`}
-                    type="button"
+                    key={`${day.toDateString()}-${currentHour}`}
+                    role="button"
+                    tabIndex={0}
                     className='time-slot flex-1 border-r border-gray-100 min-h-[60px] p-1 hover:bg-gray-50 cursor-pointer'
                     onClick={() => {
                       const clickDate = new Date(day)
@@ -145,7 +146,7 @@ export function WeekView({
                         </button>
                       )
                     })}
-                  </button>
+                  </div>
                 )
               })}
             </div>

@@ -1,5 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "packageManager": "bun@1.2.22",
   "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json", "bun.lock", "bun.config.js"],
   "globalEnv": [
     "NODE_ENV",

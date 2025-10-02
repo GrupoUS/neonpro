@@ -3,16 +3,10 @@
   "version": 2,
   "regions": ["gru1"],
   "framework": "vite",
-  "installCommand": "bun install",
-  "buildCommand": "bunx turbo build --filter=@neonpro/web",
+  "buildCommand": "cd apps/web && bun run build",
   "outputDirectory": "apps/web/dist",
-  "builds": [
-    {
-      "src": "apps/web/vite.config.ts",
-      "use": "@vercel/vite@latest"
-    }
-  ],
-
+  "installCommand": "bun install",
+  "ignoreCommand": "exit 0",
   "rewrites": [
     {
       "source": "/api/(.*)",
@@ -23,7 +17,6 @@
       "destination": "/index.html"
     }
   ],
-
   "headers": [
     {
       "source": "/api/(.*)",
@@ -104,11 +97,9 @@
       ]
     }
   ],
-
   "git": {
     "deploymentEnabled": true
   },
-
   "crons": [
     {
       "path": "/api/cleanup/ai-sessions",
@@ -132,3 +123,4 @@
     }
   ]
 }
+
