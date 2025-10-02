@@ -26,6 +26,7 @@ export default defineConfig({
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@trpc/server/unstable-core-do-not-import': '@trpc/server',
     },
   },
   define: {
@@ -75,6 +76,9 @@ export default defineConfig({
       'react-dom',
       '@tanstack/react-router',
       '@tanstack/react-query',
+      '@trpc/server',
+      '@trpc/client',
+      '@trpc/react-query',
       'react-hook-form',
       'zod',
       'valibot',
