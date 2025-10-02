@@ -1,27 +1,6 @@
-# Ignore everything at root level
-/*
-
-# Allow only essential files and directories
-!apps/
-!apps/web/
-!apps/web/**
-!packages/
-!packages/**
-
-# Essential config files
-!package.json
-!bun.lockb
-!vercel.json
-!tsconfig.json
-!tsconfig.base.json
-
-# Ignore everything else in apps except web
+# Ignore non-essential directories
 apps/api/
 apps/analysis/
-apps/*/
-!apps/web/
-
-# Ignore non-essential directories
 scripts/
 docs/
 supabase/
