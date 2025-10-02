@@ -79,6 +79,7 @@ export default defineConfig({
       '@trpc/server',
       '@trpc/client',
       '@trpc/react-query',
+      'superjson',
       'react-hook-form',
       'zod',
       'valibot',
