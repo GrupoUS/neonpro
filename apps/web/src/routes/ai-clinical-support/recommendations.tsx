@@ -1,9 +1,8 @@
 import { TreatmentRecommendationsDashboard } from '@/components/ai-clinical-support/TreatmentRecommendationsDashboard'
-import { apiClient as api } from '@/lib/api.js'
+import { apiClient as api } from '@/lib/api.ts'
+import { logger } from '@/utils/logger.ts'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useLoaderData } from '@tanstack/react-router'
-import { logger } from '@/utils/logger.js'
-
 
 // Define loader data type
 interface TreatmentRecommendationsLoaderData {
