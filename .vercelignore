@@ -5,10 +5,15 @@
 !dist
 !package.json
 !tsconfig.json
+!build.sh
+!vercel.json
 
 # Include UI package dependencies
 !packages/ui
 !packages/types
+
+# Include web app
+!apps/web
 
 # Include essential config files
 !vite.config.*
