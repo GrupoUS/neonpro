@@ -4,6 +4,7 @@
 # Only include frontend and essential files
 !dist
 !package.json
+!bun.lockb
 !tsconfig.json
 !build.sh
 !vercel.json
