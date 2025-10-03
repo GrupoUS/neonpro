@@ -19,7 +19,7 @@ echo "✅ tRPC patches applied to all files"
 # Build only the frontend web app
 echo "🏗️ Building frontend web app..."
 cd apps/web
-npm run build
+npx vite build
 cd ../..
 
 # Validate output
