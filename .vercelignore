@@ -1,39 +1,35 @@
-# Exclude everything by default
-*
+# Exclude development and documentation files
+.augment/
+.claude/
+.github/
+.husky/
+.vscode/
+docs/
+scripts/
+quality-gate-results/
 
-# Only include frontend and essential files
-!dist
-!package.json
-!bun.lockb
-!tsconfig.json
-!build.sh
-!vercel.json
-
-# Include all packages
-!packages/ui
-!packages/types
-!packages/database
-!packages/core
-!packages/config
-
-# Include web app
-!apps/web
-
-# Include essential config files
-!vite.config.*
-!tailwind.config.*
-!postcss.config.*
-!.eslintrc.*
-!.prettierrc.*
-
-# Exclude development and test files
+# Exclude test files
 **/__tests__/**
 **/*.test.*
 **/*.spec.*
-**/node_modules/**
-!apps/web/node_modules/**
 
 # Exclude source maps and logs
 **/*.map
 **/*.log
-!.env.example
+
+# Exclude environment files (except example)
+.env
+.env.local
+.env.production
+.env.staging
+.env.test
+
+# Exclude build artifacts
+**/dist/**
+**/node_modules/**
+
+# Exclude config files not needed for build
+.biomeignore
+.eslintrc.*
+.prettierrc.*
+.oxlintrc.json
