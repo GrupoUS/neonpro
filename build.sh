@@ -16,9 +16,10 @@ echo "✅ Bun version: $(bun --version)"
 echo "📥 Installing dependencies with Bun..."
 bun install
 
-# Apply patches with patch-package
-echo "🔧 Applying patches with patch-package..."
-npx patch-package
+# Apply manual patch to fix tRPC v11 import issue
+echo "🔧 Applying manual patch to fix tRPC v11 import issue..."
+sed -i 's|from "@trpc/server/unstable-core-do-not-import"|from "@trpc/server"|g' node_modules/@trpc/react-query/dist/getQueryKey-BY58RNzP.mjs
+echo "✅ Patch applied successfully"
 
 # Build the frontend web app
 echo "🏗️  Building frontend web app..."
