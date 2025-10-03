@@ -3,9 +3,10 @@ set -e
 
 echo "🚀 NeonPro Simplified Build - Starting..."
 
-# Install dependencies with npm (more stable on Vercel)
-echo "📥 Installing dependencies with npm..."
-npm install --legacy-peer-deps
+# Install dependencies with pnpm (supports workspaces)
+echo "📥 Installing dependencies with pnpm..."
+npm install -g pnpm@latest
+pnpm install --no-frozen-lockfile
 
 # Apply tRPC v11 patch to ALL files that import isObject
 echo "🔧 Applying tRPC v11 compatibility patch..."
