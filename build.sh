@@ -22,4 +22,5 @@ cd apps/web
 bun run build
 
 echo "✅ Build completed successfully!"
+echo "🎉 NeonPro frontend is ready for deployment!"
 
