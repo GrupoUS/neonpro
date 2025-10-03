@@ -6,7 +6,6 @@
   "buildCommand": "bash build.sh",
   "outputDirectory": "apps/web/dist",
   "installCommand": "echo 'Skipping install - handled by build script'",
-  "ignoreCommand": "exit 0",
   "rewrites": [
     {
       "source": "/api/(.*)",
