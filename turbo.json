@@ -5,7 +5,7 @@
     "bun.lockb",
     "package.json"
   ],
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "outputs": [
