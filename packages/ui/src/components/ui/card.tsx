@@ -1,15 +1,17 @@
 import { cn } from "@/lib/utils"
 import * as React from "react"
 
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  readonly clientId?: string
+  readonly userRole?: 'admin' | 'aesthetician' | 'coordinator' | 'doctor' | 'nurse'
+  readonly lgpdCompliant?: boolean
+  readonly variant?: 'default' | 'neonpro' | 'glass' | 'medical' | 'emergency'
+  readonly accessibilityLevel?: 'standard' | 'enhanced'
+}
+
 const Card = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    readonly clientId?: string
-    readonly userRole?: 'admin' | 'aesthetician' | 'coordinator' | 'doctor' | 'nurse'
-    readonly lgpdCompliant?: boolean
-    readonly variant?: 'default' | 'neonpro' | 'glass' | 'medical' | 'emergency'
-    readonly accessibilityLevel?: 'standard' | 'enhanced'
-  }
+  CardProps
 >(({ className, variant = 'default', accessibilityLevel = 'standard', ...props }, ref) => {
   const variantClasses = {
     default: "rounded-lg border bg-card text-card-foreground shadow-sm",
@@ -137,3 +139,4 @@ const CardFooter = React.forwardRef<
 CardFooter.displayName = "CardFooter"
 
 export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
+export type { CardProps }

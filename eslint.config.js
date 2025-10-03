@@ -1,6 +1,8 @@
 // ESLint Flat Configuration - Security & Healthcare Compliance Focus
 // OXLint (primary) → ESLint (security fallback) → Biome (formatting)
 
+import typescript from '@typescript-eslint/parser'
+
 export default [
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -8,9 +10,13 @@ export default [
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
+      parser: typescript,
       parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: '.',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     rules: {

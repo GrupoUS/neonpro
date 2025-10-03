@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 import { Button, ButtonProps } from './button'
 
-export interface MobileHealthcareButtonProps extends ButtonProps {
+export interface MobileHealthcareButtonProps extends Omit<ButtonProps, 'variant'> {
   variant?: 'primary' | 'secondary' | 'destructive' | 'emergency' | 'medical'
   size?: 'default' | 'sm' | 'lg' | 'xl' | 'accessible'
   icon?: React.ReactNode
@@ -13,10 +13,12 @@ export interface MobileHealthcareButtonProps extends ButtonProps {
   accessible?: boolean
   children: React.ReactNode
   // Healthcare-specific props
-  medicalAction?: 'call' | 'navigate' | 'alert' | 'record'
+  medicalAction?: MedicalActionType
   patientId?: string
   location?: string
 }
+
+export type MedicalActionType = 'call' | 'navigate' | 'alert' | 'record'
 
 const extractTextContent = (node: React.ReactNode): string => {
   return React.Children.toArray(node)
@@ -168,7 +170,7 @@ export const EmergencyButton: React.FC<Omit<MobileHealthcareButtonProps, 'varian
 
 // Medical action button with context-aware features
 export const MedicalActionButton: React.FC<{
-  action: 'call' | 'navigate' | 'alert' | 'record'
+  action: MedicalActionType
   patientId?: string
   location?: string
   children: React.ReactNode
@@ -183,7 +185,7 @@ export const MedicalActionButton: React.FC<{
     <MobileHealthcareButton
       variant="medical"
       medicalAction={action}
-      patientId={patientId}
+      patientId={patientId || ''}
       location={location}
       accessible={true}
       {...props}

@@ -40,7 +40,7 @@ export interface BadgeProps
   ariaLabel?: string
 }
 
-function Badge({
+const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(({
   className,
   variant,
   healthcare = false,
@@ -48,7 +48,7 @@ function Badge({
   ariaLabel,
   children,
   ...props
-}: BadgeProps) {
+}, ref) => {
   // Auto-apply healthcare variants when in healthcare mode
   let effectiveVariant = variant
   if (healthcare && !variant) {
@@ -60,6 +60,7 @@ function Badge({
 
   return (
     <div
+      ref={ref}
       className={cn(badgeVariants({ variant: effectiveVariant }), className)}
       aria-label={ariaLabel}
       role="status"
@@ -68,6 +69,7 @@ function Badge({
       {children}
     </div>
   )
-}
+})
+Badge.displayName = "Badge"
 
 export { Badge, badgeVariants }

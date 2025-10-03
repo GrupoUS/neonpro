@@ -1011,4 +1011,7 @@ const ProtocolCard: React.FC<{
   )
 }
 
+// Export utility functions for use in tests
+export { validateBrazilianPhone, getContactConfiguration, formatPhoneForTel }
+
 export default AestheticTreatmentCoordination
