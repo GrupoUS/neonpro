@@ -26,7 +26,7 @@ export default defineConfig({
     extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@trpc/server/unstable-core-do-not-import': '@trpc/server',
+      '@trpc/server/unstable-core-do-not-import': path.resolve(__dirname, '../../node_modules/@trpc/server/dist/index.mjs'),
       '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
       '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
       '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
