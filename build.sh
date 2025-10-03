@@ -3,10 +3,9 @@ set -e
 
 echo "🚀 NeonPro Simplified Build - Starting..."
 
-# Install dependencies with pnpm (supports workspaces)
-echo "📥 Installing dependencies with pnpm..."
-npm install -g pnpm@latest
-pnpm install --no-frozen-lockfile
+# Install dependencies with Bun
+echo "📥 Installing dependencies with Bun..."
+bun install
 
 # Apply tRPC v11 patch to ALL files that import isObject
 echo "🔧 Applying tRPC v11 compatibility patch..."
@@ -20,7 +19,7 @@ echo "✅ tRPC patches applied to all files"
 # Build only the frontend web app
 echo "🏗️ Building frontend web app..."
 cd apps/web
-npx vite build
+bunx vite build
 cd ../..
 
 # Validate output
