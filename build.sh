@@ -25,9 +25,9 @@ fi
 # Install dependencies with workspace support
 echo "📥 Installing dependencies..."
 if [ "$PKG_MANAGER" = "bun" ]; then
-    bun install --frozen-lockfile
+    bun install
 else
-    pnpm install --frozen-lockfile
+    pnpm install
 fi
 
 # Apply patches if needed
