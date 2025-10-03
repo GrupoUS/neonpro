@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { defineConfig } from 'vite'
+import { trpcFix } from './vite-plugin-trpc-fix'
 
 let TanStackRouterVite: () => { name: string }
 try {
@@ -13,6 +14,7 @@ try {
 
 export default defineConfig({
   plugins: [
+    trpcFix(),
     TanStackRouterVite(),
     react(),
     tsconfigPaths({
