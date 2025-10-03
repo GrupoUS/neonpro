@@ -16,6 +16,10 @@ echo "✅ Bun version: $(bun --version)"
 echo "📥 Installing dependencies with Bun..."
 bun install
 
+# Apply patches with patch-package
+echo "🔧 Applying patches with patch-package..."
+npx patch-package
+
 # Build the frontend web app
 echo "🏗️  Building frontend web app..."
 cd apps/web
