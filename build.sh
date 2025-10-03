@@ -54,9 +54,8 @@ export VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-$SUPABASE_ANON_KEY}
 export VERCEL_ENV=$ENVIRONMENT
 export VERCEL_REGION=$REGION
 
-# Type checking first
-echo "🔍 Running TypeScript type checking..."
-$PKG_MANAGER run type-check
+# Skip type checking in Vercel (done in CI/CD)
+echo "⏭️  Skipping type checking (handled by CI/CD)"
 
 # Build with Turborepo if available, otherwise fallback to individual builds
 if command -v turbo &> /dev/null; then
