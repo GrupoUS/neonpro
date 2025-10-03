@@ -129,3 +129,61 @@ export interface AccessLog {
   ipAddress: string
   justification?: string
 }
+
+// Medical procedure types (ANVISA compliant)
+export interface MedicalProcedure extends BaseEntity {
+  // Basic information
+  id: string
+  name: string
+  description: string
+  category: ProcedureCategory
+  duration: number // Estimated duration in minutes
+  cost: number // Cost in Brazilian Reais (BRL)
+  
+  // Healthcare compliance
+  anvisaCode?: string // ANVISA medical device code
+  cfmRequired: boolean // CFM professional requirement
+  requiresConsent: boolean // LGPD consent requirement
+  
+  // Clinical information
+  contraindications?: string[]
+  precautions?: string[]
+  postProcedureInstructions?: string
+  
+  // Status
+  status: Status
+  isActive: boolean
+}
+
+export type ProcedureCategory =
+  | 'aesthetic' // Procedimentos estéticos
+  | 'dermatological' // Procedimentos dermatológicos
+  | 'cosmetic' // Procedimentos cosméticos
+  | 'reconstructive' // Procedimentos reconstrutivos
+  | 'laser' // Procedimentos a laser
+  | 'injection' // Procedimentos injetáveis
+  | 'peeling' // Procedimentos de peeling
+  | 'fillers' // Preenchimentos faciais
+
+// Procedure selection interface for hooks
+export interface ProcedureSelection {
+  id: string
+  selected: boolean
+  quantity?: number
+  notes?: string
+}
+
+// Procedure calculation results
+export interface ProcedureCalculation {
+  totalDuration: number // Total duration in minutes
+  totalCost: number // Total cost in BRL
+  procedureCount: number
+  selectedProcedures: MedicalProcedure[]
+}
+
+// Procedure validation result
+export interface ProcedureValidation {
+  isValid: boolean
+  errors: string[]
+  warnings: string[]
+}

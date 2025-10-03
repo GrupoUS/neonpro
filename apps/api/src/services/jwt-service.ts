@@ -63,15 +63,28 @@ export class JWTService {
         }
       }
 
+        // Build validated payload with proper optional property handling
+      const validatedPayload: JWTPayload = {
+        userId: payload.userId,
+        sessionId: payload.sessionId,
+        role: payload.role,
+        exp: payload.exp
+      }
+
+      // Add optional properties only if they exist
+      if (payload.iat !== undefined) {
+        validatedPayload.iat = payload.iat
+      }
+      if (payload.emergencyAccess !== undefined) {
+        validatedPayload.emergencyAccess = payload.emergencyAccess
+      }
+      if (payload.reason !== undefined) {
+        validatedPayload.reason = payload.reason
+      }
+
       return {
         isValid: true,
-        payload: {
-          userId: payload.userId,
-          sessionId: payload.sessionId,
-          role: payload.role,
-          emergencyAccess: payload.emergencyAccess,
-          reason: payload.reason
-        }
+        payload: validatedPayload
       }
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {

@@ -573,7 +573,6 @@ export class ComplianceService {
 
   private checkPatientDataRetention(currentTime?: Date): boolean {
     // Validate patient data retention policies
-    const now = currentTime || new Date()
     try {
       const activeRetention = this.retentionPolicy.patientData.activePeriod
       const archivalRetention = this.retentionPolicy.patientData.archivalPeriod
@@ -591,7 +590,6 @@ export class ComplianceService {
 
   private checkFinancialDataRetention(currentTime?: Date): boolean {
     // Validate financial data retention policies
-    const now = currentTime || new Date()
     try {
       const activeRetention = this.retentionPolicy.financialData.activePeriod
       const archivalRetention = this.retentionPolicy.financialData.archivalPeriod

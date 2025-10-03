@@ -1,11 +1,13 @@
 import { useCallback, useState } from 'react'
+import type { MedicalProcedure, ProcedureCalculation } from '@neonpro/types'
 
 export interface ProcedureSelection {
   selectedProcedures: string[]
   handleProcedureSelect: (procedureId: string, selected: boolean) => void
-  getSelectedProceduresData: (procedures: any[]) => any[]
-  getTotalEstimatedDuration: (procedures: any[]) => number
-  getTotalEstimatedCost: (procedures: any[]) => number
+  getSelectedProceduresData: (procedures: MedicalProcedure[]) => MedicalProcedure[]
+  getTotalEstimatedDuration: (procedures: MedicalProcedure[]) => number
+  getTotalEstimatedCost: (procedures: MedicalProcedure[]) => number
+  getProcedureCalculation: (procedures: MedicalProcedure[]) => ProcedureCalculation
 }
 
 export function useProcedureSelection(): ProcedureSelection {
@@ -21,25 +23,36 @@ export function useProcedureSelection(): ProcedureSelection {
     })
   }, [])
 
-  const getSelectedProceduresData = useCallback((procedures: any[]) => {
+  const getSelectedProceduresData = useCallback((procedures: MedicalProcedure[]) => {
     return procedures.filter(procedure => selectedProcedures.includes(procedure.id))
   }, [selectedProcedures])
 
-  const getTotalEstimatedDuration = useCallback((procedures: any[]) => {
+  const getTotalEstimatedDuration = useCallback((procedures: MedicalProcedure[]) => {
     const selected = getSelectedProceduresData(procedures)
-    return selected.reduce((total, procedure) => total + (procedure.baseDuration || 0), 0)
+    return selected.reduce((total, procedure) => total + procedure.duration, 0)
   }, [getSelectedProceduresData])
 
-  const getTotalEstimatedCost = useCallback((procedures: any[]) => {
+  const getTotalEstimatedCost = useCallback((procedures: MedicalProcedure[]) => {
     const selected = getSelectedProceduresData(procedures)
-    return selected.reduce((total, procedure) => total + (procedure.basePrice || 0), 0)
+    return selected.reduce((total, procedure) => total + procedure.cost, 0)
   }, [getSelectedProceduresData])
+
+  const getProcedureCalculation = useCallback((procedures: MedicalProcedure[]): ProcedureCalculation => {
+    const selectedProceduresData = getSelectedProceduresData(procedures)
+    return {
+      totalDuration: getTotalEstimatedDuration(procedures),
+      totalCost: getTotalEstimatedCost(procedures),
+      procedureCount: selectedProceduresData.length,
+      selectedProcedures: selectedProceduresData
+    }
+  }, [getSelectedProceduresData, getTotalEstimatedDuration, getTotalEstimatedCost])
 
   return {
     selectedProcedures,
     handleProcedureSelect,
     getSelectedProceduresData,
     getTotalEstimatedDuration,
-    getTotalEstimatedCost
+    getTotalEstimatedCost,
+    getProcedureCalculation
   }
 }
