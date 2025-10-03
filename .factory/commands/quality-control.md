@@ -2256,7 +2256,114 @@ PERFORMANCE_METRICS:
 - **`vitest.config.ts`**: Testing (single config)
 - **`playwright.config.ts`**: E2E testing (3 browsers)
 
-## Agent Coordination
+## 🤖 Factory Droids Coordination Reference
+
+### **Droid Specialization Matrix**
+
+| Droid | Primary Role | Phase Focus | Key Capabilities | Coordination Pattern |
+|-------|--------------|-------------|------------------|---------------------|
+| **tdd-orchestrator** | Master coordination | All phases | Parallel execution, resource management, quality gate orchestration | Adaptive orchestration |
+| **apex-dev** | Implementation specialist | Phase 4 | Archon task management, code implementation, problem solving | Parallel task execution |
+| **code-reviewer** | Code quality expert | Phase 1, 4 | OXLint optimization, security scanning, performance analysis | Parallel analysis |
+| **test-auditor** | TDD RED phase specialist | Phase 1, 4 | Healthcare compliance testing, coverage validation, performance testing | Sequential validation |
+| **architect-review** | System architect | Phase 2, 3 | Architecture validation, design patterns, scalability analysis | Sequential validation |
+| **apex-researcher** | Research intelligence | Phase 2 | Multi-source validation, documentation analysis, solution validation | Hybrid research |
+| **database-specialist** | Database expert | Phase 1, 4 | Query optimization, schema validation, data integrity | Parallel analysis |
+
+### **When to Use Which Droid**
+
+**Multi-Agent Coordination:**
+- **tdd-orchestrator**: Master coordination for complex quality control workflows
+- **Parallel execution**: Independent code quality fixes with no dependencies
+- **Sequential execution**: Healthcare compliance and security-critical tasks
+- **Hybrid coordination**: Complex scenarios with mixed dependencies
+
+**Specialized Scenarios:**
+- **@apex-dev + @code-reviewer**: Code implementation with quality validation
+- **@test-auditor + @apex-researcher**: Compliance validation with research backing
+- **@architect-review + @code-reviewer**: Architecture validation with implementation review
+- **@database-specialist + @test-auditor**: Database optimization with performance testing
+
+### **Droid Workflow Examples**
+
+```yaml
+# Multi-Agent Quality Control Workflow
+complex_lgpd_compliance_issue:
+  phase_1_detection:
+    coordinator: "code_reviewer"
+    parallel_droids: ["test_auditor", "database_specialist"]
+    execution_pattern: "parallel_analysis"
+  
+  phase_2_research:
+    coordinator: "apex_researcher"
+    supporting_droids: ["architect_review", "code_reviewer"]
+    execution_pattern: "hybrid_research"
+  
+  phase_3_planning:
+    coordinator: "tdd-orchestrator"
+    supporting_droids: ["apex_dev", "test_auditor"]
+    execution_pattern: "adaptive_task_decomposition"
+  
+  phase_4_execution:
+    coordinator: "tdd-orchestrator"
+    parallel_streams: ["code_reviewer", "test_auditor", "database_specialist"]
+    execution_pattern: "parallel_execution_with_validation"
+
+# Simple Code Quality Fix
+formatting_and_style_issues:
+  coordinator: "code_reviewer"
+  execution_pattern: "parallel_execution"
+  parallel_tasks: 3-5 concurrent fixes
+  validation: "OXLint + Biome validation"
+
+# Healthcare Compliance Validation
+patient_data_compliance:
+  coordinator: "test_auditor"
+  execution_pattern: "sequential_execution"
+  required_order: ["test_auditor" → "code_reviewer" → "apex_dev"]
+  validation: "LGPD compliance + security validation"
+```
+
+### **Droid-Specific Tool Integration**
+
+```yaml
+tdd-orchestrator_tools:
+  primary: ["Archon MCP", "Task management", "Resource allocation"]
+  coordination: ["Parallel execution engine", "Quality gate orchestration"]
+  monitoring: ["Performance tracking", "Conflict resolution"]
+
+apex-dev_tools:
+  primary: ["Archon MCP", "Serena MCP", "Desktop Commander"]
+  implementation: ["Code editing", "Task orchestration", "Problem solving"]
+  validation: ["Type checking", "Testing", "Documentation"]
+
+code_reviewer_tools:
+  primary: ["OXLint", "Biome", "Security scanners"]
+  analysis: ["Code quality", "Performance optimization", "Healthcare compliance"]
+  validation: ["Security validation", "LGPD compliance checking"]
+
+test_auditor_tools:
+  primary: ["Vitest", "Playwright", "Performance testing"]
+  testing: ["Coverage analysis", "Compliance validation", "Performance testing"]
+  healthcare: ["LGPD testing", "Security testing", "Compliance validation"]
+
+architect_review_tools:
+  primary: ["Architecture analysis", "Scalability assessment", "Pattern validation"]
+  validation: ["Architectural integrity", "Design pattern compliance", "System integration"]
+  analysis: ["Scalability", "Maintainability", "Technical debt assessment"]
+
+apex_researcher_tools:
+  primary: ["Context7 MCP", "Tavily MCP", "Archon RAG"]
+  research: ["Multi-source validation", "Documentation analysis", "Solution validation"]
+  methodology: ["Research intelligence chain", "Knowledge integration"]
+
+database_specialist_tools:
+  primary: ["Database analysis", "Query optimization", "Schema validation"]
+  optimization: ["Performance tuning", "Query analysis", "Data integrity"]
+  validation: ["Schema compliance", "Performance validation", "Data consistency"]
+```
+
+## Legacy Agent Coordination
 
 ### **When to Use Which Agent**
 

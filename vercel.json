@@ -6,6 +6,20 @@
   "buildCommand": "bash build.sh",
   "outputDirectory": "apps/web/dist",
   "installCommand": "echo 'Skipping install - handled by build script'",
+  "functions": {
+    "apps/api/src/edge/**/*.ts": {
+      "runtime": "edge",
+      "maxDuration": 30
+    },
+    "apps/api/src/node/**/*.ts": {
+      "runtime": "nodejs18.x",
+      "maxDuration": 60
+    },
+    "apps/api/src/**/*.ts": {
+      "runtime": "edge",
+      "maxDuration": 30
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",

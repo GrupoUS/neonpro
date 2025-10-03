@@ -1,4 +1,9 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-  - "tools/*"
+  # All applications
+  - 'apps/*'
+  
+  # All shared packages
+  - 'packages/*'
+  
+  # Development tools
+  - 'tools/*'
