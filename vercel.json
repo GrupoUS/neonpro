@@ -1,18 +1,5 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "regions": ["gru1"],
-  "framework": "vite",
-  "buildCommand": "bash build.sh",
-  "outputDirectory": "apps/web/dist",
-  "installCommand": "echo 'Skipping install - handled by build script'",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "git": {
-    "deploymentEnabled": true
-  }
+  "buildCommand": "echo 'Skipping build - using prebuilt files'"
 }

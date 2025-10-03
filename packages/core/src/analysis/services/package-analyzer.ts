@@ -592,14 +592,7 @@ function calculateNodeCentralityScore(node: DependencyNode, allNodes: Dependency
   return averageDistance;
 }
 
-function calculateAverageDistance(
-  distances: number[]
-): number {
-  if (distances.length === 0) return 0;
-  
-  const totalDistance = distances.reduce((sum, distance) => sum + distance);
-  return Math.round(totalDistance / distances.length);
-}
+
 
 export function calculateAverageDistance(
   node: DependencyNode,
@@ -609,7 +602,7 @@ export function calculateAverageDistance(
   const distances = allNodes.map((n, i) => ({
     node: n,
     distance: Math.sqrt(Math.pow(allNodes[nodeIndex].x - allNodes[i].x, 2) + Math.pow(allNodes[i].y - allNodes[i].y, 2)),
-    node: allNodes[nodeIndex]
+    referenceNode: allNodes[nodeIndex]
   }));
   
   if (distances.length === 0) return 0;
@@ -630,7 +623,7 @@ function calculateClusterCoefficient(
     let overlap = 0;
     
     for (let j = 0; j < clusters.length; j++) {
-      const overlap = this.calculateOverlap(clusters[i], clusters[j]);
+      let overlap = this.calculateOverlap(clusters[i], clusters[j]);
       overlap = Math.max(overlap, clusters[i].lines / clusters[j].lines);
       overlap = Math.round(overlap * 100 / clusters[i].lines);
       coefficient += overlap;

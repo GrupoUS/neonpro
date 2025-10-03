@@ -449,7 +449,7 @@ export class AnalysisOrchestrator {
   /**
    * Calculate DuplicationSeverity from score
    */
-  private calculateDuplicationSeverity(score: number): SeverityLevel {
+  private calculateDuplicationSeverityFromScore(score: number): SeverityLevel {
     if (score >= 90) return SeverityLevel.CRITICAL;
     if (score >= 75) return SeverityLevel.HIGH;
     if (score >= 50) return SeverityLevel.MEDIUM;

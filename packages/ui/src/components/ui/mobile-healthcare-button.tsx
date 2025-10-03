@@ -1,5 +1,6 @@
 import React from 'react'
 import { Heart, AlertTriangle, Phone, MapPin, Clock } from 'lucide-react'
+import { z } from 'zod'
 
 import { cn } from '@/lib/utils'
 
@@ -27,7 +28,8 @@ const extractTextContent = (node: React.ReactNode): string => {
         return String(child)
       }
       if (React.isValidElement(child) && child.props?.children) {
-        return extractTextContent(child.props.children)
+        const element = child as React.ReactElement
+        return extractTextContent(element.props.children)
       }
       return ''
     })
@@ -35,6 +37,19 @@ const extractTextContent = (node: React.ReactNode): string => {
     .join(' ')
     .trim()
 }
+
+// Zod schema for prop validation
+const mobileHealthcareButtonSchema = z.object({
+  variant: z.enum(['primary', 'secondary', 'destructive', 'emergency', 'medical']).optional().default('primary'),
+  size: z.enum(['default', 'sm', 'lg', 'xl', 'accessible']).optional().default('default'),
+  icon: z.any().optional(),
+  emergency: z.boolean().optional().default(false),
+  accessible: z.boolean().optional().default(false),
+  medicalAction: z.enum(['call', 'navigate', 'alert', 'record']).optional(),
+  patientId: z.string().optional(),
+  location: z.string().optional(),
+  children: z.any(),
+})
 
 export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
   variant = 'primary',
@@ -49,6 +64,24 @@ export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
   className,
   ...props
 }) => {
+  // Validate props with Zod (development only)
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      mobileHealthcareButtonSchema.parse({
+        variant,
+        size,
+        icon,
+        emergency,
+        accessible,
+        medicalAction,
+        patientId,
+        location,
+        children,
+      })
+    } catch (error) {
+      console.warn('MobileHealthcareButton prop validation error:', error)
+    }
+  }
   // Determine button characteristics based on context
   const finalVariant = emergency ? 'emergency' : variant
   const finalSize = accessible ? 'accessible' : size
@@ -78,13 +111,9 @@ export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (emergency) {
       // Trigger emergency response protocol
-      console.log('🚨 Emergency protocol activated')
-      if (patientId) {
-        console.log(`📋 Emergency for patient: ${patientId}`)
-      }
-      if (location) {
-        console.log(`📍 Emergency location: ${location}`)
-      }
+      console.warn('🚨 Emergency protocol activated')
+      // TODO: Integrate with audit-log for compliant logging
+      // PII (patientId, location) should be logged through audit-log.ts for LGPD compliance
       
       // Vibrate for emergency (if supported)
       if ('vibrate' in navigator) {
@@ -138,7 +167,10 @@ export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
       className={cn(
         'flex items-center gap-2 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105',
         emergency && 'animate-pulse border-2 border-red-600',
-        accessible && 'min-h-[44px] min-w-[44px]', // WCAG 2.1 AA+ touch targets
+        // Ensure WCAG 2.1 AA+ touch targets (minimum 44px)
+        (accessible || size === 'xl' || size === 'lg') && 'min-h-[44px] min-w-[44px]',
+        !accessible && size === 'default' && 'min-h-[44px] min-w-[44px]', // Default also meets WCAG
+        !accessible && size === 'sm' && 'min-h-[44px] min-w-[44px]', // Small also meets WCAG
         className
       )}
       onClick={handleClick}
@@ -186,7 +218,7 @@ export const MedicalActionButton: React.FC<{
       variant="medical"
       medicalAction={action}
       patientId={patientId || ''}
-      location={location}
+      location={location ?? ''}
       accessible={true}
       {...props}
     >

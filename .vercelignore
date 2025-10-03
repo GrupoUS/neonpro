@@ -1,78 +1,30 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
+# Exclude everything by default
+*
 
-# Testing
-coverage/
-.nyc_output/
+# Only include frontend and essential files
+!dist
+!package.json
+!tsconfig.json
 
-# Build outputs (except the one we need)
-dist/
-build/
-out/
-!apps/web/dist
+# Include UI package dependencies
+!packages/ui
+!packages/types
 
-# Logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+# Include essential config files
+!vite.config.*
+!tailwind.config.*
+!postcss.config.*
+!.eslintrc.*
+!.prettierrc.*
 
-# OS
-.DS_Store
-Thumbs.db
+# Exclude development and test files
+**/__tests__/**
+**/*.test.*
+**/*.spec.*
+**/node_modules/**
+!apps/web/node_modules/**
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Temporary files
-*.tmp
-*.temp
-.cache/
-
-# Git
-.git/
-.gitignore
-
-# Vercel
-.vercel/
-
-# Large files that shouldn't be deployed
-*.mp4
-*.mov
-*.avi
-*.mkv
-*.zip
-*.tar.gz
-*.rar
-
-# Documentation
-docs/
-*.md
-!README.md
-
-# Tests
-**/__tests__/
-**/*.test.ts
-**/*.test.tsx
-**/*.test.js
-**/*.test.jsx
-**/*.spec.ts
-**/*.spec.tsx
-**/*.spec.js
-**/*.spec.jsx
-tests/
-test/
-specs/
-
-# Development files
-.env.local
-.env.development
-.env.test
-
+# Exclude source maps and logs
+**/*.map
+**/*.log
+!.env.example

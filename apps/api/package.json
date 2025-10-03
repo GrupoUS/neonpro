@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "bunx hono --entry src/index.ts --watch",
     "build": "bunx tsc --noEmit && bunx vite build",
+    "build:serverless": "bunx tsc --noEmit && mkdir -p .vercel/output/functions && cp src/index.ts .vercel/output/functions/ && cp -r src/edge .vercel/output/functions/ && cp -r src/node .vercel/output/functions/ && cp -r src/shared .vercel/output/functions/",
     "test": "bunx vitest run",
     "lint": "bunx oxlint -c ../../.oxlintrc.json",
     "lint:edge": "bunx oxlint -c ../../apps/.oxlintrc.edge.json",

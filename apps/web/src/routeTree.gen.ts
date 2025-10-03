@@ -38,6 +38,8 @@ import { Route as AestheticSchedulingPackagesRouteImport } from './routes/aesthe
 import { Route as AestheticSchedulingMultiSessionRouteImport } from './routes/aesthetic-scheduling/multi-session'
 import { Route as AestheticSchedulingContraindicationsRouteImport } from './routes/aesthetic-scheduling/contraindications'
 import { Route as AestheticSchedulingCertificationRouteImport } from './routes/aesthetic-scheduling/certification'
+import { Route as ComplianceLgpdIndexRouteImport } from './routes/compliance/lgpd/index'
+import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
 import { Route as InventoryProductProductIdRouteImport } from './routes/inventory/product/$productId'
 
 const TreatmentPlans_rootRoute = TreatmentPlans_rootRouteImport.update({
@@ -196,6 +198,17 @@ const AestheticSchedulingCertificationRoute =
     path: '/aesthetic-scheduling/certification',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ComplianceLgpdIndexRoute = ComplianceLgpdIndexRouteImport.update({
+  id: '/compliance/lgpd/',
+  path: '/compliance/lgpd/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsPatientIdDocumentsRoute =
+  PatientsPatientIdDocumentsRouteImport.update({
+    id: '/patients/$patientId/documents',
+    path: '/patients/$patientId/documents',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const InventoryProductProductIdRoute =
   InventoryProductProductIdRouteImport.update({
     id: '/inventory/product/$productId',
@@ -234,6 +247,8 @@ export interface FileRoutesByFullPath {
   '/inventory': typeof InventoryIndexRoute
   '/patient-engagement': typeof PatientEngagementIndexRoute
   '/inventory/product/$productId': typeof InventoryProductProductIdRoute
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
+  '/compliance/lgpd': typeof ComplianceLgpdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -265,6 +280,8 @@ export interface FileRoutesByTo {
   '/inventory': typeof InventoryIndexRoute
   '/patient-engagement': typeof PatientEngagementIndexRoute
   '/inventory/product/$productId': typeof InventoryProductProductIdRoute
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
+  '/compliance/lgpd': typeof ComplianceLgpdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -298,6 +315,8 @@ export interface FileRoutesById {
   '/inventory/': typeof InventoryIndexRoute
   '/patient-engagement/': typeof PatientEngagementIndexRoute
   '/inventory/product/$productId': typeof InventoryProductProductIdRoute
+  '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
+  '/compliance/lgpd/': typeof ComplianceLgpdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -332,6 +351,8 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/patient-engagement'
     | '/inventory/product/$productId'
+    | '/patients/$patientId/documents'
+    | '/compliance/lgpd'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -363,6 +384,8 @@ export interface FileRouteTypes {
     | '/inventory'
     | '/patient-engagement'
     | '/inventory/product/$productId'
+    | '/patients/$patientId/documents'
+    | '/compliance/lgpd'
   id:
     | '__root__'
     | '/'
@@ -395,6 +418,8 @@ export interface FileRouteTypes {
     | '/inventory/'
     | '/patient-engagement/'
     | '/inventory/product/$productId'
+    | '/patients/$patientId/documents'
+    | '/compliance/lgpd/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -427,6 +452,8 @@ export interface RootRouteChildren {
   InventoryIndexRoute: typeof InventoryIndexRoute
   PatientEngagementIndexRoute: typeof PatientEngagementIndexRoute
   InventoryProductProductIdRoute: typeof InventoryProductProductIdRoute
+  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute
+  ComplianceLgpdIndexRoute: typeof ComplianceLgpdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -634,6 +661,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AestheticSchedulingCertificationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/compliance/lgpd/': {
+      id: '/compliance/lgpd/'
+      path: '/compliance/lgpd'
+      fullPath: '/compliance/lgpd'
+      preLoaderRoute: typeof ComplianceLgpdIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/$patientId/documents': {
+      id: '/patients/$patientId/documents'
+      path: '/patients/$patientId/documents'
+      fullPath: '/patients/$patientId/documents'
+      preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/inventory/product/$productId': {
       id: '/inventory/product/$productId'
       path: '/inventory/product/$productId'
@@ -688,6 +729,8 @@ const rootRouteChildren: RootRouteChildren = {
   InventoryIndexRoute: InventoryIndexRoute,
   PatientEngagementIndexRoute: PatientEngagementIndexRoute,
   InventoryProductProductIdRoute: InventoryProductProductIdRoute,
+  PatientsPatientIdDocumentsRoute: PatientsPatientIdDocumentsRoute,
+  ComplianceLgpdIndexRoute: ComplianceLgpdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -41,9 +41,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      // Core packages with critical shared and types
-      "@neonpro/shared": ["./packages/shared/src"],
-      "@neonpro/shared/*": ["./packages/shared/src/*"],
+      // Core packages with critical types
       "@neonpro/types": ["./packages/types/src"],
       "@neonpro/types/*": ["./packages/types/src/*"],
       // Core packages that exist based on git status
@@ -69,7 +67,6 @@
   "references": [
     // Critical packages first
     { "path": "./packages/types" },
-    { "path": "./packages/shared" },
     // Existing packages based on current project structure
     { "path": "./packages/database" },
     { "path": "./packages/ui" },

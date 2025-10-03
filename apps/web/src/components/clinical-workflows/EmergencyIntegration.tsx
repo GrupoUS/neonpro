@@ -1,10 +1,10 @@
 /**
  * Aesthetic Treatment Coordination Component
- * 
+ *
  * Sistema de coordenação de tratamentos estéticos para clínicas brasileiras
  * Protocolos de atendimento profissional, notificação de equipe e conformidade regulatória
- * 
- * @component AestheticTreatmentCoordination
+ *
+ * @type {React.FC<AestheticTreatmentCoordinationProps>}
  */
 
 'use client'
@@ -18,7 +18,6 @@ import { AccessibilityProvider } from '@/components/ui/accessibility-provider'
 import { HealthcareFormGroup } from '@/components/ui/healthcare-form-group'
 import { AccessibilityInput } from '@/components/ui/accessibility-input'
 import { MobileHealthcareButton } from '@neonpro/ui'
-import { ScreenReaderAnnouncer } from '@neonpro/ui'
 
 import {
   AestheticTreatmentAlert,
@@ -124,11 +123,11 @@ const getContactConfiguration = (contactConfig?: ContactConfiguration): ContactC
   }
 
   const validatedConfig: ContactConfiguration = {}
-  Object.entries(mergedConfig).forEach(([key, value]) => {
+  for (const [key, value] of Object.entries(mergedConfig)) {
     if (typeof value === 'string' && validateBrazilianPhone(value)) {
       validatedConfig[key as keyof ContactConfiguration] = value
     }
-  })
+  }
 
   return validatedConfig
 }
@@ -443,7 +442,10 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
       })
 
       // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Solicitação de tratamento criada com sucesso')
+      const announcement = document.getElementById('screen-reader-announcements')
+      if (announcement) {
+        announcement.textContent = 'Solicitação de tratamento criada com sucesso'
+      }
       
       // Switch to alerts tab
       setActiveTab('alerts')
@@ -468,7 +470,10 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
           setCountdownTime(0)
         }
 
-        ScreenReaderAnnouncer.announce('Status da solicitação atualizado com sucesso')
+      const announcement = document.getElementById('screen-reader-announcements')
+      if (announcement) {
+        announcement.textContent = 'Status da solicitação atualizado com sucesso'
+      }
       } catch (error) {
         console.error('Error updating alert status:', error)
       } finally {
@@ -487,7 +492,10 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
       }
 
       // Announce for screen readers
-      ScreenReaderAnnouncer.announce('Protocolo de tratamento ativado com sucesso')
+      const announcement = document.getElementById('screen-reader-announcements')
+      if (announcement) {
+        announcement.textContent = 'Protocolo de tratamento ativado com sucesso'
+      }
     } catch (error) {
       console.error('Error activating protocol:', error)
     } finally {
@@ -537,6 +545,13 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
   return (
     <AccessibilityProvider>
       <div className={`max-w-6xl mx-auto p-4 ${className}`}>
+        {/* Screen reader announcements for accessibility */}
+        <div
+          id="screen-reader-announcements"
+          aria-live="polite"
+          role="status"
+          className="sr-only"
+        />
         {/* Treatment Header */}
         <Card className="mb-6 border-purple-200 bg-purple-50">
           <CardHeader>
@@ -590,7 +605,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <MobileHealthcareButton
-                variant="treatment"
+                variant="medical"
                 size="lg"
                 onClick={() => handleContactSupport('specialist')}
                 className="w-full"
@@ -598,7 +613,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                 👨‍⚕️ Especialista
               </MobileHealthcareButton>
               <MobileHealthcareButton
-                variant="treatment"
+                variant="medical"
                 size="lg"
                 onClick={() => handleContactSupport('technical')}
                 className="w-full"
@@ -606,7 +621,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                 🔧 Suporte Técnico
               </MobileHealthcareButton>
               <MobileHealthcareButton
-                variant="treatment"
+                variant="medical"
                 size="lg"
                 onClick={() => handleContactSupport('clinic')}
                 className="w-full"
@@ -673,7 +688,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <HealthcareFormGroup label="Tipo de Solicitação" context={healthcareContext}>
+                  <HealthcareFormGroup label="Tipo de Solicitação">
                     <select
                       value={newAlert.type}
                       onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
@@ -688,7 +703,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                       ))}
                     </select>
                   </HealthcareFormGroup>
-                  <HealthcareFormGroup label="Prioridade" context={healthcareContext}>
+                  <HealthcareFormGroup label="Prioridade">
                     <select
                       value={newAlert.priority}
                       onChange={(event: React.ChangeEvent<HTMLSelectElement>) =>
@@ -708,7 +723,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   </HealthcareFormGroup>
                 </div>
 
-                <HealthcareFormGroup label="Localização" context={healthcareContext}>
+                <HealthcareFormGroup label="Localização">
                   <AccessibilityInput
                     value={newAlert.location}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
@@ -718,7 +733,7 @@ export const AestheticTreatmentCoordination: React.FC<AestheticTreatmentCoordina
                   />
                 </HealthcareFormGroup>
 
-                <HealthcareFormGroup label="Descrição" context={healthcareContext}>
+                <HealthcareFormGroup label="Descrição">
                   <textarea
                     value={newAlert.description}
                     onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
@@ -825,16 +840,24 @@ const AlertCard: React.FC<{
         'border-gray-200 hover:border-gray-300'
       }`}
       onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <Badge variant={(typeInfo?.color as any) || 'secondary'}>
+          <Badge variant={typeInfo?.color as 'default' | 'secondary' | 'destructive' | 'outline' || 'secondary'}>
             {typeInfo?.label || alert.type}
           </Badge>
-          <Badge variant={(priorityInfo?.color as any) || 'secondary'}>
+          <Badge variant={priorityInfo?.color as 'default' | 'secondary' | 'destructive' | 'outline' || 'secondary'}>
             {priorityInfo?.label || alert.priority}
           </Badge>
-          <Badge variant={(statusStyles[alert.status]?.color as any) || 'secondary'}>
+          <Badge variant={statusStyles[alert.status]?.color as 'default' | 'secondary' | 'destructive' | 'outline' || 'secondary'}>
             {statusStyles[alert.status]?.label ?? alert.status}
           </Badge>
         </div>

@@ -84,7 +84,7 @@ export const SignUpFormSimple: React.FC<SignUpFormProps> = ({
     const sanitizeInput = (input: string): string => {
       // Remove potential XSS and injection characters
       return input
-        .replace(/[<>\"'`&]/g, '') // Remove dangerous characters
+        .replace(/[<>"`&]/g, '') // Remove dangerous characters
         .trim()
     }
 
@@ -167,7 +167,7 @@ export const SignUpFormSimple: React.FC<SignUpFormProps> = ({
       } else {
         // Enhanced license validation based on profession
         const sanitizedLicense = sanitizeInput(formData.license)
-        if (!/^[A-Z0-9\s\.\-\,\/]+$/.test(sanitizedLicense)) {
+        if (!/^[A-Z0-9\s.\-,/]+$/.test(sanitizedLicense)) {
           errors.license = 'Registro profissional contém caracteres inválidos'
         }
         
