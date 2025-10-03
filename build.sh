@@ -7,16 +7,14 @@ echo "🚀 NeonPro Simplified Build - Starting..."
 echo "📥 Installing dependencies with Bun..."
 bun install
 
-# Apply tRPC v11 patch
+# Apply tRPC v11 patch to ALL files that import isObject
 echo "🔧 Applying tRPC v11 compatibility patch..."
-TRPC_FILE="node_modules/@trpc/react-query/dist/getQueryKey-BY58RNzP.mjs"
-if [ -f "$TRPC_FILE" ]; then
-    sed -i '/from "@trpc\/server\/unstable-core-do-not-import"/d' "$TRPC_FILE"
-    sed -i '2a\\n// Inline isObject function\nfunction isObject(value) {\n  return value !== null && typeof value === "object";\n}' "$TRPC_FILE"
-    echo "✅ tRPC patch applied"
-else
-    echo "⚠️ tRPC file not found, skipping patch"
-fi
+find node_modules/@trpc -name "*.mjs" -type f -exec grep -l 'from "@trpc/server/unstable-core-do-not-import"' {} \; | while read -r file; do
+    echo "Patching: $file"
+    sed -i '/from "@trpc\/server\/unstable-core-do-not-import"/d' "$file"
+    sed -i '2a\\n// Inline isObject function\nfunction isObject(value) {\n  return value !== null && typeof value === "object";\n}' "$file"
+done
+echo "✅ tRPC patches applied to all files"
 
 # Build only the frontend web app
 echo "🏗️ Building frontend web app..."
