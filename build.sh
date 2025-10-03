@@ -3,9 +3,9 @@ set -e
 
 echo "🚀 NeonPro Simplified Build - Starting..."
 
-# Install dependencies
-echo "📥 Installing dependencies with Bun..."
-bun install
+# Install dependencies with npm (more stable on Vercel)
+echo "📥 Installing dependencies with npm..."
+npm install --legacy-peer-deps
 
 # Apply tRPC v11 patch to ALL files that import isObject
 echo "🔧 Applying tRPC v11 compatibility patch..."
@@ -19,7 +19,7 @@ echo "✅ tRPC patches applied to all files"
 # Build only the frontend web app
 echo "🏗️ Building frontend web app..."
 cd apps/web
-bun run build
+npm run build
 cd ../..
 
 # Validate output
