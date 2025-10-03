@@ -18,7 +18,7 @@ bun install
 
 # Apply manual patch to fix tRPC v11 import issue
 echo "🔧 Applying manual patch to fix tRPC v11 import issue..."
-sed -i 's|from "@trpc/server/unstable-core-do-not-import"|from "@trpc/server"|g' node_modules/@trpc/react-query/dist/getQueryKey-BY58RNzP.mjs
+sed -i 's|from "@trpc/server/unstable-core-do-not-import"|from "@trpc/server/dist/getCauseFromUnknown-2d66414a.mjs"|g' node_modules/@trpc/react-query/dist/getQueryKey-BY58RNzP.mjs
 echo "✅ Patch applied successfully"
 
 # Build the frontend web app
