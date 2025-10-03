@@ -8,9 +8,12 @@
 !build.sh
 !vercel.json
 
-# Include UI package dependencies
+# Include all packages
 !packages/ui
 !packages/types
+!packages/database
+!packages/core
+!packages/config
 
 # Include web app
 !apps/web
