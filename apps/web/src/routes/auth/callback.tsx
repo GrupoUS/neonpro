@@ -8,8 +8,8 @@
  * @author NeonPro Platform Team
  */
 
-import { getNextRedirectFromCallback } from '@/lib/site-url.ts'
-import { createSupabaseClient } from '@/lib/supabase/client.ts'
+import { getNextRedirectFromCallback } from '@/lib/site-url'
+import supabase from '@/integrations/supabase/client'
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect } from 'react'
 
@@ -20,11 +20,11 @@ export const Route = createFileRoute('/auth/callback')({
 function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
-      const supabase = createSupabaseClient()
+      // Use o cliente Supabase compartilhado (singleton)
 
       try {
         // Exchange code for session
-        const { data, error } = await supabase.auth.exchangeCodeForSession(
+        const { error } = await supabase.auth.exchangeCodeForSession(
           window.location.href
         )
 

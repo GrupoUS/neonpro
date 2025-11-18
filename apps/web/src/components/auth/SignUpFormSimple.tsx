@@ -1,5 +1,5 @@
-import { useSignUp } from '@/hooks/useAuth.ts'
-
+import { useState, useEffect, useRef } from 'react'
+import { useSignUp } from '@/hooks/useAuth'
 
 // Add a local ProfessionType union that matches the option values used below.
 // Include '' so the initial empty string cast remains valid.

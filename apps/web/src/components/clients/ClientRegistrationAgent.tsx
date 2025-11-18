@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select.tsx'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
 import { Textarea } from '@/components/ui/textarea.tsx'
-import { createClient } from '@/integrations/supabase/client'
+import supabase from '@/integrations/supabase/client'
 import { useCoAgent, useCopilotAction } from '@copilotkit/react-core'
 import {
   AlertCircle,
@@ -152,8 +152,6 @@ export const ClientRegistrationAgent: React.FC<
   const [isProcessing, setIsProcessing] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
   const [ocrProcessing, setOcrProcessing] = useState(false)
-
-  const supabase = createClient()
 
   // Form steps
   const formSteps = [

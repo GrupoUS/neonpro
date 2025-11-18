@@ -25,7 +25,6 @@ import {
 // import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from '@/components/ui/progress.tsx'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
-import { createClient } from '@/integrations/supabase/client'
 import { cn } from '@/lib/utils.ts'
 import {
   Activity,
@@ -238,8 +237,6 @@ export const ClientProfileManagement: React.FC = () => {
       },
     },
   })
-
-  const _supabase = createClient()
 
   // Load client data
   useEffect(() => {

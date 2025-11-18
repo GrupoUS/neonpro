@@ -1,7 +1,7 @@
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { CopilotKitProvider } from './providers/CopilotKitProvider'
+// import { CopilotKitProvider } from './providers/CopilotKitProvider' // DESABILITADO - Recurso opcional de IA
 import { RealtimeQueryProvider } from './providers/RealtimeQueryProvider'
 import { AuthProvider } from './contexts/AuthContext'
 import { routeTree } from './routeTree.gen'
@@ -26,12 +26,11 @@ if (!rootElement) {
 const root = createRoot(rootElement)
 root.render(
   <StrictMode>
-    <RealtimeQueryProvider>
-      <CopilotKitProvider>
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
-      </CopilotKitProvider>
-    </RealtimeQueryProvider>
+    <AuthProvider>
+      <RealtimeQueryProvider>
+        {/* CopilotKitProvider desabilitado - Recurso opcional de IA */}
+        <RouterProvider router={router} />
+      </RealtimeQueryProvider>
+    </AuthProvider>
   </StrictMode>,
 )

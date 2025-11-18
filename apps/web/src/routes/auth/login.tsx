@@ -9,16 +9,17 @@
  * @author NeonPro Platform Team
  */
 
-import { createFileRoute, Navigate } from '@tanstack/react-router'
+import { createFileRoute, Navigate, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useAuth } from '@/contexts/AuthContext.tsx'
-import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index.ts'
+import { useAuth } from '@/contexts/AuthContext'
+import { Button, Input, Card, CardContent, CardDescription, CardHeader, CardTitle, Alert, AlertDescription } from '@/components/ui/index'
 
 export const Route = createFileRoute('/auth/login')({
   component: LoginPage,
 })
 
 function LoginPage() {
+  const navigate = useNavigate()
   const { signIn, signInWithOAuth, isAuthenticated, isLoading } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -40,15 +41,24 @@ function LoginPage() {
     setError(null)
 
     try {
+      console.log('🔐 Iniciando login...', { email })
       const result = await signIn({ email, password })
-      
+      console.log('✅ Resultado do login:', result)
+
       if (result.error) {
+        console.error('❌ Erro no login:', result.error)
         setError(result.error.message)
+        setLoading(false)
+      } else {
+        console.log('✅ Login bem-sucedido! Redirecionando...')
+        // Aguardar um pouco antes de redirecionar para o AuthContext atualizar
+        setTimeout(() => {
+          navigate({ to: '/dashboard' })
+        }, 500)
       }
-      // Success redirect handled by AuthContext
     } catch (err) {
+      console.error('❌ Exceção no login:', err)
       setError('Erro inesperado durante o login')
-    } finally {
       setLoading(false)
     }
   }
@@ -58,8 +68,11 @@ function LoginPage() {
     setError(null)
 
     try {
-      const result = await signInWithOAuth('google', '/dashboard')
-      
+      const result = await signInWithOAuth({
+        provider: 'google',
+        redirectTo: '/dashboard'
+      })
+
       if (result.error) {
         setError(result.error.message)
         setLoading(false)
@@ -102,8 +115,7 @@ function LoginPage() {
           <Button
             onClick={handleGoogleLogin}
             disabled={loading}
-            variant="neonpro-medical"
-            size="touch"
+            variant="outline"
             className="w-full"
           >
             {loading ? 'Carregando...' : 'Continuar com Google'}
@@ -157,8 +169,7 @@ function LoginPage() {
             <Button
               type="submit"
               disabled={loading}
-              variant="neonpro"
-              size="touch"
+              variant="default"
               className="w-full"
             >
               {loading ? 'Entrando...' : 'Entrar com Email'}

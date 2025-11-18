@@ -165,24 +165,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: SupabaseSession | null) => {
-        // Log para auditoria LGPD
-        if (event === 'SIGNED_IN' && session?.user) {
-          // Criar registro de audit log
-          try {
-            await supabase.from('audit_logs').insert({
-              table_name: 'auth.users',
-              record_id: session.user.id,
-              action: 'SIGN_IN',
-              user_id: session.user.id,
-              phi_accessed: false,
-            })
-          } catch (error) {
-            console.error('Failed to create audit log:', error)
-          }
-        } else if (event === 'SIGNED_OUT') {
-        }
+        console.log('🔔 Auth State Change Event:', event, session ? 'Session exists' : 'No session')
 
+        // Log para auditoria LGPD - TEMPORARIAMENTE DESABILITADO PARA DEBUG
+        // if (event === 'SIGNED_IN' && session?.user) {
+        //   // Criar registro de audit log
+        //   try {
+        //     await supabase.from('audit_logs').insert({
+        //       table_name: 'auth.users',
+        //       record_id: session.user.id,
+        //       action: 'SIGN_IN',
+        //       user_id: session.user.id,
+        //       phi_accessed: false,
+        //     })
+        //   } catch (error) {
+        //     console.error('Failed to create audit log:', error)
+        //   }
+        // } else if (event === 'SIGNED_OUT') {
+        // }
+
+        console.log('🔔 Atualizando auth state...')
         updateAuthState(session)
+        console.log('🔔 Auth state atualizado!')
       },
     )
 
@@ -290,14 +294,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
    */
   const signIn = async (credentials: AuthCredentials): Promise<{ error?: AuthError }> => {
     try {
+      console.log('🔑 AuthContext.signIn iniciando...')
       setAuthState(prev => ({ ...prev, isLoading: true }))
 
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('🔑 Chamando supabase.auth.signInWithPassword...')
+
+      // Adicionar timeout de 10 segundos para detectar travamento
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('Login timeout - conexão demorou mais de 10 segundos')), 10000)
+      })
+
+      const loginPromise = supabase.auth.signInWithPassword({
         email: credentials.email,
         password: credentials.password,
       })
 
+      const { error } = await Promise.race([loginPromise, timeoutPromise])
+      console.log('🔑 Resposta do Supabase:', { error })
+
       if (error) {
+        console.error('🔑 Erro do Supabase:', error)
         return {
           error: {
             code: error.message,
@@ -307,9 +323,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       }
 
+      console.log('🔑 Login bem-sucedido no AuthContext')
       return {}
     } catch (err) {
-      console.error('SignIn error:', err)
+      console.error('🔑 SignIn error:', err)
       return {
         error: {
           code: 'SIGNIN_ERROR',
@@ -318,6 +335,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         },
       }
     } finally {
+      console.log('🔑 Finally - resetando isLoading')
       setAuthState(prev => ({ ...prev, isLoading: false }))
     }
   }

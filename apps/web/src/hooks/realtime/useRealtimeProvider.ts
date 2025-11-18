@@ -1,6 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
-import type { SupabaseClient } from '@supabase/supabase-js'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import supabase from '@/integrations/supabase/client'
 
 /**
  * Realtime Provider Hook
@@ -15,34 +14,24 @@ export interface RealtimeProviderReturn {
   error: string | null
 }
 
-export function useRealtimeProvider(
-  supabaseUrl?: string,
-  supabaseKey?: string,
-): RealtimeProviderReturn {
+export function useRealtimeProvider(): RealtimeProviderReturn {
   const [isConnected, setIsConnected] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState<
     'connecting' | 'connected' | 'disconnected' | 'error'
   >('disconnected')
   const [error, setError] = useState<string | null>(null)
 
-  // Memoize Supabase client so it is stable across renders and can be used in deps
-  const supabase = useMemo(
-    () =>
-      createClient(
-        supabaseUrl || import.meta.env.VITE_SUPABASE_URL,
-        supabaseKey || import.meta.env.VITE_SUPABASE_ANON_KEY,
-      ) as SupabaseClient,
-    [supabaseUrl, supabaseKey],
-  )
+  // Use o cliente Supabase compartilhado (NÃO criar nova instância!)
+  const supabaseClient = supabase
 
   // Wrap reconnect in useCallback so it is stable and can be referenced safely in useEffect deps
   const reconnect = useCallback(() => {
     setConnectionStatus('connecting')
     setError(null)
     // Reinitialize realtime connection
-    supabase.removeAllChannels()
+    supabaseClient.removeAllChannels()
     // Trigger a simple channel to test connection
-    const testChannel = supabase.channel('connection-test')
+    const testChannel = supabaseClient.channel('connection-test')
     testChannel.subscribe(status => {
       if (status === 'SUBSCRIBED') {
         setIsConnected(true)
@@ -56,15 +45,18 @@ export function useRealtimeProvider(
         setConnectionStatus('error')
       }
     })
-  }, [supabase])
+  }, [supabaseClient])
 
   useEffect(() => {
-    reconnect()
+    // DESABILITADO: Não conectar automaticamente ao Realtime durante inicialização
+    // Isso pode interferir com o processo de autenticação
+    // A conexão será estabelecida manualmente após o login bem-sucedido
+    // reconnect()
 
     return () => {
-      supabase.removeAllChannels()
+      supabaseClient.removeAllChannels()
     }
-  }, [reconnect, supabase])
+  }, [supabaseClient])
 
   return {
     isConnected,

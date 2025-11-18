@@ -8,12 +8,12 @@ extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
-port = 54322
+port = 5433
 major_version = 15
 
 [studio]
 enabled = true
-port = 54324
+port = 5434
 
 [realtime]
 enabled = true

@@ -55,7 +55,6 @@ import { Button } from '@/components/ui/button.tsx'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx'
 import { Progress } from '@/components/ui/progress.tsx'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx'
-import { createClient } from '@/integrations/supabase/client'
 import { useCoAgent, useCopilotAction } from '@copilotkit/react-core'
 import {
   AlertTriangle,
@@ -239,8 +238,6 @@ export const ClientManagementDashboard: React.FC = () => {
   const [selectedTimeRange, setSelectedTimeRange] = useState<
     '7d' | '30d' | '90d' | '1y'
   >('30d')
-
-  const _supabase = createClient()
 
   // CopilotKit integration
   const { state: _state, setState } = useCoAgent({
