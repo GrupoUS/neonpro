@@ -3,9 +3,9 @@
   "version": 2,
   "regions": ["gru1"],
   "framework": "vite",
-  "buildCommand": "bash build.sh",
+  "buildCommand": "cd apps/web && bun run build",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "echo 'Skipping install - handled by build script'",
+  "installCommand": "bun install",
   "rewrites": [
     {
       "source": "/(.*)",
