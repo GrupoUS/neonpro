@@ -1,4 +1,4 @@
-import app from './app';
+import { app } from './server';
 
 // Development server for local runs using Bun's native server
 // Bun.serve() configuration for development with hot reload support

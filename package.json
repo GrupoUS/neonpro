@@ -51,6 +51,9 @@
   "author": "NeonPro Development Team",
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "5.22.0",
+    "@tanstack/history": "1.139.0",
+    "@tanstack/router-core": "1.139.14",
     "dotenv": "^17.2.2",
     "lodash.debounce": "^4.0.8",
     "turbo": "^2.6.1"
@@ -58,10 +61,13 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^24.4.0",
+    "@vitejs/plugin-react": "5.1.1",
     "@vitest/ui": "^3.2.4",
     "bun": "^1.2.22",
     "oxlint": "^1.15.0",
     "typescript": "^5.9.2",
+    "vite": "7.2.6",
+    "vite-tsconfig-paths": "5.1.4",
     "vitest": "^3.2.4"
   }
 }

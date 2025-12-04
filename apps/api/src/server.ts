@@ -15,6 +15,9 @@ import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
 // Create Hono app
 const app = new Hono()
 
+// Export app for index.ts
+export { app }
+
 // Middleware
 app.use('*', logger())
 app.use('*', cors({

@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "types": "src/index.ts",
   "scripts": {
-    "build": "bun run build",
+    "build": "echo 'No build needed for config package'",
     "test": "vitest",
     "clean": "rm -rf dist"
   },

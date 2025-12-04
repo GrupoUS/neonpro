@@ -10,7 +10,7 @@
     "build": "tsup src/index.ts --format esm --target esnext --clean",
     "start": "node dist/index.js",
     "prepare": "echo 'prepare script temporarily disabled for workspace install'",
-    "postinstall": "prisma generate --schema ../../packages/database/prisma/schema.prisma",
+    "postinstall": "echo 'postinstall temporarily disabled - run bun prisma:generate manually'",
     "type-check": "tsc --noEmit",
     "test": "vitest --run",
     "test:watch": "vitest",
