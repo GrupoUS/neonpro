@@ -39,6 +39,7 @@
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
     "@tanstack/react-router": "^1.132.7",
+    "@tanstack/react-store": "0.8.0",
     "@trpc/client": "10.45.2",
     "@trpc/react-query": "10.45.2",
     "@trpc/server": "10.45.2",
@@ -70,6 +71,8 @@
     "sonner": "^2.0.7",
     "superjson": "^2.2.1",
     "tailwind-merge": "^3.3.1",
+    "tiny-invariant": "1.3.3",
+    "tiny-warning": "1.0.3",
     "zod": "^4.1.11"
   },
   "devDependencies": {

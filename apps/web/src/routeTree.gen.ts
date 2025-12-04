@@ -12,10 +12,19 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TreatmentPlans_rootRouteImport } from './routes/treatment-plans/__root'
 import { Route as AiClinicalSupport_rootRouteImport } from './routes/ai-clinical-support/__root'
 import { Route as AestheticScheduling_rootRouteImport } from './routes/aesthetic-scheduling/__root'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
+import { Route as PatientEngagementIndexRouteImport } from './routes/patient-engagement/index'
+import { Route as InventoryIndexRouteImport } from './routes/inventory/index'
+import { Route as FinancialManagementIndexRouteImport } from './routes/financial-management/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as CoordinationIndexRouteImport } from './routes/coordination/index'
+import { Route as ComplianceIndexRouteImport } from './routes/compliance/index'
+import { Route as AnalyticsIndexRouteImport } from './routes/analytics/index'
 import { Route as PatientsIdRouteImport } from './routes/patients.$id'
+import { Route as InventoryNewProductRouteImport } from './routes/inventory/new-product'
+import { Route as AuthSignupRouteImport } from './routes/auth/signup'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AiClinicalSupportRecommendationsRouteImport } from './routes/ai-clinical-support/recommendations'
@@ -47,76 +56,71 @@ const AestheticScheduling_rootRoute =
     id: '/aesthetic-scheduling/__root',
     getParentRoute: () => rootRouteImport,
   } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ComprehensiveButtonTestRoute = ComprehensiveButtonTestRouteImport.update({
-  id: '/comprehensive-button-test',
-  path: '/comprehensive-button-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientsRoute = ClientsRouteImport.update({
-  id: '/clients',
-  path: '/clients',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ButtonTestRoute = ButtonTestRouteImport.update({
-  id: '/button-test',
-  path: '/button-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BentoGridTestRoute = BentoGridTestRouteImport.update({
-  id: '/bento-grid-test',
-  path: '/bento-grid-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AppointmentsRoute = AppointmentsRouteImport.update({
-  id: '/appointments',
-  path: '/appointments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiTestRoute = ApiTestRouteImport.update({
-  id: '/api-test',
-  path: '/api-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnimationValidationSuiteRoute =
-  AnimationValidationSuiteRouteImport.update({
-    id: '/animation-validation-suite',
-    path: '/animation-validation-suite',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const AiChatRoute = AiChatRouteImport.update({
-  id: '/ai-chat',
-  path: '/ai-chat',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdvancedAnimationsTestRoute = AdvancedAnimationsTestRouteImport.update({
-  id: '/advanced-animations-test',
-  path: '/advanced-animations-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const R404Route = R404RouteImport.update({
-  id: '/404',
-  path: '/404',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
-  id: '/$patientId',
-  path: '/$patientId',
-  getParentRoute: () => PatientsRoute,
+const PatientEngagementIndexRoute = PatientEngagementIndexRouteImport.update({
+  id: '/patient-engagement/',
+  path: '/patient-engagement/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryIndexRoute = InventoryIndexRouteImport.update({
+  id: '/inventory/',
+  path: '/inventory/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FinancialManagementIndexRoute =
+  FinancialManagementIndexRouteImport.update({
+    id: '/financial-management/',
+    path: '/financial-management/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CoordinationIndexRoute = CoordinationIndexRouteImport.update({
+  id: '/coordination/',
+  path: '/coordination/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ComplianceIndexRoute = ComplianceIndexRouteImport.update({
+  id: '/compliance/',
+  path: '/compliance/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsIndexRoute = AnalyticsIndexRouteImport.update({
+  id: '/analytics/',
+  path: '/analytics/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsIdRoute = PatientsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => PatientsRoute,
+  id: '/patients/$id',
+  path: '/patients/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InventoryNewProductRoute = InventoryNewProductRouteImport.update({
+  id: '/inventory/new-product',
+  path: '/inventory/new-product',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthSignupRoute = AuthSignupRouteImport.update({
+  id: '/auth/signup',
+  path: '/auth/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
   id: '/auth/confirm',
@@ -220,7 +224,6 @@ const InventoryProductProductIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/aesthetic-scheduling': typeof AestheticScheduling_rootRoute
   '/aesthetic-scheduling/certification': typeof AestheticSchedulingCertificationRoute
   '/aesthetic-scheduling/contraindications': typeof AestheticSchedulingContraindicationsRoute
@@ -237,8 +240,20 @@ export interface FileRoutesByFullPath {
   '/ai-clinical-support/recommendations': typeof AiClinicalSupportRecommendationsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/inventory/new-product': typeof InventoryNewProductRoute
   '/patients/$id': typeof PatientsIdRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/treatment-plans': typeof TreatmentPlans_rootRoute
+  '/analytics': typeof AnalyticsIndexRoute
+  '/compliance': typeof ComplianceIndexRoute
+  '/coordination': typeof CoordinationIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/financial-management': typeof FinancialManagementIndexRoute
+  '/inventory': typeof InventoryIndexRoute
+  '/patient-engagement': typeof PatientEngagementIndexRoute
+  '/inventory/product/$productId': typeof InventoryProductProductIdRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/compliance/lgpd': typeof ComplianceLgpdIndexRoute
 }
@@ -260,15 +275,26 @@ export interface FileRoutesByTo {
   '/ai-clinical-support/recommendations': typeof AiClinicalSupportRecommendationsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/inventory/new-product': typeof InventoryNewProductRoute
   '/patients/$id': typeof PatientsIdRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/treatment-plans': typeof TreatmentPlans_rootRoute
+  '/analytics': typeof AnalyticsIndexRoute
+  '/compliance': typeof ComplianceIndexRoute
+  '/coordination': typeof CoordinationIndexRoute
+  '/dashboard': typeof DashboardIndexRoute
+  '/financial-management': typeof FinancialManagementIndexRoute
+  '/inventory': typeof InventoryIndexRoute
+  '/patient-engagement': typeof PatientEngagementIndexRoute
+  '/inventory/product/$productId': typeof InventoryProductProductIdRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/compliance/lgpd': typeof ComplianceLgpdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRouteWithChildren
   '/aesthetic-scheduling/__root': typeof AestheticScheduling_rootRoute
   '/aesthetic-scheduling/certification': typeof AestheticSchedulingCertificationRoute
   '/aesthetic-scheduling/contraindications': typeof AestheticSchedulingContraindicationsRoute
@@ -285,8 +311,20 @@ export interface FileRoutesById {
   '/ai-clinical-support/recommendations': typeof AiClinicalSupportRecommendationsRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/signup': typeof AuthSignupRoute
+  '/inventory/new-product': typeof InventoryNewProductRoute
   '/patients/$id': typeof PatientsIdRoute
-  '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/treatment-plans/__root': typeof TreatmentPlans_rootRoute
+  '/analytics/': typeof AnalyticsIndexRoute
+  '/compliance/': typeof ComplianceIndexRoute
+  '/coordination/': typeof CoordinationIndexRoute
+  '/dashboard/': typeof DashboardIndexRoute
+  '/financial-management/': typeof FinancialManagementIndexRoute
+  '/inventory/': typeof InventoryIndexRoute
+  '/patient-engagement/': typeof PatientEngagementIndexRoute
+  '/inventory/product/$productId': typeof InventoryProductProductIdRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/compliance/lgpd/': typeof ComplianceLgpdIndexRoute
 }
@@ -294,7 +332,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/dashboard'
     | '/aesthetic-scheduling'
     | '/aesthetic-scheduling/certification'
     | '/aesthetic-scheduling/contraindications'
@@ -311,8 +348,20 @@ export interface FileRouteTypes {
     | '/ai-clinical-support/recommendations'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/signup'
+    | '/inventory/new-product'
     | '/patients/$id'
-    | '/patients/$patientId'
+    | '/treatment-plans'
+    | '/analytics'
+    | '/compliance'
+    | '/coordination'
+    | '/dashboard'
+    | '/financial-management'
+    | '/inventory'
+    | '/patient-engagement'
+    | '/inventory/product/$productId'
     | '/patients/$patientId/documents'
     | '/compliance/lgpd'
   fileRoutesByTo: FileRoutesByTo
@@ -334,14 +383,25 @@ export interface FileRouteTypes {
     | '/ai-clinical-support/recommendations'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/signup'
+    | '/inventory/new-product'
     | '/patients/$id'
-    | '/patients/$patientId'
+    | '/treatment-plans'
+    | '/analytics'
+    | '/compliance'
+    | '/coordination'
+    | '/dashboard'
+    | '/financial-management'
+    | '/inventory'
+    | '/patient-engagement'
+    | '/inventory/product/$productId'
     | '/patients/$patientId/documents'
     | '/compliance/lgpd'
   id:
     | '__root__'
     | '/'
-    | '/dashboard'
     | '/aesthetic-scheduling/__root'
     | '/aesthetic-scheduling/certification'
     | '/aesthetic-scheduling/contraindications'
@@ -358,15 +418,26 @@ export interface FileRouteTypes {
     | '/ai-clinical-support/recommendations'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/signup'
+    | '/inventory/new-product'
     | '/patients/$id'
-    | '/patients/$patientId'
+    | '/treatment-plans/__root'
+    | '/analytics/'
+    | '/compliance/'
+    | '/coordination/'
+    | '/dashboard/'
+    | '/financial-management/'
+    | '/inventory/'
+    | '/patient-engagement/'
+    | '/inventory/product/$productId'
     | '/patients/$patientId/documents'
     | '/compliance/lgpd/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
   AestheticScheduling_rootRoute: typeof AestheticScheduling_rootRoute
   AestheticSchedulingCertificationRoute: typeof AestheticSchedulingCertificationRoute
   AestheticSchedulingContraindicationsRoute: typeof AestheticSchedulingContraindicationsRoute
@@ -382,14 +453,17 @@ export interface RootRouteChildren {
   AiClinicalSupportPredictionsRoute: typeof AiClinicalSupportPredictionsRoute
   AiClinicalSupportRecommendationsRoute: typeof AiClinicalSupportRecommendationsRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthSignupRoute: typeof AuthSignupRoute
   InventoryNewProductRoute: typeof InventoryNewProductRoute
+  PatientsIdRoute: typeof PatientsIdRoute
   TreatmentPlans_rootRoute: typeof TreatmentPlans_rootRoute
   AnalyticsIndexRoute: typeof AnalyticsIndexRoute
   ComplianceIndexRoute: typeof ComplianceIndexRoute
   CoordinationIndexRoute: typeof CoordinationIndexRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   FinancialManagementIndexRoute: typeof FinancialManagementIndexRoute
   InventoryIndexRoute: typeof InventoryIndexRoute
   PatientEngagementIndexRoute: typeof PatientEngagementIndexRoute
@@ -421,83 +495,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AestheticScheduling_rootRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/comprehensive-button-test': {
-      id: '/comprehensive-button-test'
-      path: '/comprehensive-button-test'
-      fullPath: '/comprehensive-button-test'
-      preLoaderRoute: typeof ComprehensiveButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/clients': {
-      id: '/clients'
-      path: '/clients'
-      fullPath: '/clients'
-      preLoaderRoute: typeof ClientsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/button-test': {
-      id: '/button-test'
-      path: '/button-test'
-      fullPath: '/button-test'
-      preLoaderRoute: typeof ButtonTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bento-grid-test': {
-      id: '/bento-grid-test'
-      path: '/bento-grid-test'
-      fullPath: '/bento-grid-test'
-      preLoaderRoute: typeof BentoGridTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/appointments': {
-      id: '/appointments'
-      path: '/appointments'
-      fullPath: '/appointments'
-      preLoaderRoute: typeof AppointmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api-test': {
-      id: '/api-test'
-      path: '/api-test'
-      fullPath: '/api-test'
-      preLoaderRoute: typeof ApiTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/animation-validation-suite': {
-      id: '/animation-validation-suite'
-      path: '/animation-validation-suite'
-      fullPath: '/animation-validation-suite'
-      preLoaderRoute: typeof AnimationValidationSuiteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/ai-chat': {
-      id: '/ai-chat'
-      path: '/ai-chat'
-      fullPath: '/ai-chat'
-      preLoaderRoute: typeof AiChatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/advanced-animations-test': {
-      id: '/advanced-animations-test'
-      path: '/advanced-animations-test'
-      fullPath: '/advanced-animations-test'
-      preLoaderRoute: typeof AdvancedAnimationsTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/404': {
-      id: '/404'
-      path: '/404'
-      fullPath: '/404'
-      preLoaderRoute: typeof R404RouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -505,19 +502,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/patients/$patientId': {
-      id: '/patients/$patientId'
-      path: '/$patientId'
-      fullPath: '/patients/$patientId'
-      preLoaderRoute: typeof PatientsPatientIdRouteImport
-      parentRoute: typeof PatientsRoute
+    '/patient-engagement/': {
+      id: '/patient-engagement/'
+      path: '/patient-engagement'
+      fullPath: '/patient-engagement'
+      preLoaderRoute: typeof PatientEngagementIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory/': {
+      id: '/inventory/'
+      path: '/inventory'
+      fullPath: '/inventory'
+      preLoaderRoute: typeof InventoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/financial-management/': {
+      id: '/financial-management/'
+      path: '/financial-management'
+      fullPath: '/financial-management'
+      preLoaderRoute: typeof FinancialManagementIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coordination/': {
+      id: '/coordination/'
+      path: '/coordination'
+      fullPath: '/coordination'
+      preLoaderRoute: typeof CoordinationIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compliance/': {
+      id: '/compliance/'
+      path: '/compliance'
+      fullPath: '/compliance'
+      preLoaderRoute: typeof ComplianceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics/': {
+      id: '/analytics/'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/patients/$id': {
       id: '/patients/$id'
-      path: '/$id'
+      path: '/patients/$id'
       fullPath: '/patients/$id'
       preLoaderRoute: typeof PatientsIdRouteImport
-      parentRoute: typeof PatientsRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory/new-product': {
+      id: '/inventory/new-product'
+      path: '/inventory/new-product'
+      fullPath: '/inventory/new-product'
+      preLoaderRoute: typeof InventoryNewProductRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/signup': {
+      id: '/auth/signup'
+      path: '/auth/signup'
+      fullPath: '/auth/signup'
+      preLoaderRoute: typeof AuthSignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/auth/confirm': {
       id: '/auth/confirm'
@@ -629,55 +696,20 @@ declare module '@tanstack/react-router' {
       path: '/patients/$patientId/documents'
       fullPath: '/patients/$patientId/documents'
       preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport
-      parentRoute: typeof PatientsPatientIdRoute
+      parentRoute: typeof rootRouteImport
+    }
+    '/inventory/product/$productId': {
+      id: '/inventory/product/$productId'
+      path: '/inventory/product/$productId'
+      fullPath: '/inventory/product/$productId'
+      preLoaderRoute: typeof InventoryProductProductIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface AppointmentsRouteChildren {
-  AppointmentsNewRoute: typeof AppointmentsNewRoute
-}
-
-const AppointmentsRouteChildren: AppointmentsRouteChildren = {
-  AppointmentsNewRoute: AppointmentsNewRoute,
-}
-
-const AppointmentsRouteWithChildren = AppointmentsRoute._addFileChildren(
-  AppointmentsRouteChildren,
-)
-
-interface PatientsPatientIdRouteChildren {
-  PatientsPatientIdDocumentsRoute: typeof PatientsPatientIdDocumentsRoute
-  PatientsPatientIdEditRoute: typeof PatientsPatientIdEditRoute
-  PatientsPatientIdHistoryRoute: typeof PatientsPatientIdHistoryRoute
-}
-
-const PatientsPatientIdRouteChildren: PatientsPatientIdRouteChildren = {
-  PatientsPatientIdDocumentsRoute: PatientsPatientIdDocumentsRoute,
-  PatientsPatientIdEditRoute: PatientsPatientIdEditRoute,
-  PatientsPatientIdHistoryRoute: PatientsPatientIdHistoryRoute,
-}
-
-const PatientsPatientIdRouteWithChildren =
-  PatientsPatientIdRoute._addFileChildren(PatientsPatientIdRouteChildren)
-
-interface PatientsRouteChildren {
-  PatientsIdRoute: typeof PatientsIdRoute
-  PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
-}
-
-const PatientsRouteChildren: PatientsRouteChildren = {
-  PatientsIdRoute: PatientsIdRoute,
-  PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
-}
-
-const PatientsRouteWithChildren = PatientsRoute._addFileChildren(
-  PatientsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRouteWithChildren,
   AestheticScheduling_rootRoute: AestheticScheduling_rootRoute,
   AestheticSchedulingCertificationRoute: AestheticSchedulingCertificationRoute,
   AestheticSchedulingContraindicationsRoute:
@@ -695,14 +727,17 @@ const rootRouteChildren: RootRouteChildren = {
   AiClinicalSupportPredictionsRoute: AiClinicalSupportPredictionsRoute,
   AiClinicalSupportRecommendationsRoute: AiClinicalSupportRecommendationsRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthSignupRoute: AuthSignupRoute,
   InventoryNewProductRoute: InventoryNewProductRoute,
+  PatientsIdRoute: PatientsIdRoute,
   TreatmentPlans_rootRoute: TreatmentPlans_rootRoute,
   AnalyticsIndexRoute: AnalyticsIndexRoute,
   ComplianceIndexRoute: ComplianceIndexRoute,
   CoordinationIndexRoute: CoordinationIndexRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   FinancialManagementIndexRoute: FinancialManagementIndexRoute,
   InventoryIndexRoute: InventoryIndexRoute,
   PatientEngagementIndexRoute: PatientEngagementIndexRoute,
