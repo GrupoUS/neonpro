@@ -1,55 +1,17 @@
-import { Hono } from 'hono'
-import { cors } from 'hono/cors'
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
-import { appRouter } from './trpc/router.ts'
-import { createContext } from './trpc/context.ts'
+import app from './app';
 
-const app = new Hono()
+// Development server for local runs using Bun's native server
+// Bun.serve() configuration for development with hot reload support
+const port = Number.parseInt(process.env.PORT || '3004', 10);
 
-app.use('*', cors({
-  origin: ['https://*.neonpro.com.br', 'http://localhost:5173'],
-  allowMethods: ['GET', 'POST', 'OPTIONS'],
-  credentials: true,
-}))
+if (process.env.NODE_ENV === 'development') {
+  console.log(`Started development server: http://localhost:${port}`);
+}
 
-app.get('/health', (c) => {
-  return c.json({
-    status: 'ok',
-    region: process.env.VERCEL_REGION ?? 'local',
-    timestamp: Date.now(),
-    lgpdCompliant: true,
-    dataResidency: 'brazil-only'
-  }, {
-    headers: {
-      'X-LGPD-Compliant': 'true',
-      'X-Data-Residency': 'brazil-only',
-      'Cache-Control': 'no-cache'
+// Export Bun server config in development, Hono app otherwise
+export default process.env.NODE_ENV === 'development'
+  ? {
+      port,
+      fetch: app.fetch,
     }
-  })
-})
-
-// Add CORS headers for all responses
-app.use('*', async (c, next) => {
-  await next()
-  c.header('X-LGPD-Compliant', 'true')
-  c.header('X-Data-Residency', 'brazil-only')
-  c.header('X-Response-Time', `${Date.now() - c.get('startTime')}ms`)
-})
-
-// Track start time for response time measurement
-app.use('*', async (c, next) => {
-  c.set('startTime', Date.now())
-  await next()
-})
-
-app.use('/trpc/*', async (c) =>
-  fetchRequestHandler({
-    endpoint: '/trpc',
-    req: c.req.raw,
-    router: appRouter,
-    createContext,
-  }),
-)
-
-export default app
-export const fetch = (request: Request) => app.fetch(request)
+  : app;

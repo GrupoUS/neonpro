@@ -4,117 +4,458 @@
 export interface Database {
   public: {
     Tables: {
-      users: {
+      profiles: {
         Row: {
-          id: string
-          email: string
-          name: string
-          role: 'admin' | 'doctor' | 'receptionist' | 'patient'
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          email: string | null;
+          full_name: string | null;
+          first_name: string | null;
+          last_name: string | null;
+          avatar_url: string | null;
+          professional_title: string | null;
+          medical_license: string | null;
+          department: string | null;
+          phone: string | null;
+          role: string | null;
+          google_provider_id: string | null;
+          google_picture: string | null;
+          google_verified_email: boolean | null;
+          profile_sync_status: string | null;
+          google_sync_enabled: boolean | null;
+          last_google_sync: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+          data_consent_given: boolean | null;
+          lgpd_consent_date: string | null;
+          tenant_id: string | null;
+          clinic_id: string | null;
+          professional_license: string | null;
+          specialty: string[] | null;
+          is_active: boolean;
+          hire_date: string | null;
+          termination_date: string | null;
+          permissions: Json | null;
+          access_level: number | null;
+          can_access_all_patients: boolean | null;
+          restricted_areas: string[] | null;
+          lgpd_consent_given: boolean | null;
+          lgpd_consent_version: string | null;
+          privacy_settings: Json | null;
+          preferred_language: string | null;
+          notification_preferences: Json | null;
+          communication_consent: Json | null;
+          last_login_at: string | null;
+          password_changed_at: string | null;
+          failed_login_attempts: number | null;
+          account_locked_until: string | null;
+          mfa_enabled: boolean | null;
+          deleted_at: string | null;
+          // New subscription fields
+          subscription_plan: string | null;
+          subscription_status: string | null;
+          trial_ends_at: string | null;
+          stripe_customer_id: string | null;
+          stripe_subscription_id: string | null;
+        };
         Insert: {
-          id?: string
-          email: string
-          name: string
-          role: 'admin' | 'doctor' | 'receptionist' | 'patient'
-          created_at?: string
-          updated_at?: string
-        }
+          id: string;
+          email?: string | null;
+          full_name?: string | null;
+          first_name?: string | null;
+          last_name?: string | null;
+          avatar_url?: string | null;
+          professional_title?: string | null;
+          medical_license?: string | null;
+          department?: string | null;
+          phone?: string | null;
+          role?: string | null;
+          google_provider_id?: string | null;
+          google_picture?: string | null;
+          google_verified_email?: boolean | null;
+          profile_sync_status?: string | null;
+          google_sync_enabled?: boolean | null;
+          last_google_sync?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+          data_consent_given?: boolean | null;
+          lgpd_consent_date?: string | null;
+          tenant_id?: string | null;
+          clinic_id?: string | null;
+          professional_license?: string | null;
+          specialty?: string[] | null;
+          is_active?: boolean;
+          hire_date?: string | null;
+          termination_date?: string | null;
+          permissions?: Json | null;
+          access_level?: number | null;
+          can_access_all_patients?: boolean | null;
+          restricted_areas?: string[] | null;
+          lgpd_consent_given?: boolean | null;
+          lgpd_consent_version?: string | null;
+          privacy_settings?: Json | null;
+          preferred_language?: string | null;
+          notification_preferences?: Json | null;
+          communication_consent?: Json | null;
+          last_login_at?: string | null;
+          password_changed_at?: string | null;
+          failed_login_attempts?: number | null;
+          account_locked_until?: string | null;
+          mfa_enabled?: boolean | null;
+          deleted_at?: string | null;
+          // New subscription fields
+          subscription_plan?: string | null;
+          subscription_status?: string | null;
+          trial_ends_at?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+        };
         Update: {
-          id?: string
-          email?: string
-          name?: string
-          role?: 'admin' | 'doctor' | 'receptionist' | 'patient'
-          created_at?: string
-          updated_at?: string
-        }
-      }
+          id?: string;
+          email?: string | null;
+          full_name?: string | null;
+          first_name?: string | null;
+          last_name?: string | null;
+          avatar_url?: string | null;
+          professional_title?: string | null;
+          medical_license?: string | null;
+          department?: string | null;
+          phone?: string | null;
+          role?: string | null;
+          google_provider_id?: string | null;
+          google_picture?: string | null;
+          google_verified_email?: boolean | null;
+          profile_sync_status?: string | null;
+          google_sync_enabled?: boolean | null;
+          last_google_sync?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+          data_consent_given?: boolean | null;
+          lgpd_consent_date?: string | null;
+          tenant_id?: string | null;
+          clinic_id?: string | null;
+          professional_license?: string | null;
+          specialty?: string[] | null;
+          is_active?: boolean;
+          hire_date?: string | null;
+          termination_date?: string | null;
+          permissions?: Json | null;
+          access_level?: number | null;
+          can_access_all_patients?: boolean | null;
+          restricted_areas?: string[] | null;
+          lgpd_consent_given?: boolean | null;
+          lgpd_consent_version?: string | null;
+          privacy_settings?: Json | null;
+          preferred_language?: string | null;
+          notification_preferences?: Json | null;
+          communication_consent?: Json | null;
+          last_login_at?: string | null;
+          password_changed_at?: string | null;
+          failed_login_attempts?: number | null;
+          account_locked_until?: string | null;
+          mfa_enabled?: boolean | null;
+          deleted_at?: string | null;
+          // New subscription fields
+          subscription_plan?: string | null;
+          subscription_status?: string | null;
+          trial_ends_at?: string | null;
+          stripe_customer_id?: string | null;
+          stripe_subscription_id?: string | null;
+        };
+        Relationships: [];
+      };
       patients: {
         Row: {
-          id: string
-          user_id: string
-          full_name: string
-          phone: string
-          date_of_birth: string
-          gender: 'male' | 'female' | 'other'
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          clinic_id: string;
+          medical_record_number: string;
+          external_ids: Json | null;
+          given_names: string[];
+          family_name: string;
+          full_name: string;
+          preferred_name: string | null;
+          phone_primary: string | null;
+          phone_secondary: string | null;
+          email: string | null;
+          address_line1: string | null;
+          address_line2: string | null;
+          city: string | null;
+          state: string | null;
+          postal_code: string | null;
+          country: string | null;
+          birth_date: string | null;
+          gender: string | null;
+          marital_status: string | null;
+          is_active: boolean | null;
+          deceased_indicator: boolean | null;
+          deceased_date: string | null;
+          data_consent_status: string | null;
+          data_consent_date: string | null;
+          data_retention_until: string | null;
+          data_source: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+          created_by: string | null;
+          updated_by: string | null;
+          photo_url: string | null;
+          cpf: string | null;
+          rg: string | null;
+          passport_number: string | null;
+          preferred_contact_method: string | null;
+          blood_type: string | null;
+          allergies: string[];
+          chronic_conditions: string[];
+          current_medications: string[];
+          insurance_provider: string | null;
+          insurance_number: string | null;
+          insurance_plan: string | null;
+          emergency_contact_name: string | null;
+          emergency_contact_phone: string | null;
+          emergency_contact_relationship: string | null;
+          lgpd_consent_given: boolean;
+          lgpd_consent_version: string | null;
+          data_sharing_consent: Json | null;
+          marketing_consent: boolean | null;
+          research_consent: boolean | null;
+          no_show_risk_score: number | null;
+          last_no_show_date: string | null;
+          total_no_shows: number | null;
+          total_appointments: number | null;
+          preferred_appointment_time: string[];
+          communication_preferences: Json | null;
+          patient_status: string | null;
+          registration_source: string | null;
+          last_visit_date: string | null;
+          next_appointment_date: string | null;
+          patient_notes: string | null;
+          nationality: string | null;
+          primary_doctor_id: string | null;
+        };
         Insert: {
-          id?: string
-          user_id: string
-          full_name: string
-          phone: string
-          date_of_birth: string
-          gender: 'male' | 'female' | 'other'
-          created_at?: string
-          updated_at?: string
-        }
+          id?: string;
+          clinic_id: string;
+          medical_record_number: string;
+          external_ids?: Json | null;
+          given_names: string[];
+          family_name: string;
+          full_name: string;
+          preferred_name?: string | null;
+          phone_primary?: string | null;
+          phone_secondary?: string | null;
+          email?: string | null;
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          state?: string | null;
+          postal_code?: string | null;
+          country?: string | null;
+          birth_date?: string | null;
+          gender?: string | null;
+          marital_status?: string | null;
+          is_active?: boolean | null;
+          deceased_indicator?: boolean | null;
+          deceased_date?: string | null;
+          data_consent_status?: string | null;
+          data_consent_date?: string | null;
+          data_retention_until?: string | null;
+          data_source?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+          created_by?: string | null;
+          updated_by?: string | null;
+          photo_url?: string | null;
+          cpf?: string | null;
+          rg?: string | null;
+          passport_number?: string | null;
+          preferred_contact_method?: string | null;
+          blood_type?: string | null;
+          allergies?: string[];
+          chronic_conditions?: string[];
+          current_medications?: string[];
+          insurance_provider?: string | null;
+          insurance_number?: string | null;
+          insurance_plan?: string | null;
+          emergency_contact_name?: string | null;
+          emergency_contact_phone?: string | null;
+          emergency_contact_relationship?: string | null;
+          lgpd_consent_given?: boolean;
+          lgpd_consent_version?: string | null;
+          data_sharing_consent?: Json | null;
+          marketing_consent?: boolean | null;
+          research_consent?: boolean | null;
+          no_show_risk_score?: number | null;
+          last_no_show_date?: string | null;
+          total_no_shows?: number | null;
+          total_appointments?: number | null;
+          preferred_appointment_time?: string[];
+          communication_preferences?: Json | null;
+          patient_status?: string | null;
+          registration_source?: string | null;
+          last_visit_date?: string | null;
+          next_appointment_date?: string | null;
+          patient_notes?: string | null;
+          nationality?: string | null;
+          primary_doctor_id?: string | null;
+        };
         Update: {
-          id?: string
-          user_id?: string
-          full_name?: string
-          phone?: string
-          date_of_birth?: string
-          gender?: 'male' | 'female' | 'other'
-          created_at?: string
-          updated_at?: string
-        }
-      }
-      appointments: {
+          id?: string;
+          clinic_id?: string;
+          medical_record_number?: string;
+          external_ids?: Json | null;
+          given_names?: string[];
+          family_name?: string;
+          full_name?: string;
+          preferred_name?: string | null;
+          phone_primary?: string | null;
+          phone_secondary?: string | null;
+          email?: string | null;
+          address_line1?: string | null;
+          address_line2?: string | null;
+          city?: string | null;
+          state?: string | null;
+          postal_code?: string | null;
+          country?: string | null;
+          birth_date?: string | null;
+          gender?: string | null;
+          marital_status?: string | null;
+          is_active?: boolean | null;
+          deceased_indicator?: boolean | null;
+          deceased_date?: string | null;
+          data_consent_status?: string | null;
+          data_consent_date?: string | null;
+          data_retention_until?: string | null;
+          data_source?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+          created_by?: string | null;
+          updated_by?: string | null;
+          photo_url?: string | null;
+          cpf?: string | null;
+          rg?: string | null;
+          passport_number?: string | null;
+          preferred_contact_method?: string | null;
+          blood_type?: string | null;
+          allergies?: string[];
+          chronic_conditions?: string[];
+          current_medications?: string[];
+          insurance_provider?: string | null;
+          insurance_number?: string | null;
+          insurance_plan?: string | null;
+          emergency_contact_name?: string | null;
+          emergency_contact_phone?: string | null;
+          emergency_contact_relationship?: string | null;
+          lgpd_consent_given?: boolean;
+          lgpd_consent_version?: string | null;
+          data_sharing_consent?: Json | null;
+          marketing_consent?: boolean | null;
+          research_consent?: boolean | null;
+          no_show_risk_score?: number | null;
+          last_no_show_date?: string | null;
+          total_no_shows?: number | null;
+          total_appointments?: number | null;
+          preferred_appointment_time?: string[];
+          communication_preferences?: Json | null;
+          patient_status?: string | null;
+          registration_source?: string | null;
+          last_visit_date?: string | null;
+          next_appointment_date?: string | null;
+          patient_notes?: string | null;
+          nationality?: string | null;
+          primary_doctor_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "patients_clinic_id_fkey";
+            columns: ["clinic_id"];
+            isOneToOne: false;
+            referencedRelation: "clinics";
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+      subscriptions: {
         Row: {
-          id: string
-          patient_id: string
-          doctor_id: string
-          service_id: string
-          scheduled_at: string
-          status:
-            | 'scheduled'
-            | 'confirmed'
-            | 'in_progress'
-            | 'completed'
-            | 'cancelled'
-            | 'no_show'
-          notes?: string
-          created_at: string
-          updated_at: string
-        }
+          id: string;
+          clinic_id: string;
+          customer_id: string;
+          plan_id: string;
+          subscription_code: string;
+          status: string;
+          current_cycle: number | null;
+          total_cycles: number | null;
+          amount: number;
+          currency: string | null;
+          trial_started_at: string | null;
+          trial_ends_at: string | null;
+          current_period_start: string;
+          current_period_end: string;
+          next_billing_date: string | null;
+          cancelled_at: string | null;
+          expires_at: string | null;
+          default_payment_method_id: string | null;
+          proration_behavior: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
         Insert: {
-          id?: string
-          patient_id: string
-          doctor_id: string
-          service_id: string
-          scheduled_at: string
-          status:
-            | 'scheduled'
-            | 'confirmed'
-            | 'in_progress'
-            | 'completed'
-            | 'cancelled'
-            | 'no_show'
-          notes?: string
-          created_at?: string
-          updated_at?: string
-        }
+          id?: string;
+          clinic_id: string;
+          customer_id: string;
+          plan_id: string;
+          subscription_code: string;
+          status?: string;
+          current_cycle?: number | null;
+          total_cycles?: number | null;
+          amount: number;
+          currency?: string | null;
+          trial_started_at?: string | null;
+          trial_ends_at?: string | null;
+          current_period_start: string;
+          current_period_end: string;
+          next_billing_date?: string | null;
+          cancelled_at?: string | null;
+          expires_at?: string | null;
+          default_payment_method_id?: string | null;
+          proration_behavior?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
         Update: {
-          id?: string
-          patient_id?: string
-          doctor_id?: string
-          service_id?: string
-          scheduled_at?: string
-          status?:
-            | 'scheduled'
-            | 'confirmed'
-            | 'in_progress'
-            | 'completed'
-            | 'cancelled'
-            | 'no_show'
-          notes?: string
-          created_at?: string
-          updated_at?: string
-        }
-      }
-    }
-  }
+          id?: string;
+          clinic_id?: string;
+          customer_id?: string;
+          plan_id?: string;
+          subscription_code?: string;
+          status?: string;
+          current_cycle?: number | null;
+          total_cycles?: number | null;
+          amount?: number;
+          currency?: string | null;
+          trial_started_at?: string | null;
+          trial_ends_at?: string | null;
+          current_period_start?: string;
+          current_period_end?: string;
+          next_billing_date?: string | null;
+          cancelled_at?: string | null;
+          expires_at?: string | null;
+          default_payment_method_id?: string | null;
+          proration_behavior?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+    };
+    Views: {
+      [_ in never]: never;
+    };
+    Functions: {
+      [_ in never]: never;
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
+    };
+  };
 }

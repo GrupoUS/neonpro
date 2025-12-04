@@ -34,47 +34,278 @@ export const patientKeys = {
   list: (filters: Record<string, any>) => [...patientKeys.lists(), { filters }] as const,
   details: () => [...patientKeys.all, 'detail'] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
+  search: (clinicId: string, query: string) =>
+    [...patientKeys.all, 'search', clinicId, query] as const,
+  history: (patientId: string) => [...patientKeys.all, 'history', patientId] as const,
+};
+
+/**
+ * Hook to search patients by name or phone
+ */
+export function useSearchPatients(
+  clinicId: string,
+  query: string,
+  options?: Omit<UseQueryOptions<Patient[], Error>, 'queryKey' | 'queryFn'>,
+) {
+  return useQuery({
+    queryKey: patientKeys.search(clinicId, query),
+    queryFn: () => patientService.searchPatients(clinicId, query),
+    staleTime: 30 * 1000, // 30 seconds - patient search should be fresh
+    gcTime: 2 * 60 * 1000, // 2 minutes
+    enabled: !!clinicId && query.length >= 2, // Only search with 2+ characters
+    ...options,
+  });
 }
 
-// Hook for fetching all patients with optional filters
-export function usePatients(filters?: Record<string, any>) {
+/**
+ * Hook to get patient by ID
+ */
+export function usePatient(
+  patientId: string,
+  options?: Omit<UseQueryOptions<Patient | null, Error>, 'queryKey' | 'queryFn'>,
+) {
   return useQuery({
-    queryKey: patientKeys.list(filters || {}),
-    queryFn: async () => {
-      let query = supabase.from('patients').select('*')
+    queryKey: patientKeys.detail(patientId),
+    queryFn: () => patientService.getPatient(patientId),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    enabled: !!patientId,
+    ...options,
+  });
+}
 
-      // Apply filters if provided
-      if (filters?.search) {
-        query = query.ilike('full_name', `%${filters.search}%`)
+/**
+ * Alias for usePatient - more semantic name for detail views
+ */
+export function usePatientDetail(patientId: string) {
+  return usePatient(patientId);
+}
+
+/**
+ * Hook to create new patients
+ */
+export function useCreatePatient() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({ data, clinicId }: { data: CreatePatientData; clinicId: string }) => {
+      if (!user?.id) {
+        throw new Error('User not authenticated');
       }
-
-      if (filters?.status) {
-        query = query.eq('status', filters.status)
-      }
-
-      const { data, error } = await query
-
-      if (error) {
-        throw new Error(`Failed to fetch patients: ${error.message}`)
-      }
-
-      return data as Patient[]
+      return patientService.createPatient(data, clinicId, user.id);
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 30, // 30 minutes
-  })
+
+    onSuccess: (newPatient, { clinicId }) => {
+      // Invalidate patient lists and searches
+      queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: patientKeys.search(clinicId, '') });
+
+      // Add to cache
+      queryClient.setQueryData(patientKeys.detail(newPatient.id), newPatient);
+
+      toast.success('Paciente criado com sucesso!');
+    },
+
+    onError: error => {
+      console.error('Error creating patient:', error);
+      toast.error(error.message || 'Erro ao criar paciente');
+    },
+  });
 }
 
-// Hook for fetching a single patient by ID
-export function usePatient(id: string) {
+/**
+ * Hook for patient search with debouncing
+ */
+export function useDebouncedPatientSearch(clinicId: string, query: string, delay = 300) {
+  const [debouncedQuery, setDebouncedQuery] = React.useState(query);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, delay);
+
+    return () => clearTimeout(timer);
+  }, [query, delay]);
+
+  return useSearchPatients(clinicId, debouncedQuery, {
+    enabled: debouncedQuery.length >= 2,
+  });
+}
+
+/**
+ * Hook to prefetch patient data
+ */
+export function usePrefetchPatients() {
+  const queryClient = useQueryClient();
+
+  const prefetchPatient = (patientId: string) => {
+    queryClient.prefetchQuery({
+      queryKey: patientKeys.detail(patientId),
+      queryFn: () => patientService.getPatient(patientId),
+      staleTime: 5 * 60 * 1000,
+    });
+  };
+
+  const prefetchPatientSearch = (clinicId: string, query: string) => {
+    if (query.length >= 2) {
+      queryClient.prefetchQuery({
+        queryKey: patientKeys.search(clinicId, query),
+        queryFn: () => patientService.searchPatients(clinicId, query),
+        staleTime: 30 * 1000,
+      });
+    }
+  };
+
+  return {
+    prefetchPatient,
+    prefetchPatientSearch,
+  };
+}
+
+/**
+ * Hook to get patient appointment history
+ */
+export function usePatientAppointmentHistory(
+  patientId: string,
+  options?: Omit<
+    UseQueryOptions<
+      ReturnType<typeof patientService.getPatientAppointmentHistory> extends Promise<infer R> ? R
+        : never,
+      Error
+    >,
+    'queryKey' | 'queryFn'
+  >,
+) {
   return useQuery({
-    queryKey: patientKeys.detail(id),
+    queryKey: patientKeys.history(patientId),
+    queryFn: () => patientService.getPatientAppointmentHistory(patientId),
+    staleTime: 2 * 60 * 1000, // 2 minutes - appointment history should be relatively fresh
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!patientId,
+    ...options,
+  });
+}
+
+/**
+ * Enhanced Patient interface for data table
+ */
+export interface PatientTableData extends Patient {
+  status: 'Active' | 'Inactive' | 'Pending';
+  lastVisit?: string;
+  nextAppointment?: string;
+  totalAppointments: number;
+  contactMethod: string;
+  age?: number;
+}
+
+/**
+ * Hook to get paginated patients list with real-time updates
+ */
+export function usePatientsTable(
+  clinicId: string,
+  options?: {
+    pageIndex?: number;
+    pageSize?: number;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+    filters?: {
+      search?: string;
+      status?: string[];
+    };
+  },
+) {
+  const queryClient = useQueryClient();
+  const { pageIndex = 0, pageSize = 10, sortBy = 'full_name', sortOrder = 'asc', filters } = options
+    || {};
+
+  // Set up real-time subscription
+  React.useEffect(() => {
+    if (!clinicId) return;
+
+    const channel = supabase
+      .channel('patients-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'patients',
+          filter: `clinic_id=eq.${clinicId}`,
+        },
+        payload => {
+          console.log('Patient real-time update:', payload);
+
+          // Invalidate queries to refresh data
+          queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
+
+          // Show toast notification for changes
+          switch (payload.eventType) {
+            case 'INSERT':
+              toast.success('Novo paciente adicionado');
+              break;
+            case 'UPDATE':
+              toast.info('Dados do paciente atualizados');
+              break;
+            case 'DELETE':
+              toast.info('Paciente removido');
+              break;
+          }
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [clinicId, queryClient]);
+
+  return useQuery({
+    queryKey: patientKeys.list(clinicId, { pageIndex, pageSize, sortBy, sortOrder, filters }),
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('patients')
-        .select('*')
-        .eq('id', id)
-        .single()
+        .select(
+          `
+          id,
+          full_name,
+          email,
+          phone_primary,
+          birth_date,
+          cpf,
+          patient_status,
+          last_visit_date,
+          next_appointment_date,
+          total_appointments,
+          preferred_contact_method,
+          created_at,
+          is_active
+        `,
+          { count: 'exact' },
+        )
+        .eq('clinic_id', clinicId);
+
+      // Apply search filter
+      if (filters?.search) {
+        query = query.or(
+          `full_name.ilike.%${filters.search}%,email.ilike.%${filters.search}%,phone_primary.ilike.%${filters.search}%`,
+        );
+      }
+
+      // Apply status filter
+      if (filters?.status && filters.status.length > 0) {
+        query = query.in('patient_status', filters.status);
+      }
+
+      // Apply sorting
+      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+
+      // Apply pagination
+      const from = pageIndex * pageSize;
+      const to = from + pageSize - 1;
+      query = query.range(from, to);
+
+      const { data, error, count } = await query;
 
       if (error) {
         throw new Error(`Failed to fetch patient: ${error.message}`)

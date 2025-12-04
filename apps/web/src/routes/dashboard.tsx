@@ -1,318 +1,440 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { NotificationCard } from '@/components';
+import { DraggableDashboard } from '@/components/dashboard/DraggableDashboard';
+import { BentoGridItem } from '@/components/ui/bento-grid';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@neonpro/ui';
+import { Button } from '@neonpro/ui';
 
-export const Route = createFileRoute('/dashboard')({
-  component: Dashboard,
-})
+import { useQuery } from '@tanstack/react-query';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Activity, Bell, Calendar, DollarSign, Settings, TrendingUp, Users } from 'lucide-react';
+import { useEffect, useMemo } from 'react';
 
-function Dashboard() {
-  console.log('🎯 [DASHBOARD] Dashboard carregando com sucesso!')
+import { formatBRL } from '@neonpro/utils';
+
+function DashboardComponent() {
+  const { session, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate(); // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate({ to: '/' as const });
+    }
+  }, [loading, isAuthenticated, navigate]);
+
+  // Clean OAuth hash when session established
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const nextUrl = searchParams.get('next');
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const accessToken = hashParams.get('access_token');
+
+    if (session && accessToken) {
+      const cleanUrl = nextUrl ? decodeURIComponent(nextUrl) : '/dashboard';
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+  }, [session]);
+
+  // Data queries
+  const todayRange = useMemo(() => {
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+    return { start: start.toISOString(), end: end.toISOString() };
+  }, []);
+
+  const { data: appointmentsTodayCount, isLoading: loadingAppt } = useQuery({
+    queryKey: ['appointmentsTodayCount', todayRange],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('appointments')
+        .select('id', { count: 'exact', head: true })
+        .gte('start_time', todayRange.start)
+        .lte('start_time', todayRange.end)
+        .neq('status', 'cancelled');
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const { data: activeClientsCount, isLoading: loadingClients } = useQuery({
+    queryKey: ['activeClientsCount'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('patients')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_active', true);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+
+  const { data: monthlyRevenue, isLoading: loadingRevenue } = useQuery({
+    queryKey: ['monthlyRevenue'],
+    queryFn: async () => {
+      // Sum income transactions for current month
+      const start = new Date();
+      start.setDate(1);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(start);
+      end.setMonth(end.getMonth() + 1);
+      end.setMilliseconds(-1);
+
+      const { data, error } = await supabase
+        .from('financial_transactions')
+        .select('amount, transaction_date, transaction_type')
+        .gte('transaction_date', start.toISOString())
+        .lte('transaction_date', end.toISOString())
+        .eq('transaction_type', 'income');
+      if (error) throw error;
+      const total = (data ?? []).reduce((sum, t: any) => sum + (t?.amount ?? 0), 0);
+      return total;
+    },
+  });
+
+  const sevenDays = useMemo(() => {
+    const end = new Date();
+    end.setHours(23, 59, 59, 999);
+    const start = new Date();
+    start.setDate(start.getDate() - 6);
+    start.setHours(0, 0, 0, 0);
+    return { start: start.toISOString(), end: end.toISOString() };
+  }, []);
+
+  const { data: showRate = 0, isLoading: showRateLoading } = useQuery({
+    queryKey: ['showRate7d', sevenDays],
+    queryFn: async () => {
+      // Try analytics_appointments first if exists, else compute from appointments
+      const { data: analytics, error: aErr } = await supabase
+        .from('analytics_appointments')
+        .select('is_completed, is_no_show, status, start_time')
+        .gte('start_time', sevenDays.start)
+        .lte('start_time', sevenDays.end)
+        .limit(1000);
+
+      if (!aErr && analytics && analytics.length > 0) {
+        const completed = analytics.reduce(
+          (acc: number, r: any) => acc + (r.is_completed ? 1 : 0),
+          0,
+        );
+        const noshow = analytics.reduce((acc: number, r: any) => acc + (r.is_no_show ? 1 : 0), 0);
+        const denom = completed + noshow;
+        return denom > 0 ? completed / denom : 0;
+      }
+
+      // Fallback: use appointments.status
+      const { data: appts, error } = await supabase
+        .from('appointments')
+        .select('status, start_time')
+        .gte('start_time', sevenDays.start)
+        .lte('start_time', sevenDays.end)
+        .limit(1000);
+      if (error) throw error;
+      const relevant = (appts ?? []).filter((a: any) =>
+        ['completed', 'no_show', 'cancelled'].includes(a.status ?? '')
+      );
+      const completed = relevant.filter((a: any) => a.status === 'completed').length;
+      const noshow = relevant.filter((a: any) => a.status === 'no_show').length;
+      const denom = completed + noshow;
+      return denom > 0 ? completed / denom : 0;
+    },
+  });
+
+  const { data: recentActivity, isLoading: loadingActivity } = useQuery({
+    queryKey: ['recentActivity'],
+    queryFn: async () => {
+      // Last 5 appointments and patient registrations merged
+      const [apptRes, patientRes] = await Promise.all([
+        supabase
+          .from('appointments')
+          .select('id, start_time, status, created_at, patient_id, service_type_id')
+          .order('created_at', { ascending: false })
+          .limit(5),
+        supabase
+          .from('patients')
+          .select('id, full_name, created_at')
+          .order('created_at', { ascending: false })
+          .limit(5),
+      ]);
+      if (apptRes.error) throw apptRes.error;
+      if (patientRes.error) throw patientRes.error;
+      const items = [
+        ...(apptRes.data ?? []).map(a => ({
+          type: 'appointment' as const,
+          id: a.id,
+          created_at: a.created_at,
+          label: 'Nova consulta agendada',
+          detail: `${
+            a.start_time
+              ? new Date(a.start_time).toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+              : '00:00'
+          }`,
+        })),
+        ...(patientRes.data ?? []).map(p => ({
+          type: 'patient' as const,
+          id: p.id,
+          created_at: p.created_at,
+          label: 'Novo paciente cadastrado',
+          detail: p.full_name ?? 'Paciente',
+        })),
+      ];
+      return items
+        .filter(x => !!x.created_at)
+        .sort((a, b) => (a.created_at! < b.created_at! ? 1 : -1))
+        .slice(0, 5);
+    },
+  });
+
+  // Dashboard cards configuration - MUST be before any conditional returns to follow React Hooks rules
+  const dashboardCards = useMemo(() => [
+    {
+      id: 'consultas-hoje',
+      defaultLayout: { x: 0, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Consultas Hoje'
+          description={loadingAppt
+            ? 'Carregando...'
+            : `${appointmentsTodayCount} consultas agendadas para hoje`}
+          icon={<Calendar className='h-5 w-5' />}
+          variant='primary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+          emphasis='brand'
+        >
+          <div className='text-3xl font-bold'>
+            {loadingAppt ? '—' : appointmentsTodayCount}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'pacientes-ativos',
+      defaultLayout: { x: 3, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Pacientes Ativos'
+          description={loadingClients
+            ? 'Carregando...'
+            : `${activeClientsCount} pacientes cadastrados e ativos`}
+          icon={<Users className='h-5 w-5' />}
+          variant='secondary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='text-3xl font-bold'>
+            {loadingClients ? '—' : activeClientsCount}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'receita-mensal',
+      defaultLayout: { x: 6, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Receita Mensal'
+          description={loadingRevenue ? 'Carregando...' : `Receita total do mês atual`}
+          icon={<DollarSign className='h-5 w-5' />}
+          variant='accent'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='text-3xl font-bold'>
+            {loadingRevenue ? '—' : formatBRL(monthlyRevenue ?? 0)}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'taxa-presenca',
+      defaultLayout: { x: 9, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Taxa de Presença'
+          description={showRateLoading
+            ? 'Carregando...'
+            : `${(showRate * 100).toFixed(0)}% dos pacientes compareceram nos últimos 7 dias`}
+          icon={<TrendingUp className='h-5 w-5' />}
+          variant='primary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='text-3xl font-bold'>
+            {showRateLoading ? '—' : `${(showRate * 100).toFixed(0)}%`}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'atividade-recente',
+      defaultLayout: { x: 0, y: 3, w: 8, h: 4 },
+      content: (
+        <BentoGridItem
+          title='Atividade Recente'
+          description='Últimas ações na sua clínica'
+          icon={<Activity className='h-5 w-5' />}
+          variant='default'
+          size='lg'
+          enhanced={true}
+          elevation='sm'
+        >
+          <div className='space-y-4 mt-4'>
+            {loadingActivity && <p className='text-xs text-muted-foreground'>Carregando...</p>}
+            {!loadingActivity && (recentActivity?.length ?? 0) === 0 && (
+              <p className='text-xs text-muted-foreground'>Sem atividades recentes.</p>
+            )}
+            {!loadingActivity
+              && (recentActivity ?? []).map((item, idx) => (
+                <div key={item.id + idx} className='flex items-center space-x-4'>
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      item.type === 'appointment' ? 'bg-primary' : 'bg-blue-500'
+                    }`}
+                  >
+                  </div>
+                  <div className='flex-1'>
+                    <p className='text-sm font-medium'>{item.label}</p>
+                    <p className='text-xs text-muted-foreground'>{item.detail}</p>
+                  </div>
+                  <Badge variant='secondary'>
+                    {new Date(item.created_at!).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Badge>
+                </div>
+              ))}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'acoes-rapidas',
+      defaultLayout: { x: 8, y: 3, w: 4, h: 4 },
+      content: (
+        <BentoGridItem
+          title='Ações Rápidas'
+          description='Acesso rápido às funcionalidades principais'
+          icon={<Settings className='h-5 w-5' />}
+          variant='primary'
+          size='md'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='space-y-3 mt-4'>
+            <Button
+              className='w-full justify-start'
+              variant='outline'
+              onClick={() => navigate({ to: '/appointments/new' })}
+            >
+              <Calendar className='h-4 w-4 mr-2' />
+              Nova Consulta
+            </Button>
+            <Button
+              className='w-full justify-start'
+              variant='outline'
+              onClick={() => navigate({ to: '/clients' })}
+            >
+              <Users className='h-4 w-4 mr-2' />
+              Cadastrar Paciente
+            </Button>
+            <Button
+              className='w-full justify-start'
+              variant='outline'
+              onClick={() => navigate({ to: '/services' })}
+            >
+              <Settings className='h-4 w-4 mr-2' />
+              Gerenciar Serviços
+            </Button>
+            <Button className='w-full justify-start' variant='outline'>
+              <DollarSign className='h-4 w-4 mr-2' />
+              Registrar Pagamento
+            </Button>
+            <Button className='w-full justify-start' variant='outline'>
+              <TrendingUp className='h-4 w-4 mr-2' />
+              Ver Relatórios
+            </Button>
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'notificacoes',
+      defaultLayout: { x: 0, y: 7, w: 12, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Notificações'
+          description='Alertas e informações importantes'
+          icon={<Bell className='h-5 w-5' />}
+          variant='secondary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='mt-4'>
+            <NotificationCard />
+          </div>
+        </BentoGridItem>
+      ),
+    },
+  ], [
+    loadingAppt,
+    appointmentsTodayCount,
+    loadingClients,
+    activeClientsCount,
+    loadingRevenue,
+    monthlyRevenue,
+    showRateLoading,
+    showRate,
+    loadingActivity,
+    recentActivity,
+    navigate,
+  ]);
+
+  // Early returns AFTER all hooks to follow React Hooks rules
+  if (loading) {
+    return (
+      <div className='flex min-h-full h-full items-center justify-center bg-background'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4' />
+          <p className='text-sm text-muted-foreground'>Carregando dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) return null;
 
   return (
-    <div style={{
-      padding: '32px',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      minHeight: '100vh',
-      color: 'white'
-    }}>
-      <div style={{
-        background: 'rgba(255, 255, 255, 0.95)',
-        color: '#333',
-        borderRadius: '16px',
-        padding: '32px',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-        backdropFilter: 'blur(10px)'
-      }}>
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '32px'
-        }}>
-          <h1 style={{
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            margin: '0 0 16px 0',
-            background: 'linear-gradient(135deg, #667eea, #764ba2)',
-            backgroundClip: 'text',
-            color: 'transparent'
-          }}>
-            🏥 Dashboard NeonPro
-          </h1>
-          <p style={{
-            fontSize: '1.2rem',
-            color: '#666',
-            margin: '0'
-          }}>
-            Sistema de Gestão para Clínicas Estéticas
+    <div className='h-full bg-background'>
+      {/* Main Content */}
+      <main className='container mx-auto px-4 py-8'>
+        <div className='mb-8'>
+          <h2 className='text-3xl font-bold tracking-tight mb-2'>
+            Bem-vindo ao Dashboard
+          </h2>
+          <p className='text-muted-foreground'>
+            Gerencie sua clínica de estética com inteligência artificial
           </p>
         </div>
 
-        {/* Métricas Principais */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px'
-        }}>
-          <div style={{
-            background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
-            padding: '24px',
-            borderRadius: '12px',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>👥</div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>158</div>
-            <div style={{ opacity: 0.9 }}>Pacientes Ativos</div>
-          </div>
-
-          <div style={{
-            background: 'linear-gradient(135deg, #43e97b, #38f9d7)',
-            padding: '24px',
-            borderRadius: '12px',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>📅</div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>12</div>
-            <div style={{ opacity: 0.9 }}>Agendamentos Hoje</div>
-          </div>
-
-          <div style={{
-            background: 'linear-gradient(135deg, #fa709a, #fee140)',
-            padding: '24px',
-            borderRadius: '12px',
-            color: 'white',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>💰</div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>R$ 24.5K</div>
-            <div style={{ opacity: 0.9 }}>Receita do Mês</div>
-          </div>
-
-          <div style={{
-            background: 'linear-gradient(135deg, #a8edea, #fed6e3)',
-            padding: '24px',
-            borderRadius: '12px',
-            color: '#333',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '8px' }}>📊</div>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold' }}>96%</div>
-            <div style={{ opacity: 0.7 }}>Taxa de Satisfação</div>
-          </div>
-        </div>
-
-        {/* Menu de Ações */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '16px',
-          marginBottom: '32px'
-        }}>
-          <button style={{
-            background: '#4f46e5',
-            color: 'white',
-            border: 'none',
-            padding: '16px 24px',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(79, 70, 229, 0.3)'
-          }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-2px)'
-            e.target.style.boxShadow = '0 6px 20px rgba(79, 70, 229, 0.4)'
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'translateY(0)'
-            e.target.style.boxShadow = '0 4px 12px rgba(79, 70, 229, 0.3)'
-          }}>
-            ➕ Novo Agendamento
-          </button>
-
-          <button style={{
-            background: '#059669',
-            color: 'white',
-            border: 'none',
-            padding: '16px 24px',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(5, 150, 105, 0.3)'
-          }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-2px)'
-            e.target.style.boxShadow = '0 6px 20px rgba(5, 150, 105, 0.4)'
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'translateY(0)'
-            e.target.style.boxShadow = '0 4px 12px rgba(5, 150, 105, 0.3)'
-          }}>
-            👤 Cadastrar Paciente
-          </button>
-
-          <button style={{
-            background: '#dc2626',
-            color: 'white',
-            border: 'none',
-            padding: '16px 24px',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
-          }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-2px)'
-            e.target.style.boxShadow = '0 6px 20px rgba(220, 38, 38, 0.4)'
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'translateY(0)'
-            e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)'
-          }}
-          onClick={() => alert('🚨 Protocolo de emergência ativado!')}>
-            🚨 Emergência
-          </button>
-
-          <button style={{
-            background: '#7c3aed',
-            color: 'white',
-            border: 'none',
-            padding: '16px 24px',
-            borderRadius: '12px',
-            fontSize: '1rem',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            boxShadow: '0 4px 12px rgba(124, 58, 237, 0.3)'
-          }}
-          onMouseOver={(e) => {
-            e.target.style.transform = 'translateY(-2px)'
-            e.target.style.boxShadow = '0 6px 20px rgba(124, 58, 237, 0.4)'
-          }}
-          onMouseOut={(e) => {
-            e.target.style.transform = 'translateY(0)'
-            e.target.style.boxShadow = '0 4px 12px rgba(124, 58, 237, 0.3)'
-          }}>
-            📊 Relatórios
-          </button>
-        </div>
-
-        {/* Agenda de Hoje */}
-        <div style={{
-          background: '#f8fafc',
-          padding: '24px',
-          borderRadius: '12px',
-          border: '1px solid #e2e8f0'
-        }}>
-          <h2 style={{
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            margin: '0 0 16px 0',
-            color: '#1e293b'
-          }}>
-            📅 Agenda de Hoje
-          </h2>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <div style={{
-              background: 'white',
-              padding: '16px',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div>
-                <div style={{ fontWeight: '500', color: '#1e293b' }}>Maria Silva - Botox</div>
-                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>Dra. Ana Beatriz • Sala 1</div>
-              </div>
-              <div style={{
-                background: '#dbeafe',
-                color: '#1d4ed8',
-                padding: '4px 12px',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                fontWeight: '500'
-              }}>
-                09:30
-              </div>
-            </div>
-
-            <div style={{
-              background: 'white',
-              padding: '16px',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div>
-                <div style={{ fontWeight: '500', color: '#1e293b' }}>Ana Oliveira - Preenchimento</div>
-                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>Dr. Carlos Mendes • Sala 2</div>
-              </div>
-              <div style={{
-                background: '#dcfce7',
-                color: '#166534',
-                padding: '4px 12px',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                fontWeight: '500'
-              }}>
-                14:00
-              </div>
-            </div>
-
-            <div style={{
-              background: 'white',
-              padding: '16px',
-              borderRadius: '8px',
-              border: '1px solid #e2e8f0',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center'
-            }}>
-              <div>
-                <div style={{ fontWeight: '500', color: '#1e293b' }}>Camila Costa - Limpeza de Pele</div>
-                <div style={{ fontSize: '0.875rem', color: '#64748b' }}>Esteticista Paula • Sala 3</div>
-              </div>
-              <div style={{
-                background: '#fef3c7',
-                color: '#92400e',
-                padding: '4px 12px',
-                borderRadius: '6px',
-                fontSize: '0.875rem',
-                fontWeight: '500'
-              }}>
-                16:30
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div style={{
-          textAlign: 'center',
-          marginTop: '32px',
-          padding: '16px',
-          background: '#f0fdf4',
-          borderRadius: '8px',
-          border: '1px solid #bbf7d0'
-        }}>
-          <div style={{ color: '#15803d', fontWeight: '500' }}>
-            ✅ Dashboard funcionando perfeitamente!
-          </div>
-          <div style={{ fontSize: '0.875rem', color: '#166534', marginTop: '4px' }}>
-            Sistema NeonPro - Versão completa com todos os complementos
-          </div>
-        </div>
-      </div>
+        {/* Draggable Dashboard */}
+        <DraggableDashboard
+          cards={dashboardCards}
+          cols={12}
+          rowHeight={80}
+          storageKey='neonpro-dashboard-layout-v2'
+        />
+      </main>
     </div>
   )
 }

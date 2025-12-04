@@ -1,107 +1,67 @@
 {
   "name": "neonpro",
   "version": "1.0.0",
-  "description": "NeonPro: Healthcare Compliance & Performance Platform",
-  "packageManager": "bun@1.2.22",
-  "main": "index.js",
-  "scripts": {
-    "postinstall": "patch-package",
-    "dev": "bun run --hot apps/api/src/server.ts",
-    "build": "bun build apps/api/src/server.ts --outdir dist --target bun",
-    "start": "bun run dist/server.js",
-    "test": "bun test",
-    "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
-    "lint": "bun x eslint . --fix",
-    "format": "bun x prettier --write .",
-    "type-check": "bun x tsc --noEmit",
-    "validate": "bun run scripts/validate-bun-migration.ts",
-    "quality": "bun run scripts/quality-gate.ts",
-    "quality:fix": "bun run biome format --write && bun run lint && bun run type-check && bun run quality",
-    "tdd": "bun run scripts/tdd-orchestrator.ts",
-    "tdd:red": "bun run tdd -- --stage red",
-    "tdd:green": "bun run tdd -- --stage green",
-    "tdd:refactor": "bun run tdd -- --stage refactor",
-    "tdd:full": "bun run tdd -- --stage full",
-    "db:migrate": "supabase db push",
-    "db:reset": "supabase db reset",
-    "db:seed": "supabase db seed",
-    "deploy": "vercel --prod",
-    "deploy:staging": "vercel"
-  },
-  "keywords": [
-    "healthcare",
-    "compliance",
-    "performance",
-    "lgpd",
-    "anvisa",
-    "cfm",
-    "bun",
-    "vercel",
-    "supabase"
-  ],
-  "author": "NeonPro Team",
-  "license": "MIT",
-  "dependencies": {
-    "@neonpro/database": "workspace:*",
-    "@neonpro/types": "workspace:*",
-    "@neonpro/ui": "workspace:*",
-    "@supabase/supabase-js": "^2.38.0",
-    "@trpc/server": "10.45.2",
-    "@trpc/client": "10.45.2",
-    "@trpc/react-query": "10.45.2",
-    "superjson": "^2.2.1",
-    "zod": "^3.22.4",
-    "hono": "^3.11.0",
-    "jsonwebtoken": "^9.0.2",
-    "bcryptjs": "^2.4.3",
-    "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "compression": "^1.7.4",
-    "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.0.1",
-    "dotenv": "^16.3.1",
-    "uuid": "^9.0.1",
-    "date-fns": "^2.30.0",
-    "lodash": "^4.17.21"
-  },
-  "devDependencies": {
-    "@types/bcryptjs": "^2.4.6",
-    "@types/bun": "^1.0.0",
-    "@types/compression": "^1.7.5",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/lodash": "^4.14.202",
-    "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.13.1",
-    "@typescript-eslint/parser": "^6.13.1",
-    "eslint": "^8.54.0",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.1",
-    "patch-package": "^8.0.0",
-    "prettier": "^3.1.0",
-    "supabase": "^1.127.0",
-    "turbo": "2.5.8",
-    "typescript": "^5.9.2",
-    "vercel": "^32.7.2"
+  "description": "NeonPro aesthetic clinic management platform - Turborepo monorepo",
+  "private": true,
+  "type": "module",
+  "packageManager": "bun@1.3.2",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=8.0.0"
   },
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "tools/*"
+    "packages/*"
   ],
-  "engines": {
-    "bun": ">=1.0.0",
-    "node": ">=18.0.0"
+  "overrides": {
+    "esbuild": ">=0.25.0",
+    "hono": ">=4.9.7",
+    "tmp": ">=0.2.4"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/neonpro/neonpro.git"
+  "scripts": {
+    "build": "bunx turbo build",
+    "dev": "bunx turbo dev --concurrency=20",
+    "dev:web": "bunx turbo dev --filter=@neonpro/web --concurrency=5",
+    "dev:web:pnpm": "pnpm --filter @neonpro/web dev",
+    "test": "bunx turbo test",
+    "lint": "bunx turbo lint",
+    "type-check": "bunx turbo type-check",
+    "clean": "bunx turbo clean",
+    "format": "bunx turbo format",
+    "format:check": "bunx turbo format:check",
+    "deploy": "./scripts/deploy.sh",
+    "deploy:prod": "./scripts/deploy.sh production",
+    "deploy:preview": "./scripts/deploy.sh preview",
+    "deploy:staging": "./scripts/deploy.sh staging",
+    "vercel:build": "bun install && bunx turbo build",
+    "vercel:dev": "bunx turbo dev",
+    "vercel:deploy": "vercel deploy --prod --scope grupous-projects --yes",
+    "vercel-build": "bun install && bunx turbo build --filter=@neonpro/web"
   },
-  "bugs": {
-    "url": "https://github.com/neonpro/neonpro/issues"
+  "keywords": [
+    "neonpro",
+    "healthcare",
+    "aesthetic-clinic",
+    "turborepo",
+    "monorepo",
+    "vite",
+    "react",
+    "typescript"
+  ],
+  "author": "NeonPro Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.2",
+    "lodash.debounce": "^4.0.8",
+    "turbo": "^2.6.1"
   },
-  "homepage": "https://github.com/neonpro/neonpro#readme"
+  "devDependencies": {
+    "@types/lodash.debounce": "^4.0.9",
+    "@types/node": "^24.4.0",
+    "@vitest/ui": "^3.2.4",
+    "bun": "^1.2.22",
+    "oxlint": "^1.15.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
 }
