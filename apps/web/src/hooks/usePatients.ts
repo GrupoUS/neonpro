@@ -59,6 +59,13 @@ export function usePatient(
 }
 
 /**
+ * Alias for usePatient - more semantic name for detail views
+ */
+export function usePatientDetail(patientId: string) {
+  return usePatient(patientId);
+}
+
+/**
  * Hook to create new patients
  */
 export function useCreatePatient() {

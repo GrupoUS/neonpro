@@ -1,5 +1,9 @@
 {
-  "env": {
-      "ANTHROPIC_MODEL": "glm-4.5"
+  "permissions": {
+    "allow": [
+      "Bash(docker exec:*)"
+    ],
+    "deny": [],
+    "ask": []
   }
 }

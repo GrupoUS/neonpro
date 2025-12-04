@@ -45,6 +45,7 @@ import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-an
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
+import { Route as PatientsIdRouteImport } from './routes/patients.$id'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
@@ -233,6 +234,11 @@ const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   path: '/$patientId',
   getParentRoute: () => PatientsRoute,
 } as any)
+const PatientsIdRoute = PatientsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PatientsRoute,
+} as any)
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
   id: '/auth/confirm',
   path: '/auth/confirm',
@@ -305,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/patients/$id': typeof PatientsIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/patients/$id': typeof PatientsIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
@@ -394,6 +402,7 @@ export interface FileRoutesById {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
+  '/patients/$id': typeof PatientsIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
@@ -440,6 +449,7 @@ export interface FileRouteTypes {
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/patients/$id'
     | '/patients/$patientId'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
@@ -484,6 +494,7 @@ export interface FileRouteTypes {
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/patients/$id'
     | '/patients/$patientId'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
@@ -528,6 +539,7 @@ export interface FileRouteTypes {
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
+    | '/patients/$id'
     | '/patients/$patientId'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
@@ -828,6 +840,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientsPatientIdRouteImport
       parentRoute: typeof PatientsRoute
     }
+    '/patients/$id': {
+      id: '/patients/$id'
+      path: '/$id'
+      fullPath: '/patients/$id'
+      preLoaderRoute: typeof PatientsIdRouteImport
+      parentRoute: typeof PatientsRoute
+    }
     '/auth/confirm': {
       id: '/auth/confirm'
       path: '/auth/confirm'
@@ -901,10 +920,12 @@ const PatientsPatientIdRouteWithChildren =
   PatientsPatientIdRoute._addFileChildren(PatientsPatientIdRouteChildren)
 
 interface PatientsRouteChildren {
+  PatientsIdRoute: typeof PatientsIdRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
 }
 
 const PatientsRouteChildren: PatientsRouteChildren = {
+  PatientsIdRoute: PatientsIdRoute,
   PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
 }
 

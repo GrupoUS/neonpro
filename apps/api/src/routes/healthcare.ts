@@ -153,7 +153,7 @@ healthcare.use('*', cors({
   origin: [
   process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app',
   'http://localhost:3000'
-],,
+],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

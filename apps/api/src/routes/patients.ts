@@ -10,6 +10,9 @@ import type { Context } from 'hono';
 import { cache } from 'hono/cache';
 import { etag } from 'hono/etag';
 import { z } from 'zod';
+import { badRequest, created, notFound, ok, serverError } from '../utils/responses';
+import { requireAuth } from '../middleware/authn';
+import { encryptPII, decryptPII, maskPII, validateCPF } from '@neonpro/security';
 
 // Consent duration configuration (defaults to 1 year)
 const DEFAULT_CONSENT_DURATION_MS = 365 * 24 * 60 * 60 * 1000;
@@ -33,6 +36,7 @@ const PatientCreateSchema = z.object({
   fullName: z.string().min(2).max(100),
   familyName: z.string().min(1).max(50),
   cpf: z.string().optional(),
+  rg: z.string().optional(),
   birthDate: z.string().datetime().optional(),
   phone: z.string().optional(),
   email: z.string().email().optional(),
@@ -49,7 +53,30 @@ const PatientQuerySchema = z.object({
   limit: z.string().optional().transform(val => val ? Math.min(parseInt(val) || 20, 100) : 20),
   search: z.string().optional(),
   status: z.enum(['active', 'inactive', 'all']).optional().default('active'),
+  mask: z.string().optional().transform(val => val === 'true'),
 });
+
+// Helper function to mask or decrypt PII fields
+function processPIIFields(patient: any, shouldMask: boolean) {
+  if (shouldMask) {
+    // Mask sensitive data for display
+    return {
+      ...patient,
+      cpf: patient.cpf ? maskPII(decryptPII(patient.cpf), 'cpf') : null,
+      rg: patient.rg ? maskPII(decryptPII(patient.rg), 'rg') : null,
+      email: patient.email ? maskPII(patient.email, 'email') : null,
+      phone_primary: patient.phonePrimary ? maskPII(patient.phonePrimary, 'phone') : null,
+      phone_secondary: patient.phoneSecondary ? maskPII(patient.phoneSecondary, 'phone') : null,
+    };
+  }
+
+  // Decrypt for full access (authorized users only)
+  return {
+    ...patient,
+    cpf: patient.cpf ? decryptPII(patient.cpf) : null,
+    rg: patient.rg ? decryptPII(patient.rg) : null,
+  };
+}
 
 class PatientService extends BaseService {
   // Add public wrapper method for clinic access validation
@@ -65,6 +92,7 @@ class PatientService extends BaseService {
       limit: number;
       search?: string;
       status: string;
+      mask?: boolean;
     },
   ) {
     return this.withAuditLog(
@@ -124,8 +152,13 @@ class PatientService extends BaseService {
           prisma.patient.count({ where: whereClause }),
         ]);
 
+        // Process PII data - either mask or decrypt based on options
+        const processedPatients = patients.map(patient =>
+          processPIIFields(patient, options.mask || false)
+        );
+
         return {
-          data: patients,
+          data: processedPatients,
           pagination: {
             page: options.page,
             limit: options.limit,
@@ -173,7 +206,12 @@ class PatientService extends BaseService {
           throw new Error('Patient not found');
         }
 
-        return patient;
+        // Decrypt PII data for response
+        return {
+          ...patient,
+          cpf: patient.cpf ? decryptPII(patient.cpf) : null,
+          rg: patient.rg ? decryptPII(patient.rg) : null,
+        };
       },
     );
   }
@@ -185,9 +223,9 @@ class PatientService extends BaseService {
       }
     }
 
-    // Validate CPF if provided
-    if (data.cpf && !this.validateCPF(data.cpf)) {
-      throw new Error('Invalid CPF format');
+    // Validate CPF if provided (using real Brazilian CPF validation algorithm)
+    if (data.cpf && !validateCPF(data.cpf)) {
+      throw new Error('Invalid CPF - check digits verification failed');
     }
 
     return this.withAuditLog(
@@ -202,9 +240,18 @@ class PatientService extends BaseService {
         // Generate medical record number
         const medicalRecordNumber = await this.generateMedicalRecordNumber(data.clinicId);
 
+        // Encrypt sensitive PII data before storing (LGPD Article 46)
+        const encryptedData = { ...data };
+        if (data.cpf) {
+          encryptedData.cpf = encryptPII(data.cpf);
+        }
+        if (data.rg) {
+          encryptedData.rg = encryptPII(data.rg);
+        }
+
         const patient = await prisma.patient.create({
           data: {
-            ...data,
+            ...encryptedData,
             medicalRecordNumber,
             dataConsentDate: data.lgpdConsentGiven ? new Date() : null,
             createdAt: new Date(),
@@ -233,7 +280,14 @@ class PatientService extends BaseService {
           });
         }
 
-        return patient;
+        // Decrypt PII data for response (keep encrypted in DB)
+        const patientResponse = {
+          ...patient,
+          cpf: patient.cpf ? decryptPII(patient.cpf) : null,
+          rg: patient.rg ? decryptPII(patient.rg) : null,
+        };
+
+        return patientResponse;
       },
     );
   }
@@ -267,10 +321,19 @@ class PatientService extends BaseService {
       async () => {
         const { id, ...updateData } = data;
 
-        return prisma.patient.update({
+        // Encrypt sensitive PII data if provided (LGPD Article 46)
+        const encryptedUpdateData = { ...updateData };
+        if (updateData.cpf) {
+          encryptedUpdateData.cpf = encryptPII(updateData.cpf);
+        }
+        if (updateData.rg) {
+          encryptedUpdateData.rg = encryptPII(updateData.rg);
+        }
+
+        const updatedPatient = await prisma.patient.update({
           where: { id },
           data: {
-            ...updateData,
+            ...encryptedUpdateData,
             updatedAt: new Date(),
           },
           include: {
@@ -279,6 +342,113 @@ class PatientService extends BaseService {
             },
           },
         });
+
+        // Decrypt PII data for response
+        return {
+          ...updatedPatient,
+          cpf: updatedPatient.cpf ? decryptPII(updatedPatient.cpf) : null,
+          rg: updatedPatient.rg ? decryptPII(updatedPatient.rg) : null,
+        };
+      },
+    );
+  }
+
+  async deletePatient(patientId: string, userId: string) {
+    const existingPatient = await prisma.patient.findUnique({
+      where: { id: patientId },
+    });
+
+    if (!existingPatient) {
+      throw new Error('Patient not found');
+    }
+
+    return this.withAuditLog(
+      {
+        operation: 'DELETE_PATIENT_LGPD',
+        userId,
+        tableName: 'patients',
+        recordId: patientId,
+        oldValues: existingPatient,
+        newValues: {
+          reason: 'LGPD_RIGHT_TO_ERASURE',
+          anonymized: true,
+        },
+      },
+      async () => {
+        // Soft delete with LGPD-compliant data anonymization
+        const anonymizedPatient = await prisma.patient.update({
+          where: { id: patientId },
+          data: {
+            // Mark as inactive
+            isActive: false,
+            deceasedIndicator: true, // Use this field to mark as "deleted"
+            deceasedDate: new Date(),
+
+            // Anonymize personal data
+            fullName: `ANONYMIZED_PATIENT_${patientId.substring(0, 8)}`,
+            givenNames: ['ANONYMIZED'],
+            familyName: 'ANONYMIZED',
+            preferredName: null,
+            email: null,
+            phonePrimary: null,
+            phoneSecondary: null,
+
+            // Anonymize address
+            addressLine1: null,
+            addressLine2: null,
+            city: null,
+            state: null,
+            postalCode: null,
+
+            // Anonymize identity documents
+            cpf: null,
+            rg: null,
+            passportNumber: null,
+
+            // Anonymize medical data (keep allergies/conditions for safety)
+            photoUrl: null,
+            insuranceProvider: null,
+            insuranceNumber: null,
+            insurancePlan: null,
+
+            // Anonymize emergency contact
+            emergencyContactName: null,
+            emergencyContactPhone: null,
+            emergencyContactRelationship: null,
+
+            // Update consent status
+            dataConsentStatus: 'withdrawn',
+            lgpdConsentGiven: false,
+            marketingConsent: false,
+            researchConsent: false,
+
+            // Record anonymization
+            patientNotes: `[LGPD ERASURE] Patient data anonymized on ${new Date().toISOString()} by user ${userId}`,
+            updatedAt: new Date(),
+            updatedBy: userId,
+          },
+          select: {
+            id: true,
+            fullName: true,
+            isActive: true,
+            dataConsentStatus: true,
+            updatedAt: true,
+          },
+        });
+
+        return {
+          success: true,
+          patientId,
+          anonymized: true,
+          erasureDate: new Date().toISOString(),
+          lgpdCompliance: {
+            rightToErasure: true,
+            dataAnonymized: true,
+            auditTrailRetained: true,
+            medicalHistoryRetained: true, // For legal compliance
+          },
+          patient: anonymizedPatient,
+        };
       },
     );
   }
@@ -307,8 +477,6 @@ const validateClinicAccess = async (c: Context<{ Variables: Variables }>, next: 
   return await next();
 };
 
-import { requireAuth } from '../middleware/authn';
-
 // Routes with optimized caching and validation
 app.get(
   '/patients',
@@ -333,6 +501,7 @@ app.get(
           limit: query.limit,
           search: query.search,
           status: query.status,
+          mask: query.mask,
         },
       );
 
@@ -340,11 +509,9 @@ app.get(
       c.header('X-Total-Count', result.pagination.total.toString());
       c.header('X-Page', result.pagination.page.toString());
 
-      import { ok } from '../utils/responses';
       return ok(c, result);
     } catch (error) {
       console.error('Error fetching patients:', error);
-      import { serverError } from '../utils/responses';
       return serverError(c, 'Failed to fetch patients', error instanceof Error ? error : undefined);
     }
   },
@@ -371,11 +538,9 @@ app.get(
       c.header('X-Data-Classification', 'sensitive');
       c.header('X-Retention-Policy', '7-years');
 
-      import { ok } from '../utils/responses';
       return ok(c, patient);
     } catch (error) {
       console.error('Error fetching patient:', error);
-      import { notFound, serverError } from '../utils/responses';
       if (error instanceof Error && error.message === 'Patient not found') {
         return notFound(c, 'Patient not found');
       }
@@ -387,7 +552,7 @@ app.get(
 // Create new patient
 app.post(
   '/patients',
-  requireAuth, 
+  requireAuth,
   zValidator('json', PatientCreateSchema),
   validateClinicAccess,
   async c => {
@@ -401,12 +566,70 @@ app.post(
       c.header('X-Created-At', new Date().toISOString());
       c.header('Location', `/patients/${patient.id}`);
 
-      import { created } from '../utils/responses';
       return created(c, patient, `/patients/${patient.id}`);
     } catch (error) {
       console.error('Error creating patient:', error);
-      import { badRequest } from '../utils/responses';
       return badRequest(c, 'VALIDATION_ERROR', error instanceof Error ? error.message : 'Failed to create patient', error instanceof Error ? error : undefined);
+    }
+  },
+);
+
+// Update patient
+app.put(
+  '/patients/:id',
+  requireAuth,
+  zValidator('json', PatientUpdateSchema),
+  validateClinicAccess,
+  async c => {
+    const patientId = c.req.param('id');
+    const data = c.req.valid('json');
+    const userId = c.get('userId');
+
+    try {
+      const patient = await patientService.updatePatient(
+        { ...data, id: patientId },
+        userId,
+      );
+
+      // Add LGPD compliance headers
+      c.header('X-Data-Classification', 'sensitive');
+      c.header('X-Last-Modified', new Date().toISOString());
+
+      return ok(c, patient);
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      if (error instanceof Error && error.message === 'Patient not found') {
+        return notFound(c, 'Patient not found');
+      }
+      return serverError(c, 'Failed to update patient', error instanceof Error ? error : undefined);
+    }
+  },
+);
+
+// Delete patient (LGPD-compliant soft delete with anonymization)
+app.delete(
+  '/patients/:id',
+  requireAuth,
+  validateClinicAccess,
+  async c => {
+    const patientId = c.req.param('id');
+    const userId = c.get('userId');
+
+    try {
+      const result = await patientService.deletePatient(patientId, userId);
+
+      // Add LGPD compliance headers
+      c.header('X-Data-Classification', 'sensitive');
+      c.header('X-LGPD-Erasure', 'true');
+      c.header('X-Erasure-Date', result.erasureDate);
+
+      return ok(c, result);
+    } catch (error) {
+      console.error('Error deleting patient:', error);
+      if (error instanceof Error && error.message === 'Patient not found') {
+        return notFound(c, 'Patient not found');
+      }
+      return serverError(c, 'Failed to delete patient', error instanceof Error ? error : undefined);
     }
   },
 );

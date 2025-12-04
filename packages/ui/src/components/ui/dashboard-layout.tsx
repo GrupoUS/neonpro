@@ -31,6 +31,8 @@ export function DashboardCard({
 
   const position = getCardPosition(cardId);
 
+  console.log(`🎯 Card ${cardId} position:`, position);
+
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
 
@@ -58,6 +60,7 @@ export function DashboardCard({
       dragMomentum={false}
       dragElastic={0.1}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      initial={false}
       animate={{
         x: position.x,
         y: position.y,
@@ -78,6 +81,8 @@ export function DashboardCard({
       className={`cursor-grab active:cursor-grabbing ${className} ${isDragging ? 'z-50' : 'z-10'}`}
       style={{
         position: 'absolute',
+        left: 0,
+        top: 0,
       }}
     >
       {/* Snap grid visual feedback (only during drag) */}
@@ -121,24 +126,47 @@ export function DashboardLayout({ children, className = '' }: DashboardLayoutPro
   // Extract card IDs from children
   const cardIds = React.Children.toArray(children).map((child, index) => {
     if (React.isValidElement(child)) {
-      return child.key?.toString() || (child.props as any)?.id || `dashboard-card-${index}`;
+      // Remove React's key prefix (e.g., ".$consultas-hoje" -> "consultas-hoje")
+      const rawKey = child.key?.toString().replace(/^\.\$/, '') || (child.props as any)?.id || `dashboard-card-${index}`;
+      return rawKey;
     }
     return `dashboard-card-${index}`;
   });
 
   // Update container size on mount and resize
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const updateSize = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
-        updateContainerSize({ width: rect.width, height: rect.height });
+        console.log('📏 Container size update:', { width: rect.width, height: rect.height, rect });
+        // Use offsetHeight to get actual rendered height
+        const height = containerRef.current.offsetHeight || rect.height || 800;
+        updateContainerSize({ width: rect.width, height });
       }
     };
 
-    updateSize();
+    // Initial size update with delay to ensure DOM is rendered
+    const timer = setTimeout(updateSize, 100);
+
+    // Use ResizeObserver for more reliable size tracking
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        console.log('📐 ResizeObserver update:', { width, height });
+        updateContainerSize({ width, height: height || 800 });
+      }
+    });
+
+    resizeObserver.observe(containerRef.current);
     window.addEventListener('resize', updateSize);
 
-    return () => window.removeEventListener('resize', updateSize);
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateSize);
+    };
   }, [updateContainerSize]);
 
   // Auto-distribute cards when container size is available and children change
@@ -156,7 +184,7 @@ export function DashboardLayout({ children, className = '' }: DashboardLayoutPro
   }, [cardIds.join(','), autoDistributeCards]);
 
   return (
-    <div className={`relative min-h-[600px] ${className}`} ref={containerRef}>
+    <div className={`relative h-[800px] ${className}`} ref={containerRef}>
       {/* Reset button */}
       <div className='absolute top-0 right-0 z-20 mb-4'>
         <Button
@@ -171,16 +199,16 @@ export function DashboardLayout({ children, className = '' }: DashboardLayoutPro
       </div>
 
       {/* Dashboard Content - Cards with absolute positioning */}
-      <div className='relative w-full h-full pt-14'>
+      <div className='relative w-full min-h-[700px] pt-14'>
         {React.Children.map(children, (child, index) => {
           if (React.isValidElement(child)) {
-            // Generate consistent ID for each card
-            const cardId = child.key?.toString() || (child.props as any)?.id
+            // Generate consistent ID for each card (remove React's key prefix)
+            const rawKey = child.key?.toString().replace(/^\.\$/, '') || (child.props as any)?.id
               || `dashboard-card-${index}`;
 
             return React.cloneElement(child as any, {
-              key: cardId,
-              cardId: cardId,
+              key: rawKey,
+              cardId: rawKey,
               className: `${(child.props as any)?.className || ''} w-80 h-64`, // Fixed size for consistent layout
             });
           }

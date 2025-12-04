@@ -4,8 +4,6 @@
     "**/.env.*local",
     "**/package.json",
     "**/tsconfig.json",
-    "pnpm-workspace.yaml",
-    "pnpm-lock.yaml",
     "package-lock.json",
     ".config/dprint/dprint.json",
     "bunfig.toml",
@@ -14,7 +12,7 @@
     "packages/database/src/**/*.ts"
   ],
 
-  "daemon": true,
+  "daemon": false,
   "ui": "tui",
   "globalEnv": [
     "NODE_ENV",

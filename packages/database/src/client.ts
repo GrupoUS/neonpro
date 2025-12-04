@@ -108,8 +108,16 @@ export const createServiceSupabaseClient = (): SupabaseClient => {
 
 // Global instances
 export const supabase = createOptimizedSupabaseClient();
-export const supabaseBrowser = createBrowserSupabaseClient();
 export const prisma = createPrismaClient();
+
+// Browser client is created lazily to avoid initialization errors in server-only environments
+let _supabaseBrowser: SupabaseClient | null = null;
+export const getSupabaseBrowser = (): SupabaseClient => {
+  if (!_supabaseBrowser) {
+    _supabaseBrowser = createBrowserSupabaseClient();
+  }
+  return _supabaseBrowser;
+};
 
 // Connection health check
 export const checkDatabaseHealth = async () => {

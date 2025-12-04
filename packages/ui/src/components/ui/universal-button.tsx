@@ -262,7 +262,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     };
 
     // Style object for CSS custom properties
-    const buttonStyle: React.CSSProperties = {
+    const buttonStyle: any = {
       ...props.style,
       ...hoverBorderStyle,
       ...(hoverBorderGradientEnabled && mousePosition && {

@@ -1,14 +1,17 @@
 import app from './app';
 
-// Development server for local runs
+// Development server for local runs using Bun's native server
+// Bun.serve() configuration for development with hot reload support
+const port = Number.parseInt(process.env.PORT || '3004', 10);
+
 if (process.env.NODE_ENV === 'development') {
-  // Lazy import to avoid bundling into serverless handler
-  import('@hono/node-server').then(({ serve }) => {
-    const port = Number.parseInt(process.env.PORT || '3004', 10);
-    serve({ fetch: app.fetch, port });
-    // eslint-disable-next-line no-console
-    console.log(`[api] Hono listening on http://localhost:${port}`);
-  });
+  console.log(`Started development server: http://localhost:${port}`);
 }
 
-export default app;
+// Export Bun server config in development, Hono app otherwise
+export default process.env.NODE_ENV === 'development'
+  ? {
+      port,
+      fetch: app.fetch,
+    }
+  : app;

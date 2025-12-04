@@ -1,8 +1,8 @@
 import { NotificationCard } from '@/components';
+import { DraggableDashboard } from '@/components/dashboard/DraggableDashboard';
 import { BentoGridItem } from '@/components/ui/bento-grid';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { DashboardCard, DashboardLayout } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 
@@ -189,12 +189,223 @@ function DashboardComponent() {
     },
   });
 
+  // Dashboard cards configuration - MUST be before any conditional returns to follow React Hooks rules
+  const dashboardCards = useMemo(() => [
+    {
+      id: 'consultas-hoje',
+      defaultLayout: { x: 0, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Consultas Hoje'
+          description={loadingAppt
+            ? 'Carregando...'
+            : `${appointmentsTodayCount} consultas agendadas para hoje`}
+          icon={<Calendar className='h-5 w-5' />}
+          variant='primary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+          emphasis='brand'
+        >
+          <div className='text-3xl font-bold'>
+            {loadingAppt ? '—' : appointmentsTodayCount}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'pacientes-ativos',
+      defaultLayout: { x: 3, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Pacientes Ativos'
+          description={loadingClients
+            ? 'Carregando...'
+            : `${activeClientsCount} pacientes cadastrados e ativos`}
+          icon={<Users className='h-5 w-5' />}
+          variant='secondary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='text-3xl font-bold'>
+            {loadingClients ? '—' : activeClientsCount}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'receita-mensal',
+      defaultLayout: { x: 6, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Receita Mensal'
+          description={loadingRevenue ? 'Carregando...' : `Receita total do mês atual`}
+          icon={<DollarSign className='h-5 w-5' />}
+          variant='accent'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='text-3xl font-bold'>
+            {loadingRevenue ? '—' : formatBRL(monthlyRevenue ?? 0)}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'taxa-presenca',
+      defaultLayout: { x: 9, y: 0, w: 3, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Taxa de Presença'
+          description={showRateLoading
+            ? 'Carregando...'
+            : `${(showRate * 100).toFixed(0)}% dos pacientes compareceram nos últimos 7 dias`}
+          icon={<TrendingUp className='h-5 w-5' />}
+          variant='primary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='text-3xl font-bold'>
+            {showRateLoading ? '—' : `${(showRate * 100).toFixed(0)}%`}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'atividade-recente',
+      defaultLayout: { x: 0, y: 3, w: 8, h: 4 },
+      content: (
+        <BentoGridItem
+          title='Atividade Recente'
+          description='Últimas ações na sua clínica'
+          icon={<Activity className='h-5 w-5' />}
+          variant='default'
+          size='lg'
+          enhanced={true}
+          elevation='sm'
+        >
+          <div className='space-y-4 mt-4'>
+            {loadingActivity && <p className='text-xs text-muted-foreground'>Carregando...</p>}
+            {!loadingActivity && (recentActivity?.length ?? 0) === 0 && (
+              <p className='text-xs text-muted-foreground'>Sem atividades recentes.</p>
+            )}
+            {!loadingActivity
+              && (recentActivity ?? []).map((item, idx) => (
+                <div key={item.id + idx} className='flex items-center space-x-4'>
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      item.type === 'appointment' ? 'bg-primary' : 'bg-blue-500'
+                    }`}
+                  >
+                  </div>
+                  <div className='flex-1'>
+                    <p className='text-sm font-medium'>{item.label}</p>
+                    <p className='text-xs text-muted-foreground'>{item.detail}</p>
+                  </div>
+                  <Badge variant='secondary'>
+                    {new Date(item.created_at!).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </Badge>
+                </div>
+              ))}
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'acoes-rapidas',
+      defaultLayout: { x: 8, y: 3, w: 4, h: 4 },
+      content: (
+        <BentoGridItem
+          title='Ações Rápidas'
+          description='Acesso rápido às funcionalidades principais'
+          icon={<Settings className='h-5 w-5' />}
+          variant='primary'
+          size='md'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='space-y-3 mt-4'>
+            <Button
+              className='w-full justify-start'
+              variant='outline'
+              onClick={() => navigate({ to: '/appointments/new' })}
+            >
+              <Calendar className='h-4 w-4 mr-2' />
+              Nova Consulta
+            </Button>
+            <Button
+              className='w-full justify-start'
+              variant='outline'
+              onClick={() => navigate({ to: '/clients' })}
+            >
+              <Users className='h-4 w-4 mr-2' />
+              Cadastrar Paciente
+            </Button>
+            <Button
+              className='w-full justify-start'
+              variant='outline'
+              onClick={() => navigate({ to: '/services' })}
+            >
+              <Settings className='h-4 w-4 mr-2' />
+              Gerenciar Serviços
+            </Button>
+            <Button className='w-full justify-start' variant='outline'>
+              <DollarSign className='h-4 w-4 mr-2' />
+              Registrar Pagamento
+            </Button>
+            <Button className='w-full justify-start' variant='outline'>
+              <TrendingUp className='h-4 w-4 mr-2' />
+              Ver Relatórios
+            </Button>
+          </div>
+        </BentoGridItem>
+      ),
+    },
+    {
+      id: 'notificacoes',
+      defaultLayout: { x: 0, y: 7, w: 12, h: 3 },
+      content: (
+        <BentoGridItem
+          title='Notificações'
+          description='Alertas e informações importantes'
+          icon={<Bell className='h-5 w-5' />}
+          variant='secondary'
+          size='sm'
+          enhanced={true}
+          elevation='md'
+        >
+          <div className='mt-4'>
+            <NotificationCard />
+          </div>
+        </BentoGridItem>
+      ),
+    },
+  ], [
+    loadingAppt,
+    appointmentsTodayCount,
+    loadingClients,
+    activeClientsCount,
+    loadingRevenue,
+    monthlyRevenue,
+    showRateLoading,
+    showRate,
+    loadingActivity,
+    recentActivity,
+    navigate,
+  ]);
+
+  // Early returns AFTER all hooks to follow React Hooks rules
   if (loading) {
     return (
       <div className='flex min-h-full h-full items-center justify-center bg-background'>
         <div className='text-center'>
-          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4'>
-          </div>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4' />
           <p className='text-sm text-muted-foreground'>Carregando dashboard...</p>
         </div>
       </div>
@@ -216,188 +427,13 @@ function DashboardComponent() {
           </p>
         </div>
 
-        {/* Stats Cards - Enhanced with TiltedCard Effect */}
-        <DashboardLayout>
-          <DashboardCard>
-            <BentoGridItem
-              title='Consultas Hoje'
-              description={loadingAppt
-                ? 'Carregando...'
-                : `${appointmentsTodayCount} consultas agendadas para hoje`}
-              icon={<Calendar className='h-5 w-5' />}
-              variant='primary'
-              size='sm'
-              enhanced={true}
-              elevation='md'
-              emphasis='brand'
-            >
-              <div className='text-3xl font-bold text-white'>
-                {loadingAppt ? '—' : appointmentsTodayCount}
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-
-          <DashboardCard>
-            <BentoGridItem
-              title='Pacientes Ativos'
-              description={loadingClients
-                ? 'Carregando...'
-                : `${activeClientsCount} pacientes cadastrados e ativos`}
-              icon={<Users className='h-5 w-5' />}
-              variant='secondary'
-              size='sm'
-              enhanced={true}
-              elevation='md'
-            >
-              <div className='text-3xl font-bold text-white'>
-                {loadingClients ? '—' : activeClientsCount}
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-
-          <DashboardCard>
-            <BentoGridItem
-              title='Receita Mensal'
-              description={loadingRevenue ? 'Carregando...' : `Receita total do mês atual`}
-              icon={<DollarSign className='h-5 w-5' />}
-              variant='accent'
-              size='sm'
-              enhanced={true}
-              elevation='md'
-            >
-              <div className='text-3xl font-bold text-white'>
-                {loadingRevenue ? '—' : formatBRL(monthlyRevenue ?? 0)}
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-
-          <DashboardCard>
-            <BentoGridItem
-              title='Taxa de Presença'
-              description={showRateLoading
-                ? 'Carregando...'
-                : `${(showRate * 100).toFixed(0)}% dos pacientes compareceram nos últimos 7 dias`}
-              icon={<TrendingUp className='h-5 w-5' />}
-              variant='default'
-              size='sm'
-              enhanced={true}
-              elevation='md'
-            >
-              <div className='text-3xl font-bold'>
-                {showRateLoading ? '—' : `${(showRate * 100).toFixed(0)}%`}
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-        </DashboardLayout>
-
-        {/* Main Dashboard Content - Enhanced with Drag & Drop and Tilted Cards */}
-        <DashboardLayout>
-          {/* Recent Activity - Large card */}
-          <DashboardCard>
-            <BentoGridItem
-              title='Atividade Recente'
-              description='Últimas ações na sua clínica'
-              icon={<Activity className='h-5 w-5' />}
-              variant='default'
-              size='lg'
-              enhanced={true}
-              elevation='sm'
-            >
-              <div className='space-y-4 mt-4'>
-                {loadingActivity && <p className='text-xs text-muted-foreground'>Carregando...</p>}
-                {!loadingActivity && (recentActivity?.length ?? 0) === 0 && (
-                  <p className='text-xs text-muted-foreground'>Sem atividades recentes.</p>
-                )}
-                {!loadingActivity
-                  && (recentActivity ?? []).map((item, idx) => (
-                    <div key={item.id + idx} className='flex items-center space-x-4'>
-                      <div
-                        className={`w-2 h-2 rounded-full ${
-                          item.type === 'appointment' ? 'bg-primary' : 'bg-blue-500'
-                        }`}
-                      >
-                      </div>
-                      <div className='flex-1'>
-                        <p className='text-sm font-medium'>{item.label}</p>
-                        <p className='text-xs text-muted-foreground'>{item.detail}</p>
-                      </div>
-                      <Badge variant='secondary'>
-                        {new Date(item.created_at!).toLocaleTimeString('pt-BR', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </Badge>
-                    </div>
-                  ))}
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-
-          {/* Quick Actions */}
-          <DashboardCard>
-            <BentoGridItem
-              title='Ações Rápidas'
-              description='Acesso rápido às funcionalidades principais'
-              icon={<Settings className='h-5 w-5' />}
-              variant='primary'
-              size='md'
-              enhanced={true}
-              elevation='md'
-            >
-              <div className='space-y-3 mt-4'>
-                <Button
-                  className='w-full justify-start'
-                  variant='outline'
-                  onClick={() => navigate({ to: '/appointments/new' })}
-                >
-                  <Calendar className='h-4 w-4 mr-2' />
-                  Nova Consulta
-                </Button>
-                <Button
-                  className='w-full justify-start'
-                  variant='outline'
-                  onClick={() => navigate({ to: '/clients' })}
-                >
-                  <Users className='h-4 w-4 mr-2' />
-                  Cadastrar Paciente
-                </Button>
-                <Button
-                  className='w-full justify-start'
-                  variant='outline'
-                  onClick={() => navigate({ to: '/services' })}
-                >
-                  <Settings className='h-4 w-4 mr-2' />
-                  Gerenciar Serviços
-                </Button>
-                <Button className='w-full justify-start' variant='outline'>
-                  <DollarSign className='h-4 w-4 mr-2' />
-                  Registrar Pagamento
-                </Button>
-                <Button className='w-full justify-start' variant='outline'>
-                  <TrendingUp className='h-4 w-4 mr-2' />
-                  Ver Relatórios
-                </Button>
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-
-          {/* Notifications */}
-          <DashboardCard>
-            <BentoGridItem
-              title='Notificações'
-              description='Alertas e informações importantes'
-              icon={<Bell className='h-5 w-5' />}
-              variant='secondary'
-              size='sm'
-              enhanced={true}
-              elevation='md'
-            >
-              <div className='mt-4'>
-                <NotificationCard />
-              </div>
-            </BentoGridItem>
-          </DashboardCard>
-        </DashboardLayout>
+        {/* Draggable Dashboard */}
+        <DraggableDashboard
+          cards={dashboardCards}
+          cols={12}
+          rowHeight={80}
+          storageKey='neonpro-dashboard-layout-v2'
+        />
       </main>
     </div>
   );

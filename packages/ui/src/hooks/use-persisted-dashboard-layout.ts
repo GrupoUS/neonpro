@@ -91,14 +91,49 @@ export function usePersistedDashboardLayout() {
 
   // Auto-distribute cards when container dimensions change or cards are added
   const autoDistributeCards = useCallback((cardIds: string[]) => {
-    if (!containerSize.width || !containerSize.height || cardIds.length === 0) return;
+    console.log('🎯 autoDistributeCards called:', {
+      cardIdsCount: cardIds.length,
+      containerSize,
+      currentPositions: positions,
+    });
 
-    // Only auto-distribute if we have no saved positions for any card
-    const hasExistingPositions = cardIds.some(id => positions[id]);
-    if (hasExistingPositions) return;
+    if (!containerSize.width || !containerSize.height || cardIds.length === 0) {
+      console.log('⚠️ Skipping distribution - missing requirements:', {
+        hasWidth: !!containerSize.width,
+        hasHeight: !!containerSize.height,
+        hasCards: cardIds.length > 0,
+      });
+      return;
+    }
 
-    const cardSize = { width: 280, height: 200 }; // Default card size
-    const newPositions = calculateGridPositions(
+    // Find cards that don't have a position yet
+    const cardsWithoutPosition = cardIds.filter(id => !positions[id]);
+
+    // Check if multiple cards are stacked at the same position (0,0 or overlapping)
+    const existingPositions = cardIds
+      .filter(id => positions[id])
+      .map(id => positions[id]);
+
+    const hasStackedCards = existingPositions.length > 1 &&
+      existingPositions.every(pos => pos.x === 0 && pos.y === 0);
+
+    console.log('📊 Distribution analysis:', {
+      totalCards: cardIds.length,
+      cardsWithoutPosition: cardsWithoutPosition.length,
+      existingPositions: existingPositions.length,
+      hasStackedCards,
+    });
+
+    // If all cards already have positions and they're not stacked, no need to distribute
+    if (cardsWithoutPosition.length === 0 && !hasStackedCards) {
+      console.log('✅ All cards positioned correctly, skipping distribution');
+      return;
+    }
+
+    const cardSize = { width: 320, height: 256 }; // Match w-80 h-64 (80*4=320px, 64*4=256px)
+
+    // Calculate positions for all cards to maintain grid structure
+    const allPositions = calculateGridPositions(
       cardIds,
       containerSize.width,
       containerSize.height,
@@ -106,7 +141,33 @@ export function usePersistedDashboardLayout() {
       gridConfig,
     );
 
-    console.log('Auto-distributing cards:', { cardIds, newPositions, containerSize });
+    console.log('📐 Calculated positions:', allPositions);
+
+    // If cards are stacked, redistribute all cards
+    if (hasStackedCards) {
+      console.log('🔄 Detected stacked cards, forcing redistribution:', {
+        cardIds,
+        existingPositions,
+        allPositions,
+        containerSize
+      });
+      setPositions(allPositions);
+      return;
+    }
+
+    // Only update positions for cards that don't have one
+    const newPositions = cardsWithoutPosition.reduce((acc, cardId) => {
+      acc[cardId] = allPositions[cardId];
+      return acc;
+    }, {} as Record<string, CardPosition>);
+
+    console.log('✨ Distributing new cards:', {
+      cardIds,
+      cardsWithoutPosition,
+      newPositions,
+      containerSize
+    });
+
     setPositions(prev => ({ ...prev, ...newPositions }));
   }, [containerSize, gridConfig, positions]);
 

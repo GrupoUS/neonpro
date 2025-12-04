@@ -234,14 +234,24 @@ export function BentoGridItem({
 
         {/* Custom Content */}
         {children && (
-          <CardContent className='relative z-10 flex-1'>
+          <CardContent
+            className={cn(
+              'relative z-10 flex-1',
+              variant !== 'default' && 'text-white'
+            )}
+          >
             {children}
           </CardContent>
         )}
 
         {/* Kokonut UI enhanced content */}
         {kokonutContent && enhanced && (
-          <CardContent className='relative z-10 flex-1'>
+          <CardContent
+            className={cn(
+              'relative z-10 flex-1',
+              variant !== 'default' && 'text-white'
+            )}
+          >
             {kokonutContent}
           </CardContent>
         )}

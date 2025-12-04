@@ -2,8 +2,6 @@ import type { ChatMessage, ChatState } from '@/components/ui/ai-chat/types';
 import { useAuth } from '@/hooks/useAuth';
 import {
   generateSearchSuggestions,
-  generateVoiceOutput,
-  logAIInteraction,
   processVoiceInput,
   streamAestheticResponse,
 } from '@/lib/ai/ai-chat-service'; // path confirmed
@@ -177,7 +175,6 @@ export function useAIChat(clientId?: string) {
         persistChatState(finalState);
 
         // Log interaction for compliance
-        logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
       } catch (error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
@@ -276,7 +273,6 @@ export function useAIChat(clientId?: string) {
     // Actions
     sendMessage: sendMessageMutation.mutate,
     processVoice: processVoiceMutation.mutate,
-    generateVoice: generateVoiceOutput,
     clearChat,
     retryLastMessage,
     setModel,

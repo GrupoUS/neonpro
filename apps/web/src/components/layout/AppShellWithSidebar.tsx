@@ -1,4 +1,5 @@
 import FloatingAIChatSimple from '@/components/ui/floating-ai-chat-simple';
+import { cn } from '@/lib/utils';
 import { Sidebar, SidebarBody, SidebarLink } from '@/components/ui/sidebar';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -173,6 +174,7 @@ const useRoutePrefetch = () => {
 function AppShellContent() {
   const [open, setOpen] = useState(false);
   const { user } = useAuth();
+  const location = useLocation();
 
   // Ativar real-time subscriptions
   usePatientRealtimeSubscription();
@@ -183,6 +185,10 @@ function AppShellContent() {
   useEffect(() => {
     setupQueryErrorHandling();
   }, []);
+
+  // Rotas públicas que não devem mostrar sidebar/chat
+  const publicRoutes = ['/login', '/signup', '/auth/callback', '/auth/confirm'];
+  const isPublicRoute = publicRoutes.includes(location.pathname);
 
   const links = [
     {
@@ -247,16 +253,31 @@ function AppShellContent() {
     });
   }
 
+  // Se for rota pública ou usuário não autenticado, renderizar apenas o conteúdo
+  if (isPublicRoute || !user) {
+    return (
+      <div className='h-screen bg-background'>
+        <Outlet />
+      </div>
+    );
+  }
+
   return (
-    <div className='flex h-screen'>
+    <div className={cn(
+      "flex w-full flex-1 flex-col overflow-hidden md:flex-row rounded-md border border-neutral-200 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800",
+      "h-screen bg-background"
+    )}>
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody>
-          <div className='flex flex-col gap-y-4 p-4'>
-            <div className='flex items-center gap-x-2 px-2'>
-              <IconStethoscope className='h-6 w-6 text-primary' />
-              <span className='text-lg font-semibold'>NeonPro</span>
+        <SidebarBody className="justify-between gap-10">
+          <div className='flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
+            {/* Logo */}
+            <div className='flex items-center gap-x-2 mb-6'>
+              <IconStethoscope className='h-6 w-6 shrink-0 text-primary' />
+              <span className='text-lg font-semibold text-foreground'>NeonPro</span>
             </div>
-            <nav className='space-y-1'>
+
+            {/* Navigation Links */}
+            <nav className='flex flex-col gap-2'>
               {links.map(link => (
                 <SidebarLink
                   key={link.href}
@@ -265,11 +286,24 @@ function AppShellContent() {
               ))}
             </nav>
           </div>
+
+          {/* User Profile Section (opcional) */}
+          {user && (
+            <div className='flex items-center gap-x-2 border-t border-neutral-200 dark:border-neutral-700 pt-4'>
+              <div className='h-8 w-8 shrink-0 rounded-full bg-primary/10 flex items-center justify-center'>
+                <IconUsers className='h-4 w-4 text-primary' />
+              </div>
+              <div className='flex flex-col'>
+                <span className='text-sm font-medium text-foreground truncate'>{user.email}</span>
+                <span className='text-xs text-muted-foreground'>Admin</span>
+              </div>
+            </div>
+          )}
         </SidebarBody>
       </Sidebar>
 
-      <main className='flex-1 overflow-y-auto'>
-        <div className='container mx-auto p-4 md:p-6'>
+      <main className='flex-1 overflow-y-auto bg-background'>
+        <div className='h-full p-4 md:p-8'>
           <Outlet />
         </div>
       </main>
@@ -277,12 +311,14 @@ function AppShellContent() {
       <FloatingAIChatSimple />
 
       {/* Status indicator para real-time */}
-      <div className='fixed bottom-4 right-4 z-50'>
-        <div className='flex items-center gap-2 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm'>
-          <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
-          <span>Real-time Active</span>
+      {user && (
+        <div className='fixed bottom-4 right-20 z-40'>
+          <div className='flex items-center gap-2 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400 px-3 py-1 rounded-full text-xs shadow-lg'>
+            <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse'></div>
+            <span>Online</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

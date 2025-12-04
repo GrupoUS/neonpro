@@ -19,6 +19,7 @@ import aiChat from './routes/ai-chat';
 import appointments from './routes/appointments';
 import auth from './routes/auth';
 import clients from './routes/clients';
+import consent from './routes/consent';
 import health from './routes/health';
 import metricsApi from './routes/metrics';
 import stripePortal from './routes/stripe-portal';
@@ -262,6 +263,7 @@ v1.use('/tools/finance/overdue', requireClinicScope())
 v1.route('/auth', auth);
 v1.route('/clients', clients);
 v1.route('/appointments', appointments);
+v1.route('/consent', consent);
 v1.route('/ai-chat', aiChat);
 v1.route('/ai-explain', (await import('./routes/ai-explanation')).default);
 v1.route('/chat', (await import('./routes/chat')).default);

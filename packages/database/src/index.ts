@@ -9,7 +9,7 @@ export {
   closeDatabaseConnections,
   prisma,
   supabase,
-  supabaseBrowser,
+  getSupabaseBrowser,
 } from './client.js';
 
 // Import prisma for internal use
