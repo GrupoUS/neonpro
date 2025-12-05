@@ -36,10 +36,13 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.3",
     "@supabase/supabase-js": "^2.57.4",
+    "@tanstack/query-core": "5.90.12",
+    "@tanstack/query-devtools": "5.91.1",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
     "@tanstack/react-router": "^1.132.7",
     "@tanstack/react-store": "0.8.0",
+    "@tanstack/store": "0.8.0",
     "@trpc/client": "10.45.2",
     "@trpc/react-query": "10.45.2",
     "@trpc/server": "10.45.2",
@@ -73,6 +76,7 @@
     "tailwind-merge": "^3.3.1",
     "tiny-invariant": "1.3.3",
     "tiny-warning": "1.0.3",
+    "use-sync-external-store": "1.6.0",
     "zod": "^4.1.11"
   },
   "devDependencies": {

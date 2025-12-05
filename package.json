@@ -53,6 +53,7 @@
   "dependencies": {
     "@prisma/client": "5.22.0",
     "@tanstack/history": "1.139.0",
+    "@tanstack/query-core": "5.90.12",
     "@tanstack/router-core": "1.139.14",
     "dotenv": "^17.2.2",
     "lodash.debounce": "^4.0.8",
