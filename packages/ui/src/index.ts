@@ -17,6 +17,8 @@ export type { InputProps } from "./components/ui/input";
 export { Label } from "./components/ui/label";
 export type { LabelProps } from "./components/ui/label";
 
+export { Separator } from "./components/ui/separator";
+
 export {
   Select,
   SelectGroup,
@@ -32,6 +34,46 @@ export {
 
 export { Checkbox, CheckboxIndicator } from "./components/ui/checkbox";
 export type { CheckboxProps, CheckboxIndicatorProps } from "./components/ui/checkbox";
+
+export {
+  Dialog,
+  DialogPortal,
+  DialogOverlay,
+  DialogClose,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "./components/ui/dialog";
+
+export {
+  useFormField,
+  Form,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+  FormField,
+} from "./components/ui/form";
+
+export { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
+
+export {
+  AlertDialog,
+  AlertDialogPortal,
+  AlertDialogOverlay,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+} from "./components/ui/alert-dialog";
 
 export { AccessibilityInput } from "./components/ui/accessibility-input";
 export type { AccessibilityInputProps } from "./components/ui/accessibility-input";
