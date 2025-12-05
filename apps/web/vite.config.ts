@@ -54,7 +54,7 @@ export default defineConfig({
     target: 'esnext',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
-      external: ['@segment/analytics-node'],
+      external: ['@segment/analytics-node', 'chalk', 'fs', 'path', 'crypto', 'os', 'stream', 'util', 'events', 'buffer'],
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
