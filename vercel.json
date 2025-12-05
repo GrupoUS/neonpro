@@ -3,7 +3,7 @@
   "version": 2,
   "regions": ["gru1"],
   "framework": "vite",
-  "buildCommand": "cd apps/web && bun run build",
+  "buildCommand": "bash build.sh",
   "outputDirectory": "apps/web/dist",
   "installCommand": "bun install",
   "rewrites": [
