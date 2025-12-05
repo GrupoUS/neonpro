@@ -68,6 +68,8 @@
     "dotenv": "^17.2.2",
     "is-what": "5.5.0",
     "lodash.debounce": "^4.0.8",
+    "react": "19.2.1",
+    "react-dom": "19.2.1",
     "seroval": "1.4.0",
     "seroval-plugins": "1.4.0",
     "superjson": "2.2.6",
