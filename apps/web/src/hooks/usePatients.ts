@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../integrations/supabase/client'
+import { useAuth } from '@/contexts/AuthContext'
+import { toast } from 'sonner'
+import React from 'react'
 
 // Types for our data
 export interface Patient {
@@ -31,7 +34,7 @@ export interface UpdatePatientData extends Partial<CreatePatientData> {
 export const patientKeys = {
   all: ['patients'] as const,
   lists: () => [...patientKeys.all, 'list'] as const,
-  list: (filters: Record<string, any>) => [...patientKeys.lists(), { filters }] as const,
+  list: (clinicId: string, filters: Record<string, any>) => [...patientKeys.lists(), clinicId, { filters }] as const,
   details: () => [...patientKeys.all, 'detail'] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
   search: (clinicId: string, query: string) =>
@@ -45,11 +48,24 @@ export const patientKeys = {
 export function useSearchPatients(
   clinicId: string,
   query: string,
-  options?: Omit<UseQueryOptions<Patient[], Error>, 'queryKey' | 'queryFn'>,
+  options?: any,
 ) {
   return useQuery({
     queryKey: patientKeys.search(clinicId, query),
-    queryFn: () => patientService.searchPatients(clinicId, query),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('patients')
+        .select('*')
+        .eq('clinic_id', clinicId)
+        .or(`full_name.ilike.%${query}%,phone_primary.ilike.%${query}%`)
+        .limit(10);
+
+      if (error) {
+        throw new Error(`Failed to search patients: ${error.message}`);
+      }
+
+      return data as Patient[];
+    },
     staleTime: 30 * 1000, // 30 seconds - patient search should be fresh
     gcTime: 2 * 60 * 1000, // 2 minutes
     enabled: !!clinicId && query.length >= 2, // Only search with 2+ characters
@@ -62,11 +78,23 @@ export function useSearchPatients(
  */
 export function usePatient(
   patientId: string,
-  options?: Omit<UseQueryOptions<Patient | null, Error>, 'queryKey' | 'queryFn'>,
+  options?: any,
 ) {
   return useQuery({
     queryKey: patientKeys.detail(patientId),
-    queryFn: () => patientService.getPatient(patientId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('patients')
+        .select('*')
+        .eq('id', patientId)
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to fetch patient: ${error.message}`);
+      }
+
+      return data as Patient | null;
+    },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
     enabled: !!patientId,
@@ -89,17 +117,27 @@ export function useCreatePatient() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ data, clinicId }: { data: CreatePatientData; clinicId: string }) => {
+    mutationFn: async (patientData: CreatePatientData) => {
       if (!user?.id) {
         throw new Error('User not authenticated');
       }
-      return patientService.createPatient(data, clinicId, user.id);
+
+      const { data, error } = await supabase
+        .from('patients')
+        .insert([patientData])
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to create patient: ${error.message}`);
+      }
+
+      return data as Patient;
     },
 
-    onSuccess: (newPatient, { clinicId }) => {
-      // Invalidate patient lists and searches
+    onSuccess: (newPatient) => {
+      // Invalidate patient lists
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: patientKeys.search(clinicId, '') });
 
       // Add to cache
       queryClient.setQueryData(patientKeys.detail(newPatient.id), newPatient);
@@ -107,7 +145,7 @@ export function useCreatePatient() {
       toast.success('Paciente criado com sucesso!');
     },
 
-    onError: error => {
+    onError: (error: Error) => {
       console.error('Error creating patient:', error);
       toast.error(error.message || 'Erro ao criar paciente');
     },
@@ -142,7 +180,19 @@ export function usePrefetchPatients() {
   const prefetchPatient = (patientId: string) => {
     queryClient.prefetchQuery({
       queryKey: patientKeys.detail(patientId),
-      queryFn: () => patientService.getPatient(patientId),
+      queryFn: async () => {
+        const { data, error } = await supabase
+          .from('patients')
+          .select('*')
+          .eq('id', patientId)
+          .single();
+
+        if (error) {
+          throw new Error(`Failed to fetch patient: ${error.message}`);
+        }
+
+        return data as Patient | null;
+      },
       staleTime: 5 * 60 * 1000,
     });
   };
@@ -151,7 +201,20 @@ export function usePrefetchPatients() {
     if (query.length >= 2) {
       queryClient.prefetchQuery({
         queryKey: patientKeys.search(clinicId, query),
-        queryFn: () => patientService.searchPatients(clinicId, query),
+        queryFn: async () => {
+          const { data, error } = await supabase
+            .from('patients')
+            .select('*')
+            .eq('clinic_id', clinicId)
+            .or(`full_name.ilike.%${query}%,phone_primary.ilike.%${query}%`)
+            .limit(10);
+
+          if (error) {
+            throw new Error(`Failed to search patients: ${error.message}`);
+          }
+
+          return data as Patient[];
+        },
         staleTime: 30 * 1000,
       });
     }
@@ -168,18 +231,23 @@ export function usePrefetchPatients() {
  */
 export function usePatientAppointmentHistory(
   patientId: string,
-  options?: Omit<
-    UseQueryOptions<
-      ReturnType<typeof patientService.getPatientAppointmentHistory> extends Promise<infer R> ? R
-        : never,
-      Error
-    >,
-    'queryKey' | 'queryFn'
-  >,
+  options?: any,
 ) {
   return useQuery({
     queryKey: patientKeys.history(patientId),
-    queryFn: () => patientService.getPatientAppointmentHistory(patientId),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('patient_id', patientId)
+        .order('appointment_date', { ascending: false });
+
+      if (error) {
+        throw new Error(`Failed to fetch appointment history: ${error.message}`);
+      }
+
+      return data;
+    },
     staleTime: 2 * 60 * 1000, // 2 minutes - appointment history should be relatively fresh
     gcTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!patientId,
@@ -316,42 +384,6 @@ export function usePatientsTable(
     enabled: !!id, // Only run query if ID is provided
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 30, // 30 minutes
-  })
-}
-
-// Hook for creating a new patient
-export function useCreatePatient() {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: async (patientData: CreatePatientData) => {
-      const { data, error } = await supabase
-        .from('patients')
-        .insert([patientData])
-        .select()
-        .single()
-
-      if (error) {
-        throw new Error(`Failed to create patient: ${error.message}`)
-      }
-
-      return data as Patient
-    },
-    onSuccess: newPatient => {
-      // Invalidate and refetch patients list
-      queryClient.invalidateQueries({
-        queryKey: patientKeys.lists(),
-      })
-
-      // Add the new patient to the cache
-      queryClient.setQueryData(
-        patientKeys.detail(newPatient.id),
-        newPatient,
-      )
-    },
-    onError: error => {
-      console.error('Error creating patient:', error)
-    },
   })
 }
 
