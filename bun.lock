@@ -276,6 +276,7 @@
       "dependencies": {
         "@neonpro/types": "workspace:*",
         "@supabase/supabase-js": "2.58.0",
+        "zod": "^4.1.11",
       },
       "devDependencies": {
         "@types/node": "^20.19.13",
