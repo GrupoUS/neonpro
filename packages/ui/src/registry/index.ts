@@ -1,14 +1,12 @@
 /**
  * NEONPRO Component Registry - Multi-Registry Management
- * 
+ *
  * Implements A.P.T.E methodology for component registry management with:
  * - Multiple UI library support (Magic UI, Aceternity UI, Kokonut UI)
  * - Constitutional compliance for Brazilian aesthetic clinics
  * - Dependency conflict resolution
  * - Framer Motion v11.0.0 compatibility
  */
-
-import { type ClassValue, clsx } from 'clsx'
 
 // Registry configuration interface
 export interface RegistryConfig {
@@ -501,7 +499,7 @@ export class ComponentRegistry {
     // Check accessibility compliance
     if (!component.accessibility.wcag21AA) {
       warnings.push({
-        category: 'accessibility',
+        category: 'best_practice',
         description: 'Component may not meet WCAG 2.1 AA standards',
         recommendation: 'Review and test component accessibility'
       })

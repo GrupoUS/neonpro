@@ -77,7 +77,7 @@ export const ACCESSIBLE_PURPLE_COLORS = {
 } as const
 
 // Accessibility utility functions for color validation
-export const validateColorContrast = (foreground: string, background: string): boolean => {
+export const validateColorContrast = (_foreground: string, _background: string): boolean => {
   // This would integrate with a color contrast library
   // For now, return true for our predefined accessible combinations
   return true
@@ -120,15 +120,28 @@ export const getAccessibleColors = (
   subtype?: string,
   highContrast: boolean = false
 ): string => {
-  const colors = ACCESSIBLE_PURPLE_COLORS[type]
-  
-  if (type === 'alerts' && subtype && colors[subtype as keyof typeof colors]) {
-    return Object.values(colors[subtype as keyof typeof colors]).join(' ')
+  if (type === 'alerts' && subtype) {
+    const alertColors = ACCESSIBLE_PURPLE_COLORS.alerts[subtype as keyof typeof ACCESSIBLE_PURPLE_COLORS.alerts]
+    if (alertColors) {
+      return Object.values(alertColors).join(' ')
+    }
   }
-  
-  if (highContrast) {
-    return `${colors.textHighContrast} ${colors.backgroundHighContrast} ${colors.borderHighContrast}`
+
+  if (type === 'primary') {
+    const primaryColors = ACCESSIBLE_PURPLE_COLORS.primary
+    if (highContrast) {
+      return `${primaryColors.textHighContrast} ${primaryColors.backgroundHighContrast} ${primaryColors.borderHighContrast}`
+    }
+    return `${primaryColors.text} ${primaryColors.background} ${primaryColors.border}`
   }
-  
-  return `${colors.text} ${colors.background} ${colors.border}`
+
+  if (type === 'vip') {
+    const vipColors = ACCESSIBLE_PURPLE_COLORS.vip
+    if (highContrast) {
+      return `${vipColors.textCritical} ${vipColors.backgroundCritical} ${vipColors.borderCritical}`
+    }
+    return `${vipColors.text} ${vipColors.background} ${vipColors.border}`
+  }
+
+  return ''
 }

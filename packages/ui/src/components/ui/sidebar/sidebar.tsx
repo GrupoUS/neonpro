@@ -7,15 +7,10 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Menu, 
-  X, 
-  ChevronRight,
-  Home,
-  Calendar,
-  Users,
-  Settings,
-  LogOut
+import {
+  Menu,
+  X,
+  ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 

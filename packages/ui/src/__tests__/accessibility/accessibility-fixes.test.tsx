@@ -1,24 +1,43 @@
 /**
  * NEONPRO Accessibility Fixes Test Suite
- * 
+ *
  * Comprehensive testing for purple theme and ARIA attribute improvements
  * WCAG 2.1 AA+ compliance validation
  * Brazilian healthcare accessibility standards
  */
 
-import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { vi } from 'vitest'
 import { AestheticConsultationAlert } from '../../components/healthcare/aesthetic-consultation-alert'
 import { VIPClientStatus } from '../../components/aesthetic/client/client-vip-status'
 import { ACCESSIBLE_PURPLE_COLORS, HEALTHCARE_ACCESSIBILITY_COLORS } from '../../accessibility/colors'
 import { announceToScreenReader } from '../../accessibility/aria'
 
 // Mock screen reader announcements
-jest.mock('../../accessibility/aria', () => ({
-  ...jest.requireActual('../../accessibility/aria'),
-  announceToScreenReader: jest.fn()
-}))
+vi.mock('../../accessibility/aria', async () => {
+  const actual = await vi.importActual('../../accessibility/aria')
+  return {
+    ...actual,
+    announceToScreenReader: vi.fn()
+  }
+})
+
+// Mock VIP client data for tests
+const mockVIPClient = {
+  clientId: 'C12345',
+  clientName: 'Maria Silva',
+  vipLevel: 'diamond' as const,
+  membershipSince: new Date('2023-01-15'),
+  totalTreatments: 25,
+  totalSpent: 55000,
+  upcomingAppointments: 2,
+  loyaltyPoints: 1500,
+  preferredTreatments: ['Botox', 'Preenchimento'],
+  lastVisit: new Date('2024-01-10'),
+  onContactClient: () => {},
+  onViewProfile: () => {},
+  onScheduleTreatment: () => {}
+}
 
 describe('Purple Theme Accessibility Fixes', () => {
   describe('Color Contrast Compliance', () => {
@@ -65,7 +84,7 @@ describe('Purple Theme Accessibility Fixes', () => {
 
   describe('Aesthetic Consultation Alert Accessibility', () => {
     beforeEach(() => {
-      jest.clearAllMocks()
+      vi.clearAllMocks()
     })
 
     test('VIP alerts have proper ARIA live regions', () => {
@@ -143,22 +162,6 @@ describe('Purple Theme Accessibility Fixes', () => {
   })
 
   describe('VIP Client Status Accessibility', () => {
-    const mockVIPClient = {
-      clientId: 'C12345',
-      clientName: 'Maria Silva',
-      vipLevel: 'diamond' as const,
-      membershipSince: new Date('2023-01-15'),
-      totalTreatments: 25,
-      totalSpent: 55000,
-      upcomingAppointments: 2,
-      loyaltyPoints: 1500,
-      preferredTreatments: ['Botox', 'Preenchimento'],
-      lastVisit: new Date('2024-01-10'),
-      onContactClient: () => {},
-      onViewProfile: () => {},
-      onScheduleTreatment: () => {}
-    }
-
     test('VIP badges have proper ARIA attributes and colors', () => {
       render(<VIPClientStatus {...mockVIPClient} />)
 

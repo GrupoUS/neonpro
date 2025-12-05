@@ -116,7 +116,8 @@ export function usePersistedDashboardLayout() {
     // Check if multiple cards are stacked at the same position (0,0 or overlapping)
     const existingPositions = cardIds
       .filter(id => positions[id])
-      .map(id => positions[id]);
+      .map(id => positions[id])
+      .filter((pos): pos is CardPosition => pos !== undefined);
 
     const hasStackedCards = existingPositions.length > 1 &&
       existingPositions.every(pos => pos.x === 0 && pos.y === 0);
@@ -161,7 +162,10 @@ export function usePersistedDashboardLayout() {
 
     // Only update positions for cards that don't have one
     const newPositions = cardsWithoutPosition.reduce((acc, cardId) => {
-      acc[cardId] = allPositions[cardId];
+      const position = allPositions[cardId];
+      if (position) {
+        acc[cardId] = position;
+      }
       return acc;
     }, {} as Record<string, CardPosition>);
 

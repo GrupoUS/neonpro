@@ -79,9 +79,12 @@
     "@types/node": "^20.16.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@vitest/ui": "4.0.15",
+    "jsdom": "27.2.0",
     "tsup": "^8.0.0",
     "typescript": "5.9.2",
     "vite": "^5.0.0",
+    "vitest": "4.0.15",
     "vitest-axe": "0.1.0"
   },
   "peerDependencies": {

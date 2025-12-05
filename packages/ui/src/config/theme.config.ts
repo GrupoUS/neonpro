@@ -56,7 +56,7 @@ export const ThemeConfigSchema = z.object({
   branding: z.object({
     clinicName: z.string().optional(),
     logo: z.string().url().optional(),
-    customColors: z.record(z.string()).optional(),
+    customColors: z.record(z.string(), z.string()).optional(),
     brandGradients: z.array(z.string()).optional(),
   }),
 
@@ -244,10 +244,11 @@ export class ThemeConfigManager {
     }
 
     // Color format validation
-    const colorValues = Object.values(colors)
-    const invalidColors = colorValues.filter(color =>
-      !color.match(/^oklch\([\d\s.%/]+\)$/) && !color.match(/^#[0-9A-Fa-f]{6}$/)
-    )
+    const colorValues = Object.values(colors).filter((color): color is string => typeof color === 'string')
+    const invalidColors = colorValues.filter(color => {
+      if (!color) return false
+      return !color.match(/^oklch\([\d\s.%/]+\)$/) && !color.match(/^#[0-9A-Fa-f]{6}$/)
+    })
 
     if (invalidColors.length > 0) {
       issues.push('Invalid color format detected. Use OKLCH or HEX format.')

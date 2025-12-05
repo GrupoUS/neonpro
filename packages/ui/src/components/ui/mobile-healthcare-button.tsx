@@ -27,9 +27,11 @@ const extractTextContent = (node: React.ReactNode): string => {
       if (typeof child === 'string' || typeof child === 'number') {
         return String(child)
       }
-      if (React.isValidElement(child) && child.props?.children) {
-        const element = child as React.ReactElement
-        return extractTextContent(element.props.children)
+      if (React.isValidElement(child)) {
+        const props = child.props as Record<string, unknown>
+        if (props && 'children' in props) {
+          return extractTextContent(props['children'] as React.ReactNode)
+        }
       }
       return ''
     })
@@ -65,7 +67,7 @@ export const MobileHealthcareButton: React.FC<MobileHealthcareButtonProps> = ({
   ...props
 }) => {
   // Validate props with Zod (development only)
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     try {
       mobileHealthcareButtonSchema.parse({
         variant,

@@ -12,6 +12,7 @@
       "@/lib/*": ["./src/lib/*"],
       "ui/*": ["./src/*"]
     },
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowJs": false,

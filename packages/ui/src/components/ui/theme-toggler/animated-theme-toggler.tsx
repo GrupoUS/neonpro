@@ -1,11 +1,10 @@
 /**
  * Animated Theme Toggler Component
- * 
+ *
  * Beautiful animated toggle for switching between light/dark modes
  * Integrated with NEONPRO theme and constitutional compliance
  */
 
-import React from "react";
 import { motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";

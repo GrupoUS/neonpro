@@ -27,11 +27,10 @@ export function HoverBorderGradientButton({
   animationDuration = 2,
   glowIntensity = "medium",
   disabled,
+  style,
   ...props
 }: HoverBorderGradientButtonProps) {
-  // Separate form props from other props to avoid TypeScript conflicts
-  const { formAction, form, formEncType, formMethod, formNoValidate, formTarget, ...otherProps } = props;
-  
+
   const baseClasses = "relative inline-flex items-center justify-center rounded-md font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neonpro-primary disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden";
 
   const sizeClasses = {
@@ -63,6 +62,7 @@ export function HoverBorderGradientButton({
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       disabled={disabled}
+      {...(style ? { style } : {})}
       {...props}
     >
       {/* Animated gradient border */}
@@ -112,4 +112,4 @@ export function HoverBorderGradientButton({
   );
 }
 
-export default HoverBorderGradientButton;n;
+export default HoverBorderGradientButton;
