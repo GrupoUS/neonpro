@@ -84,6 +84,7 @@ export default defineConfig({
       'react/jsx-runtime',
       'react/jsx-dev-runtime',
       'scheduler',
+      '@supabase/supabase-js',
       '@tanstack/react-router',
       '@tanstack/react-query',
       '@tanstack/router-core',
