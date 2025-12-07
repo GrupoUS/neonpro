@@ -80,6 +80,7 @@ export const WCAGComplianceSchema = z.object({
   level: z.enum(['2.1 AA+', '2.1 AAA']),
   compliant: z.boolean(),
   lastAudit: z.date(),
+  nextAudit: z.date(),
   score: z.number().min(0).max(100, 'Score must be between 0 and 100'),
   checks: z.array(ComplianceCheckSchema),
   issues: z.array(z.object({
@@ -155,6 +156,7 @@ export const defaultComplianceFrameworkStatus: Omit<ComplianceFrameworkStatus, '
 export const defaultWCAGCompliance: Omit<WCAGCompliance, 'level'> = {
   compliant: true,
   lastAudit: new Date(),
+  nextAudit: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
   score: 100,
   checks: [],
   issues: [],
@@ -231,7 +233,7 @@ export const updateComplianceStatus = async (
   update: ComplianceStatusUpdate
 ): Promise<ComplianceStatus> => {
   const now = new Date()
-  const updatedStatus = {
+  const updatedStatus: Record<string, any> = {
     ...update,
     updatedAt: now,
     lastUpdated: now,
@@ -246,7 +248,7 @@ export const updateComplianceStatus = async (
         ...updatedStatus,
       }
 
-      updatedStatus.overallScore = calculateOverallComplianceScore(mergedStatus as ComplianceStatus)
+      updatedStatus['overallScore'] = calculateOverallComplianceScore(mergedStatus as ComplianceStatus)
     }
   }
 

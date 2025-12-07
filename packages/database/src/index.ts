@@ -16,19 +16,21 @@ export {
 import { prisma } from './client.js';
 
 // Base service class and utilities
-export type { AuditLogData } from './services/base.service';
-export { BaseService } from './services/base.service.js';
+// TODO: Re-enable when base.service is implemented
+// export type { AuditLogData } from './services/base.service';
+// export { BaseService } from './services/base.service.js';
 
 // Re-export Prisma types for type sharing across packages
-export type {
-  Appointment,
-  AuditTrail,
-  Clinic,
-  ConsentRecord,
-  Patient,
-  Professional,
-  User,
-} from '@prisma/client';
+// TODO: Re-enable when Prisma schema is generated
+// export type {
+//   Appointment,
+//   AuditTrail,
+//   Clinic,
+//   ConsentRecord,
+//   Patient,
+//   Professional,
+//   User,
+// } from '@prisma/client';
 
 // Healthcare-specific utilities
 export const validateCPF = (cpf: string): boolean => {

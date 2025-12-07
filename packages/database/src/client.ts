@@ -17,13 +17,13 @@ import { createClient as createSupabaseClient, type SupabaseClient } from '@supa
 
 // Connection pool configuration optimized for healthcare workloads
 const createOptimizedSupabaseClient = (): SupabaseClient => {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env['SUPABASE_URL'] || !process.env['SUPABASE_SERVICE_ROLE_KEY']) {
     throw new Error('Missing required Supabase environment variables for optimized client');
   }
-  
+
   return createSupabaseClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    process.env['SUPABASE_URL'],
+    process.env['SUPABASE_SERVICE_ROLE_KEY'],
     {
       db: {
         schema: 'public',
@@ -49,8 +49,8 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
 // Browser client for client-side operations with RLS
 const createBrowserSupabaseClient = (): SupabaseClient => {
   return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+    process.env['NEXT_PUBLIC_SUPABASE_URL'] ?? '',
+    process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'] ?? '',
     {
       auth: {
         persistSession: true,
@@ -69,7 +69,7 @@ const createBrowserSupabaseClient = (): SupabaseClient => {
 // Prisma client for healthcare workloads
 const createPrismaClient = (): PrismaClient => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development'
+    log: process.env['NODE_ENV'] === 'development'
       ? ['query', 'error', 'warn']
       : ['error'],
     errorFormat: 'pretty',
@@ -78,12 +78,12 @@ const createPrismaClient = (): PrismaClient => {
 
 // Client creation functions for testing
 export const createNodeSupabaseClient = (): SupabaseClient => {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env['SUPABASE_URL'] || !process.env['SUPABASE_SERVICE_ROLE_KEY']) {
     throw new Error('Missing Supabase environment variables');
   }
   return createSupabaseClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    process.env['SUPABASE_URL'],
+    process.env['SUPABASE_SERVICE_ROLE_KEY'],
     {
       db: {
         schema: 'public',
@@ -97,12 +97,12 @@ export const createNodeSupabaseClient = (): SupabaseClient => {
 };
 
 export const createServiceSupabaseClient = (): SupabaseClient => {
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  if (!process.env['SUPABASE_URL'] || !process.env['SUPABASE_SERVICE_ROLE_KEY']) {
     throw new Error('Missing Supabase service role environment variables');
   }
   return createSupabaseClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY,
+    process.env['SUPABASE_URL'],
+    process.env['SUPABASE_SERVICE_ROLE_KEY'],
     {
       db: {
         schema: 'public',

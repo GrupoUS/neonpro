@@ -62,11 +62,11 @@ export const loadDatabaseConfig = (): Partial<DatabaseConfig> => {
  * Enforces server-only runtime and includes audit logging
  */
 export const createSupabaseAdminClient = (config?: Partial<DatabaseConfig>): SupabaseClient<Database> => {
-  // Enforce server-only runtime
-  const isServer = typeof window === 'undefined' &&
-                  (typeof process !== 'undefined' ||
-                   (typeof globalThis !== 'undefined' && 'process' in globalThis));
-  
+  // Enforce server-only runtime using globalThis
+  const isServer = typeof globalThis !== 'undefined' &&
+                  !('window' in globalThis) &&
+                  'process' in globalThis;
+
   if (!isServer) {
     throw new Error('createSupabaseAdminClient can only be used in server environments');
   }

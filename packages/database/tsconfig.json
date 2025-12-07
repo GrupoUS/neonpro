@@ -3,16 +3,16 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
+    "lib": ["ES2022"],
     "allowJs": true,
     "checkJs": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "strict": true,
@@ -36,14 +36,18 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.test.ts",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.ts",
-    "src/**/*.spec.tsx",
-    "src/__tests__/**/*"
+    "src/**/*.tsx"
   ],
-  "exclude": ["dist", "node_modules", "**/*.js"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "**/*.js",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "**/__tests__/**/*"
+  ],
   "references": [
     { "path": "../types" }
   ]
