@@ -2,9 +2,9 @@
   "version": 2,
   "name": "neonpro-web",
   "framework": "vite",
-  "buildCommand": "npm run build",
+  "buildCommand": "cd ../.. && bun install --frozen-lockfile && bash build.sh",
   "outputDirectory": "dist",
-  "installCommand": "npm install",
+  "installCommand": "bun install --frozen-lockfile",
   "regions": ["gru1"],
   "headers": [
     {
