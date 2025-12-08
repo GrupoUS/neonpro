@@ -67,15 +67,11 @@ export default defineConfig({
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
-      exclude: [],
-      // Prevent Supabase from being treated as external
       ignoreTryCatch: false,
       requireReturnsDefault: 'auto',
-      esmExternals: (id) => {
-        // Force Supabase modules to NOT be treated as ESM externals
-        if (id.includes('@supabase/')) return false;
-        return true;
-      }
+      esmExternals: false,  // Don't treat anything as ESM external - bundle everything
+      dynamicRequireTargets: [],
+      ignore: []
     },
     rollupOptions: {
       external: (id) => {
