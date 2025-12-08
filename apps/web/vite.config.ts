@@ -79,9 +79,7 @@ export default defineConfig({
         'stream', 
         'util', 
         'events', 
-        'buffer',
-        'iceberg-js',
-        '@supabase/node-fetch'
+        'buffer'
       ],
       output: {
         manualChunks: {
