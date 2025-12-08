@@ -45,7 +45,8 @@ export default defineConfig({
     global: 'globalThis',
   },
   ssr: {
-    noExternal: ['@supabase/supabase-js', '@supabase/auth-js', '@supabase/postgrest-js', '@supabase/functions-js', '@supabase/realtime-js', '@supabase/storage-js']
+    noExternal: true, // Force bundle ALL dependencies for SSR
+    external: ['@segment/analytics-node', 'chalk']
   },
   server: {
     host: true,
@@ -65,7 +66,8 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
     commonjsOptions: {
       include: [/node_modules/],
-      transformMixedEsModules: true
+      transformMixedEsModules: true,
+      exclude: []
     },
     rollupOptions: {
       external: (id) => {
