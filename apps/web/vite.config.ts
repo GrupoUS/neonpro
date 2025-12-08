@@ -43,7 +43,6 @@ export default defineConfig({
   },
   define: {
     global: 'globalThis',
-    'process.env': 'import.meta.env',
   },
   ssr: {
     noExternal: ['@supabase/supabase-js', '@supabase/auth-js', '@supabase/postgrest-js', '@supabase/functions-js', '@supabase/realtime-js', '@supabase/storage-js']
