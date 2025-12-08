@@ -43,6 +43,9 @@ export default defineConfig({
     global: 'globalThis',
     'process.env': 'import.meta.env',
   },
+  ssr: {
+    noExternal: ['@supabase/supabase-js']
+  },
   server: {
     host: true,
     port: 8080,
