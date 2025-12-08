@@ -76,9 +76,12 @@ export default defineConfig({
         
         // Never externalize Supabase packages - must be bundled
         if (id.includes('@supabase/')) return false;
+        if (id.includes('?commonjs-external')) return false;
         
         return nodeBuiltins.includes(id);
       },
+      makeAbsoluteExternalsRelative: false,
+      preserveEntrySignatures: 'strict',
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
