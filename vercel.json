@@ -5,7 +5,7 @@
   "framework": "vite",
   "buildCommand": "bash build.sh",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "bun install",
+  "installCommand": "bun install --frozen-lockfile",
   "rewrites": [
     {
       "source": "/(.*)",
