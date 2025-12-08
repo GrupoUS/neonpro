@@ -21,6 +21,10 @@ export default defineConfig({
       ignoreConfigErrors: true,
     }),
   ],
+  logLevel: 'warn',
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  },
   root: '.',
   publicDir: 'public',
   resolve: {
@@ -52,6 +56,8 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
     target: 'esnext',
+    minify: 'terser',
+    reportCompressedSize: false,
     chunkSizeWarningLimit: 2000,
     rollupOptions: {
       external: [
