@@ -71,11 +71,8 @@ export default defineConfig({
         'util', 
         'events', 
         'buffer',
-        '@supabase/auth-js',
-        '@supabase/postgrest-js', 
-        '@supabase/functions-js',
-        '@supabase/realtime-js',
-        '@supabase/storage-js'
+        'iceberg-js',
+        '@supabase/node-fetch'
       ],
       output: {
         manualChunks: {
@@ -139,6 +136,6 @@ export default defineConfig({
       'tiny-warning',
       'use-sync-external-store',
     ],
-    exclude: ['@segment/analytics-node'],
+    exclude: ['@segment/analytics-node', 'iceberg-js', '@supabase/node-fetch'],
   },
 })
