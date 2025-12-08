@@ -37,6 +37,8 @@ export default defineConfig({
       '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
       '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
       '@neonpro/core': path.resolve(__dirname, '../../packages/core/src'),
+      'iceberg-js': path.resolve(__dirname, './src/polyfills/iceberg-js.ts'),
+      '@supabase/node-fetch': path.resolve(__dirname, './src/polyfills/node-fetch.ts'),
     },
   },
   define: {
@@ -62,6 +64,10 @@ export default defineConfig({
     minify: 'terser',
     reportCompressedSize: false,
     chunkSizeWarningLimit: 2000,
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
+    },
     rollupOptions: {
       external: [
         '@segment/analytics-node', 
@@ -140,6 +146,6 @@ export default defineConfig({
       'tiny-warning',
       'use-sync-external-store',
     ],
-    exclude: ['@segment/analytics-node', 'iceberg-js', '@supabase/node-fetch'],
+    exclude: ['@segment/analytics-node'],
   },
 })
