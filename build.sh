@@ -31,7 +31,17 @@ echo "   VITE_APP_ENV: ${VITE_APP_ENV}"
 # Build only the frontend web app
 echo "🏗️ Building frontend web app..."
 cd apps/web
-bunx vite build
+
+# Debug: Show Vite config being used
+echo "🔍 Checking Vite configuration..."
+head -50 vite.config.ts | grep -A5 "ssr:" || echo "No SSR config found"
+
+# Clear Vite cache to ensure fresh build
+echo "🧹 Clearing Vite cache..."
+rm -rf node_modules/.vite
+rm -rf .vite
+
+bunx vite build --logLevel info
 cd ../..
 
 # Validate output
