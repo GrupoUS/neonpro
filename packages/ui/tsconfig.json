@@ -17,12 +17,15 @@
     "moduleResolution": "bundler",
     "allowJs": false,
     "checkJs": false,
-    "composite": true,
+    "composite": false,
+    "incremental": false,
     "noEmit": false,
     "skipLibCheck": true
   },
   "include": [
     "src/**/*",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "src/**/*.spec.ts",
