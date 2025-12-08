@@ -83,7 +83,7 @@ export default defineConfig({
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
           trpc: ['@trpc/server', '@trpc/client', '@trpc/react-query'],
-          supabase: ['@supabase/supabase-js', '@supabase/auth-js', '@supabase/postgrest-js', '@supabase/functions-js', '@supabase/realtime-js', '@supabase/storage-js'],
+          supabase: ['@supabase/supabase-js'],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
           forms: ['react-hook-form', 'zod'],
           utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
