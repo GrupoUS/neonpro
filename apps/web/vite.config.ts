@@ -68,18 +68,15 @@ export default defineConfig({
       transformMixedEsModules: true
     },
     rollupOptions: {
-      external: [
-        '@segment/analytics-node', 
-        'chalk', 
-        'fs', 
-        'path', 
-        'crypto', 
-        'os', 
-        'stream', 
-        'util', 
-        'events', 
-        'buffer'
-      ],
+      external: (id) => {
+        // Only externalize Node.js built-ins and specific packages
+        const nodeBuiltins = ['fs', 'path', 'crypto', 'os', 'stream', 'util', 'events', 'buffer', 'chalk', '@segment/analytics-node'];
+        
+        // Never externalize Supabase packages - must be bundled
+        if (id.includes('@supabase/')) return false;
+        
+        return nodeBuiltins.includes(id);
+      },
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
