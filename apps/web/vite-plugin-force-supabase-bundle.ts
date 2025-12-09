@@ -10,13 +10,25 @@ export function forceSupabaseBundle(): Plugin {
     name: 'force-supabase-bundle',
     enforce: 'pre', // Run before other plugins including commonjs
     
-    resolveId(source, importer, options) {
+    async resolveId(source, importer, options) {
       // Block commonjs-external suffix for Supabase modules
       if (source.includes('?commonjs-external') && source.includes('@supabase/')) {
-        // Remove the suffix and resolve normally
+        // Remove the suffix and force resolve
         const cleanSource = source.replace('?commonjs-external', '')
-        // Return false to prevent externalization
-        return false
+        
+        // Force resolve the clean source
+        const resolved = await this.resolve(cleanSource, importer, {
+          skipSelf: true,
+          ...options
+        })
+        
+        if (resolved) {
+          // Return the resolved id WITHOUT the external flag
+          return {
+            id: resolved.id,
+            external: false // Critical: force it to NOT be external
+          }
+        }
       }
       
       return null // Let other plugins handle
