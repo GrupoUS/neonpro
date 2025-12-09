@@ -1,0 +1,38 @@
+import { createRouter, RouterProvider } from '@tanstack/react-router'
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+// import { CopilotKitProvider } from './providers/CopilotKitProvider' // DESABILITADO - Recurso opcional de IA
+import { RealtimeQueryProvider } from './providers/RealtimeQueryProvider'
+import { AuthProvider } from './contexts/AuthContext'
+import { routeTree } from './routeTree.gen'
+import './styles/globals.css'
+
+const router = createRouter({
+  routeTree,
+  defaultPreload: 'intent',
+})
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+const rootElement = document.getElementById('root')
+if (!rootElement) {
+  throw new Error('Root element #root not found')
+}
+
+const root = createRoot(rootElement)
+root.render(
+  <StrictMode>
+    <AuthProvider>
+      <RealtimeQueryProvider>
+        {/* CopilotKitProvider desabilitado - Recurso opcional de IA */}
+        <RouterProvider router={router} />
+      </RealtimeQueryProvider>
+    </AuthProvider>
+  </StrictMode>,
+)
+
+// Cache buster: 1765237951
