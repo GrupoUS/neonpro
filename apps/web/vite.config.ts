@@ -5,6 +5,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vite'
 import { trpcFix } from './vite-plugin-trpc-fix'
 import { forceSupabaseBundle } from './vite-plugin-force-supabase-bundle.js'
+import { disableCommonjsForSupabase } from './vite-plugin-disable-commonjs.js'
 
 let TanStackRouterVite: () => { name: string }
 try {
@@ -15,7 +16,8 @@ try {
 
 export default defineConfig({
   plugins: [
-    forceSupabaseBundle(), // MUST be first to intercept before commonjs
+    disableCommonjsForSupabase(), // Disable commonjs for Supabase
+    forceSupabaseBundle(), // Force bundle Supabase modules
     trpcFix(),
     TanStackRouterVite(),
     react(),
