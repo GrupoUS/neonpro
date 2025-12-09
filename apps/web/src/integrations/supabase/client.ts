@@ -114,6 +114,11 @@ export const supabase = {
       }
     },
     
+    async signInWithPassword(credentials: { email: string; password: string }) {
+      // Alias for signIn to maintain SDK compatibility
+      return this.signIn(credentials.email, credentials.password)
+    },
+    
     async signUp(credentials: { email: string; password: string; options?: any } | string, password?: string, options?: any) {
       try {
         // Support both formats:
