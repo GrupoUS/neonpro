@@ -3,8 +3,12 @@
  * Simplified version without external dependencies issues
  */
 
-import { createClient } from '@supabase/supabase-js'
+// Import using default export to avoid ESM/CommonJS issues
+import supabaseLib from '@supabase/supabase-js'
 import type { Database } from './types'
+
+// Extract createClient from default export
+const { createClient } = supabaseLib as any
 
 // Environment variables with fallbacks
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
