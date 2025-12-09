@@ -44,6 +44,8 @@ export default defineConfig({
       'iceberg-js': path.resolve(__dirname, './src/polyfills/iceberg-js.ts'),
       '@supabase/node-fetch': path.resolve(__dirname, './src/polyfills/node-fetch.ts'),
     },
+    // Use main (CommonJS) field to avoid ESM wrapper bugs
+    mainFields: ['main', 'module'],
   },
   define: {
     global: 'globalThis',
@@ -70,10 +72,11 @@ export default defineConfig({
     chunkSizeWarningLimit: 2000,
     commonjsOptions: {
       include: [/node_modules/],
+      exclude: [/@supabase\//],  // Don't apply commonjs transform to Supabase - treat as ESM
       transformMixedEsModules: true,
       ignoreTryCatch: false,
       requireReturnsDefault: 'auto',
-      esmExternals: false,  // Don't treat anything as ESM external - bundle everything
+      esmExternals: false,
       dynamicRequireTargets: [],
       ignore: []
     },
@@ -82,8 +85,12 @@ export default defineConfig({
         // Only externalize Node.js built-ins and specific packages
         const nodeBuiltins = ['fs', 'path', 'crypto', 'os', 'stream', 'util', 'events', 'buffer', 'chalk', '@segment/analytics-node'];
         
-        // Never externalize Supabase packages - must be bundled
-        if (id.includes('@supabase/')) return false;
+        // Log to verify this is being called
+        if (id.includes('@supabase/')) {
+          console.log(`[external check] ${id} -> BUNDLED (returning false)`)
+          return false
+        }
+        
         if (id.includes('?commonjs-external')) return false;
         
         return nodeBuiltins.includes(id);
@@ -91,12 +98,20 @@ export default defineConfig({
       makeAbsoluteExternalsRelative: false,
       preserveEntrySignatures: 'strict',
       output: {
+        intro: 'console.log("[NeonPro] Bundle loaded successfully");',
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
           trpc: ['@trpc/server', '@trpc/client', '@trpc/react-query'],
-          supabase: ['@supabase/supabase-js'],
+          supabase: [
+            '@supabase/supabase-js',
+            '@supabase/auth-js',
+            '@supabase/postgrest-js',
+            '@supabase/functions-js',
+            '@supabase/realtime-js',
+            '@supabase/storage-js'
+          ],
           ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
           forms: ['react-hook-form', 'zod'],
           utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
