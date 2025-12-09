@@ -22,7 +22,11 @@ export function disableCommonjsForSupabase() {
           const originalResolveId = plugin.resolveId
           plugin.resolveId = function(source, importer, options) {
             if (source.includes('@supabase/')) {
+              console.log(`[SKIP COMMONJS] Skipping: ${source} (imported by ${importer})`)
               return null // Skip commonjs handling
+            }
+            if (source.includes('?commonjs-external')) {
+              console.log(`[WARNING] Found commonjs-external suffix: ${source}`)
             }
             return originalResolveId?.call(this, source, importer, options)
           }
