@@ -114,14 +114,33 @@ export const supabase = {
       }
     },
     
-    async signUp(email: string, password: string, options: any = {}) {
+    async signUp(credentials: { email: string; password: string; options?: any } | string, password?: string, options?: any) {
       try {
+        // Support both formats:
+        // 1. signUp({ email, password, options }) - SDK style
+        // 2. signUp(email, password, options) - function params style
+        let email: string
+        let pass: string
+        let opts: any = {}
+        
+        if (typeof credentials === 'string') {
+          // Function params style
+          email = credentials
+          pass = password!
+          opts = options || {}
+        } else {
+          // SDK style
+          email = credentials.email
+          pass = credentials.password
+          opts = credentials.options || {}
+        }
+        
         const data = await supabaseFetch('/auth/v1/signup', {
           method: 'POST',
           body: JSON.stringify({ 
             email, 
-            password,
-            data: options.data || {} // metadata
+            password: pass,
+            data: opts.data || {} // metadata
           }),
         })
         
