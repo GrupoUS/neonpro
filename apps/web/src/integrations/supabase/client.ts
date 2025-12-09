@@ -100,6 +100,29 @@ export const supabase = {
       }
     },
     
+    async signUp(email: string, password: string, options: any = {}) {
+      try {
+        const data = await supabaseFetch('/auth/v1/signup', {
+          method: 'POST',
+          body: JSON.stringify({ 
+            email, 
+            password,
+            data: options.data || {} // metadata
+          }),
+        })
+        
+        // Store session if auto-confirmed
+        if (typeof window !== 'undefined' && data.access_token) {
+          localStorage.setItem('supabase.auth.token', JSON.stringify(data))
+        }
+        
+        return { data, error: null }
+      } catch (error: any) {
+        console.error('[Supabase] SignUp error:', error)
+        return { data: null, error }
+      }
+    },
+    
     async signOut() {
       try {
         await supabaseFetch('/auth/v1/logout', { method: 'POST' })
