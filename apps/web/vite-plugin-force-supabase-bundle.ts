@@ -11,29 +11,28 @@ export function forceSupabaseBundle(): Plugin {
     enforce: 'pre', // Run before other plugins including commonjs
     
     resolveId(source, importer, options) {
-      // Intercept Supabase module resolution
-      if (source.includes('@supabase/')) {
-        // Don't let it be treated as external
-        return null // Let Vite handle normal resolution
-      }
-      
-      // Block commonjs-external suffix
-      if (source.includes('?commonjs-external')) {
+      // Block commonjs-external suffix for Supabase modules
+      if (source.includes('?commonjs-external') && source.includes('@supabase/')) {
+        // Remove the suffix and resolve normally
         const cleanSource = source.replace('?commonjs-external', '')
-        if (cleanSource.includes('@supabase/')) {
-          // Force resolve without the suffix
-          return this.resolve(cleanSource, importer, { skipSelf: true, ...options })
-        }
+        // Return false to prevent externalization
+        return false
       }
       
       return null // Let other plugins handle
     },
     
     load(id) {
+      // Don't try to load modules with null bytes (Rollup virtual modules)
+      if (id.startsWith('\x00')) {
+        return null
+      }
+      
       // Prevent loading of external Supabase modules
       if (id.includes('@supabase/') && id.includes('?commonjs-external')) {
-        const cleanId = id.replace('?commonjs-external', '')
-        return this.load({ id: cleanId })
+        const cleanId = id.replace('?commonjs-external', '').replace(/^\x00/, '')
+        // Let other plugins handle the actual loading
+        return null
       }
       return null
     }
