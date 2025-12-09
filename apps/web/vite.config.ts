@@ -4,7 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 
 import { defineConfig } from 'vite'
 import { trpcFix } from './vite-plugin-trpc-fix'
-import { forceSupabaseBundle } from './vite-plugin-force-supabase-bundle'
+import { forceSupabaseBundle } from './vite-plugin-force-supabase-bundle.js'
 
 let TanStackRouterVite: () => { name: string }
 try {
