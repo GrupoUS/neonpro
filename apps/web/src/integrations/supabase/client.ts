@@ -1,49 +1,43 @@
-import { createClient as supabaseCreateClient } from '@supabase/supabase-js'
+/**
+ * Supabase Client - Clean Implementation
+ * Simplified version without external dependencies issues
+ */
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+import { createClient } from '@supabase/supabase-js'
+import type { Database } from './types'
 
-// Log missing environment variables but don't throw to prevent white screen
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('⚠️ Missing Supabase environment variables:', {
-    VITE_SUPABASE_URL: supabaseUrl ? '✓ set' : '✗ missing',
-    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? '✓ set' : '✗ missing',
-  })
+// Environment variables with fallbacks
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
+
+// Validate environment variables
+if (supabaseUrl === 'https://placeholder.supabase.co') {
+  console.warn('[Supabase] Using placeholder URL - set VITE_SUPABASE_URL')
 }
 
-console.log('🔧 Criando cliente Supabase:', { url: supabaseUrl || 'NOT_SET' })
-
-// Limpar storage antigo que pode estar corrompido
-if (typeof window !== 'undefined') {
-  console.log('🧹 Limpando storage do Supabase...')
-  const keysToRemove = Object.keys(localStorage).filter(key =>
-    key.startsWith('supabase.auth') || key.startsWith('sb-')
-  )
-  keysToRemove.forEach(key => {
-    console.log(`  Removendo: ${key}`)
-    localStorage.removeItem(key)
-  })
+if (supabaseAnonKey === 'placeholder-key') {
+  console.warn('[Supabase] Using placeholder key - set VITE_SUPABASE_ANON_KEY')
 }
 
-// Use placeholder values if env vars are missing to prevent crash
-// The app will show appropriate error messages when trying to use Supabase
-export const supabase = supabaseCreateClient(
-  supabaseUrl || 'https://placeholder.supabase.co',
-  supabaseAnonKey || 'placeholder-key',
-  {
-    auth: {
-      // Configuração minimalista para debug
-      persistSession: false, // Desabilitado temporariamente para debug
-      autoRefreshToken: false, // Desabilitado temporariamente para debug
-      detectSessionInUrl: false, // Desabilitado temporariamente para debug
-    },
+/**
+ * Supabase client instance
+ * Clean, simple implementation that works in all environments
+ */
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: typeof window !== 'undefined' ? window.localStorage : undefined
+  },
+  global: {
+    headers: {
+      'x-application-name': 'neonpro'
+    }
   }
-)
+})
 
-// Create a convenience export for the client
-export const createSupabaseClient = () => supabase
-// Back-compat named export expected by components
-export const createClient = createSupabaseClient
-
-// Default export for components expecting it
+// Export client for backwards compatibility
 export default supabase
+
+console.log('[Supabase] Client initialized successfully')
