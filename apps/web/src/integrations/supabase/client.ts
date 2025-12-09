@@ -8,13 +8,17 @@
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
 
+// Debug: Log environment variables (remove in production)
+console.log('[Supabase] URL:', SUPABASE_URL)
+console.log('[Supabase] Key length:', SUPABASE_ANON_KEY?.length || 0)
+
 // Validate environment variables
 if (SUPABASE_URL === 'https://placeholder.supabase.co') {
-  console.warn('[Supabase] Using placeholder URL - set VITE_SUPABASE_URL')
+  console.error('[Supabase] ❌ Using placeholder URL - set VITE_SUPABASE_URL')
 }
 
 if (SUPABASE_ANON_KEY === 'placeholder-key') {
-  console.warn('[Supabase] Using placeholder key - set VITE_SUPABASE_ANON_KEY')
+  console.error('[Supabase] ❌ Using placeholder key - set VITE_SUPABASE_ANON_KEY')
 }
 
 /**
@@ -41,6 +45,9 @@ function getAuthToken(): string | null {
  */
 async function supabaseFetch(endpoint: string, options: RequestInit = {}) {
   const token = getAuthToken()
+  const fullUrl = `${SUPABASE_URL}${endpoint}`
+  
+  console.log('[Supabase] Fetching:', fullUrl)
   
   const headers: HeadersInit = {
     'apikey': SUPABASE_ANON_KEY,
@@ -52,17 +59,24 @@ async function supabaseFetch(endpoint: string, options: RequestInit = {}) {
     headers['Authorization'] = `Bearer ${token}`
   }
   
-  const response = await fetch(`${SUPABASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  })
-  
-  if (!response.ok) {
-    const error = await response.text()
-    throw new Error(`Supabase error: ${response.status} - ${error}`)
+  try {
+    const response = await fetch(fullUrl, {
+      ...options,
+      headers,
+      mode: 'cors', // Explicitly enable CORS
+    })
+    
+    if (!response.ok) {
+      const error = await response.text()
+      console.error('[Supabase] Response error:', response.status, error)
+      throw new Error(`Supabase error: ${response.status} - ${error}`)
+    }
+    
+    return response.json()
+  } catch (error: any) {
+    console.error('[Supabase] Fetch error:', error.message)
+    throw error
   }
-  
-  return response.json()
 }
 
 /**
