@@ -1,188 +1,47 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider } from '@tanstack/react-router'
-import * as React from 'react'
-import { AccessibilityProvider } from './components/providers/accessibility-provider'
-import { PWAInstallPrompt } from './components/stubs/PWAInstallPrompt'
-import { PWAOfflineIndicator } from './components/stubs/PWAOfflineIndicator'
-import { router } from './router'
-import './styles/healthcare-colors.css'
-import './styles/healthcare-mobile.css'
-import './styles/ui-theme.css'
-import { ThemeProvider } from './theme-provider'
-import { TRPCProvider } from './components/providers/TRPCProvider'
-import { AuthProvider } from './contexts/AuthContext'
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+// import { SupabaseCacheManager } from '@/lib/cache/supabase-cache-manager'; // disabled for production type-check
+// import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher'; // disabled for production type-check
+import { queryClient } from '@/lib/query-client';
+import { QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+// import { TwentyFirstToolbar } from '@21st-extension/toolbar-react';
+// import { ReactPlugin } from '@21st-extension/react';
 
-// Add typed definitions for PWA event and app cleanup to avoid `any` usage
-type AppEventHandler = (this: Window, ev: Event) => unknown
-
-interface AppCleanup {
-  loadHandler?: AppEventHandler
-  beforeInstallHandler?: AppEventHandler
-  appInstalledHandler?: AppEventHandler
-  handleOnline?: AppEventHandler
-  handleOffline?: AppEventHandler
-}
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
-}
-
-declare global {
-  interface Window {
-    __appCleanup?: AppCleanup
-  }
-}
-
-// Service Worker Registration
-export function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    const handleLoad = async () => {
-      try {
-        const registration = await navigator.serviceWorker.register('/sw.ts')
-        console.warn('SW registered: ', registration)
-      } catch (registrationError) {
-        console.warn('SW registration failed: ', registrationError)
-      }
-    }
-
-    window.addEventListener('load', handleLoad) // Store for cleanup
-    const prevCleanup = window.__appCleanup ?? {}
-    window.__appCleanup = {
-      ...prevCleanup,
-      loadHandler: handleLoad,
-    }
-  }
-}
-
-// PWA Install Handlers
-export function setupPWAInstallHandlers() {
-  let deferredPrompt: BeforeInstallPromptEvent | null = null
-
-  const handleBeforeInstall: AppEventHandler = (e: Event) => {
-    e.preventDefault()
-    deferredPrompt = e as BeforeInstallPromptEvent
-    window.dispatchEvent(
-      new CustomEvent('pwa-install-available', {
-        detail: deferredPrompt,
-      }),
-    )
-  }
-
-  const handleAppInstalled: AppEventHandler = () => {
-    console.warn('PWA was installed')
-    window.dispatchEvent(new CustomEvent('pwa-installed'))
-  }
-
-  window.addEventListener('beforeinstallprompt', handleBeforeInstall)
-  window.addEventListener('appinstalled', handleAppInstalled) // Store for cleanup
-  const prevCleanup = window.__appCleanup ?? {}
-  window.__appCleanup = {
-    ...prevCleanup,
-    beforeInstallHandler: handleBeforeInstall,
-    appInstalledHandler: handleAppInstalled,
-  }
-}
-
-// Cleanup function for development
-export function cleanupAppEventListeners() {
-  const cleanup = window.__appCleanup
-  if (cleanup) {
-    if (cleanup.loadHandler) {
-      window.removeEventListener('load', cleanup.loadHandler)
-    }
-    if (cleanup.beforeInstallHandler) {
-      window.removeEventListener('beforeinstallprompt', cleanup.beforeInstallHandler)
-    }
-    if (cleanup.appInstalledHandler) {
-      window.removeEventListener('appinstalled', cleanup.appInstalledHandler)
-    }
-    if (cleanup.handleOnline) {
-      window.removeEventListener('online', cleanup.handleOnline)
-    }
-    if (cleanup.handleOffline) {
-      window.removeEventListener('offline', cleanup.handleOffline)
-    }
-  }
-}
-
-function App() {
-  const [queryClient] = React.useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 60 * 1000,
-            refetchOnWindowFocus: false,
-          },
-        },
-      }),
-  )
+// Cache Manager Component
+const CacheManager = () => {
+  React.useEffect(() => {
+    // Cache manager disabled in production type-check
+    return () => {};
+  }, []);
 
   React.useEffect(() => {
-    // Register Service Worker
-    registerServiceWorker()
+    // Prefetcher disabled in production type-check
+    return () => {};
+  }, []);
 
-    // Setup PWA Install Handlers
-    setupPWAInstallHandlers()
+  return null;
+};
 
-    // Set up online/offline event listeners
-    const handleOnline: AppEventHandler = () => {
-      console.warn('App is online')
-      window.dispatchEvent(new CustomEvent('app-online'))
-    }
-
-    const handleOffline: AppEventHandler = () => {
-      console.warn('App is offline')
-      window.dispatchEvent(new CustomEvent('app-offline'))
-    }
-
-    window.addEventListener('online', handleOnline)
-    window.addEventListener('offline', handleOffline) // Store handlers for cleanup
-    const prevCleanup = window.__appCleanup ?? {}
-    window.__appCleanup = {
-      ...prevCleanup,
-      handleOnline,
-      handleOffline,
-    }
-
-    // Cleanup function
-    return () => {
-      window.removeEventListener('online', handleOnline)
-      window.removeEventListener('offline', handleOffline)
-
-      // Full cleanup for development
-      if (import.meta.env.MODE === 'development') {
-        cleanupAppEventListeners()
+// Note: Router is mounted in main.tsx via <RouterProvider /> from @tanstack/react-router
+// This component is only responsible for app-wide providers and common UI.
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      {/* Single toast provider mounted via Sonner */}
+      <Sonner />
+      {/* Cache Manager for Supabase data */}
+      <CacheManager />
+      {/* 21st.dev Toolbar - only runs in development mode */}
+      {
+        /* <TwentyFirstToolbar
+        config={{
+          plugins: [ReactPlugin],
+        }}
+      /> */
       }
-    }
-  }, [])
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        brazilianOptimization={true}
-        aestheticClinicMode={true}
-        lgpdCompliance={true}
-        defaultTheme="system"
-      >
-        <AuthProvider>
-          <TRPCProvider>
-            <AccessibilityProvider>
-              <div className='min-h-screen healthcare-bg-primary'>
-                {/* PWA Components */}
-                <PWAInstallPrompt />
-                <PWAOfflineIndicator />
-
-                {/* Main Application Router */}
-                <RouterProvider router={router} />
-              </div>
-            </AccessibilityProvider>
-          </TRPCProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
-  )
-}
-
-export default App
+export default App;

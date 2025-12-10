@@ -1,0 +1,467 @@
+@import "tw-animate-css";
+@import "react-grid-layout/css/styles.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* NeonPro Aesthetic Clinic Theme - Pantone Palette */
+@layer base {
+  :root {
+    /* Light theme - NeonPro Aesthetic Palette - SIMPLIFIED HSL */
+    --background: 0 0% 100%;
+    --foreground: 220 13% 18%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 18%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 18%;
+    --primary: 39 29% 54%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 80%;
+    --secondary-foreground: 220 13% 18%;
+    --muted: 210 40% 95%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 39 29% 54%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 39 29% 54%;
+    --chart-1: 39 29% 54%;
+    --chart-2: 210 40% 80%;
+    --chart-3: 39 29% 54%;
+    --chart-4: 220 13% 91%;
+    --chart-5: 210 40% 95%;
+    --sidebar: 210 40% 95%;
+    --sidebar-foreground: 220 13% 18%;
+    --sidebar-primary: 39 29% 54%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 39 29% 54%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 39 29% 54%;
+    --destructive: oklch(0.6368 0.2078 25.3313); /* Standard red for errors */
+    --destructive-foreground: oklch(1.0000 0 0); /* White text */
+    --border: oklch(0.8687 0.0043 56.3660); /* #B4AC9C - PANTONE 7535 C */
+    --input: oklch(0.8687 0.0043 56.3660); /* #B4AC9C */
+    --ring: oklch(0.5854 0.2041 277.1173); /* #112031 */
+    --chart-1: oklch(0.5854 0.2041 277.1173); /* #112031 - Deep Green */
+    --chart-2: oklch(0.5106 0.2301 276.9656); /* #294359 - Petrol Blue */
+    --chart-3: oklch(0.4568 0.2146 277.0229); /* #AC9469 - Aesthetic Gold */
+    --chart-4: oklch(0.3984 0.1773 277.3662); /* #B4AC9C - Light Beige */
+    --chart-5: oklch(0.3588 0.1354 278.6973); /* #D2D0C8 - Soft Gray */
+    --radius: 1.25rem;
+    --sidebar: oklch(0.9500 0.0030 56.3660); /* Light sidebar background */
+    --sidebar-foreground: oklch(0.2000 0.0400 260.0310); /* Dark sidebar text */
+    --sidebar-primary: oklch(0.1800 0.0350 251.3554); /* Dark primary in sidebar */
+    --sidebar-primary-foreground: oklch(0.9800 0.0020 0); /* White text on primary */
+    --sidebar-accent: oklch(0.6500 0.0600 321.9388); /* Vibrant sidebar accent */
+    --sidebar-accent-foreground: oklch(0.9800 0.0020 259.7328); /* White text on accent */
+    --sidebar-border: oklch(0.8500 0.0050 56.3660); /* Subtle sidebar border */
+    --sidebar-ring: oklch(0.1800 0.0350 251.3554); /* Dark sidebar ring */
+    --font-sans: Inter, sans-serif;
+    --font-serif: Lora, serif;
+    --font-mono: Libre Baskerville, serif;
+    --shadow-color: hsl(240 4% 60%);
+    --shadow-opacity: 0.18;
+    --shadow-blur: 10px;
+    --shadow-spread: 4px;
+    --shadow-offset-x: 2px;
+    --shadow-offset-y: 2px;
+    --letter-spacing: 0em;
+    --spacing: 0.25rem;
+    --shadow-2xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
+    --shadow-xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
+    --shadow-sm: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+    --shadow: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+    --shadow-md: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 2px 4px 3px hsl(240 4% 60% / 0.18);
+    --shadow-lg: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 4px 6px 3px hsl(240 4% 60% / 0.18);
+    --shadow-xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 8px 10px 3px hsl(240 4% 60% / 0.18);
+    --shadow-2xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.45);
+    --tracking-normal: 0em;
+  }
+
+  .dark {
+    /* Dark theme - NeonPro Aesthetic Palette - SIMPLIFIED HSL */
+    --background: 220 13% 9%;
+    --foreground: 210 6% 93%;
+    --card: 220 13% 12%;
+    --card-foreground: 210 6% 93%;
+    --popover: 220 13% 12%;
+    --popover-foreground: 210 6% 93%;
+    --primary: 39 29% 54%;
+    --primary-foreground: 220 13% 9%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 210 6% 93%;
+    --muted: 220 13% 20%;
+    --muted-foreground: 210 6% 70%;
+    --accent: 39 29% 54%;
+    --accent-foreground: 220 13% 9%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 6% 93%;
+    --border: 220 13% 25%;
+    --input: 220 13% 15%;
+    --ring: 39 29% 54%;
+    --chart-1: 220 13% 9%;
+    --chart-2: 210 6% 93%;
+    --chart-3: 39 29% 54%;
+    --chart-4: 220 13% 25%;
+    --chart-5: 220 13% 20%;
+    --sidebar: 220 13% 12%;
+    --sidebar-foreground: 210 6% 93%;
+    --sidebar-primary: 39 29% 54%;
+    --sidebar-primary-foreground: 220 13% 9%;
+    --sidebar-accent: 39 29% 54%;
+    --sidebar-accent-foreground: 220 13% 9%;
+    --sidebar-border: 220 13% 25%;
+    --sidebar-ring: 39 29% 54%;
+    --chart-1: oklch(0.6801 0.1583 276.9349); /* #AC9469 - Gold */
+    --chart-2: oklch(0.5854 0.2041 277.1173); /* #D2D0C8 - Light Gray */
+    --chart-3: oklch(0.5106 0.2301 276.9656); /* #B4AC9C - Beige */
+    --chart-4: oklch(0.4568 0.2146 277.0229); /* #294359 - Petrol */
+    --chart-5: oklch(0.3984 0.1773 277.3662); /* #112031 - Deep Green */
+    --radius: 1.25rem;
+    --sidebar: oklch(0.1300 0.0180 252.5089); /* Darker sidebar */
+    --sidebar-foreground: oklch(0.9500 0.0100 82.1097); /* Bright sidebar text */
+    --sidebar-primary: oklch(0.7200 0.0800 82.1097); /* Gold sidebar primary */
+    --sidebar-primary-foreground: oklch(0.1200 0.0150 251.3554); /* Dark text on primary */
+    --sidebar-accent: oklch(0.6500 0.0600 321.9388); /* Vibrant sidebar accent */
+    --sidebar-accent-foreground: oklch(0.1200 0.0150 251.3554); /* Dark text on accent */
+    --sidebar-border: oklch(0.3000 0.0100 59.4197); /* Visible sidebar border */
+    --sidebar-ring: oklch(0.7200 0.0800 82.1097); /* Gold sidebar ring */
+    --font-sans: Inter, sans-serif;
+    --font-serif: Lora, serif;
+    --font-mono: Libre Baskerville, serif;
+    --shadow-color: hsl(0 0% 0%);
+    --shadow-opacity: 0.18;
+    --shadow-blur: 10px;
+    --shadow-spread: 4px;
+    --shadow-offset-x: 2px;
+    --shadow-offset-y: 2px;
+    --letter-spacing: 0em;
+    --spacing: 0.25rem;
+    --shadow-2xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
+    --shadow-xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
+    --shadow-sm: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+    --shadow: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+    --shadow-md: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 2px 4px 3px hsl(0 0% 0% / 0.18);
+    --shadow-lg: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 4px 6px 3px hsl(0 0% 0% / 0.18);
+    --shadow-xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 8px 10px 3px hsl(0 0% 0% / 0.18);
+    --shadow-2xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.45);
+  }
+  .theme {
+    --font-sans: Inter, sans-serif;
+    --font-mono: Libre Baskerville, serif;
+    --font-serif: Lora, serif;
+    --radius: 1.25rem;
+    --tracking-tighter: calc(var(--tracking-normal) - 0.05em);
+    --tracking-tight: calc(var(--tracking-normal) - 0.025em);
+    --tracking-wide: calc(var(--tracking-normal) + 0.025em);
+    --tracking-wider: calc(var(--tracking-normal) + 0.05em);
+    --tracking-widest: calc(var(--tracking-normal) + 0.1em);
+  }
+  body {
+    letter-spacing: var(--tracking-normal);
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: hsl(var(--border));
+  }
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Aesthetic clinic focus optimizations */
+  .aesthetic-focus {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
+  }
+
+  /* Brazilian Portuguese typography optimizations */
+  .text-portuguese {
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Mobile-first touch targets for beauty clinic workflows */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Magic Card Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Duplicated section removed - already defined above */
+
+@layer base {
+  /* Animation definitions for NeonPro theme */
+  .animate-shine {
+    animation: shine var(--duration, 8s) infinite linear;
+  }
+  
+  .animate-shine-rotate {
+    animation: shine-rotate var(--duration, 8s) infinite linear;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 0% 0%;
+    }
+    25% {
+      background-position: 100% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    75% {
+      background-position: 0% 100%;
+    }
+    100% {
+      background-position: 0% 0%;
+    }
+  }
+
+  @keyframes shine-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Shimmer animation for hover border gradients */
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  /* Traveling Light Animations - Each border animates sequentially */
+  @keyframes shine-top {
+    0% { opacity: 0; }
+    12.5% { opacity: 1; }
+    25% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes shine-right {
+    0% { opacity: 0; }
+    25% { opacity: 0; }
+    37.5% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes shine-bottom {
+    0% { opacity: 0; }
+    50% { opacity: 0; }
+    62.5% { opacity: 1; }
+    75% { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes shine-left {
+    0% { opacity: 0; }
+    75% { opacity: 0; }
+    87.5% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+}
+
+/* Smooth Shine Border Animation for Cards */
+@layer components {
+  .shine-border-animation {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--border-width, 1px);
+    background: conic-gradient(
+      from 0deg,
+      transparent 270deg,
+      var(--shine-color, #AC9469) 360deg,
+      transparent 450deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: shine-rotate var(--shine-duration, 8s) linear infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  @keyframes shine-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+}
+
+/* Hover Border Gradient for all Buttons */
+@layer components {
+  .np-hover-border-gradient {
+    position: relative;
+    overflow: visible; /* allow glow outside */
+    z-index: 0; /* allow pseudo under content but above background */
+    --np-border-thickness: 1.5px;
+    --np-glow-blur: 8px;
+    --np-anim-duration: 14s;
+  }
+  .np-hover-border-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--np-border-thickness);
+    --np-line-size: 6deg;
+    --np-angle: 0deg;
+    background: conic-gradient(from var(--np-angle), hsl(var(--ring)) 0deg var(--np-line-size), transparent var(--np-line-size) 360deg);
+    -webkit-mask: linear-gradient(#CCB07D) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#CCB07D) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 300ms ease;
+    animation: np-sweep var(--np-anim-duration) linear infinite;
+    pointer-events: none;
+    z-index: 0; /* under content, above background */
+  }
+  .np-hover-border-gradient::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--np-border-thickness);
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--ring) / 0.6) 0deg,
+      hsl(var(--primary) / 0.6) 120deg,
+      hsl(var(--accent) / 0.6) 240deg,
+      hsl(var(--ring) / 0.6) 360deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    filter: blur(var(--np-glow-blur));
+    opacity: 0;
+    transition: opacity 300ms ease;
+    z-index: -2; /* glow below ::before */
+  }
+  .np-hover-border-gradient:hover::before,
+  .np-hover-border-gradient:focus-visible::before,
+  .np-hover-border-gradient:hover::after,
+  .np-hover-border-gradient:focus-visible::after {
+    opacity: 1;
+  }
+  @keyframes np-sweep {
+    to { --np-angle: 360deg; }
+  }
+}
+
+/* Custom property registration so animation of --np-angle works in Chromium */
+@supports (background: conic-gradient(from 0deg, red, blue)) {
+  @property --np-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+  }
+  
+  @property --np-shine-color {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: #AC9469;
+  }
+  
+  @property --np-anim-duration {
+    syntax: '<time>';
+    inherits: false;
+    initial-value: 8s;
+  }
+}
+
+/* Universal Button Custom Animations - NeonPro Enhanced */
+@keyframes gradient-x {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-x {
+  background-size: 200% 200% !important;
+  animation: gradient-x 3s ease infinite !important;
+}
+
+@keyframes reverse-spin {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-reverse-spin {
+  animation: reverse-spin 1s linear infinite !important;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(172, 148, 105, 0.4),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gradient-x,
+  .animate-shimmer,
+  .animate-reverse-spin {
+    animation: none !important;
+  }
+}

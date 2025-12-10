@@ -1,102 +1,118 @@
-import { cn } from "@/lib/utils"
 import * as React from "react"
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  readonly clientId?: string
-  readonly userRole?: 'admin' | 'aesthetician' | 'coordinator' | 'doctor' | 'nurse'
-  readonly lgpdCompliant?: boolean
-  readonly variant?: 'default' | 'neonpro' | 'glass' | 'medical' | 'emergency'
-  readonly accessibilityLevel?: 'standard' | 'enhanced'
-}
+import { cn } from "../../utils"
 
 const Card = React.forwardRef<
   HTMLDivElement,
-  CardProps
->(({ className, variant = 'default', accessibilityLevel = 'standard', ...props }, ref) => {
-  const variantClasses = {
-    default: "rounded-lg border bg-card text-card-foreground shadow-sm",
-    neonpro: "rounded-lg border bg-card text-card-foreground neonpro-neumorphic",
-    glass: "rounded-lg border neonpro-glass",
-    medical: "rounded-lg border border-blue-200 bg-blue-50/50 text-blue-900 shadow-sm",
-    emergency: "rounded-lg border border-red-200 bg-red-50/50 text-red-900 shadow-lg",
+  React.HTMLAttributes<HTMLDivElement> & {
+    /** Back-compat props */
+    magic?: boolean;
+    disableShine?: boolean;
+    /** New explicit flag (optional) */
+    enableShineBorder?: boolean;
+    /** Effect tuning */
+    shineDuration?: number;
+    shineColor?: string | string[];
+    borderWidth?: number;
   }
+>(({  
+  className,
+  magic = false,
+  disableShine = false,
+  enableShineBorder,
+  shineDuration = 8,
+  shineColor = '#AC9469',
+  borderWidth = 1,
+  children,
+  ...props
+}, ref) => {
+  const __show = enableShineBorder ?? (magic || !disableShine);
+  if (__show) {
+    const duration = Math.max(0.1, shineDuration ?? 8);
+    const colorValue = Array.isArray(shineColor)
+      ? shineColor[0] ?? '#AC9469'
+      : shineColor ?? '#AC9469';
 
-  const accessibilityClasses = {
-    standard: "",
-    enhanced: "focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2",
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          'relative rounded-xl bg-card text-card-foreground shadow overflow-hidden',
+          className,
+        )}
+        style={{
+          '--shine-duration': `${duration}s`,
+          '--shine-color': colorValue,
+          '--border-width': `${borderWidth}px`,
+        } as React.CSSProperties}
+        {...props}
+
+      >
+        {/* Shine border animation */}
+        <div
+          className='absolute inset-0 rounded-xl shine-border-animation'
+          aria-hidden='true'
+        />
+
+        {/* Content wrapper with border */}
+        <div
+          className={cn(
+            'relative z-10 rounded-xl border bg-card text-card-foreground',
+            'h-full w-full',
+          )}
+        >
+          {children}
+        </div>
+      </div>
+    );
   }
 
   return (
     <div
       ref={ref}
       className={cn(
-        variantClasses[variant], 
-        accessibilityClasses[accessibilityLevel],
+        "rounded-xl border bg-card text-card-foreground shadow",
         className
       )}
       {...props}
-    />
-  )
+    >
+      {children}
+    </div>
+  );
 })
 Card.displayName = "Card"
 
 const CardHeader = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    readonly emergency?: boolean
-    readonly accessibilityLevel?: 'standard' | 'enhanced'
-  }
->(({ className, emergency = false, accessibilityLevel = 'standard', ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "flex flex-col space-y-1.5 p-6",
-      emergency && "border-b border-red-200 bg-red-50/30",
-      accessibilityLevel === 'enhanced' && "focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2",
-      className
-    )}
+    className={cn("flex flex-col space-y-1.5 p-6", className)}
     {...props}
   />
 ))
 CardHeader.displayName = "CardHeader"
 
 const CardTitle = React.forwardRef<
-  HTMLHeadingElement,
-  React.HTMLAttributes<HTMLHeadingElement> & {
-    readonly emergency?: boolean
-    readonly accessibilityLevel?: 'standard' | 'enhanced'
-  }
->(({ className, emergency = false, accessibilityLevel = 'standard', ...props }, ref) => {
-  const emergencyClasses = emergency ? "text-red-700 font-bold" : ""
-  const accessibilityClasses = accessibilityLevel === 'enhanced' ? "text-xl" : "text-2xl"
-  
-  return (
-    <h3
-      ref={ref}
-      className={cn(
-        `font-semibold leading-none tracking-tight ${accessibilityClasses}`,
-        emergencyClasses,
-        className
-      )}
-      {...props}
-    />
-  )
-})
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("font-semibold leading-none tracking-tight", className)}
+    {...props}
+  />
+))
 CardTitle.displayName = "CardTitle"
 
 const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement> & {
-    readonly screenReaderOnly?: boolean
-  }
->(({ className, screenReaderOnly = false, ...props }, ref) => (
-  <p
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
     ref={ref}
-    className={cn(
-      "text-sm text-muted-foreground",
-      screenReaderOnly && "sr-only",
-      className
-    )}
+    className={cn("text-sm text-muted-foreground", className)}
     {...props}
   />
 ))
@@ -104,39 +120,22 @@ CardDescription.displayName = "CardDescription"
 
 const CardContent = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    readonly enhancedFocus?: boolean
-  }
->(({ className, enhancedFocus = false, ...props }, ref) => (
-  <div 
-    ref={ref} 
-    className={cn(
-      "p-6 pt-0", 
-      enhancedFocus && "focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2",
-      className
-    )} 
-    {...props} 
-  />
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ))
 CardContent.displayName = "CardContent"
 
 const CardFooter = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    readonly emergencyActions?: boolean
-  }
->(({ className, emergencyActions = false, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn(
-      "flex items-center p-6 pt-0",
-      emergencyActions && "border-t border-red-200 bg-red-50/20",
-      className
-    )}
+    className={cn("flex items-center p-6 pt-0", className)}
     {...props}
   />
 ))
 CardFooter.displayName = "CardFooter"
 
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
-export type { CardProps }
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

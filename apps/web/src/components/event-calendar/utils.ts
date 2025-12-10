@@ -1,406 +1,152 @@
-/**
- * Event Calendar Utilities
- * Utility functions for calendar operations in healthcare settings
- */
+import { isSameDay } from 'date-fns';
 
-import { addDays, format, isSameDay, isWithinInterval, parseISO, subDays } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-
-function assertUnreachable(_value: never): never {
-  throw new Error('Unsupported export format')
-}
-
-export interface CalendarEvent {
-  id: string
-  title: string
-  start: Date
-  end: Date
-  type: 'appointment' | 'consultation' | 'procedure' | 'follow_up' | 'blocker'
-  patientId?: string
-  patientName?: string
-  professionalId?: string
-  professionalName?: string
-  clinicId: string
-  status: 'scheduled' | 'confirmed' | 'in_progress' | 'completed' | 'cancelled' | 'no_show'
-  notes?: string
-  color?: string
-  reminder?: boolean
-  reminderTime?: number // minutes before event
-}
-
-export interface CalendarView {
-  type: 'day' | 'week' | 'month'
-  date: Date
-}
-
-export interface CalendarFilters {
-  type?: CalendarEvent['type'][]
-  status?: CalendarEvent['status'][]
-  professionalId?: string
-  patientId?: string
-  searchQuery?: string
-}
-
-export interface TimeSlot {
-  start: Date
-  end: Date
-  available: boolean
-  professionalId?: string
-}
+import type { CalendarEvent, EventColor } from '.';
 
 /**
- * Generate time slots for a given date
+ * Get CSS classes for event colors
  */
-export function generateTimeSlots(
-  date: Date,
-  intervalMinutes: number = 15,
-  startHour: number = 8,
-  endHour: number = 18,
-): TimeSlot[] {
-  const slots: TimeSlot[] = []
-  const startTime = new Date(date)
-  startTime.setHours(startHour, 0, 0, 0)
+export function getEventColorClasses(color?: EventColor | string): string {
+  const eventColor = color || 'sky';
 
-  const endTime = new Date(date)
-  endTime.setHours(endHour, 0, 0, 0)
-
-  const currentSlot = new Date(startTime)
-
-  while (currentSlot < endTime) {
-    const slotEnd = new Date(currentSlot)
-    slotEnd.setMinutes(currentSlot.getMinutes() + intervalMinutes)
-
-    slots.push({
-      start: new Date(currentSlot),
-      end: slotEnd,
-      available: true,
-    })
-
-    currentSlot.setTime(slotEnd.getTime())
+  switch (eventColor) {
+    case 'sky':
+      return 'bg-sky-200/50 hover:bg-sky-200/40 text-sky-950/80 dark:bg-sky-400/25 dark:hover:bg-sky-400/20 dark:text-sky-200 shadow-sky-700/8';
+    case 'amber':
+      return 'bg-amber-200/50 hover:bg-amber-200/40 text-amber-950/80 dark:bg-amber-400/25 dark:hover:bg-amber-400/20 dark:text-amber-200 shadow-amber-700/8';
+    case 'violet':
+      return 'bg-violet-200/50 hover:bg-violet-200/40 text-violet-950/80 dark:bg-violet-400/25 dark:hover:bg-violet-400/20 dark:text-violet-200 shadow-violet-700/8';
+    case 'rose':
+      return 'bg-rose-200/50 hover:bg-rose-200/40 text-rose-950/80 dark:bg-rose-400/25 dark:hover:bg-rose-400/20 dark:text-rose-200 shadow-rose-700/8';
+    case 'emerald':
+      return 'bg-emerald-200/50 hover:bg-emerald-200/40 text-emerald-950/80 dark:bg-emerald-400/25 dark:hover:bg-emerald-400/20 dark:text-emerald-200 shadow-emerald-700/8';
+    case 'orange':
+      return 'bg-orange-200/50 hover:bg-orange-200/40 text-orange-950/80 dark:bg-orange-400/25 dark:hover:bg-orange-400/20 dark:text-orange-200 shadow-orange-700/8';
+    default:
+      return 'bg-sky-200/50 hover:bg-sky-200/40 text-sky-950/80 dark:bg-sky-400/25 dark:hover:bg-sky-400/20 dark:text-sky-200 shadow-sky-700/8';
   }
-
-  return slots
 }
 
 /**
- * Check if a time slot is available
+ * Get CSS classes for border radius based on event position in multi-day events
  */
-export function isTimeSlotAvailable(
-  slot: TimeSlot,
-  events: CalendarEvent[],
-  professionalId?: string,
-): boolean {
-  return !events.some(event => {
-    if (professionalId && event.professionalId !== professionalId) {
-      return false
-    }
-
-    return (
-      isWithinInterval(slot.start, { start: event.start, end: event.end }) ||
-      isWithinInterval(slot.end, { start: event.start, end: event.end }) ||
-      isWithinInterval(event.start, { start: slot.start, end: slot.end })
-    )
-  })
+export function getBorderRadiusClasses(
+  isFirstDay: boolean,
+  isLastDay: boolean,
+): string {
+  if (isFirstDay && isLastDay) {
+    return 'rounded'; // Both ends rounded
+  } else if (isFirstDay) {
+    return 'rounded-l rounded-r-none'; // Only left end rounded
+  } else if (isLastDay) {
+    return 'rounded-r rounded-l-none'; // Only right end rounded
+  } else {
+    return 'rounded-none'; // No rounded corners
+  }
 }
 
 /**
- * Filter events based on view and filters
+ * Check if an event is a multi-day event
  */
-export function filterCalendarEvents(
+export function isMultiDayEvent(event: CalendarEvent): boolean {
+  const eventStart = new Date(event.start);
+  const eventEnd = new Date(event.end);
+  return event.allDay || eventStart.getDate() !== eventEnd.getDate();
+}
+
+/**
+ * Filter events for a specific day
+ */
+export function getEventsForDay(
   events: CalendarEvent[],
-  view: CalendarView,
-  filters: CalendarFilters = {},
+  day: Date,
+): CalendarEvent[] {
+  return events
+    .filter(event => {
+      const eventStart = new Date(event.start);
+      return isSameDay(day, eventStart);
+    })
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+}
+
+/**
+ * Sort events with multi-day events first, then by start time
+ */
+export function sortEvents(events: CalendarEvent[]): CalendarEvent[] {
+  return [...events].sort((a, b) => {
+    const aIsMultiDay = isMultiDayEvent(a);
+    const bIsMultiDay = isMultiDayEvent(b);
+
+    if (aIsMultiDay && !bIsMultiDay) return -1;
+    if (!aIsMultiDay && bIsMultiDay) return 1;
+
+    return new Date(a.start).getTime() - new Date(b.start).getTime();
+  });
+}
+
+/**
+ * Get multi-day events that span across a specific day (but don't start on that day)
+ */
+export function getSpanningEventsForDay(
+  events: CalendarEvent[],
+  day: Date,
 ): CalendarEvent[] {
   return events.filter(event => {
-    // Date range filter based on view
-    let inDateRange = false
+    if (!isMultiDayEvent(event)) return false;
 
-    switch (view.type) {
-      case 'day':
-        inDateRange = isSameDay(event.start, view.date)
-        break
-      case 'week':
-        const weekStart = subDays(view.date, view.date.getDay())
-        const weekEnd = addDays(weekStart, 6)
-        inDateRange = isWithinInterval(event.start, { start: weekStart, end: weekEnd })
-        break
-      case 'month':
-        inDateRange = event.start.getMonth() === view.date.getMonth() &&
-          event.start.getFullYear() === view.date.getFullYear()
-        break
-    }
+    const eventStart = new Date(event.start);
+    const eventEnd = new Date(event.end);
 
-    if (!inDateRange) return false
-
-    // Type filter
-    if (filters.type && !filters.type.includes(event.type)) return false
-
-    // Status filter
-    if (filters.status && !filters.status.includes(event.status)) return false
-
-    // Professional filter
-    if (filters.professionalId && event.professionalId !== filters.professionalId) return false
-
-    // Patient filter
-    if (filters.patientId && event.patientId !== filters.patientId) return false
-
-    // Search query filter
-    if (filters.searchQuery) {
-      const query = filters.searchQuery.toLowerCase()
-      const searchText = `${event.title} ${event.patientName || ''} ${event.notes || ''}`
-        .toLowerCase()
-      if (!searchText.includes(query)) return false
-    }
-
-    return true
-  })
+    // Only include if it's not the start day but is either the end day or a middle day
+    return (
+      !isSameDay(day, eventStart)
+      && (isSameDay(day, eventEnd) || (day > eventStart && day < eventEnd))
+    );
+  });
 }
 
 /**
- * Get event color based on type and status
+ * Get all events visible on a specific day (starting, ending, or spanning)
  */
-export function getEventColor(event: CalendarEvent): string {
-  const typeColors = {
-    appointment: '#3B82F6', // blue
-    consultation: '#10B981', // green
-    procedure: '#F59E0B', // amber
-    follow_up: '#8B5CF6', // purple
-    blocker: '#EF4444', // red
-  }
-
-  const baseColor = typeColors[event.type] || '#6B7280'
-
-  // Return base color (CSS classes would handle modifiers in actual component)
-  return baseColor
-}
-
-/**
- * Format date for calendar display
- */
-export function formatCalendarDate(
-  date: Date,
-  formatString: string = 'dd/MM/yyyy',
-): string {
-  return format(date, formatString, { locale: ptBR })
-}
-
-/**
- * Format time for calendar display
- */
-export function formatCalendarTime(time: Date): string {
-  return format(time, 'HH:mm', { locale: ptBR })
-}
-
-/**
- * Calculate event duration
- */
-export function getEventDuration(event: CalendarEvent): number {
-  return (event.end.getTime() - event.start.getTime()) / (1000 * 60) // minutes
-}
-
-/**
- * Check for overlapping events
- */
-export function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][] {
-  const sortedEvents = [...events].sort((a, b) => a.start.getTime() - b.start.getTime())
-  const overlappingGroups: CalendarEvent[][] = []
-
-  for (const event of sortedEvents) {
-    let added = false
-
-    // Check if this event overlaps with any existing group
-    for (const group of overlappingGroups) {
-      if (
-        group.some(groupEvent =>
-          isWithinInterval(event.start, { start: groupEvent.start, end: groupEvent.end }) ||
-          isWithinInterval(event.end, { start: groupEvent.start, end: groupEvent.end }) ||
-          isWithinInterval(groupEvent.start, { start: event.start, end: event.end })
-        )
-      ) {
-        group.push(event)
-        added = true
-        break
-      }
-    }
-
-    if (!added) {
-      overlappingGroups.push([event])
-    }
-  }
-
-  return overlappingGroups
-}
-
-/**
- * Generate available time slots for scheduling
- */
-export function getAvailableTimeSlots(
-  date: Date,
+export function getAllEventsForDay(
   events: CalendarEvent[],
-  professionalId?: string,
-  intervalMinutes: number = 15,
-): TimeSlot[] {
-  const allSlots = generateTimeSlots(date, intervalMinutes)
-
-  return allSlots.map(slot => ({
-    ...slot,
-    professionalId,
-    available: isTimeSlotAvailable(slot, events, professionalId),
-  }))
+  day: Date,
+): CalendarEvent[] {
+  return events.filter(event => {
+    const eventStart = new Date(event.start);
+    const eventEnd = new Date(event.end);
+    return (
+      isSameDay(day, eventStart)
+      || isSameDay(day, eventEnd)
+      || (day > eventStart && day < eventEnd)
+    );
+  });
 }
 
 /**
- * Validate event time constraints
+ * Get all events for a day (for agenda view)
  */
-export function validateEventTime(
-  start: Date,
-  end: Date,
-  workingHours = { start: 8, end: 18 },
-): { isValid: boolean; errors: string[] } {
-  const errors: string[] = []
-
-  if (start >= end) {
-    errors.push('O horário de início deve ser anterior ao horário de término')
-  }
-
-  if (start.getHours() < workingHours.start || start.getHours() >= workingHours.end) {
-    errors.push('O horário de início está fora do horário de funcionamento')
-  }
-
-  if (
-    end.getHours() > workingHours.end ||
-    (end.getHours() === workingHours.end && end.getMinutes() > 0)
-  ) {
-    errors.push('O horário de término está fora do horário de funcionamento')
-  }
-
-  const duration = (end.getTime() - start.getTime()) / (1000 * 60)
-  if (duration < 15) {
-    errors.push('O evento deve ter duração mínima de 15 minutos')
-  }
-
-  if (duration > 240) {
-    errors.push('O evento não pode ter duração superior a 4 horas')
-  }
-
-  return {
-    isValid: errors.length === 0,
-    errors,
-  }
-}
-
-/**
- * Export calendar events to different formats
- */
-export function exportCalendarEvents(
+export function getAgendaEventsForDay(
   events: CalendarEvent[],
-  format: 'csv' | 'json' | 'ical',
-): string {
-  switch (format) {
-    case 'csv':
-      return eventsToCSV(events)
-    case 'json':
-      return JSON.stringify(events, null, 2)
-    case 'ical':
-      return eventsToICal(events)
-    default:
-      return assertUnreachable(format)
-  }
+  day: Date,
+): CalendarEvent[] {
+  return events
+    .filter(event => {
+      const eventStart = new Date(event.start);
+      const eventEnd = new Date(event.end);
+      return (
+        isSameDay(day, eventStart)
+        || isSameDay(day, eventEnd)
+        || (day > eventStart && day < eventEnd)
+      );
+    })
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 }
 
 /**
- * Convert events to CSV format
+ * Add hours to a date
  */
-function eventsToCSV(events: CalendarEvent[]): string {
-  const headers = [
-    'ID',
-    'Título',
-    'Início',
-    'Término',
-    'Tipo',
-    'Status',
-    'Paciente',
-    'Profissional',
-  ]
-
-  const rows = events.map(event => [
-    event.id,
-    event.title,
-    event.start.toISOString(),
-    event.end.toISOString(),
-    event.type,
-    event.status,
-    event.patientName || '',
-    event.professionalName || '',
-  ])
-
-  return [headers, ...rows]
-    .map(row => row.map(cell => `"${cell}"`).join(','))
-    .join('\n')
-}
-
-/**
- * Convert events to iCal format
- */
-function eventsToICal(events: CalendarEvent[]): string {
-  const header = `BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//NeonPro//Calendar//EN
-CALSCALE:GREGORIAN`
-
-  const footer = `END:VCALENDAR`
-
-  const eventStrings = events.map(event => {
-    const startDate = format(event.start, "yyyyMMdd'T'HHmmss")
-    const endDate = format(event.end, "yyyyMMdd'T'HHmmss")
-
-    return `BEGIN:VEVENT
-UID:${event.id}
-DTSTART:${startDate}
-DTEND:${endDate}
-SUMMARY:${event.title}
-DESCRIPTION:${event.notes || ''}
-STATUS:${event.status}
-END:VEVENT`
-  })
-
-  return [header, ...eventStrings, footer].join('\n')
-}
-
-/**
- * Parse date from various formats
- */
-export function parseDate(dateInput: string | Date): Date {
-  if (dateInput instanceof Date) {
-    return dateInput
-  }
-
-  // Try parsing as ISO string first
-  const isoDate = parseISO(dateInput)
-  if (!isNaN(isoDate.getTime())) {
-    return isoDate
-  }
-
-  // Try parsing common Brazilian formats
-  const formats = [
-    'dd/MM/yyyy HH:mm',
-    'dd/MM/yyyy',
-    'yyyy-MM-dd HH:mm',
-    'yyyy-MM-dd',
-  ]
-
-  for (const _formatString of formats) {
-    try {
-      // Note: In a real implementation, you'd use a library that supports custom date parsing
-      // For now, we'll rely on the Date constructor and hope for the best
-      const parsed = new Date(dateInput)
-      if (!isNaN(parsed.getTime())) {
-        return parsed
-      }
-    } catch {
-      // Continue to next format
-    }
-  }
-
-  throw new Error(`Unable to parse date: ${dateInput}`)
+export function addHoursToDate(date: Date, hours: number): Date {
+  const result = new Date(date);
+  result.setHours(result.getHours() + hours);
+  return result;
 }

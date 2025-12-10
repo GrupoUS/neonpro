@@ -1,6 +1,0 @@
-/**
- * NeonPro web theme styles.
- * Delegates to the shared @neonpro/ui globals without relying on symlinks
- * so the repo stays Windows-compatible.
- */
-@import '@neonpro/ui/globals.css';

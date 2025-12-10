@@ -17,25 +17,20 @@
 
 /* Core shine border implementation */
 .shine-border::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: calc(-1 * var(--border-width, 1px));
   border-radius: inherit;
   background: var(--shine-gradient);
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: xor;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   opacity: var(--shine-intensity, 0.8);
   filter: blur(var(--shine-blur, 2px));
   z-index: -1;
   transform: translateZ(0);
-  animation: var(--shine-animation) var(--shine-duration, 3s)
-    var(--shine-easing, linear) infinite;
+  animation: var(--shine-animation) var(--shine-duration, 3s) var(--shine-easing, linear) infinite;
 }
 
 /* Pattern-specific gradient definitions */
@@ -43,7 +38,7 @@
   --shine-gradient: linear-gradient(
     var(--shine-angle, 90deg),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-linear-sweep;
@@ -53,7 +48,7 @@
   --shine-gradient: conic-gradient(
     from var(--orbital-angle, 0deg),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-orbital;
@@ -77,25 +72,20 @@
 
 /* Core shine border implementation */
 .shine-border::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: calc(-1 * var(--border-width, 1px));
   border-radius: inherit;
   background: var(--shine-gradient);
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask-composite: xor;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   opacity: var(--shine-intensity, 0.8);
   filter: blur(var(--shine-blur, 2px));
   z-index: -1;
   transform: translateZ(0);
-  animation: var(--shine-animation) var(--shine-duration, 3s)
-    var(--shine-easing, linear) infinite;
+  animation: var(--shine-animation) var(--shine-duration, 3s) var(--shine-easing, linear) infinite;
 }
 
 /* Pattern-specific gradient definitions */
@@ -103,7 +93,7 @@
   --shine-gradient: linear-gradient(
     var(--shine-angle, 90deg),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-linear-sweep;
@@ -113,7 +103,7 @@
   --shine-gradient: conic-gradient(
     from var(--orbital-angle, 0deg),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-orbital;
@@ -122,7 +112,7 @@
 .shine-border--pulse {
   --shine-gradient: radial-gradient(
     circle at var(--pulse-origin-x, 50%) var(--pulse-origin-y, 50%),
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-pulse;
@@ -132,7 +122,7 @@
   --shine-gradient: linear-gradient(
     var(--wave-direction, 45deg),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-wave;
@@ -142,9 +132,9 @@
   --shine-gradient: conic-gradient(
     from var(--spiral-start, 0deg),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent,
-    var(--shine-color, #ac9469),
+    var(--shine-color, #AC9469),
     transparent
   );
   --shine-animation: shine-spiral;
@@ -178,8 +168,7 @@
 }
 
 @keyframes shine-pulse {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 0;
     transform: scale(0.8) translateZ(0);
   }
@@ -237,38 +226,38 @@
 }
 
 .shine-border--vibrant {
-  --shine-intensity: 1;
+  --shine-intensity: 1.0;
   --shine-blur: 3px;
   --shine-duration: 2s;
 }
 
 /* Theme presets */
 .shine-border--gold {
-  --shine-color: #ac9469;
+  --shine-color: #AC9469;
 }
 
 .shine-border--silver {
-  --shine-color: #c0c0c0;
+  --shine-color: #C0C0C0;
 }
 
 .shine-border--copper {
-  --shine-color: #b87333;
+  --shine-color: #B87333;
 }
 
 .shine-border--blue {
-  --shine-color: #4a90e2;
+  --shine-color: #4A90E2;
 }
 
 .shine-border--purple {
-  --shine-color: #8b5cf6;
+  --shine-color: #8B5CF6;
 }
 
 .shine-border--green {
-  --shine-color: #10b981;
+  --shine-color: #10B981;
 }
 
 .shine-border--red {
-  --shine-color: #ef4444;
+  --shine-color: #EF4444;
 }
 
 /* Speed variants */
@@ -317,7 +306,7 @@
     opacity: var(--shine-intensity, 0.8);
     transform: translateZ(0);
   }
-
+  
   .shine-border:hover::before {
     opacity: calc(var(--shine-intensity, 0.8) * 1.2);
     transition: opacity 0.2s ease;
@@ -327,7 +316,7 @@
 /* Browser optimizations */
 @supports not (mask: linear-gradient(#fff 0 0)) {
   .shine-border::before {
-    border: var(--border-width, 1px) solid var(--shine-color, #ac9469);
+    border: var(--border-width, 1px) solid var(--shine-color, #AC9469);
     background: transparent;
     opacity: calc(var(--shine-intensity, 0.8) * 0.5);
   }

@@ -1,5 +1,10 @@
-// NeonPro Database Types
-// This file defines the database schema types for Supabase integration
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 export interface Database {
   public: {

@@ -38,33 +38,4 @@ export function getApiUrl(): string {
     return `${getSiteUrl()}/api`;
 }
 
-/**
- * Get the next redirect URL from OAuth callback
- * Extracts the 'next' or 'redirect_to' query parameter from the callback URL
- */
-export function getNextRedirectFromCallback(callbackUrl: string): string {
-    try {
-        const url = new URL(callbackUrl);
-        const next = url.searchParams.get('next') || url.searchParams.get('redirect_to');
-
-        if (next) {
-            // Validate that the redirect is to our own domain (security)
-            try {
-                const redirectUrl = new URL(next, getSiteUrl());
-                const siteOrigin = new URL(getSiteUrl()).origin;
-                if (redirectUrl.origin === siteOrigin) {
-                    return next;
-                }
-            } catch {
-                // If parsing fails, fall through to default
-            }
-        }
-    } catch {
-        // If URL parsing fails, fall through to default
-    }
-
-    // Default redirect to dashboard
-    return '/dashboard';
-}
-
 export const siteUrl = getSiteUrl();

@@ -1,73 +1,110 @@
-import { AlertTriangle, RefreshCw } from 'lucide-react'
-import * as React from 'react'
+/**
+ * Error Boundary Component
+ *
+ * React Error Boundary that catches JavaScript errors and displays appropriate error pages
+ */
 
-interface ErrorBoundaryProps {
-  children: React.ReactNode
+import { Component, ErrorInfo, ReactNode } from 'react';
+import { ServerErrorPage } from './ServerErrorPage';
+
+interface Props {
+  children: ReactNode;
+  fallback?: (error: Error, errorId: string) => ReactNode;
 }
 
-interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
+interface State {
+  hasError: boolean;
+  error: Error | null;
+  errorId: string | null;
 }
 
-export class ErrorBoundary extends React.Component<
-  ErrorBoundaryProps,
-  ErrorBoundaryState
-> {
-  constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorId: null };
   }
 
-  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+  static getDerivedStateFromError(error: Error): State {
+    // Generate a unique error ID for tracking
+    const errorId = `ERR-${Date.now().toString(36).toUpperCase()}-${
+      Math.random().toString(36).substr(2, 5).toUpperCase()
+    }`;
+
+    return {
+      hasError: true,
+      error,
+      errorId,
+    };
   }
 
-  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo)
+  override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // Log error to console in development
+    if (import.meta.env.DEV) {
+      console.error('ErrorBoundary caught an error:', error, errorInfo);
+    }
+
+    // In production, you would send this to your error reporting service
+    // Example: Sentry, LogRocket, etc.
+    if (import.meta.env.PROD) {
+      // TODO: Send to error reporting service
+      console.error('Production error caught:', {
+        error: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+        errorId: this.state.errorId,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+      });
+    }
   }
 
   override render() {
-    if (this.state.hasError) {
+    if (this.state.hasError && this.state.error && this.state.errorId) {
+      // Use custom fallback if provided
+      if (this.props.fallback) {
+        return this.props.fallback(this.state.error, this.state.errorId);
+      }
+
+      // Default to ServerErrorPage
       return (
-        <div className='min-h-screen flex items-center justify-center bg-gray-50'>
-          <div className='max-w-md w-full bg-white shadow-lg rounded-lg p-6 text-center'>
-            <div className='mx-auto h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mb-4'>
-              <AlertTriangle className='h-6 w-6 text-red-600' />
-            </div>
-            <h2 className='text-xl font-bold text-gray-900 mb-2'>
-              Oops! Algo deu errado
-            </h2>
-            <p className='text-gray-600 mb-6'>
-              {this.state.error?.message ||
-                'Ocorreu um erro inesperado. Por favor, tente novamente.'}
-            </p>
-            <button
-              onClick={() => {
-                this.setState({ hasError: false, error: undefined })
-                window.location.reload()
-              }}
-              className='inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-            >
-              <RefreshCw className='h-4 w-4 mr-2' />
-              Tentar novamente
-            </button>
-          </div>
-        </div>
-      )
+        <ServerErrorPage
+          error={this.state.error}
+          errorId={this.state.errorId}
+        />
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
 
-// Hook-based error boundary for functional components
+// Hook version for functional components
 export function useErrorHandler() {
-  const [error, setError] = React.useState<Error | null>(null)
+  return (error: Error, errorInfo?: { componentStack?: string }) => {
+    const errorId = `ERR-${Date.now().toString(36).toUpperCase()}-${
+      Math.random().toString(36).substr(2, 5).toUpperCase()
+    }`;
 
-  if (error) {
-    throw error
-  }
+    if (import.meta.env.DEV) {
+      console.error('Error caught by useErrorHandler:', error, errorInfo);
+    }
 
-  return setError
+    if (import.meta.env.PROD) {
+      // TODO: Send to error reporting service
+      console.error('Production error:', {
+        error: error.message,
+        stack: error.stack,
+        componentStack: errorInfo?.componentStack,
+        errorId,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        url: window.location.href,
+      });
+    }
+
+    throw error; // Re-throw to be caught by ErrorBoundary
+  };
 }
+
+export default ErrorBoundary;

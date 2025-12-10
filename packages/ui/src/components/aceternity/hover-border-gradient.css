@@ -1,0 +1,102 @@
+/* Aceternity Hover Border Gradient Styles */
+.hover-border-gradient {
+  position: relative;
+  border-radius: 9999px;
+  border-width: 1px;
+  display: flex;
+  align-content: center;
+  background-color: rgba(0, 0, 0, 0.2);
+  transition: background-color 0.5s;
+  align-items: center;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  gap: 2.5rem;
+  height: min-content;
+  justify-content: center;
+  overflow: visible;
+  padding: 1px;
+  text-decoration: inherit;
+  width: fit-content;
+}
+
+.hover-border-gradient:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark .hover-border-gradient {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Theme-based hover border gradients for NeonPro aesthetic clinic */
+.hover-border-gradient--blue {
+  --hover-gradient-color: #3275F8;
+}
+
+.hover-border-gradient--purple {
+  --hover-gradient-color: #8B5CF6;
+}
+
+.hover-border-gradient--green {
+  --hover-gradient-color: #10B981;
+}
+
+.hover-border-gradient--red {
+  --hover-gradient-color: #EF4444;
+}
+
+.hover-border-gradient--orange {
+  --hover-gradient-color: #F97316;
+}
+
+.hover-border-gradient--pink {
+  --hover-gradient-color: #EC4899;
+}
+
+.hover-border-gradient--neonpro {
+  --hover-gradient-color: #AC9469; /* NeonPro aesthetic gold */
+}
+
+.hover-border-gradient--aesthetic {
+  --hover-gradient-color: linear-gradient(45deg, #AC9469, #294359); /* NeonPro aesthetic gradient */
+}
+
+/* Smooth animations for professional aesthetic clinic feel */
+.hover-border-gradient .hover-gradient-background {
+  flex: none;
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: 0;
+  border-radius: inherit;
+  filter: blur(2px);
+  width: 100%;
+  height: 100%;
+  transition: background 1s linear;
+}
+
+.hover-border-gradient .hover-gradient-inner {
+  background-color: black;
+  position: absolute;
+  z-index: 1;
+  flex: none;
+  inset: 2px;
+  border-radius: 100px;
+}
+
+/* Enhanced accessibility for aesthetic clinic interface */
+.hover-border-gradient:focus-visible {
+  outline: 2px solid var(--hover-gradient-color, #3275F8);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support for sensitive users */
+@media (prefers-reduced-motion: reduce) {
+  .hover-border-gradient .hover-gradient-background {
+    transition: none;
+    animation: none;
+  }
+  
+  .hover-border-gradient {
+    transition: none;
+  }
+}

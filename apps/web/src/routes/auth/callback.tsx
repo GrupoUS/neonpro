@@ -1,68 +1,145 @@
-/**
- * @file OAuth Callback Route
- *
- * Handles OAuth redirects and email confirmations
- * Implements patterns from supabase-auth-redirects.md
- *
- * @version 1.0.0
- * @author NeonPro Platform Team
- */
+import { supabase } from '@/integrations/supabase/client';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 
-import { getNextRedirectFromCallback } from '@/lib/site-url'
-import supabase from '@/integrations/supabase/client'
-import { createFileRoute } from '@tanstack/react-router'
-import { useEffect } from 'react'
+function AuthCallbackComponent() {
+  const router = useRouter();
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
 
-export const Route = createFileRoute('/auth/callback')({
-  component: AuthCallback
-})
-
-function AuthCallback() {
   useEffect(() => {
     const handleAuthCallback = async () => {
-      // Use o cliente Supabase compartilhado (singleton)
-
       try {
-        // Exchange code for session
-        const { error } = await supabase.auth.exchangeCodeForSession(
-          window.location.href
-        )
+        // Handle OAuth callback - supports both code flow and implicit flow
+        const url = new URL(window.location.href);
+        const code = url.searchParams.get('code');
+        const accessToken = url.hash.match(/access_token=([^&]+)/)?.[1];
 
-        if (error) {
-          console.error('OAuth callback error:', error)
-          // Redirect to login with error
-          window.location.href = '/auth/login?error=' + encodeURIComponent(error.message)
-          return
+        console.log('Auth callback - URL:', url.href);
+        console.log('Auth callback - Code:', !!code, 'Access Token:', !!accessToken);
+
+        // Handle code flow (PKCE)
+        if (code) {
+          console.log('Processing PKCE flow with code');
+          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+          if (error) {
+            console.error('Auth callback error:', error);
+            setStatus('error');
+            setTimeout(() => {
+              router.navigate({
+                to: '/' as const,
+                search: { error: 'auth_callback_failed' } as any,
+              });
+            }, 1500);
+            return;
+          }
+
+          if (data.session) {
+            console.log('Auth callback successful (code flow), redirecting to dashboard');
+            setStatus('success');
+            setTimeout(() => {
+              router.navigate({ to: '/dashboard' });
+            }, 800);
+            return;
+          }
         }
 
-        // Get next redirect URL from query params
-        const nextUrl = getNextRedirectFromCallback(window.location.href)
+        // Handle implicit flow (access_token in hash)
+        if (accessToken) {
+          console.log('Processing implicit flow with access_token');
 
-        // LGPD Compliant: Use secure audit logging from @neonpro/security
-        // Removed console.log with personal data (user email)
-        // TODO: Implement secure audit logging for OAuth login events
+          // Force redirect to dashboard immediately
+          // The Supabase client should have already processed the hash automatically
+          console.log('Access token found, redirecting to dashboard immediately');
+          setStatus('success');
 
-        // Navigate to intended destination (SPA navigation)
-        // For TanStack Router, you would use router.navigate() here
-        // For now, using window.location to ensure it works
-        window.location.href = nextUrl
+          // Clean the URL hash before redirecting
+          const cleanUrl = window.location.pathname + window.location.search;
+          window.history.replaceState({}, document.title, cleanUrl);
 
+          // Redirect to dashboard
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 800);
+
+          return;
+        }
+
+        // No code or access_token found
+        console.error('No authentication parameters found in callback URL');
+        setStatus('error');
+        setTimeout(() => {
+          router.navigate({ to: '/' as const, search: { error: 'auth_callback_failed' } as any });
+        }, 1500);
       } catch (error) {
-        console.error('Unexpected error in OAuth callback:', error)
-        window.location.href = '/auth/login?error=callback_failed'
+        console.error('Auth callback exception:', error);
+        setStatus('error');
+        setTimeout(() => {
+          router.navigate({ to: '/' as const, search: { error: 'auth_exception' } as any });
+        }, 1500);
       }
-    }
+    };
 
-    handleAuthCallback()
-  }, [])
+    handleAuthCallback();
+  }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Processando autenticação...</p>
-        <p className="text-sm text-gray-500 mt-2">Você será redirecionado automaticamente.</p>
+    <div className='flex min-h-full h-full items-center justify-center bg-background'>
+      <div className='text-center space-y-4'>
+        {status === 'loading' && (
+          <>
+            <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto'>
+            </div>
+            <p className='text-sm text-muted-foreground'>Processando autenticação...</p>
+          </>
+        )}
+        {status === 'success' && (
+          <>
+            <div className='h-12 w-12 bg-green-100 rounded-full flex items-center justify-center mx-auto'>
+              <svg
+                className='h-6 w-6 text-green-600'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M5 13l4 4L19 7'
+                />
+              </svg>
+            </div>
+            <p className='text-sm text-green-600'>Autenticação realizada com sucesso!</p>
+            <p className='text-xs text-muted-foreground'>Redirecionando para o dashboard...</p>
+          </>
+        )}
+        {status === 'error' && (
+          <>
+            <div className='h-12 w-12 bg-red-100 rounded-full flex items-center justify-center mx-auto'>
+              <svg
+                className='h-6 w-6 text-red-600'
+                fill='none'
+                viewBox='0 0 24 24'
+                stroke='currentColor'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M6 18L18 6M6 6l12 12'
+                />
+              </svg>
+            </div>
+            <p className='text-sm text-red-600'>Erro na autenticação</p>
+            <p className='text-xs text-muted-foreground'>Redirecionando para login...</p>
+          </>
+        )}
       </div>
     </div>
-  )
+  );
 }
+
+export const Route = createFileRoute('/auth/callback')({
+  component: AuthCallbackComponent,
+});

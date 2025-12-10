@@ -1,37 +1,37 @@
-'use client'
+'use client';
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react';
 
 interface CardPosition {
-  x: number
-  y: number
-  id: string
+  x: number;
+  y: number;
+  id: string;
 }
 
 interface GridConfig {
-  snapSize: number
-  columns: number
-  gap: number
+  snapSize: number;
+  columns: number;
+  gap: number;
 }
 
 // Responsive grid configurations
 const getGridConfig = (width: number): GridConfig => {
   if (width < 768) {
     // Mobile: 1 column, larger snap
-    return { snapSize: 25, columns: 1, gap: 24 }
+    return { snapSize: 25, columns: 1, gap: 24 };
   } else if (width < 1024) {
     // Tablet: 2 columns, medium snap
-    return { snapSize: 40, columns: 2, gap: 24 }
+    return { snapSize: 40, columns: 2, gap: 24 };
   } else {
     // Desktop: 3 columns, fine snap
-    return { snapSize: 50, columns: 3, gap: 24 }
+    return { snapSize: 50, columns: 3, gap: 24 };
   }
-}
+};
 
 // Snap position to grid
 const snapToGrid = (position: number, snapSize: number): number => {
-  return Math.round(position / snapSize) * snapSize
-}
+  return Math.round(position / snapSize) * snapSize;
+};
 
 // Get container constraints based on viewport
 const getConstraints = (
@@ -45,8 +45,8 @@ const getConstraints = (
     right: Math.max(0, containerWidth - cardWidth),
     top: 0,
     bottom: Math.max(0, containerHeight - cardHeight),
-  }
-}
+  };
+};
 
 // Calculate automatic grid positions for cards
 const calculateGridPositions = (
@@ -56,42 +56,38 @@ const calculateGridPositions = (
   cardSize: { width: number; height: number },
   gridConfig: GridConfig,
 ): Record<string, CardPosition> => {
-  const { columns, gap } = gridConfig
-  const positions: Record<string, CardPosition> = {}
+  const { columns, gap } = gridConfig;
+  const positions: Record<string, CardPosition> = {};
 
   cardIds.forEach((cardId, index) => {
-    const row = Math.floor(index / columns)
-    const col = index % columns
+    const row = Math.floor(index / columns);
+    const col = index % columns;
 
-    const x = gap + col * (cardSize.width + gap)
-    const y = gap + row * (cardSize.height + gap)
+    const x = gap + col * (cardSize.width + gap);
+    const y = gap + row * (cardSize.height + gap);
 
-    positions[cardId] = { id: cardId, x, y }
-  })
+    positions[cardId] = { id: cardId, x, y };
+  });
 
-  return positions
-}
+  return positions;
+};
 
 export function usePersistedDashboardLayout() {
-  const [positions, setPositions] = useState<Record<string, CardPosition>>({})
-  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 })
-  const [gridConfig, setGridConfig] = useState<GridConfig>({
-    snapSize: 50,
-    columns: 3,
-    gap: 24,
-  })
+  const [positions, setPositions] = useState<Record<string, CardPosition>>({});
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+  const [gridConfig, setGridConfig] = useState<GridConfig>({ snapSize: 50, columns: 3, gap: 24 });
 
   // Load positions from localStorage on mount
   useEffect(() => {
-    const savedPositions = localStorage.getItem('neonpro-dashboard-layout')
+    const savedPositions = localStorage.getItem('neonpro-dashboard-layout');
     if (savedPositions) {
       try {
-        setPositions(JSON.parse(savedPositions))
+        setPositions(JSON.parse(savedPositions));
       } catch (error) {
-        console.warn('Failed to parse saved dashboard layout:', error)
+        console.warn('Failed to parse saved dashboard layout:', error);
       }
     }
-  }, [])
+  }, []);
 
   // Auto-distribute cards when container dimensions change or cards are added
   const autoDistributeCards = useCallback((cardIds: string[]) => {
@@ -116,8 +112,7 @@ export function usePersistedDashboardLayout() {
     // Check if multiple cards are stacked at the same position (0,0 or overlapping)
     const existingPositions = cardIds
       .filter(id => positions[id])
-      .map(id => positions[id])
-      .filter((pos): pos is CardPosition => pos !== undefined);
+      .map(id => positions[id]);
 
     const hasStackedCards = existingPositions.length > 1 &&
       existingPositions.every(pos => pos.x === 0 && pos.y === 0);
@@ -162,10 +157,7 @@ export function usePersistedDashboardLayout() {
 
     // Only update positions for cards that don't have one
     const newPositions = cardsWithoutPosition.reduce((acc, cardId) => {
-      const position = allPositions[cardId];
-      if (position) {
-        acc[cardId] = position;
-      }
+      acc[cardId] = allPositions[cardId];
       return acc;
     }, {} as Record<string, CardPosition>);
 
@@ -182,96 +174,75 @@ export function usePersistedDashboardLayout() {
   // Update grid config based on container size
   useEffect(() => {
     if (containerSize.width > 0) {
-      setGridConfig(getGridConfig(containerSize.width))
+      setGridConfig(getGridConfig(containerSize.width));
     }
-  }, [containerSize.width])
+  }, [containerSize.width]);
 
   // Debounced save to localStorage
-  const savePositions = useCallback(
-    (newPositions: Record<string, CardPosition>) => {
-      const timeoutId = setTimeout(() => {
-        try {
-          localStorage.setItem(
-            'neonpro-dashboard-layout',
-            JSON.stringify(newPositions),
-          )
-        } catch (error) {
-          console.warn('Failed to save dashboard layout:', error)
-        }
-      }, 300)
+  const savePositions = useCallback((newPositions: Record<string, CardPosition>) => {
+    const timeoutId = setTimeout(() => {
+      try {
+        localStorage.setItem('neonpro-dashboard-layout', JSON.stringify(newPositions));
+      } catch (error) {
+        console.warn('Failed to save dashboard layout:', error);
+      }
+    }, 300);
 
-      return () => clearTimeout(timeoutId)
-    },
-    [],
-  )
+    return () => clearTimeout(timeoutId);
+  }, []);
 
   // Update card position with snap assist
-  const updateCardPosition = useCallback(
-    (
-      cardId: string,
-      newPosition: { x: number; y: number },
-      cardSize: { width: number; height: number },
-    ) => {
-      // Apply snap to grid
-      const snappedX = snapToGrid(newPosition.x, gridConfig.snapSize)
-      const snappedY = snapToGrid(newPosition.y, gridConfig.snapSize)
+  const updateCardPosition = useCallback((
+    cardId: string,
+    newPosition: { x: number; y: number },
+    cardSize: { width: number; height: number },
+  ) => {
+    // Apply snap to grid
+    const snappedX = snapToGrid(newPosition.x, gridConfig.snapSize);
+    const snappedY = snapToGrid(newPosition.y, gridConfig.snapSize);
 
-      // Apply constraints to keep card in view
-      const constraints = getConstraints(
-        containerSize.width,
-        containerSize.height,
-        cardSize.width,
-        cardSize.height,
-      )
+    // Apply constraints to keep card in view
+    const constraints = getConstraints(
+      containerSize.width,
+      containerSize.height,
+      cardSize.width,
+      cardSize.height,
+    );
 
-      const constrainedX = Math.max(
-        constraints.left,
-        Math.min(constraints.right, snappedX),
-      )
-      const constrainedY = Math.max(
-        constraints.top,
-        Math.min(constraints.bottom, snappedY),
-      )
+    const constrainedX = Math.max(constraints.left, Math.min(constraints.right, snappedX));
+    const constrainedY = Math.max(constraints.top, Math.min(constraints.bottom, snappedY));
 
-      const finalPosition = {
-        id: cardId,
-        x: constrainedX,
-        y: constrainedY,
-      }
+    const finalPosition = {
+      id: cardId,
+      x: constrainedX,
+      y: constrainedY,
+    };
 
-      setPositions(prev => {
-        const newPositions = {
-          ...prev,
-          [cardId]: finalPosition,
-        }
-        savePositions(newPositions)
-        return newPositions
-      })
-    },
-    [gridConfig.snapSize, containerSize, savePositions],
-  )
+    setPositions(prev => {
+      const newPositions = {
+        ...prev,
+        [cardId]: finalPosition,
+      };
+      savePositions(newPositions);
+      return newPositions;
+    });
+  }, [gridConfig.snapSize, containerSize, savePositions]);
 
   // Get position for a card
-  const getCardPosition = useCallback(
-    (cardId: string) => {
-      return positions[cardId] || { id: cardId, x: 0, y: 0 }
-    },
-    [positions],
-  )
+  const getCardPosition = useCallback((cardId: string) => {
+    return positions[cardId] || { id: cardId, x: 0, y: 0 };
+  }, [positions]);
 
   // Reset all positions
   const resetLayout = useCallback(() => {
-    setPositions({})
-    localStorage.removeItem('neonpro-dashboard-layout')
-  }, [])
+    setPositions({});
+    localStorage.removeItem('neonpro-dashboard-layout');
+  }, []);
 
   // Update container size (call from parent component)
-  const updateContainerSize = useCallback(
-    (size: { width: number; height: number }) => {
-      setContainerSize(size)
-    },
-    [],
-  )
+  const updateContainerSize = useCallback((size: { width: number; height: number }) => {
+    setContainerSize(size);
+  }, []);
 
   return {
     positions,
@@ -282,5 +253,5 @@ export function usePersistedDashboardLayout() {
     updateContainerSize,
     autoDistributeCards,
     snapToGrid: (pos: number) => snapToGrid(pos, gridConfig.snapSize),
-  }
+  };
 }

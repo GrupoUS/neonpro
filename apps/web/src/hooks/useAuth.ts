@@ -1,202 +1,143 @@
-import { useAuth } from '@/contexts/AuthContext.tsx'
-import type { AuthCredentials, SignUpData } from '@neonpro/types'
+import { getCurrentSession, supabase } from '@/integrations/supabase/client';
+import { type UserProfile, userProfileService } from '@/services/user-profile.service';
+import type { Session, User } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
 
-/**
- * @file useAuth.ts
- * 
- * Simplified authentication hooks for NeonPro platform
- * Provides healthcare-compliant authentication with LGPD compliance
- * 
- * @version 1.0.0
- * @author NeonPro Platform Team
- * @healthcare-compliance LGPD, ANVISA, CFM
- */
-
-// Re-export do hook principal
-export { useAuth }
-
-/**
- * Simplified login hook for healthcare professionals
- * Provides secure authentication with proper error handling
- * 
- * @healthcare-compliance LGPD: Secure credential handling
- * @healthcare-compliance ANVISA: Audit trail for login attempts
- * 
- * @returns {Object} Login functionality
- * @returns {Function} login - Async function to authenticate user
- * @returns {boolean} isLoading - Loading state for login process
- * 
- * @example
- * ```typescript
- * const { login, isLoading } = useLogin()
- * const result = await login('user@clinic.com', 'password123')
- * ```
- */
-export const useLogin = () => {
-  const { signIn, isLoading } = useAuth()
-
-  /**
-   * Authenticate user with provided credentials
-   * 
-   * @param {string} email - User's email address
-   * @param {string} password - User's password
-   * @returns {Promise<any>} Authentication result
-   * @throws {Error} When authentication fails
-   * 
-   * @healthcare-compliance LGPD: Secure credential transmission
-   * @healthcare-compliance Security: No credential logging
-   */
-  const login = async (email: string, password: string) => {
-    const credentials: AuthCredentials = { email, password }
-    return await signIn(credentials)
-  }
-
-  return { login, isLoading }
+export interface AuthState {
+  user: User | null;
+  session: Session | null;
+  profile: UserProfile | null;
+  loading: boolean;
+  isAuthenticated: boolean;
+  hasPermission: (permission: keyof UserProfile['permissions']) => boolean;
+  isRole: (role: UserProfile['role']) => boolean;
 }
 
-/**
- * Simplified signup hook for healthcare professionals
- * Handles user registration with healthcare compliance validation
- * 
- * @healthcare-compliance LGPD: Consent tracking during registration
- * @healthcare-compliance ANVISA: Professional license validation
- * @healthcare-compliance CFM: Medical professional verification
- * 
- * @returns {Object} Registration functionality
- * @returns {Function} register - Async function to register new user
- * @returns {boolean} isLoading - Loading state for registration process
- * 
- * @example
- * ```typescript
- * const { register, isLoading } = useSignUp()
- * const result = await register(
- *   'user@clinic.com',
- *   'password123',
- *   'John',
- *   'Doe',
- *   'medico',
- *   'CRM 12345/SP'
- * )
- * ```
- */
-export const useSignUp = () => {
-  const { signUp, isLoading } = useAuth()
+export function useAuth(): AuthState {
+  const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  /**
-   * Register new healthcare professional user
-   * 
-   * @param {string} email - User's professional email address
-   * @param {string} password - User's secure password
-   * @param {string} firstName - User's first name
-   * @param {string} lastName - User's last name
-   * @param {string} profession - User's healthcare profession
-   * @param {string} [license] - Professional license (required for most healthcare roles)
-   * @returns {Promise<any>} Registration result
-   * @throws {Error} When registration fails or validation fails
-   * 
-   * @healthcare-compliance LGPD: Explicit consent tracking
-   * @healthcare-compliance Security: Password strength enforcement
-   * @healthcare-compliance ANVISA: Professional license validation
-   */
-  const register = async (
-    email: string,
-    password: string,
-    firstName: string,
-    lastName: string,
-    profession: string,
-    license?: string
-  ) => {
-    const data: SignUpData = {
-      email,
-      password,
-      firstName,
-      lastName,
-      profession,
-      license,
-    }
-    return await signUp(data)
-  }
+  useEffect(() => {
+    // Get initial session and profile
+    const getInitialSession = async () => {
+      console.log('🔍 useAuth: Getting initial session...');
+      try {
+        // Add timeout to prevent hanging
+        const sessionPromise = getCurrentSession();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Session timeout')), 3000)
+        );
 
-  return { register, isLoading }
-}
+        const currentSession = await Promise.race([sessionPromise, timeoutPromise]) as any;
+        console.log('🔍 useAuth: Current session:', currentSession ? 'Found' : 'None');
+        setSession(currentSession);
+        setUser(currentSession?.user || null);
 
-/**
- * Logout hook for secure session termination
- * Handles user logout with proper cleanup and audit logging
- * 
- * @healthcare-compliance LGPD: Session cleanup and data retention
- * @healthcare-compliance Security: Secure session termination
- * 
- * @returns {Object} Logout functionality
- * @returns {Function} logout - Async function to terminate user session
- * @returns {boolean} isLoading - Loading state for logout process
- * 
- * @example
- * ```typescript
- * const { logout, isLoading } = useLogout()
- * await logout()
- * ```
- */
-export const useLogout = () => {
-  const { signOut, isLoading } = useAuth()
+        // Load user profile if authenticated
+        if (currentSession?.user) {
+          console.log('🔍 useAuth: Loading profile for user:', currentSession.user.id);
+          try {
+            const profilePromise = userProfileService.getUserProfile(currentSession.user.id);
+            const profileTimeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Profile loading timeout')), 3000)
+            );
 
-  /**
-   * Terminate user session securely
-   * Performs cleanup operations and audit logging
-   * 
-   * @returns {Promise<any>} Logout result
-   * 
-   * @healthcare-compliance LGPD: Session data cleanup
-   * @healthcare-compliance Security: Secure session termination
-   * @healthcare-compliance Audit: Logout event logging
-   */
-  const logout = async () => {
-    return await signOut()
-  }
+            const userProfile = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
+            console.log('✅ useAuth: Profile loaded:', userProfile ? 'Success' : 'Failed');
+            setProfile(userProfile);
+          } catch (profileError) {
+            console.error('❌ useAuth: Error loading user profile:', profileError);
+            // Set null profile instead of trying fallback to prevent infinite loading
+            setProfile(null);
+          }
+        } else {
+          console.log('⚠️ useAuth: No authenticated user, setting null profile');
+          // Don't create fallback profile - just set null to allow app to work
+          setProfile(null);
+        }
+      } catch (error) {
+        console.error('❌ useAuth: Error getting initial session:', error);
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+      } finally {
+        console.log('✅ useAuth: Initial session loading complete');
+        setLoading(false);
+      }
+    };
 
-  return { logout, isLoading }
-}
+    getInitialSession();
 
-/**
- * Authentication status hook for healthcare applications
- * Provides comprehensive authentication state with healthcare-specific logic
- * 
- * @healthcare-compliance LGPD: User status verification
- * @healthcare-compliance ANVISA: Healthcare professional status tracking
- * 
- * @returns {Object} Authentication status information
- * @returns {Object|null} user - Current authenticated user data
- * @returns {boolean} isAuthenticated - User authentication status
- * @returns {boolean} isLoggedIn - Alias for isAuthenticated
- * @returns {boolean} isEmailVerified - Email verification status
- * @returns {boolean} isLoading - Loading state for status checks
- * @returns {boolean} hasProfile - Whether user has complete profile
- * @returns {boolean} isProfessional - Whether user is healthcare professional
- * 
- * @example
- * ```typescript
- * const { 
- *   user, 
- *   isAuthenticated, 
- *   isProfessional,
- *   hasProfile 
- * } = useAuthStatus()
- * 
- * if (isAuthenticated && isProfessional) {
- *   // Render professional dashboard
- * }
- * ```
- */
-export const useAuthStatus = () => {
-  const { user, isAuthenticated, isEmailVerified, isLoading } = useAuth()
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state changed:', event, session?.user?.email);
+
+        setSession(session);
+        setUser(session?.user || null);
+
+        // Load user profile for authenticated users
+        if (session?.user) {
+          try {
+            const profilePromise = userProfileService.getUserProfile(session.user.id);
+            const profileTimeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Profile loading timeout')), 3000)
+            );
+
+            const userProfile = await Promise.race([profilePromise, profileTimeoutPromise]) as any;
+            setProfile(userProfile);
+          } catch (profileError) {
+            console.error('Error loading user profile:', profileError);
+            setProfile(null);
+          }
+        } else {
+          setProfile(null);
+        }
+
+        setLoading(false);
+
+        // Handle specific auth events
+        switch (event) {
+          case 'SIGNED_IN':
+            console.log('User signed in:', session?.user?.email);
+            break;
+          case 'SIGNED_OUT':
+            console.log('User signed out');
+            setProfile(null);
+            break;
+          case 'TOKEN_REFRESHED':
+            console.log('Token refreshed for user:', session?.user?.email);
+            break;
+          case 'USER_UPDATED':
+            console.log('User updated:', session?.user?.email);
+            break;
+        }
+      },
+    );
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  // Helper functions
+  const hasPermission = (permission: keyof UserProfile['permissions']): boolean => {
+    return profile?.permissions[permission] || false;
+  };
+
+  const isRole = (role: UserProfile['role']): boolean => {
+    return profile?.role === role;
+  };
 
   return {
     user,
-    isAuthenticated,
-    isLoggedIn: isAuthenticated,
-    isEmailVerified,
-    isLoading,
-    hasProfile: !!user?.firstName && !!user?.lastName,
-    isProfessional: !!user?.profession && user.profession !== 'admin',
-  }
+    session,
+    profile,
+    loading,
+    isAuthenticated: !!session && !!user,
+    hasPermission,
+    isRole,
+  };
 }

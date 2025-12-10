@@ -1,53 +1,25 @@
-/**
- * Main Components Index
- * 
- * Exportação de todos os componentes da aplicação
- * 
- * @module Components
- */
+// Central barrel for app-level components
+// Import from here in routes/pages: import { Button, Card } from '@/components'
 
-// UI Components
-export * from './ui'
+export * from './atoms';
+export * from './molecules';
+// Export specific Organisms only (avoid Sidebar name collisions from ui/sidebar re-exports)
+export { AIChatContainer, NotificationCard } from './organisms';
+// export * from './templates'; // commented: path may not exist
+// Avoid re-exporting entire ui barrel; export only safe items
+export * from './ui/ai-chat';
+export * from './ui/beams-background';
+export { Toaster } from './ui/toaster';
+// Do not re-export './ui/sidebar' here to avoid duplicate Sidebar symbols
 
-// Healthcare Components
-export * from './healthcare'
+// export * from './healthcare'; // removed: folder no longer exists
 
-// Clinical Workflow Components
-export * from './clinical-workflows'
+// Common aliases (optional convenience re-exports)
+export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
+export { Badge } from '@neonpro/ui';
+export { Button } from '@neonpro/ui'; // Use Button from UI package
+export { Input } from './atoms/input';
+export { Label } from './atoms/label';
 
-// AI Clinical Support Components
-export * from './ai-clinical-support'
-
-// Aesthetic Scheduling Components
-export * from './aesthetic-scheduling'
-
-// Auth Components
-export * from './auth'
-
-// Chat Components
-export * from './chat'
-
-// Client Management Components
-export * from './clients'
-
-// Compliance Components
-export * from './compliance'
-
-// Event Calendar Components
-export * from './event-calendar'
-
-// PWA Components
-export * from './pwa'
-
-// Scheduling Components
-export * from './scheduling'
-
-// Shared Components (legacy)
-export * from './ui-shared'
-
-// Utility Components
-export { LoadingSpinner } from './LoadingSpinner'
-export { ErrorBoundary } from './ErrorBoundary'
-
-// Examples
-export * from './examples'
+export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './molecules/table';

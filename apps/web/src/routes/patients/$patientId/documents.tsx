@@ -3,25 +3,12 @@
  * Features: Upload, organize, preview, secure sharing, audit trail
  */
 
-// TODO: Implement patient documents components and queries
-// import {
-//   type PatientDocument as UploadedPatientDocument,
-//   PatientDocumentUpload,
-// } from '@/components/patient-documents';
-// import { usePatient } from '@/hooks/usePatients';
-// import {
-//   downloadDocument,
-//   type PatientDocument,
-//   patientDocumentsQueryOptions,
-//   useDocumentDelete,
-//   useDocumentUpload,
-// } from '@/queries/documents';
-import { Card, CardHeader, CardTitle, CardContent } from '@neonpro/ui';
+import { usePatient } from '@/hooks/usePatients';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
-import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, useNavigate, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -39,11 +26,13 @@ import {
   Share2,
   Shield,
   Trash2,
+  Upload,
   User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
+
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),
@@ -51,9 +40,7 @@ const patientParamsSchema = z.object({
 
 // Search params for filtering documents
 const documentsSearchSchema = z.object({
-  category: z
-    .enum(['all', 'medical', 'insurance', 'consent', 'exams', 'photos'])
-    .optional()
+  category: z.enum(['all', 'medical', 'insurance', 'consent', 'exams', 'photos']).optional()
     .default('all'),
   sortBy: z.enum(['name', 'date', 'size', 'type']).optional().default('date'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
@@ -113,9 +100,7 @@ export const Route = createFileRoute('/patients/$patientId/documents')({
           <div className='mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4'>
             <AlertCircle className='w-6 h-6 text-destructive' />
           </div>
-          <CardTitle className='text-destructive'>
-            Erro ao Carregar Documentos
-          </CardTitle>
+          <CardTitle className='text-destructive'>Erro ao Carregar Documentos</CardTitle>
         </CardHeader>
         <CardContent className='space-y-4'>
           <p className='text-muted-foreground'>
@@ -145,27 +130,16 @@ function PatientDocumentsPage() {
   const { category, sortBy, sortOrder } = Route.useSearch();
   const navigate = useNavigate();
 
+  // Data fetching
+  const { data: patient, isLoading: patientLoading } = usePatient(patientId);
+
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
 
-  // Data fetching
-  // TODO: Implement patient hook
-  // const { data: patient, isLoading: patientLoading } = usePatient(patientId);
-  const [patient] = useState({ fullName: 'Mock Patient' }); // Mock for now
-  const patientLoading = false;
-
-  // Mock documents for development (replace with real data from API)
-  const documents = mockDocuments;
-  const documentsLoading = false;
-  const documentsError = null;
-
-  // TODO: Implement document mutations
-  // const uploadMutation = useDocumentUpload();
-  // const deleteMutation = useDocumentDelete();
-
-  // Mock documents for development (replace with real data from API)
-  const mockDocuments = [
+  // Mock documents data (replace with real data)
+  const mockDocuments: PatientDocument[] = [
     {
       id: '1',
       name: 'Exame de Sangue - Janeiro 2024.pdf',
@@ -216,47 +190,47 @@ function PatientDocumentsPage() {
       tags: ['plano', 'saúde'],
     },
   ];
-  // TODO: Implement document management handlers
-  const handleDeleteDocument = async (documentId: string) => {
-    try {
-      // await deleteMutation.mutateAsync({ patientId, documentId });
-      setSelectedDocuments(prev => prev.filter(id => id !== documentId));
-      toast.success('Documento excluído com sucesso');
-    } catch (error) {
-      console.error('Error deleting document:', error);
-      toast.error('Erro ao excluir documento');
-    }
-  };
 
-  const handleUpload = async (
-    file: File,
-    category: string,
-    description?: string,
-    tags?: string[],
-  ) => {
-    try {
-      // await uploadMutation.mutateAsync({
-      //   patientId,
-      //   file,
-      //   category,
-      //   description,
-      //   tags,
-      // });
-      toast.success('Documento enviado com sucesso');
-    } catch (error) {
-      console.error('Error uploading document:', error);
-      toast.error('Erro ao enviar documento');
-    }
-  };
+  // File upload handler
+  const handleFileUpload = useCallback((files: FileList | null) => {
+    if (!files) return;
 
-  // Filter documents based on search (now handled by _query)
-  const filteredDocuments = documents.filter(doc => {
+    Array.from(files).forEach(file => {
+      const fileId = Math.random().toString(36).substr(2, 9);
+
+      // Simulate upload progress
+      setUploadProgress(prev => ({ ...prev, [fileId]: 0 }));
+
+      const interval = setInterval(() => {
+        setUploadProgress(prev => {
+          const newProgress = (prev[fileId] || 0) + 10;
+          if (newProgress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              setUploadProgress(prev => {
+                const { [fileId]: _, ...rest } = prev;
+                return rest;
+              });
+              toast.success(`${file.name} enviado com sucesso!`);
+            }, 500);
+            return { ...prev, [fileId]: 100 };
+          }
+          return { ...prev, [fileId]: newProgress };
+        });
+      }, 200);
+    });
+  }, []);
+
+  // Filter documents based on search and category
+  const filteredDocuments = mockDocuments.filter(doc => {
     const matchesSearch = searchQuery === ''
       || doc.name.toLowerCase().includes(searchQuery.toLowerCase())
       || doc.description?.toLowerCase().includes(searchQuery.toLowerCase())
       || doc.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
 
-    return matchesSearch;
+    const matchesCategory = category === 'all' || doc.category === category;
+
+    return matchesSearch && matchesCategory;
   });
 
   // Sort documents
@@ -281,7 +255,7 @@ function PatientDocumentsPage() {
     return sortOrder === 'desc' ? -comparison : comparison;
   });
 
-  if (patientLoading || documentsLoading) {
+  if (patientLoading) {
     return (
       <div className='container mx-auto p-4 md:p-6 space-y-6'>
         <div className='animate-pulse space-y-6'>
@@ -292,27 +266,6 @@ function PatientDocumentsPage() {
             ))}
           </div>
         </div>
-      </div>
-    );
-  }
-
-  if (documentsError) {
-    return (
-      <div className='container mx-auto p-4 md:p-6'>
-        <Card className='max-w-lg mx-auto text-center'>
-          <CardHeader>
-            <AlertCircle className='w-12 h-12 text-destructive mx-auto mb-4' />
-            <CardTitle>Erro ao Carregar Documentos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className='text-muted-foreground mb-4'>
-              Não foi possível carregar os documentos do paciente.
-            </p>
-            <Button onClick={() => window.location.reload()}>
-              Tentar Novamente
-            </Button>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -341,10 +294,7 @@ function PatientDocumentsPage() {
       <nav aria-label='Breadcrumb'>
         <ol className='flex items-center space-x-2 text-sm text-muted-foreground'>
           <li>
-            <Link
-              to='/patients'
-              className='hover:text-foreground transition-colors'
-            >
+            <Link to='/patients' className='hover:text-foreground transition-colors'>
               Pacientes
             </Link>
           </li>
@@ -377,23 +327,49 @@ function PatientDocumentsPage() {
           </p>
         </div>
 
-        {/* Upload section */}
-        {/* TODO: Implement PatientDocumentUpload component
-        <PatientDocumentUpload
-          patientId={patientId}
-          category='medical'
-          maxFiles={20}
-          maxFileSize={25}
-          onDocumentsUploaded={(documents: UploadedPatientDocument[]) => {
-            // Documents are automatically refreshed via React Query invalidation
-            toast.success(
-              `${documents.length} documento(s) enviado(s) com sucesso!`,
-            );
-          }}
-          className='w-full'
-        />
-        */}
+        {/* Upload button */}
+        <div className='flex items-center gap-2'>
+          <input
+            type='file'
+            multiple
+            accept='.pdf,.jpg,.jpeg,.png,.doc,.docx'
+            onChange={e => handleFileUpload(e.target.files)}
+            className='hidden'
+            id='file-upload'
+          />
+          <Button asChild>
+            <label htmlFor='file-upload' className='cursor-pointer'>
+              <Upload className='w-4 h-4 mr-2' />
+              Enviar Documentos
+            </label>
+          </Button>
+        </div>
       </div>
+
+      {/* Upload Progress */}
+      {Object.keys(uploadProgress).length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className='text-sm'>Enviando Arquivos...</CardTitle>
+          </CardHeader>
+          <CardContent className='space-y-2'>
+            {Object.entries(uploadProgress).map(([fileId, progress]) => (
+              <div key={fileId} className='space-y-1'>
+                <div className='flex justify-between text-sm'>
+                  <span>Upload {fileId}</span>
+                  <span>{progress}%</span>
+                </div>
+                <div className='w-full bg-muted rounded-full h-2'>
+                  <div
+                    className='bg-primary h-2 rounded-full transition-all duration-300'
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters and Search */}
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
@@ -416,11 +392,7 @@ function PatientDocumentsPage() {
             navigate({
               to: '/patients/$patientId/documents',
               params: { patientId },
-              search: {
-                category: e.target.value as typeof category,
-                sortBy,
-                sortOrder,
-              },
+              search: { category: e.target.value as typeof category, sortBy, sortOrder },
             })}
           className='w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
         >
@@ -479,7 +451,6 @@ function PatientDocumentsPage() {
                       setSelectedDocuments(prev => prev.filter(id => id !== document.id));
                     }
                   }}
-                  onDelete={handleDeleteDocument}
                 />
               ))}
             </div>
@@ -488,9 +459,7 @@ function PatientDocumentsPage() {
             <Card>
               <CardContent className='p-8 text-center'>
                 <FolderOpen className='w-12 h-12 text-muted-foreground mx-auto mb-4' />
-                <h3 className='text-lg font-semibold mb-2'>
-                  Nenhum documento encontrado
-                </h3>
+                <h3 className='text-lg font-semibold mb-2'>Nenhum documento encontrado</h3>
                 <p className='text-muted-foreground mb-4'>
                   {searchQuery
                     ? 'Não há documentos que correspondam aos filtros aplicados.'
@@ -567,53 +536,11 @@ function DocumentCard({
   document,
   isSelected,
   onSelect,
-  onDelete,
 }: {
   document: PatientDocument;
   isSelected: boolean;
   onSelect: (selected: boolean) => void;
-  onDelete?: (documentId: string) => void;
 }) {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const { patientId } = Route.useParams();
-
-  const handleDownload = async () => {
-    try {
-      setIsDownloading(true);
-      // await downloadDocument(patientId, document.id, document.name);
-      toast.success('Download concluído');
-    } catch (error) {
-      console.error('Error downloading document:', error);
-      toast.error('Erro ao baixar documento');
-    } finally {
-      setIsDownloading(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!onDelete) return;
-
-    const confirmed = globalThis.confirm(
-      `Tem certeza que deseja excluir o documento "${document.name}"?`,
-    );
-    if (!confirmed) return;
-
-    try {
-      setIsDeleting(true);
-      onDelete(document.id);
-    } catch (_error) {
-      console.error('Error deleting document:', error);
-      toast.error('Erro ao excluir documento');
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleView = () => {
-    // TODO: Implement view functionality (open in modal or new tab)
-    console.log('View document:', document.id);
-  };
   const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) return Image;
     if (type === 'application/pdf') return FileText;
@@ -629,19 +556,15 @@ function DocumentCard({
       photos: { label: 'Foto', variant: 'secondary' as const },
     };
 
-    return (
-      categoryMap[category as keyof typeof categoryMap] || {
-        label: category,
-        variant: 'outline' as const,
-      }
-    );
+    return categoryMap[category as keyof typeof categoryMap]
+      || { label: category, variant: 'outline' as const };
   };
 
   const formatFileSize = (bytes: number) => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 Bytes';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return Math.round((bytes / Math.pow(1024, i)) * 100) / 100 + ' ' + sizes[i];
+    return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };
 
   const FileIcon = getFileIcon(document.type);
@@ -672,10 +595,7 @@ function DocumentCard({
 
             <div className='flex items-center gap-1'>
               {document.isSecure && (
-                <Lock
-                  className='w-4 h-4 text-blue-600'
-                  aria-label='Documento protegido'
-                />
+                <Lock className='w-4 h-4 text-blue-600' aria-label='Documento protegido' />
               )}
               <Button variant='ghost' size='sm'>
                 <MoreVertical className='w-4 h-4' />
@@ -699,7 +619,9 @@ function DocumentCard({
             {/* Metadata */}
             <div className='flex items-center justify-between text-xs text-muted-foreground'>
               <span>{formatFileSize(document.size)}</span>
-              <Badge variant={categoryInfo.variant}>{categoryInfo.label}</Badge>
+              <Badge variant={categoryInfo.variant}>
+                {categoryInfo.label}
+              </Badge>
             </div>
 
             {/* Tags */}
@@ -726,55 +648,21 @@ function DocumentCard({
               </div>
               <div className='flex items-center gap-1'>
                 <Clock className='w-3 h-3' />
-                <span>
-                  {format(new Date(document.uploadedAt), 'dd/MM/yyyy', {
-                    locale: ptBR,
-                  })}
-                </span>
+                <span>{format(new Date(document.uploadedAt), 'dd/MM/yyyy', { locale: ptBR })}</span>
               </div>
             </div>
           </div>
 
           {/* Actions */}
           <div className='flex items-center gap-1 pt-2'>
-            <Button
-              variant='outline'
-              size='sm'
-              className='flex-1'
-              onClick={handleView}
-            >
+            <Button variant='outline' size='sm' className='flex-1'>
               <Eye className='w-3 h-3 mr-1' />
               Ver
             </Button>
-            <Button
-              variant='outline'
-              size='sm'
-              className='flex-1'
-              onClick={handleDownload}
-              disabled={isDownloading}
-            >
-              {isDownloading
-                ? (
-                  <div className='w-3 h-3 mr-1 animate-spin rounded-full border-2 border-current border-t-transparent' />
-                )
-                : <Download className='w-3 h-3 mr-1' />}
-              {isDownloading ? 'Baixando...' : 'Baixar'}
+            <Button variant='outline' size='sm' className='flex-1'>
+              <Download className='w-3 h-3 mr-1' />
+              Baixar
             </Button>
-            {onDelete && (
-              <Button
-                variant='outline'
-                size='sm'
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className='text-destructive hover:text-destructive'
-              >
-                {isDeleting
-                  ? (
-                    <div className='w-3 h-3 animate-spin rounded-full border-2 border-current border-t-transparent' />
-                  )
-                  : <Trash2 className='w-3 h-3' />}
-              </Button>
-            )}
           </div>
         </div>
       </CardContent>
