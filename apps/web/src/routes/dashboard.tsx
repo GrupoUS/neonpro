@@ -436,5 +436,9 @@ function DashboardComponent() {
         />
       </main>
     </div>
-  )
+  );
 }
+
+export const Route = createFileRoute('/dashboard')({
+  component: DashboardComponent,
+});
