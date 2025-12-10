@@ -1,105 +1,138 @@
-// Core UI Components - Healthcare Optimized
-export { Button, buttonVariants } from "./components/ui/button";
-export type { ButtonProps } from "./components/ui/button";
+// Export theme utilities
+export * from './utils';
 
-export { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./components/ui/card";
-export type { CardProps } from "./components/ui/card";
+// Re-export theme APIs at the root to avoid subpath resolution issues in some bundlers/test runners
+export { installThemeStyles, themeCss } from './theme';
+export { ThemeProviderBridge, useThemeBridge } from './theme/ThemeContext';
 
-export { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
-export type { AlertProps } from "./components/ui/alert";
-
-export { Badge, badgeVariants } from "./components/ui/badge";
-export type { BadgeProps } from "./components/ui/badge";
-
-export { Input } from "./components/ui/input";
-export type { InputProps } from "./components/ui/input";
-
-export { Label } from "./components/ui/label";
-export type { LabelProps } from "./components/ui/label";
-
-export { Separator } from "./components/ui/separator";
-
-export {
-  Select,
-  SelectGroup,
-  SelectValue,
-  SelectTrigger,
-  SelectContent,
-  SelectLabel,
-  SelectItem,
-  SelectSeparator,
-  SelectScrollUpButton,
-  SelectScrollDownButton,
-} from "./components/ui/select";
-
-export { Checkbox, CheckboxIndicator } from "./components/ui/checkbox";
-export type { CheckboxProps, CheckboxIndicatorProps } from "./components/ui/checkbox";
-
-export {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-  DialogClose,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-} from "./components/ui/dialog";
-
-export {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-  FormField,
-} from "./components/ui/form";
-
-export { Tabs, TabsList, TabsTrigger, TabsContent } from "./components/ui/tabs";
-
+// Export UI components
+export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 export {
   AlertDialog,
-  AlertDialogPortal,
-  AlertDialogOverlay,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogFooter,
-  AlertDialogTitle,
-  AlertDialogDescription,
   AlertDialogAction,
   AlertDialogCancel,
-} from "./components/ui/alert-dialog";
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './components/ui/alert-dialog';
+export { Badge, badgeVariants } from './components/ui/badge';
+export { Button, buttonVariants } from './components/ui/button';
+export { Calendar } from './components/ui/calendar';
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from './components/ui/card';
+export { Checkbox } from './components/ui/checkbox';
+export {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from './components/ui/dialog';
+export {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from './components/ui/dropdown-menu';
+export { EnhancedTable } from './components/ui/enhanced-table';
+export {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
+} from './components/ui/form';
+export { Input } from './components/ui/input';
+export { Label } from './components/ui/label';
+export { Pagination, PaginationContent, PaginationItem } from './components/ui/pagination';
+export { Popover, PopoverContent, PopoverTrigger } from './components/ui/popover';
+export { Progress } from './components/ui/progress';
+export { RadioGroup, RadioGroupItem } from './components/ui/radio-group';
+export { ScrollArea } from './components/ui/scroll-area';
+export {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './components/ui/select';
+export { Separator } from './components/ui/separator';
+export {
+  SmoothDrawer,
+  SmoothDrawerClose,
+  SmoothDrawerContent,
+  SmoothDrawerDescription,
+  SmoothDrawerHeader,
+  SmoothDrawerTitle,
+  SmoothDrawerTrigger,
+} from './components/ui/smooth-drawer';
+export { Switch } from './components/ui/switch';
+export {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './components/ui/table';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 
-export { AccessibilityInput } from "./components/ui/accessibility-input";
-export type { AccessibilityInputProps } from "./components/ui/accessibility-input";
+export { Textarea } from './components/ui/textarea';
+export { TimeSlotPicker } from './components/ui/time-slot-picker';
+export { UniversalButton, universalButtonVariants } from './components/ui/universal-button';
+export type {
+  AdvancedAnimationProps,
+  UniversalButtonProps,
+} from './components/ui/universal-button';
 
-// Healthcare-specific components
-export { EmergencyAlert } from "./components/healthcare/emergency-alert";
-export type { EmergencyAlertProps } from "./components/healthcare/emergency-alert";
+// Export hooks
+export * from './hooks';
+export { usePersistedDashboardLayout } from './hooks/use-persisted-dashboard-layout';
 
-export { MobileHealthcareButton } from "./components/ui/mobile-healthcare-button";
-export type { MobileHealthcareButtonProps, MedicalActionType } from "./components/ui/mobile-healthcare-button";
+// Export MagicUI components
+export { ShineBorder } from './components/magicui/shine-border';
+export type { ShineBorderProps } from './components/magicui/shine-border';
 
-// Accessibility components
-export { KeyboardNavigation } from "./components/accessibility/keyboard-navigation";
-export type { KeyboardNavigationProps, FocusTrapProps } from "./components/accessibility/keyboard-navigation";
+// Export Aceternity components
+export { EnhancedShineBorder, HoverBorderGradient } from './components/aceternity';
+export type { EnhancedShineBorderProps, HoverBorderGradientProps } from './components/aceternity';
+export { SharedAnimatedList } from './components/magicui';
+export type { SharedAnimatedListItem, SharedAnimatedListProps } from './components/magicui';
 
-// Utilities
-export { cn } from "./lib/utils";
-
-// Type re-exports for convenience
-export type * from "./lib/types";
-
-// Healthcare compliance version
-export const UI_VERSION = "1.0.0";
-export const HEALTHCARE_COMPLIANCE = {
-  WCAG_2_1_AA: true,
-  LGPD_COMPLIANT: true,
-  ANVISA_COMPLIANT: true,
-  EMERGENCY_READY: true,
-} as const;
+// Export Enhanced Card components
+export { DashboardCard, DashboardLayout } from './components/ui/dashboard-layout';
+export { DraggableCardBody, DraggableCardContainer } from './components/ui/draggable-card';
+export {
+  ExpandableCard,
+  ExpandableCardProvider,
+  useExpandableCard,
+} from './components/ui/expandable-card';
+export { FocusCards } from './components/ui/focus-cards';
+export { TiltedCard } from './components/ui/tilted-card';

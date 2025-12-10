@@ -116,14 +116,18 @@ id_ed25519*
 .turbo
 **/.turbo
 .specify/
-.specify
 
 # Workspace and package manager
 node_modules/
 **/node_modules/
 .pnpm/
 **/.pnpm/
-.bun/
+
+# Lock files (security: can expose vulnerabilities in exact versions)
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lockb
 
 # Package-level build outputs (22 packages)
 packages/*/dist/
@@ -145,6 +149,12 @@ apps/*/coverage/
 # =============================================================================
 # 🚀 NEONPRO SPECIFIC BUILD TOOLS & CONFIGS
 # =============================================================================
+
+# Bun specific
+bun.lockb
+.bun/
+**/.bun/
+bunfig.toml.local
 
 # TypeScript build cache
 *.tsbuildinfo
@@ -202,7 +212,6 @@ serena/
 **/serena/
 .serena/
 **/.serena/**
-.code/**
 
 # Project cleanup and reports
 cleanup-reports/
@@ -215,6 +224,8 @@ cleanup-reports/
 # Workspace configurations
 *.code-workspace
 **/*.code-workspace
+.vscode/settings.json
+.vscode/launch.json
 
 # Healthcare specific temporary files
 *patient*temp*
@@ -289,11 +300,13 @@ build/
 **/build/
 dist/
 **/dist/
-lib/
-**/lib/
-!apps/web/src/lib/
-apps/web/src/lib/**
-!apps/web/src/lib/sentry.ts
+
+# Only ignore lib/ when it's a build output, not source code
+packages/*/lib/
+apps/*/lib/
+# But do NOT ignore src/lib/ which contains source code
+!packages/*/src/lib/
+!apps/*/src/lib/
 
 # Production builds
 /build
@@ -463,43 +476,16 @@ node-compile-cache/
 .env.development.local
 .env.test.local
 .env.production.local
-.env
 
 # Local configuration overrides
 *local.config*
 *local.json
-# Exception: TypeScript typecheck config needed for CI
-!apps/web/tsconfig.typecheck.local.json
 *.local
 *user.config*
 *personal.config*
 
 # User-specific configurations
 .user.ini
-
-# =============================================================================
-# 🐍 PYTHON VIRTUAL ENVIRONMENTS & CACHE
-# =============================================================================
-
-# Python virtual environments
-venv/
-**/venv/
-env/
-**/env/
-.venv/
-**/.venv/
-.env/
-**/.env/
-
-# Python cache and compiled files
-__pycache__/
-**/__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-**/*.egg-info/
 
 # =============================================================================
 # 📱 MOBILE & CROSS-PLATFORM (Future NeonPro Mobile)

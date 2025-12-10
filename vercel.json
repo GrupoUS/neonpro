@@ -1,18 +1,28 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "regions": ["gru1"],
-  "framework": "vite",
-  "buildCommand": "bash build.sh",
+  "installCommand": "bun install",
+  "buildCommand": "bunx turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
-  "installCommand": "bun install --frozen-lockfile",
-  "rewrites": [
+  "framework": null,
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
-  "git": {
-    "deploymentEnabled": true
-  }
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production",
+      "VITE_APP_ENV": "production"
+    }
+  },
+  "regions": [
+    "gru1"
+  ]
 }

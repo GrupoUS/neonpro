@@ -1,121 +1,91 @@
-import path from 'path'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import { defineConfig } from 'vite';
 
-import { defineConfig } from 'vite'
-import { trpcFix } from './vite-plugin-trpc-fix'
-import { forceSupabaseBundle } from './vite-plugin-force-supabase-bundle.js'
-import { disableCommonjsForSupabase } from './vite-plugin-disable-commonjs.js'
-
-let TanStackRouterVite: () => { name: string }
-try {
-  TanStackRouterVite = require('@tanstack/router-plugin/vite').TanStackRouterVite
-} catch {
-  TanStackRouterVite = () => ({ name: 'tanstack-router' })
-}
-
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    disableCommonjsForSupabase(), // Disable commonjs for Supabase
-    forceSupabaseBundle(), // Force bundle Supabase modules
-    trpcFix(),
-    TanStackRouterVite(),
-    react(),
-    tsconfigPaths({
-      ignoreConfigErrors: true,
+    tanstackRouter({
+      target: 'react',
+      routesDirectory: './src/routes',
+      generatedRouteTree: './src/routeTree.gen.ts',
+      routeFileIgnorePrefix: '-',
+      quoteStyle: 'single',
+      autoCodeSplitting: true,
     }),
+    react(),
   ],
-  logLevel: 'warn',
-  esbuild: {
-    logOverride: { 'this-is-undefined-in-esm': 'silent' }
+  css: {
+    postcss: './postcss.config.js',
   },
-  root: '.',
-  publicDir: 'public',
   resolve: {
-    preserveSymlinks: true,
-    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@trpc/server/unstable-core-do-not-import': path.resolve(__dirname, '../../node_modules/@trpc/server/dist/index.mjs'),
       '@neonpro/ui': path.resolve(__dirname, '../../packages/ui/src'),
+      '@neonpro/ui/lib/utils': path.resolve(__dirname, '../../packages/ui/src/utils'),
+      '@neonpro/ui/theme': path.resolve(__dirname, '../../packages/ui/src/theme'),
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
+      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
       '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
-      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
-      '@neonpro/core': path.resolve(__dirname, '../../packages/core/src'),
-      'iceberg-js': path.resolve(__dirname, './src/polyfills/iceberg-js.ts'),
-      '@supabase/node-fetch': path.resolve(__dirname, './src/polyfills/node-fetch.ts'),
     },
-    // Use main (CommonJS) field to avoid ESM wrapper bugs
-    mainFields: ['main', 'module'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
   },
   define: {
+    // Vite requires these to be defined for Supabase
     global: 'globalThis',
+    'process.env': 'import.meta.env',
   },
   ssr: {
-    noExternal: true, // Force bundle ALL dependencies for SSR
-    external: ['@segment/analytics-node', 'chalk']
+    noExternal: [
+      '@supabase/supabase-js',
+      '@supabase/auth-js',
+      '@supabase/postgrest-js',
+      '@supabase/functions-js',
+      '@supabase/realtime-js',
+      '@supabase/storage-js',
+    ],
   },
   server: {
-    host: true,
+    host: '::',
     port: 8080,
-    open: false,
-    watch: {
-      usePolling: true,
-      interval: 1000,
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3004',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+        configure: (proxy, _options) => {
+          proxy.on('error', (err, _req, _res) => {
+            console.log('proxy error', err);
+          });
+          proxy.on('proxyReq', (_proxyReq, req, _res) => {
+            console.log('Sending Request to the Target:', req.method, req.url);
+          });
+          proxy.on('proxyRes', (proxyRes, req, _res) => {
+            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
+          });
+        },
+      },
     },
   },
   build: {
-    outDir: 'dist',
-    sourcemap: false,
-    target: 'esnext',
-    minify: 'terser',
-    reportCompressedSize: false,
-    chunkSizeWarningLimit: 2000,
-    commonjsOptions: {
-      include: [/node_modules/],
-      exclude: [/@supabase\//],  // Don't apply commonjs transform to Supabase - treat as ESM
-      transformMixedEsModules: true,
-      ignoreTryCatch: false,
-      requireReturnsDefault: 'auto',
-      esmExternals: false,
-      dynamicRequireTargets: [],
-      ignore: []
-    },
+    sourcemap: true,
     rollupOptions: {
-      external: (id) => {
-        // Only externalize Node.js built-ins and specific packages
-        const nodeBuiltins = ['fs', 'path', 'crypto', 'os', 'stream', 'util', 'events', 'buffer', 'chalk', '@segment/analytics-node'];
-        
-        // Log to verify this is being called
-        if (id.includes('@supabase/')) {
-          console.log(`[external check] ${id} -> BUNDLED (returning false)`)
-          return false
-        }
-        
-        if (id.includes('?commonjs-external')) return false;
-        
-        return nodeBuiltins.includes(id);
-      },
-      makeAbsoluteExternalsRelative: false,
-      preserveEntrySignatures: 'strict',
       output: {
-        intro: 'console.log("[NeonPro] Bundle loaded successfully");',
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
-          trpc: ['@trpc/server', '@trpc/client', '@trpc/react-query'],
-          ui: ['@radix-ui/react-slot', '@radix-ui/react-progress', 'lucide-react'],
-          forms: ['react-hook-form', 'zod'],
-          utils: ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns'],
-        },
-        chunkFileNames: chunkInfo => {
-          const facadeModuleId = chunkInfo.facadeModuleId
-            ? chunkInfo.facadeModuleId
-                .split('/')
-                .pop()
-                ?.replace(/\.[^/.]+$/, '')
-            : 'chunk'
-          return `assets/${facadeModuleId}-[hash].js`
+          supabase: [
+            '@supabase/supabase-js',
+            '@supabase/auth-js',
+            '@supabase/postgrest-js',
+            '@supabase/functions-js',
+            '@supabase/realtime-js',
+            '@supabase/storage-js',
+          ],
         },
       },
     },
@@ -124,42 +94,13 @@ export default defineConfig({
     include: [
       'react',
       'react-dom',
-      'react/jsx-runtime',
-      'react/jsx-dev-runtime',
-      'scheduler',
-      '@supabase/supabase-js',
-      '@supabase/auth-js',
-      '@supabase/postgrest-js',
-      '@supabase/functions-js', 
-      '@supabase/realtime-js',
-      '@supabase/storage-js',
       '@tanstack/react-router',
       '@tanstack/react-query',
-      '@tanstack/router-core',
-      '@tanstack/history',
-      '@tanstack/query-core',
-      '@tanstack/store',
-      '@tanstack/react-store',
-      '@trpc/server',
-      '@trpc/client',
-      '@trpc/react-query',
-      'superjson',
-      'react-hook-form',
-      'zod',
-      'clsx',
-      'tailwind-merge',
-      'lucide-react',
-      'date-fns',
-      'sonner',
-      '@radix-ui/react-slot',
-      '@radix-ui/react-progress',
-      'class-variance-authority',
-      '@neonpro/ui',
-      '@neonpro/types',
-      'tiny-invariant',
-      'tiny-warning',
-      'use-sync-external-store',
+      '@supabase/supabase-js',
     ],
-    exclude: ['@segment/analytics-node'],
   },
-})
+  esbuild: {
+    jsx: 'automatic',
+    jsxImportSource: 'react',
+  },
+});
