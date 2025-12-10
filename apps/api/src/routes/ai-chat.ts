@@ -6,7 +6,7 @@ import { cors } from 'hono/cors'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
 import { startTimer, endTimerMs, logMetric } from '../services/metrics'
-import type { CoreMessage, UIMessage } from 'ai'
+import type { CoreMessage } from 'ai'
 import { streamText } from 'ai'
 import { streamWithFailover, DEFAULT_PRIMARY, MODEL_REGISTRY, getSuggestionsFromAI, resolveProvider } from '../config/ai'
 
@@ -32,8 +32,8 @@ const app = new Hono()
 // Enable CORS for browser requests
 app.use('*', cors({
   origin: process.env.NODE_ENV === 'production'
-  ? [process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app']
-  : ['http://localhost:5173', 'http://localhost:3000'],
+    ? [process.env.FRONTEND_URL || process.env.NEXT_PUBLIC_APP_URL || 'https://neonpro.vercel.app']
+    : ['http://localhost:5173', 'http://localhost:3000'],
   allowMethods: ['GET', 'POST'],
   allowHeaders: ['Content-Type', 'Authorization'],
 }))
@@ -93,26 +93,22 @@ app.post('/stream',
         ? (model as keyof typeof MODEL_REGISTRY)
         : undefined
 
-      // Build UI messages and convert to model messages per v5 best practices
-      const uiMessages: UIMessage[] = Array.isArray(messages)
+      // Build CoreMessage[] directly from incoming messages
+      const userMessages: CoreMessage[] = Array.isArray(messages)
         ? (messages as { role: 'user' | 'assistant' | 'system'; content: string }[]).map(m => ({
-            role: m.role,
-            content: [{ type: 'text', text: m.content }],
-          }))
+          role: m.role,
+          content: m.content,
+        }))
         : []
 
       if (text && text.trim().length > 0) {
-        uiMessages.push({ role: 'user', content: [{ type: 'text', text }] })
+        userMessages.push({ role: 'user', content: text })
       }
 
-      // Build CoreMessage[] directly to avoid conversion pitfalls
+      // Build CoreMessage[] with system prompt
       const coreMessages: CoreMessage[] = [
         { role: 'system', content: SYSTEM_PROMPT },
-        ...uiMessages.map(m => ({
-          role: m.role,
-          // Convert UI blocks back to simple string for CoreMessage compatibility
-          content: (Array.isArray(m.content) ? m.content.map(b => (b as any).text).filter(Boolean).join('\n') : ''),
-        })),
+        ...userMessages,
       ]
 
       const chosen = (requestedModel ?? DEFAULT_PRIMARY) as keyof typeof MODEL_REGISTRY
@@ -123,7 +119,7 @@ app.post('/stream',
         const response = await streamWithFailover({
           model: chosen,
           allowExperimental,
-          messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...((messages as CoreMessage[]) || inputAsMessage)],
+          messages: coreMessages,
           mock: true,
         })
         const headers = new Headers(response.headers)
@@ -203,7 +199,7 @@ app.post('/suggestions',
           console.warn('Tavily search failed, continuing without web hints')
         }
       }
-      
+
       const suggestions = await getSuggestionsFromAI(query, webHints)
 
       console.log('Search Suggestions:', {
@@ -217,12 +213,12 @@ app.post('/suggestions',
       logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: true })
       c.header('X-Response-Time', `${ms}ms`)
       return c.json({ suggestions })
-      
+
     } catch (error) {
       const ms = endTimerMs(t0)
       logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: false })
       console.error('Search suggestions error:', error)
-      
+
       // Fallback suggestions
       const fallbackSuggestions = [
         'Botox para rugas',
@@ -231,7 +227,7 @@ app.post('/suggestions',
         'Harmonização facial',
         'Peeling químico'
       ]
-      
+
       return c.json({ suggestions: fallbackSuggestions })
     }
   }

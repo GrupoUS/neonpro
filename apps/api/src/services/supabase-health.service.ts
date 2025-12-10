@@ -23,7 +23,7 @@ export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
   try {
     // Test 1: Basic connection with server client
     const serverClient = createServerClient();
-    const { data: serverTest, error: serverError } = await serverClient
+    const { data: _serverTest, error: serverError } = await serverClient
       .from('profiles')
       .select('count')
       .limit(1);
@@ -39,7 +39,7 @@ export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
 
     // Test 2: Admin client connection
     const adminClient = createAdminClient();
-    const { data: adminTest, error: adminError } = await adminClient
+    const { data: _adminTest, error: adminError } = await adminClient
       .from('audit_logs')
       .select('count')
       .limit(1);
@@ -54,7 +54,7 @@ export async function checkSupabaseHealth(): Promise<HealthCheckResult> {
     }
 
     // Test 3: Database function test
-    const { data: functionTest, error: functionError } = await adminClient
+    const { data: _functionTest, error: functionError } = await adminClient
       .rpc('validate_lgpd_consent', {
         patient_uuid: '00000000-0000-0000-0000-000000000000',
         purpose: 'health_check',
@@ -195,8 +195,8 @@ export async function getComprehensiveHealthStatus() {
   ]);
 
   const overallStatus = [supabaseHealth, rlsHealth, lgpdHealth].every(
-      check => check.status === 'healthy',
-    )
+    check => check.status === 'healthy',
+  )
     ? 'healthy'
     : 'degraded';
 

@@ -64,9 +64,7 @@ app.post('/create-portal-session', async c => {
 
     // Import Stripe (dynamic import to avoid issues)
     const Stripe = (await import('stripe')).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2024-06-20',
-    });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
     // Create customer portal session
     const session = await stripe.billingPortal.sessions.create({
@@ -95,9 +93,7 @@ app.get('/portal-config', async c => {
   try {
     // Import Stripe
     const Stripe = (await import('stripe')).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2024-06-20',
-    });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
     // Get portal configuration
     const configurations = await stripe.billingPortal.configurations.list({
@@ -137,9 +133,7 @@ app.post('/create-customer', async c => {
 
     // Import Stripe
     const Stripe = (await import('stripe')).default;
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: '2024-06-20',
-    });
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
     // Create customer in Stripe
     const customer = await stripe.customers.create({

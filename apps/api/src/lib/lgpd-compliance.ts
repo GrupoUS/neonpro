@@ -33,9 +33,9 @@ export function isAuditEnabled(): boolean {
 }
 
 export async function validateConsent(
-  clientId: string,
-  purpose: string,
-  dataCategories: string[]
+  _clientId: string,
+  _purpose: string,
+  _dataCategories: string[]
 ): Promise<ConsentResult> {
   if (!lgpdConfig.enabled) {
     return { isValid: true };
@@ -48,7 +48,7 @@ export async function logDataAccess(log: DataAccessLog): Promise<void> {
   console.log('Data access logged:', log);
 }
 
-export function validateLGPDCompliance(data: any): boolean {
+export function validateLGPDCompliance(_data: unknown): boolean {
   if (!lgpdConfig.enabled) return true;
   return true;
 }

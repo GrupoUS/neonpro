@@ -30,7 +30,7 @@ if (!SUPABASE_SERVICE_ROLE_KEY) {
  * Uses anon key with RLS enabled
  */
 export function createServerClient(): SupabaseClient {
-  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  return createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -48,7 +48,7 @@ export function createAdminClient(): SupabaseClient {
     throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for admin operations');
   }
 
-  return createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+  return createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY, {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
@@ -62,7 +62,7 @@ export function createAdminClient(): SupabaseClient {
  * Injects user's JWT token for proper RLS enforcement
  */
 export function createUserClient(accessToken: string): SupabaseClient {
-  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  return createClient(SUPABASE_URL!, SUPABASE_ANON_KEY!, {
     global: {
       headers: {
         Authorization: `Bearer ${accessToken}`,

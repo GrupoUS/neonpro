@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { z } from 'zod'
 import { zValidator } from '@hono/zod-validator'
-import { streamWithFailover, MODEL_REGISTRY, DEFAULT_PRIMARY } from '../config/ai'
+import { streamWithFailover, DEFAULT_PRIMARY } from '../config/ai'
 import { sanitizeForAI } from '@neonpro/database'
 import { supabase } from '@neonpro/database'
 
@@ -38,7 +38,7 @@ function isRateLimited(userKey: string, now = Date.now()) {
 }
 
 // Minimal PII redaction delegated to shared utils
-function redactPII(text: string): string {
+function _redactPII(text: string): string {
   try {
     return sanitizeForAI(text)
   } catch {
@@ -157,7 +157,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
   }
 
   // Consent + role gate
-  const { ok, consentStatus, role } = checkConsentAndRole(c.req.raw)
+  const { ok, consentStatus } = checkConsentAndRole(c.req.raw)
   if (!ok && !question.toLowerCase().includes('mock')) {
     console.log('AuditEvent', {
       eventId: crypto.randomUUID(), userId, clinicId, timestampUTC: new Date().toISOString(), actionType: 'query', consentStatus, queryType: classifyQueryType(question), redactionApplied: false, outcome: 'refusal', latencyMs: Date.now() - t0, sessionId: sessionId || null,
@@ -169,7 +169,7 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
           user_id: userId,
           session_id: sessionId || null,
           action_type: 'query',
-          consent_status,
+          consent_status: consentStatus,
           query_type: classifyQueryType(question),
           redaction_applied: false,
           outcome: 'refusal',
@@ -222,10 +222,10 @@ app.post('/query', zValidator('json', ChatQuerySchema), async c => {
     }
 
     // Real path: call AI with failover, then bridge to SSE
-    const messages = [
+    const messages: Array<{ role: 'system' | 'user'; content: string }> = [
       { role: 'system', content: 'Você é um assistente de clínica estética. Responda de forma segura e empática.' },
       { role: 'user', content: question },
-    ] as const
+    ]
 
     const aiResp = await streamWithFailover({ model: DEFAULT_PRIMARY, messages })
     const reader = aiResp.body?.getReader()

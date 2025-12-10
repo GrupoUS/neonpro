@@ -33,11 +33,11 @@ const serverMetricSchema = z.object({
 });
 
 // Collect Web Vitals
-metricsApi.post('/web-vitals', 
+metricsApi.post('/web-vitals',
   zValidator('json', webVitalSchema),
   async (c) => {
     const metric = c.req.valid('json');
-    
+
     // Store metric
     metrics.webVitals.push({
       ...metric,
@@ -58,7 +58,7 @@ metricsApi.post('/server',
   zValidator('json', serverMetricSchema),
   async (c) => {
     const metric = c.req.valid('json');
-    
+
     metrics.serverMetrics.push({
       ...metric,
       receivedAt: Date.now()
@@ -76,7 +76,6 @@ metricsApi.post('/server',
 metricsApi.get('/dashboard', async (c) => {
   const now = Date.now();
   const last24Hours = now - (24 * 60 * 60 * 1000);
-  const last1Hour = now - (60 * 60 * 1000);
 
   // Filter recent metrics
   const recentWebVitals = metrics.webVitals.filter(m => m.timestamp > last24Hours);
@@ -89,9 +88,10 @@ metricsApi.get('/dashboard', async (c) => {
     return acc;
   }, {} as Record<string, number[]>);
 
-  const webVitalsAverages = Object.entries(webVitalsByName).reduce((acc, [name, values]) => {
+  const webVitalsAverages = Object.entries(webVitalsByName).reduce((acc, [name, vals]) => {
+    const values = vals as number[];
     acc[name] = {
-      average: values.reduce((sum, val) => sum + val, 0) / values.length,
+      average: values.reduce((sum: number, val: number) => sum + val, 0) / values.length,
       p95: percentile(values, 95),
       p99: percentile(values, 99),
       count: values.length
@@ -111,9 +111,9 @@ metricsApi.get('/dashboard', async (c) => {
   const dashboard = {
     timestamp: now,
     period: '24h',
-    
+
     webVitals: webVitalsAverages,
-    
+
     server: {
       coldStarts: {
         average: average(coldStarts),
@@ -128,7 +128,7 @@ metricsApi.get('/dashboard', async (c) => {
     },
 
     alerts: generateAlerts(webVitalsAverages, recentServerMetrics),
-    
+
     summary: {
       totalSessions: new Set(recentWebVitals.map(m => m.sessionId)).size,
       totalPageViews: recentWebVitals.filter(m => m.name === 'FCP').length,
@@ -186,7 +186,7 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
         value: data.average
       });
     }
-    
+
     if (name === 'FID' && data.average > 100) {
       alerts.push({
         type: 'warning',
@@ -200,7 +200,7 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
   // Server alerts
   const coldStarts = serverMetrics.filter(m => m.type === 'cold-start');
   const avgColdStart = average(coldStarts.map(m => m.value));
-  
+
   if (avgColdStart > 1000) {
     alerts.push({
       type: 'error',
@@ -214,8 +214,8 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
 }
 
 function calculateAverageRating(metrics: any[]): number {
-  const ratings = { good: 3, 'needs-improvement': 2, poor: 1 };
-  const total = metrics.reduce((sum, metric) => sum + (ratings[metric.rating] || 0), 0);
+  const ratings: Record<string, number> = { good: 3, 'needs-improvement': 2, poor: 1 };
+  const total = metrics.reduce((sum, metric) => sum + (ratings[metric.rating as string] || 0), 0);
   return total / metrics.length || 0;
 }
 

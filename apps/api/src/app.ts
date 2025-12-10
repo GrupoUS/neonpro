@@ -239,7 +239,7 @@ v1.get('/health', c =>
     version: 'v1',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    environment: getDetailedEnvironmentInfo(),
+    environment: process.env.NODE_ENV || 'development',
   }));
 
 v1.get('/info', c =>

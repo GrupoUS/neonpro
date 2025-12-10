@@ -30,4 +30,5 @@ export async function errorHandler(c: Context, next: Next) {
     // Default
     return serverError(c, message, process.env.NODE_ENV === 'production' ? undefined : err)
   }
+  return
 }
