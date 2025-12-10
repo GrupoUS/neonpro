@@ -123,8 +123,8 @@ export type { ShineBorderProps } from './components/magicui/shine-border';
 // Export Aceternity components
 export { EnhancedShineBorder, HoverBorderGradient } from './components/aceternity';
 export type { EnhancedShineBorderProps, HoverBorderGradientProps } from './components/aceternity';
-export { SharedAnimatedList } from './components/magicui';
-export type { SharedAnimatedListItem, SharedAnimatedListProps } from './components/magicui';
+export { SharedAnimatedList } from './components/magicui/animated-list';
+export type { SharedAnimatedListItem, SharedAnimatedListProps } from './components/magicui/animated-list';
 
 // Export Enhanced Card components
 export { DashboardCard, DashboardLayout } from './components/ui/dashboard-layout';
