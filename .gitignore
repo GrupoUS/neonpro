@@ -300,8 +300,13 @@ build/
 **/build/
 dist/
 **/dist/
-lib/
-**/lib/
+
+# Only ignore lib/ when it's a build output, not source code
+packages/*/lib/
+apps/*/lib/
+# But do NOT ignore src/lib/ which contains source code
+!packages/*/src/lib/
+!apps/*/src/lib/
 
 # Production builds
 /build
