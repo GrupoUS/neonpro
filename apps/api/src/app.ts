@@ -117,7 +117,13 @@ app.openapi(detailedHealthRoute, c =>
     version: 'v1',
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: {
+      isProduction: process.env.NODE_ENV === 'production',
+      hasDatabase: !!process.env.DATABASE_URL,
+      hasSupabase: !!process.env.SUPABASE_URL,
+      version: process.env.npm_package_version,
+      region: process.env.VERCEL_REGION,
+    },
   }));
 
 // OpenAPI-documented info route

@@ -5,7 +5,13 @@ import { dataProtection } from '../middleware/lgpd-middleware';
 
 import { requireAuth } from '../middleware/authn';
 
-const appointments = new Hono();
+type AppointmentEnv = {
+  Variables: {
+    clinicId: string;
+  };
+};
+
+const appointments = new Hono<AppointmentEnv>();
 
 // Apply data protection to all appointment routes
 appointments.use('*', requireAuth);
@@ -110,6 +116,8 @@ const AppointmentCreateSchema = z.object({
   clinicId: z.string().uuid(),
   patientId: z.string().uuid(),
   professionalId: z.string().uuid(),
+  serviceTypeId: z.string().uuid(),
+  createdBy: z.string().uuid(),
   startTime: z.string().datetime(),
   endTime: z.string().datetime(),
   status: z.enum(['scheduled', 'confirmed', 'completed', 'cancelled']).default('scheduled'),

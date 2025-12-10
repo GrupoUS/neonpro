@@ -59,6 +59,7 @@
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
     "@types/node": "^24.4.0",
+    "@vercel/node": "^5.5.15",
     "@vitest/ui": "^3.2.4",
     "bun": "^1.2.22",
     "oxlint": "^1.15.0",
