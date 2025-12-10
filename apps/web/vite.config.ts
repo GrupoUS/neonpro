@@ -34,6 +34,17 @@ export default defineConfig({
   define: {
     // Vite requires these to be defined for Supabase
     global: 'globalThis',
+    'process.env': 'import.meta.env',
+  },
+  ssr: {
+    noExternal: [
+      '@supabase/supabase-js',
+      '@supabase/auth-js',
+      '@supabase/postgrest-js',
+      '@supabase/functions-js',
+      '@supabase/realtime-js',
+      '@supabase/storage-js',
+    ],
   },
   server: {
     host: '::',
@@ -67,7 +78,14 @@ export default defineConfig({
           vendor: ['react', 'react-dom'],
           router: ['@tanstack/react-router'],
           query: ['@tanstack/react-query'],
-          supabase: ['@supabase/supabase-js'],
+          supabase: [
+            '@supabase/supabase-js',
+            '@supabase/auth-js',
+            '@supabase/postgrest-js',
+            '@supabase/functions-js',
+            '@supabase/realtime-js',
+            '@supabase/storage-js',
+          ],
         },
       },
     },

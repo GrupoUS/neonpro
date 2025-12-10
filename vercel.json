@@ -1,12 +1,17 @@
 {
   "version": 2,
   "installCommand": "bun install",
-  "buildCommand": "cd apps/web && bun install && bun run build",
+  "buildCommand": "bunx turbo build --filter=@neonpro/web",
   "outputDirectory": "apps/web/dist",
   "framework": null,
   "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
   ],
   "env": {
     "NODE_ENV": "production"
@@ -17,6 +22,7 @@
       "VITE_APP_ENV": "production"
     }
   },
-
-  "regions": ["gru1"]
+  "regions": [
+    "gru1"
+  ]
 }
