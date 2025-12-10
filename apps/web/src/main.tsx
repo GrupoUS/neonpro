@@ -57,7 +57,7 @@ async function bootstrap() {
 
     root.render(
       <React.StrictMode>
-        <ThemeProvider attribute='class' defaultTheme='system'>
+        <ThemeProvider attribute='class' defaultTheme='dark'>
           <ErrorBoundary>
             <ConsentProvider>
               <RouterProvider router={router} />
