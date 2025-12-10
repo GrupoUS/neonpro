@@ -7,6 +7,19 @@ export { ThemeProviderBridge, useThemeBridge } from './theme/ThemeContext';
 
 // Export UI components
 export { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './components/ui/alert-dialog';
 export { Badge, badgeVariants } from './components/ui/badge';
 export { Button, buttonVariants } from './components/ui/button';
 export { Calendar } from './components/ui/calendar';
@@ -89,6 +102,7 @@ export {
   TableHeader,
   TableRow,
 } from './components/ui/table';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './components/ui/tabs';
 
 export { Textarea } from './components/ui/textarea';
 export { TimeSlotPicker } from './components/ui/time-slot-picker';

@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ValidationReportRouteImport } from './routes/validation-report'
 import { Route as UniversalButtonTestRouteImport } from './routes/universal-button-test'
 import { Route as TestAuthRouteImport } from './routes/test-auth'
 import { Route as SubscriptionTestRouteImport } from './routes/subscription-test'
@@ -38,7 +37,6 @@ import { Route as ClientsRouteImport } from './routes/clients'
 import { Route as ButtonTestRouteImport } from './routes/button-test'
 import { Route as BentoGridTestRouteImport } from './routes/bento-grid-test'
 import { Route as AppointmentsRouteImport } from './routes/appointments'
-import { Route as ApiTestRouteImport } from './routes/api-test'
 import { Route as AnimationValidationSuiteRouteImport } from './routes/animation-validation-suite'
 import { Route as AiChatRouteImport } from './routes/ai-chat'
 import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-animations-test'
@@ -53,11 +51,6 @@ import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/
 import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
 import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
 
-const ValidationReportRoute = ValidationReportRouteImport.update({
-  id: '/validation-report',
-  path: '/validation-report',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const UniversalButtonTestRoute = UniversalButtonTestRouteImport.update({
   id: '/universal-button-test',
   path: '/universal-button-test',
@@ -198,11 +191,6 @@ const AppointmentsRoute = AppointmentsRouteImport.update({
   path: '/appointments',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTestRoute = ApiTestRouteImport.update({
-  id: '/api-test',
-  path: '/api-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AnimationValidationSuiteRoute =
   AnimationValidationSuiteRouteImport.update({
     id: '/animation-validation-suite',
@@ -278,7 +266,6 @@ export interface FileRoutesByFullPath {
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
-  '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRouteWithChildren
   '/bento-grid-test': typeof BentoGridTestRoute
   '/button-test': typeof ButtonTestRoute
@@ -307,7 +294,6 @@ export interface FileRoutesByFullPath {
   '/subscription-test': typeof SubscriptionTestRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
-  '/validation-report': typeof ValidationReportRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -323,7 +309,6 @@ export interface FileRoutesByTo {
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
-  '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRouteWithChildren
   '/bento-grid-test': typeof BentoGridTestRoute
   '/button-test': typeof ButtonTestRoute
@@ -352,7 +337,6 @@ export interface FileRoutesByTo {
   '/subscription-test': typeof SubscriptionTestRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
-  '/validation-report': typeof ValidationReportRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -369,7 +353,6 @@ export interface FileRoutesById {
   '/advanced-animations-test': typeof AdvancedAnimationsTestRoute
   '/ai-chat': typeof AiChatRoute
   '/animation-validation-suite': typeof AnimationValidationSuiteRoute
-  '/api-test': typeof ApiTestRoute
   '/appointments': typeof AppointmentsRouteWithChildren
   '/bento-grid-test': typeof BentoGridTestRoute
   '/button-test': typeof ButtonTestRoute
@@ -398,7 +381,6 @@ export interface FileRoutesById {
   '/subscription-test': typeof SubscriptionTestRoute
   '/test-auth': typeof TestAuthRoute
   '/universal-button-test': typeof UniversalButtonTestRoute
-  '/validation-report': typeof ValidationReportRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -416,7 +398,6 @@ export interface FileRouteTypes {
     | '/advanced-animations-test'
     | '/ai-chat'
     | '/animation-validation-suite'
-    | '/api-test'
     | '/appointments'
     | '/bento-grid-test'
     | '/button-test'
@@ -445,7 +426,6 @@ export interface FileRouteTypes {
     | '/subscription-test'
     | '/test-auth'
     | '/universal-button-test'
-    | '/validation-report'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -461,7 +441,6 @@ export interface FileRouteTypes {
     | '/advanced-animations-test'
     | '/ai-chat'
     | '/animation-validation-suite'
-    | '/api-test'
     | '/appointments'
     | '/bento-grid-test'
     | '/button-test'
@@ -490,7 +469,6 @@ export interface FileRouteTypes {
     | '/subscription-test'
     | '/test-auth'
     | '/universal-button-test'
-    | '/validation-report'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -506,7 +484,6 @@ export interface FileRouteTypes {
     | '/advanced-animations-test'
     | '/ai-chat'
     | '/animation-validation-suite'
-    | '/api-test'
     | '/appointments'
     | '/bento-grid-test'
     | '/button-test'
@@ -535,7 +512,6 @@ export interface FileRouteTypes {
     | '/subscription-test'
     | '/test-auth'
     | '/universal-button-test'
-    | '/validation-report'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -552,7 +528,6 @@ export interface RootRouteChildren {
   AdvancedAnimationsTestRoute: typeof AdvancedAnimationsTestRoute
   AiChatRoute: typeof AiChatRoute
   AnimationValidationSuiteRoute: typeof AnimationValidationSuiteRoute
-  ApiTestRoute: typeof ApiTestRoute
   AppointmentsRoute: typeof AppointmentsRouteWithChildren
   BentoGridTestRoute: typeof BentoGridTestRoute
   ButtonTestRoute: typeof ButtonTestRoute
@@ -581,20 +556,12 @@ export interface RootRouteChildren {
   SubscriptionTestRoute: typeof SubscriptionTestRoute
   TestAuthRoute: typeof TestAuthRoute
   UniversalButtonTestRoute: typeof UniversalButtonTestRoute
-  ValidationReportRoute: typeof ValidationReportRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/validation-report': {
-      id: '/validation-report'
-      path: '/validation-report'
-      fullPath: '/validation-report'
-      preLoaderRoute: typeof ValidationReportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/universal-button-test': {
       id: '/universal-button-test'
       path: '/universal-button-test'
@@ -791,13 +758,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppointmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api-test': {
-      id: '/api-test'
-      path: '/api-test'
-      fullPath: '/api-test'
-      preLoaderRoute: typeof ApiTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/animation-validation-suite': {
       id: '/animation-validation-suite'
       path: '/animation-validation-suite'
@@ -939,7 +899,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdvancedAnimationsTestRoute: AdvancedAnimationsTestRoute,
   AiChatRoute: AiChatRoute,
   AnimationValidationSuiteRoute: AnimationValidationSuiteRoute,
-  ApiTestRoute: ApiTestRoute,
   AppointmentsRoute: AppointmentsRouteWithChildren,
   BentoGridTestRoute: BentoGridTestRoute,
   ButtonTestRoute: ButtonTestRoute,
@@ -968,7 +927,6 @@ const rootRouteChildren: RootRouteChildren = {
   SubscriptionTestRoute: SubscriptionTestRoute,
   TestAuthRoute: TestAuthRoute,
   UniversalButtonTestRoute: UniversalButtonTestRoute,
-  ValidationReportRoute: ValidationReportRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,
 }
