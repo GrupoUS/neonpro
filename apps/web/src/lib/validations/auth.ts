@@ -147,6 +147,20 @@ export const authFormSchema = z.object({
     .min(2, 'Nome deve ter no mínimo 2 caracteres')
     .max(100, 'Nome muito longo')
     .optional(),
+  firstname: z
+    .string()
+    .min(2, 'Nome deve ter no mínimo 2 caracteres')
+    .max(50, 'Nome muito longo')
+    .optional(),
+  lastname: z
+    .string()
+    .min(2, 'Sobrenome deve ter no mínimo 2 caracteres')
+    .max(50, 'Sobrenome muito longo')
+    .optional(),
+  crm: z
+    .string()
+    .max(20, 'CRM muito longo')
+    .optional(),
 });
 
 /**

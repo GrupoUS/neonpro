@@ -89,12 +89,14 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          'h-full px-4 py-4 hidden  md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0',
+          'h-full py-4 hidden md:flex md:flex-col bg-sidebar dark:bg-sidebar w-[280px] shrink-0 border-r border-sidebar-border',
+          open ? 'px-4' : 'px-2 items-center',
           className,
         )}
         animate={{
-          width: animate ? (open ? '300px' : '60px') : '300px',
+          width: animate ? (open ? '280px' : '72px') : '280px',
         }}
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
         {...props}
@@ -168,25 +170,40 @@ export const SidebarLink = ({
     <Link
       to={link.href}
       className={cn(
-        'flex items-center justify-start gap-2 group/sidebar py-2 px-2 rounded-md transition-colors hover:bg-accent/50 dark:hover:bg-accent/10',
+        'flex items-center group/sidebar transition-all duration-200',
+        open
+          ? 'gap-3 py-2.5 px-3 rounded-lg hover:bg-accent/50 dark:hover:bg-accent/20'
+          : 'justify-center w-11 h-11 rounded-full hover:bg-accent/50 dark:hover:bg-accent/20',
         className,
       )}
       activeProps={{
-        className: 'bg-accent/70 dark:bg-accent/20 text-foreground',
+        className: open
+          ? 'bg-primary/15 dark:bg-primary/25 text-primary'
+          : 'bg-primary/15 dark:bg-primary/25 text-primary',
       }}
+      title={!open ? link.label : undefined}
       {...props}
     >
-      {link.icon}
+      <span className={cn(
+        'flex items-center justify-center shrink-0 transition-colors',
+        !open && 'w-5 h-5'
+      )}>
+        {link.icon}
+      </span>
 
-      <motion.span
-        animate={{
-          display: animate ? (open ? 'inline-block' : 'none') : 'inline-block',
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className='text-muted-foreground group-hover/sidebar:text-foreground text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0'
-      >
-        {link.label}
-      </motion.span>
+      <AnimatePresence>
+        {(open || !animate) && (
+          <motion.span
+            initial={{ opacity: 0, width: 0 }}
+            animate={{ opacity: 1, width: 'auto' }}
+            exit={{ opacity: 0, width: 0 }}
+            transition={{ duration: 0.15 }}
+            className='text-sidebar-foreground group-hover/sidebar:text-foreground text-sm font-medium whitespace-nowrap overflow-hidden'
+          >
+            {link.label}
+          </motion.span>
+        )}
+      </AnimatePresence>
     </Link>
   );
 };

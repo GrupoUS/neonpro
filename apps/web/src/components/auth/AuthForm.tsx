@@ -197,7 +197,7 @@ export function AuthForm(
           </Alert>
         )}
 
-        {mode !== 'forgot' && (
+        {/*         {mode !== 'forgot' && (
           <UniversalButton
             type='button'
             variant='secondary'
@@ -219,7 +219,7 @@ export function AuthForm(
             <IconBrandGoogle className='h-4 w-4 mr-2 text-[#4285f4]' />
             Continuar com Google
           </UniversalButton>
-        )}
+        )} */}
 
         {mode === 'sign-in' && (
           <form

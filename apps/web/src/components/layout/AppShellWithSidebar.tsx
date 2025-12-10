@@ -17,6 +17,7 @@ import {
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Outlet, useLocation } from '@tanstack/react-router';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -271,13 +272,33 @@ function AppShellContent() {
         <SidebarBody className="justify-between gap-10">
           <div className='flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
             {/* Logo */}
-            <div className='flex items-center gap-x-2 mb-6'>
-              <IconStethoscope className='h-6 w-6 shrink-0 text-primary' />
-              <span className='text-lg font-semibold text-foreground'>NeonPro</span>
+            <div className={cn(
+              'flex items-center mb-6 transition-all duration-200',
+              open ? 'gap-x-3 px-1' : 'justify-center'
+            )}>
+              <div className='flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 shrink-0'>
+                <IconStethoscope className='h-5 w-5 text-primary' />
+              </div>
+              <AnimatePresence>
+                {open && (
+                  <motion.span
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: 'auto' }}
+                    exit={{ opacity: 0, width: 0 }}
+                    transition={{ duration: 0.15 }}
+                    className='text-lg font-semibold text-foreground whitespace-nowrap overflow-hidden'
+                  >
+                    NeonPro
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Navigation Links */}
-            <nav className='flex flex-col gap-2'>
+            <nav className={cn(
+              'flex flex-col',
+              open ? 'gap-1' : 'gap-2 items-center'
+            )}>
               {links.map(link => (
                 <SidebarLink
                   key={link.href}
@@ -287,16 +308,30 @@ function AppShellContent() {
             </nav>
           </div>
 
-          {/* User Profile Section (opcional) */}
+          {/* User Profile Section */}
           {user && (
-            <div className='flex items-center gap-x-2 border-t border-neutral-200 dark:border-neutral-700 pt-4'>
-              <div className='h-8 w-8 shrink-0 rounded-full bg-primary/10 flex items-center justify-center'>
-                <IconUsers className='h-4 w-4 text-primary' />
-              </div>
-              <div className='flex flex-col'>
-                <span className='text-sm font-medium text-foreground truncate'>{user.email}</span>
-                <span className='text-xs text-muted-foreground'>Admin</span>
-              </div>
+            <div className={cn(
+              'border-t border-sidebar-border pt-4 transition-all duration-200',
+              open ? '' : 'flex justify-center'
+            )}>
+              {open ? (
+                <div className='flex items-center gap-x-3 px-1'>
+                  <div className='h-9 w-9 shrink-0 rounded-full bg-primary/15 flex items-center justify-center'>
+                    <IconUsers className='h-4 w-4 text-primary' />
+                  </div>
+                  <div className='flex flex-col min-w-0 flex-1'>
+                    <span className='text-sm font-medium text-foreground truncate'>{user.email}</span>
+                    <span className='text-xs text-muted-foreground'>Admin</span>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className='h-11 w-11 rounded-full bg-primary/15 flex items-center justify-center cursor-pointer hover:bg-primary/25 transition-colors'
+                  title={user.email}
+                >
+                  <IconUsers className='h-5 w-5 text-primary' />
+                </div>
+              )}
             </div>
           )}
         </SidebarBody>

@@ -128,16 +128,16 @@ export const DataMaskingInput = forwardRef<HTMLInputElement, DataMaskingInputPro
       switch (maskType) {
         case 'email':
           return value.replace(/(.{2}).*(@.*)/, '$1***$2')
-        
+
         case 'phone':
           return value.replace(/(\d{2})\s(\d{4,5})-(\d{4})/, '$1 ****-$3')
-        
+
         case 'cpf':
           return value.replace(/(\d{3})\.(\d{3})\.(\d{3})-(\d{2})/, '$1.***.***-$4')
-        
+
         case 'partial':
           return value.slice(0, 2) + '*'.repeat(Math.max(0, value.length - 4)) + value.slice(-2)
-        
+
         case 'custom':
           if (maskPattern) {
             return maskPattern.replace(/./g, (char, index) => {
@@ -147,7 +147,7 @@ export const DataMaskingInput = forwardRef<HTMLInputElement, DataMaskingInputPro
             })
           }
           return '*'.repeat(value.length)
-        
+
         case 'full':
         default:
           return '*'.repeat(value.length)
@@ -189,7 +189,7 @@ export const DataMaskingInput = forwardRef<HTMLInputElement, DataMaskingInputPro
       onConsentChange?.(true)
       setShowConsentDialog(false)
       unmaskValue()
-      
+
       logDataAccess('consent_granted', {
         field: props.name || 'unknown',
         sensitivityLevel,
@@ -460,7 +460,7 @@ export const DataMaskingInput = forwardRef<HTMLInputElement, DataMaskingInputPro
                 >
                   Cancelar
                 </button>
-                <button
+                {/*                 <button
                   onClick={() => {
                     setShowRetentionDialog(false)
                     unmaskValue()
@@ -468,7 +468,7 @@ export const DataMaskingInput = forwardRef<HTMLInputElement, DataMaskingInputPro
                   className="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
                 >
                   Continuar com Acesso
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
