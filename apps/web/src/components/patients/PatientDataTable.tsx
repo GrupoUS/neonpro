@@ -311,7 +311,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
     {
       id: 'actions',
       header: () => <span className='sr-only'>Ações</span>,
-      cell: ({ row }) => <PatientRowActions row={row} onNavigate={navigate} />,
+      cell: ({ row }) => <PatientRowActions row={row} />,
       size: 60,
       enableHiding: false,
     },
@@ -818,11 +818,11 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
 
 function PatientRowActions({
   row,
-  onNavigate,
 }: {
   row: Row<PatientTableData>;
-  onNavigate: any;
 }) {
+  const patientId = row.original.id;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -839,35 +839,26 @@ function PatientRowActions({
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => {
-              console.log('🔎 Visualizar clicked - patientId:', row.original.id);
-              // Using direct URL navigation as workaround for TanStack Router issue
-              window.location.href = `/patients/${row.original.id}`;
-            }}
-          >
-            <Eye className='mr-2 size-4' />
-            <span>Visualizar</span>
+          <DropdownMenuItem asChild>
+            <a href={`/patients/${patientId}`} className='flex items-center cursor-pointer'>
+              <Eye className='mr-2 size-4' />
+              <span>Visualizar</span>
+            </a>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              console.log('✏️ Editar clicked - patientId:', row.original.id);
-              window.location.href = `/patients/${row.original.id}/edit`;
-            }}
-          >
-            <User className='mr-2 size-4' />
-            <span>Editar</span>
+          <DropdownMenuItem asChild>
+            <a href={`/patients/${patientId}/edit`} className='flex items-center cursor-pointer'>
+              <User className='mr-2 size-4' />
+              <span>Editar</span>
+            </a>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            onClick={() => {
-              window.location.href = `/appointments?patientId=${row.original.id}`;
-            }}
-          >
-            <Calendar className='mr-2 size-4' />
-            <span>Agendar Consulta</span>
+          <DropdownMenuItem asChild>
+            <a href={`/appointments?patientId=${patientId}`} className='flex items-center cursor-pointer'>
+              <Calendar className='mr-2 size-4' />
+              <span>Agendar Consulta</span>
+            </a>
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
@@ -876,19 +867,15 @@ function PatientRowActions({
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuItem
-                  onClick={() => {
-                    window.location.href = `/patients/${row.original.id}/history`;
-                  }}
-                >
-                  Histórico Médico
+                <DropdownMenuItem asChild>
+                  <a href={`/patients/${patientId}/history`} className='flex items-center cursor-pointer'>
+                    Histórico Médico
+                  </a>
                 </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    window.location.href = `/patients/${row.original.id}/documents`;
-                  }}
-                >
-                  Documentos
+                <DropdownMenuItem asChild>
+                  <a href={`/patients/${patientId}/documents`} className='flex items-center cursor-pointer'>
+                    Documentos
+                  </a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
