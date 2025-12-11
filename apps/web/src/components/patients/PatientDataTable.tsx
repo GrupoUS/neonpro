@@ -840,21 +840,25 @@ function PatientRowActions({
       <DropdownMenuContent align='end'>
         <DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={() =>
+            onClick={() => {
+              console.log('🔎 Visualizar clicked - patientId:', row.original.id);
               onNavigate({
                 to: '/patients/$patientId',
                 params: { patientId: row.original.id },
-              })}
+              });
+            }}
           >
             <Eye className='mr-2 size-4' />
             <span>Visualizar</span>
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() =>
+            onClick={() => {
+              console.log('✏️ Editar clicked - patientId:', row.original.id);
               onNavigate({
                 to: '/patients/$patientId/edit',
                 params: { patientId: row.original.id },
-              })}
+              });
+            }}
           >
             <User className='mr-2 size-4' />
             <span>Editar</span>
