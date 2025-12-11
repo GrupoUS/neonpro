@@ -77,6 +77,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
  * Fetch clinic settings
  */
 export async function fetchClinicSettings(clinicId: string): Promise<ClinicSettings | null> {
+    console.log('[settings] fetchClinicSettings called with clinicId:', clinicId);
     try {
         const { data, error } = await supabase
             .from('clinics')
@@ -95,6 +96,7 @@ export async function fetchClinicSettings(clinicId: string): Promise<ClinicSetti
             return null;
         }
 
+        console.log('[settings] Clinic data fetched:', data);
         return data as ClinicSettings;
     } catch (e) {
         console.error('[settings] Exception fetching clinic settings:', e);
