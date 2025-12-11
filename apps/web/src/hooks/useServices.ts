@@ -151,13 +151,7 @@ export function useUpdateService() {
           updated_at: new Date().toISOString(),
         })
         .eq('id', id)
-        .select(`
-          *,
-          clinics (
-            id,
-            clinic_name
-          )
-        `)
+        .select('*')
         .single();
 
       if (error) {
@@ -276,9 +270,8 @@ export function useCheckAvailability() {
                   minute: '2-digit',
                 })
                 : '00:00',
-              description: `Agendamento existente: ${patient?.full_name || 'Paciente'} - ${
-                service?.name || 'Serviço'
-              }`,
+              description: `Agendamento existente: ${patient?.full_name || 'Paciente'} - ${service?.name || 'Serviço'
+                }`,
             });
           });
         }
@@ -374,9 +367,8 @@ export function useServiceTimeSlots(serviceId: string, date: string, professiona
 
         for (let hour = startHour; hour < endHour; hour++) {
           for (let minute = 0; minute < 60; minute += intervalMinutes) {
-            const timeString = `${hour.toString().padStart(2, '0')}:${
-              minute.toString().padStart(2, '0')
-            }`;
+            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')
+              }`;
             const slotStart = new Date(`${date}T${timeString}:00`);
             const slotEnd = new Date(slotStart.getTime() + serviceDuration * 60 * 1000);
 
