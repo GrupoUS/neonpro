@@ -43,7 +43,6 @@ import { Route as AdvancedAnimationsTestRouteImport } from './routes/advanced-an
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
-import { Route as PatientsIdRouteImport } from './routes/patients.$id'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
@@ -222,11 +221,6 @@ const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   path: '/$patientId',
   getParentRoute: () => PatientsRoute,
 } as any)
-const PatientsIdRoute = PatientsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => PatientsRoute,
-} as any)
 const AuthConfirmRoute = AuthConfirmRouteImport.update({
   id: '/auth/confirm',
   path: '/auth/confirm',
@@ -297,7 +291,6 @@ export interface FileRoutesByFullPath {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$id': typeof PatientsIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
@@ -340,7 +333,6 @@ export interface FileRoutesByTo {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$id': typeof PatientsIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
@@ -384,7 +376,6 @@ export interface FileRoutesById {
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
-  '/patients/$id': typeof PatientsIdRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
@@ -393,133 +384,133 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/404'
-    | '/advanced-animations-test'
-    | '/ai-chat'
-    | '/animation-validation-suite'
-    | '/appointments'
-    | '/bento-grid-test'
-    | '/button-test'
-    | '/clients'
-    | '/comprehensive-button-test'
-    | '/dashboard'
-    | '/financial'
-    | '/governance'
-    | '/healthcare-test'
-    | '/login'
-    | '/patients'
-    | '/pricing-rules'
-    | '/professional-services'
-    | '/profile'
-    | '/reports'
-    | '/service-analytics'
-    | '/service-categories'
-    | '/service-templates'
-    | '/services'
-    | '/settings'
-    | '/shadcn-test'
-    | '/shine-test'
-    | '/signup'
-    | '/signup-demo'
-    | '/subscription'
-    | '/subscription-test'
-    | '/test-auth'
-    | '/universal-button-test'
-    | '/appointments/new'
-    | '/auth/callback'
-    | '/auth/confirm'
-    | '/patients/$id'
-    | '/patients/$patientId'
-    | '/patients/$patientId/documents'
-    | '/patients/$patientId/edit'
-    | '/patients/$patientId/history'
+  | '/'
+  | '/404'
+  | '/advanced-animations-test'
+  | '/ai-chat'
+  | '/animation-validation-suite'
+  | '/appointments'
+  | '/bento-grid-test'
+  | '/button-test'
+  | '/clients'
+  | '/comprehensive-button-test'
+  | '/dashboard'
+  | '/financial'
+  | '/governance'
+  | '/healthcare-test'
+  | '/login'
+  | '/patients'
+  | '/pricing-rules'
+  | '/professional-services'
+  | '/profile'
+  | '/reports'
+  | '/service-analytics'
+  | '/service-categories'
+  | '/service-templates'
+  | '/services'
+  | '/settings'
+  | '/shadcn-test'
+  | '/shine-test'
+  | '/signup'
+  | '/signup-demo'
+  | '/subscription'
+  | '/subscription-test'
+  | '/test-auth'
+  | '/universal-button-test'
+  | '/appointments/new'
+  | '/auth/callback'
+  | '/auth/confirm'
+  | '/patients/$id'
+  | '/patients/$patientId'
+  | '/patients/$patientId/documents'
+  | '/patients/$patientId/edit'
+  | '/patients/$patientId/history'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
-    | '/404'
-    | '/advanced-animations-test'
-    | '/ai-chat'
-    | '/animation-validation-suite'
-    | '/appointments'
-    | '/bento-grid-test'
-    | '/button-test'
-    | '/clients'
-    | '/comprehensive-button-test'
-    | '/dashboard'
-    | '/financial'
-    | '/governance'
-    | '/healthcare-test'
-    | '/login'
-    | '/patients'
-    | '/pricing-rules'
-    | '/professional-services'
-    | '/profile'
-    | '/reports'
-    | '/service-analytics'
-    | '/service-categories'
-    | '/service-templates'
-    | '/services'
-    | '/settings'
-    | '/shadcn-test'
-    | '/shine-test'
-    | '/signup'
-    | '/signup-demo'
-    | '/subscription'
-    | '/subscription-test'
-    | '/test-auth'
-    | '/universal-button-test'
-    | '/appointments/new'
-    | '/auth/callback'
-    | '/auth/confirm'
-    | '/patients/$id'
-    | '/patients/$patientId'
-    | '/patients/$patientId/documents'
-    | '/patients/$patientId/edit'
-    | '/patients/$patientId/history'
+  | '/'
+  | '/404'
+  | '/advanced-animations-test'
+  | '/ai-chat'
+  | '/animation-validation-suite'
+  | '/appointments'
+  | '/bento-grid-test'
+  | '/button-test'
+  | '/clients'
+  | '/comprehensive-button-test'
+  | '/dashboard'
+  | '/financial'
+  | '/governance'
+  | '/healthcare-test'
+  | '/login'
+  | '/patients'
+  | '/pricing-rules'
+  | '/professional-services'
+  | '/profile'
+  | '/reports'
+  | '/service-analytics'
+  | '/service-categories'
+  | '/service-templates'
+  | '/services'
+  | '/settings'
+  | '/shadcn-test'
+  | '/shine-test'
+  | '/signup'
+  | '/signup-demo'
+  | '/subscription'
+  | '/subscription-test'
+  | '/test-auth'
+  | '/universal-button-test'
+  | '/appointments/new'
+  | '/auth/callback'
+  | '/auth/confirm'
+  | '/patients/$id'
+  | '/patients/$patientId'
+  | '/patients/$patientId/documents'
+  | '/patients/$patientId/edit'
+  | '/patients/$patientId/history'
   id:
-    | '__root__'
-    | '/'
-    | '/404'
-    | '/advanced-animations-test'
-    | '/ai-chat'
-    | '/animation-validation-suite'
-    | '/appointments'
-    | '/bento-grid-test'
-    | '/button-test'
-    | '/clients'
-    | '/comprehensive-button-test'
-    | '/dashboard'
-    | '/financial'
-    | '/governance'
-    | '/healthcare-test'
-    | '/login'
-    | '/patients'
-    | '/pricing-rules'
-    | '/professional-services'
-    | '/profile'
-    | '/reports'
-    | '/service-analytics'
-    | '/service-categories'
-    | '/service-templates'
-    | '/services'
-    | '/settings'
-    | '/shadcn-test'
-    | '/shine-test'
-    | '/signup'
-    | '/signup-demo'
-    | '/subscription'
-    | '/subscription-test'
-    | '/test-auth'
-    | '/universal-button-test'
-    | '/appointments/new'
-    | '/auth/callback'
-    | '/auth/confirm'
-    | '/patients/$id'
-    | '/patients/$patientId'
-    | '/patients/$patientId/documents'
-    | '/patients/$patientId/edit'
-    | '/patients/$patientId/history'
+  | '__root__'
+  | '/'
+  | '/404'
+  | '/advanced-animations-test'
+  | '/ai-chat'
+  | '/animation-validation-suite'
+  | '/appointments'
+  | '/bento-grid-test'
+  | '/button-test'
+  | '/clients'
+  | '/comprehensive-button-test'
+  | '/dashboard'
+  | '/financial'
+  | '/governance'
+  | '/healthcare-test'
+  | '/login'
+  | '/patients'
+  | '/pricing-rules'
+  | '/professional-services'
+  | '/profile'
+  | '/reports'
+  | '/service-analytics'
+  | '/service-categories'
+  | '/service-templates'
+  | '/services'
+  | '/settings'
+  | '/shadcn-test'
+  | '/shine-test'
+  | '/signup'
+  | '/signup-demo'
+  | '/subscription'
+  | '/subscription-test'
+  | '/test-auth'
+  | '/universal-button-test'
+  | '/appointments/new'
+  | '/auth/callback'
+  | '/auth/confirm'
+  | '/patients/$id'
+  | '/patients/$patientId'
+  | '/patients/$patientId/documents'
+  | '/patients/$patientId/edit'
+  | '/patients/$patientId/history'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -800,13 +791,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientsPatientIdRouteImport
       parentRoute: typeof PatientsRoute
     }
-    '/patients/$id': {
-      id: '/patients/$id'
-      path: '/$id'
-      fullPath: '/patients/$id'
-      preLoaderRoute: typeof PatientsIdRouteImport
-      parentRoute: typeof PatientsRoute
-    }
     '/auth/confirm': {
       id: '/auth/confirm'
       path: '/auth/confirm'
@@ -880,12 +864,10 @@ const PatientsPatientIdRouteWithChildren =
   PatientsPatientIdRoute._addFileChildren(PatientsPatientIdRouteChildren)
 
 interface PatientsRouteChildren {
-  PatientsIdRoute: typeof PatientsIdRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
 }
 
 const PatientsRouteChildren: PatientsRouteChildren = {
-  PatientsIdRoute: PatientsIdRoute,
   PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
 }
 
