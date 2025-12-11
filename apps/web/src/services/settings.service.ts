@@ -299,11 +299,11 @@ export async function createClinic(
  */
 export async function linkUserToClinic(userId: string, clinicId: string): Promise<boolean> {
     try {
+        // Only update clinic_id - tenant_id has FK to different table
         const { error } = await supabase
             .from('profiles')
             .update({
                 clinic_id: clinicId,
-                tenant_id: clinicId,
             })
             .eq('id', userId);
 
