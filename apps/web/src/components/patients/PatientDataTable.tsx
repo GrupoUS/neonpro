@@ -842,16 +842,8 @@ function PatientRowActions({
           <DropdownMenuItem
             onClick={() => {
               console.log('🔎 Visualizar clicked - patientId:', row.original.id);
-              try {
-                console.log('🔎 Calling navigate...');
-                const result = onNavigate({
-                  to: '/patients/$patientId',
-                  params: { patientId: row.original.id },
-                });
-                console.log('🔎 Navigate result:', result);
-              } catch (error) {
-                console.error('🔎 Navigate error:', error);
-              }
+              // Using direct URL navigation as workaround for TanStack Router issue
+              window.location.href = `/patients/${row.original.id}`;
             }}
           >
             <Eye className='mr-2 size-4' />
@@ -860,10 +852,7 @@ function PatientRowActions({
           <DropdownMenuItem
             onClick={() => {
               console.log('✏️ Editar clicked - patientId:', row.original.id);
-              onNavigate({
-                to: '/patients/$patientId/edit',
-                params: { patientId: row.original.id },
-              });
+              window.location.href = `/patients/${row.original.id}/edit`;
             }}
           >
             <User className='mr-2 size-4' />
@@ -873,11 +862,9 @@ function PatientRowActions({
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem
-            onClick={() =>
-              onNavigate({
-                to: '/appointments/new',
-                search: { patientId: row.original.id },
-              })}
+            onClick={() => {
+              window.location.href = `/appointments?patientId=${row.original.id}`;
+            }}
           >
             <Calendar className='mr-2 size-4' />
             <span>Agendar Consulta</span>
@@ -890,20 +877,16 @@ function PatientRowActions({
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 <DropdownMenuItem
-                  onClick={() =>
-                    onNavigate({
-                      to: '/patients/$patientId/history',
-                      params: { patientId: row.original.id },
-                    })}
+                  onClick={() => {
+                    window.location.href = `/patients/${row.original.id}/history`;
+                  }}
                 >
                   Histórico Médico
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() =>
-                    onNavigate({
-                      to: '/patients/$patientId/documents',
-                      params: { patientId: row.original.id },
-                    })}
+                  onClick={() => {
+                    window.location.href = `/patients/${row.original.id}/documents`;
+                  }}
                 >
                   Documentos
                 </DropdownMenuItem>
