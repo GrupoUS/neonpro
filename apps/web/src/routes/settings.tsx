@@ -11,6 +11,7 @@ import {
   updateDefaultChatModel,
 } from '@/services/chat-settings.service';
 import {
+  createClinic,
   fetchClinicSettings,
   fetchTeamStats,
   fetchUserProfile,
@@ -20,6 +21,7 @@ import {
   updateNotificationPreferences,
   updateUserLanguage,
   type ClinicSettings,
+  type CreateClinicData,
   type NotificationPreferences,
   type TeamStats,
   type UserProfile,
@@ -38,7 +40,7 @@ import {
   Switch,
 } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Bell, Brain, Eye, EyeOff, Globe, Shield, ShieldCheck, Users, Loader2 } from 'lucide-react';
+import { Bell, Brain, Building2, Eye, EyeOff, Globe, Shield, ShieldCheck, Users, Loader2 } from 'lucide-react';
 import React from 'react';
 
 export const Route = createFileRoute('/settings')({
@@ -85,6 +87,17 @@ function SettingsPage() {
   const [saving, setSaving] = React.useState(false);
   const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
 
+  // Clinic creation state (for new users)
+  const [showClinicSetup, setShowClinicSetup] = React.useState(false);
+  const [newClinicData, setNewClinicData] = React.useState<CreateClinicData>({
+    clinicName: '',
+    timezone: 'America/Sao_Paulo',
+    clinicType: 'aesthetic',
+    email: '',
+    phone: '',
+  });
+  const [creatingClinic, setCreatingClinic] = React.useState(false);
+
   // Load settings data
   React.useEffect(() => {
     const loadSettings = async () => {
@@ -129,6 +142,11 @@ function SettingsPage() {
       }
 
       setLoadingSettings(false);
+
+      // Show clinic setup if user has no clinic
+      if (!profile?.clinic_id && !profile?.tenant_id) {
+        setShowClinicSetup(true);
+      }
     };
 
     loadSettings();
@@ -223,6 +241,33 @@ function SettingsPage() {
     );
   }
 
+  // Handle clinic creation
+  const handleCreateClinic = async () => {
+    if (!user?.id || !newClinicData.clinicName.trim()) {
+      setSaveMessage('Nome da clínica é obrigatório');
+      return;
+    }
+
+    setCreatingClinic(true);
+    setSaveMessage(null);
+
+    try {
+      const result = await createClinic(user.id, newClinicData);
+
+      if (result.success) {
+        setSaveMessage('Clínica criada com sucesso! Recarregando...');
+        // Reload the page to get updated profile with clinic
+        setTimeout(() => window.location.reload(), 1500);
+      } else {
+        setSaveMessage(result.error || 'Erro ao criar clínica');
+      }
+    } catch {
+      setSaveMessage('Erro ao criar clínica');
+    } finally {
+      setCreatingClinic(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className='flex items-center justify-center h-full min-h-[200px]'>
@@ -232,6 +277,129 @@ function SettingsPage() {
             Você precisa estar logado para acessar esta página.
           </p>
         </div>
+      </div>
+    );
+  }
+
+  // Show clinic setup form for new users
+  if (showClinicSetup) {
+    return (
+      <div className='container mx-auto p-6 max-w-2xl'>
+        <Card>
+          <CardHeader>
+            <CardTitle className='flex items-center gap-2'>
+              <Building2 className='h-6 w-6' />
+              Configurar sua Clínica
+            </CardTitle>
+            <CardDescription>
+              Para começar a usar o NeonPro, configure os dados básicos da sua clínica.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className='space-y-6'>
+            {saveMessage && (
+              <Alert variant={saveMessage.includes('sucesso') ? 'default' : 'destructive'}>
+                <AlertDescription>{saveMessage}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className='space-y-4'>
+              <div className='space-y-2'>
+                <Label htmlFor='newClinicName'>Nome da Clínica *</Label>
+                <Input
+                  id='newClinicName'
+                  placeholder='Ex: Clínica Estética Bela Vida'
+                  value={newClinicData.clinicName}
+                  onChange={(e) => setNewClinicData(prev => ({ ...prev, clinicName: e.target.value }))}
+                  disabled={creatingClinic}
+                />
+              </div>
+
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='newClinicType'>Tipo de Clínica</Label>
+                  <select
+                    id='newClinicType'
+                    className='w-full p-2 border rounded-md'
+                    value={newClinicData.clinicType}
+                    onChange={(e) => setNewClinicData(prev => ({ ...prev, clinicType: e.target.value as CreateClinicData['clinicType'] }))}
+                    disabled={creatingClinic}
+                  >
+                    <option value='aesthetic'>Estética</option>
+                    <option value='beauty'>Beleza</option>
+                    <option value='medical_aesthetic'>Estética Médica</option>
+                    <option value='dermatology'>Dermatologia</option>
+                    <option value='plastic_surgery'>Cirurgia Plástica</option>
+                    <option value='wellness'>Bem-estar</option>
+                    <option value='spa'>Spa</option>
+                    <option value='other'>Outro</option>
+                  </select>
+                </div>
+
+                <div className='space-y-2'>
+                  <Label htmlFor='newClinicTimezone'>Fuso Horário</Label>
+                  <select
+                    id='newClinicTimezone'
+                    className='w-full p-2 border rounded-md'
+                    value={newClinicData.timezone}
+                    onChange={(e) => setNewClinicData(prev => ({ ...prev, timezone: e.target.value }))}
+                    disabled={creatingClinic}
+                  >
+                    <option value='America/Sao_Paulo'>São Paulo (GMT-3)</option>
+                    <option value='America/Rio_Branco'>Rio Branco (GMT-5)</option>
+                    <option value='America/Manaus'>Manaus (GMT-4)</option>
+                    <option value='America/Fortaleza'>Fortaleza (GMT-3)</option>
+                    <option value='America/Recife'>Recife (GMT-3)</option>
+                    <option value='America/Cuiaba'>Cuiabá (GMT-4)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='newClinicEmail'>E-mail (opcional)</Label>
+                  <Input
+                    id='newClinicEmail'
+                    type='email'
+                    placeholder='contato@suaclinica.com.br'
+                    value={newClinicData.email}
+                    onChange={(e) => setNewClinicData(prev => ({ ...prev, email: e.target.value }))}
+                    disabled={creatingClinic}
+                  />
+                </div>
+
+                <div className='space-y-2'>
+                  <Label htmlFor='newClinicPhone'>Telefone (opcional)</Label>
+                  <Input
+                    id='newClinicPhone'
+                    type='tel'
+                    placeholder='(11) 99999-9999'
+                    value={newClinicData.phone}
+                    onChange={(e) => setNewClinicData(prev => ({ ...prev, phone: e.target.value }))}
+                    disabled={creatingClinic}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className='pt-4 border-t'>
+              <Button
+                onClick={handleCreateClinic}
+                disabled={creatingClinic || !newClinicData.clinicName.trim()}
+                className='w-full'
+                size='lg'
+              >
+                {creatingClinic ? (
+                  <>
+                    <Loader2 className='h-4 w-4 animate-spin mr-2' />
+                    Criando clínica...
+                  </>
+                ) : (
+                  'Criar Clínica e Continuar'
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

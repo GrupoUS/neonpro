@@ -226,3 +226,124 @@ export function getNotificationPreferences(
         system_updates: raw.system_updates ?? DEFAULT_NOTIFICATION_PREFERENCES.system_updates,
     };
 }
+
+/**
+ * Create clinic request data
+ */
+export interface CreateClinicData {
+    clinicName: string;
+    timezone?: string;
+    clinicType?: 'aesthetic' | 'beauty' | 'medical_aesthetic' | 'dermatology' | 'plastic_surgery' | 'wellness' | 'spa' | 'other';
+    email?: string;
+    phone?: string;
+}
+
+/**
+ * Generate unique clinic code
+ */
+function generateClinicCode(): string {
+    const timestamp = Date.now().toString(36).toUpperCase();
+    const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+    return `CLI-${timestamp.slice(-4)}${random}`;
+}
+
+/**
+ * Create a new clinic for a user
+ */
+export async function createClinic(
+    userId: string,
+    data: CreateClinicData
+): Promise<{ clinicId: string; success: boolean; error?: string }> {
+    try {
+        const clinicCode = generateClinicCode();
+
+        const { data: clinic, error } = await supabase
+            .from('clinics')
+            .insert({
+                clinic_code: clinicCode,
+                clinic_name: data.clinicName,
+                timezone: data.timezone || 'America/Sao_Paulo',
+                clinic_type: data.clinicType || 'aesthetic',
+                email: data.email,
+                phone: data.phone,
+                created_by: userId,
+                status: 'active',
+                is_active: true,
+                compliance_level: 'basic',
+                business_type: 'clinic',
+                features_enabled: ['appointments', 'patients', 'financial'],
+            })
+            .select('id')
+            .single();
+
+        if (error) {
+            console.error('[settings] Error creating clinic:', error.message);
+            return { clinicId: '', success: false, error: error.message };
+        }
+
+        // Link user to the newly created clinic
+        const linked = await linkUserToClinic(userId, clinic.id);
+        if (!linked) {
+            return { clinicId: clinic.id, success: false, error: 'Clínica criada, mas falha ao vincular usuário' };
+        }
+
+        return { clinicId: clinic.id, success: true };
+    } catch (e) {
+        console.error('[settings] Exception creating clinic:', e);
+        return { clinicId: '', success: false, error: 'Erro ao criar clínica' };
+    }
+}
+
+/**
+ * Link a user to a clinic (update profile with clinic_id)
+ */
+export async function linkUserToClinic(userId: string, clinicId: string): Promise<boolean> {
+    try {
+        const { error } = await supabase
+            .from('profiles')
+            .update({
+                clinic_id: clinicId,
+                tenant_id: clinicId,
+            })
+            .eq('id', userId);
+
+        if (error) {
+            console.error('[settings] Error linking user to clinic:', error.message);
+            return false;
+        }
+        return true;
+    } catch (e) {
+        console.error('[settings] Exception linking user to clinic:', e);
+        return false;
+    }
+}
+
+/**
+ * Get or create clinic for user
+ * If user has no clinic, creates one with the given name
+ */
+export async function getOrCreateClinic(
+    userId: string,
+    clinicName: string
+): Promise<{ clinicId: string | null; isNew: boolean; error?: string }> {
+    try {
+        // First check if user already has a clinic
+        const profile = await fetchUserProfile(userId);
+        const existingClinicId = profile?.clinic_id || profile?.tenant_id;
+
+        if (existingClinicId) {
+            return { clinicId: existingClinicId, isNew: false };
+        }
+
+        // Create new clinic
+        const result = await createClinic(userId, { clinicName });
+        if (!result.success) {
+            return { clinicId: null, isNew: false, error: result.error };
+        }
+
+        return { clinicId: result.clinicId, isNew: true };
+    } catch (e) {
+        console.error('[settings] Exception in getOrCreateClinic:', e);
+        return { clinicId: null, isNew: false, error: 'Erro ao obter ou criar clínica' };
+    }
+}
