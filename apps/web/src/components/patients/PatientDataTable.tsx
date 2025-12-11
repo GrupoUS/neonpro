@@ -842,10 +842,16 @@ function PatientRowActions({
           <DropdownMenuItem
             onClick={() => {
               console.log('🔎 Visualizar clicked - patientId:', row.original.id);
-              onNavigate({
-                to: '/patients/$patientId',
-                params: { patientId: row.original.id },
-              });
+              try {
+                console.log('🔎 Calling navigate...');
+                const result = onNavigate({
+                  to: '/patients/$patientId',
+                  params: { patientId: row.original.id },
+                });
+                console.log('🔎 Navigate result:', result);
+              } catch (error) {
+                console.error('🔎 Navigate error:', error);
+              }
             }}
           >
             <Eye className='mr-2 size-4' />
