@@ -146,6 +146,8 @@ function SettingsPage() {
       // Show clinic setup if user has no clinic
       if (!profile?.clinic_id && !profile?.tenant_id) {
         setShowClinicSetup(true);
+      } else {
+        setShowClinicSetup(false);
       }
     };
 
