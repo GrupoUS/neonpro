@@ -97,9 +97,8 @@ interface PatientDataTableProps {
 
 // Custom filter function for multi-column searching
 const multiColumnFilterFn: FilterFn<PatientTableData> = (row, _columnId, filterValue: string) => {
-  const searchableRowContent = `${row.original.fullName} ${row.original.email || ''} ${
-    row.original.phone || ''
-  }`.toLowerCase();
+  const searchableRowContent = `${row.original.fullName} ${row.original.email || ''} ${row.original.phone || ''
+    }`.toLowerCase();
   const searchTerm = (filterValue ?? '').toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
@@ -267,9 +266,9 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
             className={cn(
               status === 'Inactive' && 'bg-muted-foreground/60 text-primary-foreground',
               status === 'Pending'
-                && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+              && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
               status === 'Active'
-                && 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+              && 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
             )}
           >
             {status === 'Active' ? 'Ativo' : status === 'Inactive' ? 'Inativo' : 'Pendente'}
@@ -554,8 +553,8 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
                         {value === 'Active'
                           ? 'Ativo'
                           : value === 'Inactive'
-                          ? 'Inativo'
-                          : 'Pendente'}
+                            ? 'Inativo'
+                            : 'Pendente'}
                       </Label>
                     </div>
                   ))}
@@ -593,10 +592,10 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
                       {column.id === 'contact'
                         ? 'Contato'
                         : column.id === 'lastVisit'
-                        ? 'Última Visita'
-                        : column.id === 'totalAppointments'
-                        ? 'Consultas'
-                        : column.id}
+                          ? 'Última Visita'
+                          : column.id === 'totalAppointments'
+                            ? 'Consultas'
+                            : column.id}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -899,18 +898,40 @@ function PatientRowActions({
                   Documentos
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Exportar dados</DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    toast.info('Exportação de dados em desenvolvimento');
+                  }}
+                >
+                  Exportar dados
+                </DropdownMenuItem>
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              if (row.original.email) {
+                window.open(`mailto:${row.original.email}`, '_blank');
+              } else {
+                toast.warning('Paciente não possui email cadastrado');
+              }
+            }}
+          >
             <Mail className='mr-2 size-4' />
             <span>Enviar Email</span>
           </DropdownMenuItem>
-          <DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              if (row.original.phone) {
+                window.open(`tel:${row.original.phone.replace(/\D/g, '')}`, '_blank');
+              } else {
+                toast.warning('Paciente não possui telefone cadastrado');
+              }
+            }}
+          >
             <Phone className='mr-2 size-4' />
             <span>Fazer Chamada</span>
           </DropdownMenuItem>
