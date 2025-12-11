@@ -167,8 +167,14 @@ function PatientDetailPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  // Debug logs
+  console.log('🏥 PatientDetailPage rendering - patientId:', patientId);
+  console.log('🏥 Current tab:', tab);
+
   // Fetch patient data with real-time updates
   const { data: patient, isLoading, error, refetch } = usePatient(patientId);
+
+  console.log('🏥 usePatient result - loading:', isLoading, 'error:', error, 'patient:', patient);
 
   // Log access for LGPD compliance
   useEffect(() => {
@@ -432,8 +438,8 @@ function PatientDetailPage() {
               key={key}
               onClick={() => handleTabChange(key as typeof tab)}
               className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors ${tab === key
-                  ? 'border-primary text-primary'
-                  : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               role='tab'
               aria-selected={tab === key}
