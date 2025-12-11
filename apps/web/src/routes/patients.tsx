@@ -24,7 +24,7 @@ const patientsSearchSchema = z.object({
   pageSize: z.number().min(5).max(100).optional().default(10),
   search: z.string().optional(),
   status: z.array(z.enum(['Active', 'Inactive', 'Pending'])).optional(),
-  sortBy: z.enum(['fullName', 'createdAt', 'lastVisit']).optional().default('fullName'),
+  sortBy: z.string().optional().default('fullName'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
 });
 
@@ -301,10 +301,9 @@ function PatientsStatistics({ clinicId }: { clinicId: string }) {
       icon: Activity,
       change: isLoading
         ? 'carregando…'
-        : `${
-          resolved.totalPatients > 0
-            ? ((resolved.activePatients / resolved.totalPatients) * 100).toFixed(1)
-            : '0.0'
+        : `${resolved.totalPatients > 0
+          ? ((resolved.activePatients / resolved.totalPatients) * 100).toFixed(1)
+          : '0.0'
         }% do total`,
     },
     {
