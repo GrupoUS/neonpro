@@ -119,8 +119,8 @@ class UserProfileService {
         return this.buildStaffProfile(staff);
       }
 
-      console.log('⚠️ No staff profile found, checking auth user...');
-      // If not professional or staff, treat as patient
+      console.log('⚠️ No staff profile found, checking auth user and profiles...');
+
       // Get user info from auth.users
       const authPromise = supabase.auth.getUser();
       const { data: authUser, error: authError } = await Promise.race([
@@ -133,8 +133,31 @@ class UserProfileService {
         throw new Error('No authenticated user found');
       }
 
-      console.log('✅ Found auth user, creating patient profile:', authUser.user.email);
-      return this.buildPatientProfile(authUser.user);
+      // Check profiles table for clinic_id
+      console.log('🔍 Checking profiles table for clinic_id...');
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('clinic_id, full_name, role')
+        .eq('id', userId)
+        .single();
+
+      const clinicId = profileData?.clinic_id || '';
+      let clinicName = '';
+
+      // If user has a clinic_id, fetch the clinic name
+      if (clinicId) {
+        console.log('✅ Found clinic_id in profile:', clinicId);
+        const { data: clinicData } = await supabase
+          .from('clinics')
+          .select('clinic_name')
+          .eq('id', clinicId)
+          .single();
+
+        clinicName = clinicData?.clinic_name || '';
+      }
+
+      console.log('✅ Building user profile with clinicId:', clinicId);
+      return this.buildPatientProfile(authUser.user, clinicId, clinicName, profileData?.full_name);
     } catch (error) {
       console.error('❌ Error fetching user profile:', error);
       // Throw error instead of creating fallback to let caller handle it
@@ -198,18 +221,46 @@ class UserProfileService {
   }
 
   /**
-   * Build patient profile
+   * Build patient profile (also used for clinic owners without professional/staff entry)
    */
-  private buildPatientProfile(authUser: any): UserProfile {
-    const permissions = this.getPatientPermissions();
+  private buildPatientProfile(
+    authUser: any,
+    clinicId: string = '',
+    clinicName: string = '',
+    fullName?: string | null
+  ): UserProfile {
+    // If user has a clinic, give them owner permissions
+    const permissions = clinicId
+      ? this.getClinicOwnerPermissions()
+      : this.getPatientPermissions();
+
+    const role: UserRole = clinicId ? 'clinic_owner' : 'patient';
 
     return {
       id: authUser.id,
       email: authUser.email || '',
-      role: 'patient',
-      clinicId: '', // Patients don't have a fixed clinic association
-      fullName: authUser.user_metadata?.full_name || authUser.email || '',
+      role,
+      clinicId,
+      clinicName,
+      fullName: fullName || authUser.user_metadata?.full_name || authUser.email || '',
       permissions,
+    };
+  }
+
+  /**
+   * Get permissions for clinic owner role
+   */
+  private getClinicOwnerPermissions(): UserPermissions {
+    return {
+      canViewAllAppointments: true,
+      canCreateAppointments: true,
+      canEditAppointments: true,
+      canDeleteAppointments: true,
+      canViewPatients: true,
+      canEditPatients: true,
+      canViewReports: true,
+      canManageStaff: true,
+      canManageSettings: true,
     };
   }
 
