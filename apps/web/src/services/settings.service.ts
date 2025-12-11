@@ -85,7 +85,6 @@ export async function fetchClinicSettings(clinicId: string): Promise<ClinicSetti
         id,
         clinic_name,
         timezone,
-        address,
         phone
       `)
             .eq('id', clinicId)
@@ -97,7 +96,10 @@ export async function fetchClinicSettings(clinicId: string): Promise<ClinicSetti
         }
 
         console.log('[settings] Clinic data fetched:', data);
-        return data as ClinicSettings;
+        return {
+            ...data,
+            address: null, // address column doesn't exist, use address_line1/2 if needed
+        } as ClinicSettings;
     } catch (e) {
         console.error('[settings] Exception fetching clinic settings:', e);
         return null;
