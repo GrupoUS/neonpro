@@ -6,7 +6,8 @@
 
 import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { useAuth } from '@/hooks/useAuth';
-import { usePatient } from '@/hooks/usePatients';
+import { usePatientDocuments } from '@/hooks/usePatientDocuments';
+import { usePatient, usePatientAppointmentHistory } from '@/hooks/usePatients';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge, Button } from '@neonpro/ui';
@@ -289,7 +290,22 @@ function PatientDetailPage() {
     );
   }
 
-  // Transform patient data (adapt based on your actual patient structure)
+  // Fetch appointment history for stats
+  const { data: appointmentHistory = [] } = usePatientAppointmentHistory(patientId);
+
+  // Fetch documents count
+  const { data: documents = [] } = usePatientDocuments(patientId);
+
+  // Calculate derived data from history
+  const lastVisit = appointmentHistory
+    .filter(a => a.status === 'completed')
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]?.date;
+
+  const nextAppointment = appointmentHistory
+    .filter(a => a.status === 'scheduled' || a.status === 'confirmed')
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())[0]?.date;
+
+  // Transform patient data with real values
   const patientData: PatientData = {
     id: patient.id,
     fullName: patient.fullName,
@@ -301,15 +317,15 @@ function PatientDetailPage() {
     age: patient.birthDate
       ? new Date().getFullYear() - new Date(patient.birthDate).getFullYear()
       : undefined,
-    status: 'Active', // Adapt based on your patient status logic
-    lastVisit: undefined, // Add if available in your data
-    nextAppointment: undefined, // Add if available in your data
-    totalAppointments: 0, // Add if available in your data
-    lgpdConsent: true, // Add if available in your data
-    allergies: [], // Add if available in your data
-    chronicConditions: [], // Add if available in your data
-    currentMedications: [], // Add if available in your data
-    notes: undefined, // Add if available in your data
+    status: 'Active',
+    lastVisit,
+    nextAppointment,
+    totalAppointments: appointmentHistory.length,
+    lgpdConsent: true,
+    allergies: [],
+    chronicConditions: [],
+    currentMedications: [],
+    notes: undefined,
   };
 
   return (
@@ -388,9 +404,8 @@ function PatientDetailPage() {
           className='flex items-center gap-1'
         >
           <div
-            className={`w-2 h-2 rounded-full ${
-              patientData.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'
-            }`}
+            className={`w-2 h-2 rounded-full ${patientData.status === 'Active' ? 'bg-green-500' : 'bg-gray-400'
+              }`}
             aria-hidden='true'
           />
           {patientData.status === 'Active' ? 'Ativo' : 'Inativo'}
@@ -416,11 +431,10 @@ function PatientDetailPage() {
             <button
               key={key}
               onClick={() => handleTabChange(key as typeof tab)}
-              className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors ${
-                tab === key
+              className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors ${tab === key
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground hover:border-border'
-              }`}
+                }`}
               role='tab'
               aria-selected={tab === key}
               aria-controls={`tabpanel-${key}`}
@@ -611,24 +625,75 @@ function OverviewTab({ patient }: { patient: PatientData }) {
 }
 
 /**
- * History Tab Component (Placeholder)
+ * History Tab Component - Shows recent appointment history
  */
-function HistoryTab({ patientId: _patientId }: { patientId: string }) {
+function HistoryTab({ patientId }: { patientId: string }) {
+  const { data: history = [], isLoading } = usePatientAppointmentHistory(patientId);
+  const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className='p-6'>
+          <div className='animate-pulse space-y-4'>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className='h-16 bg-muted rounded'></div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (history.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico Médico</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='text-center py-8'>
+            <History className='w-12 h-12 text-muted-foreground mx-auto mb-4' />
+            <h3 className='text-lg font-semibold mb-2'>Nenhum histórico</h3>
+            <p className='text-muted-foreground mb-4'>
+              Este paciente ainda não possui histórico de consultas.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>Histórico Médico</CardTitle>
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={() => navigate({ to: '/patients/$patientId/history', params: { patientId } })}
+        >
+          Ver Completo
+        </Button>
       </CardHeader>
       <CardContent>
-        <div className='text-center py-8'>
-          <History className='w-12 h-12 text-muted-foreground mx-auto mb-4' />
-          <h3 className='text-lg font-semibold mb-2'>Histórico em Desenvolvimento</h3>
-          <p className='text-muted-foreground mb-4'>
-            O histórico médico detalhado estará disponível em breve.
-          </p>
-          <Button variant='outline' size='sm'>
-            Ver Consultas Anteriores
-          </Button>
+        <div className='space-y-4'>
+          {history.slice(0, 5).map(appointment => (
+            <div key={appointment.id} className='flex items-center gap-4 p-3 bg-muted/50 rounded-lg'>
+              <div className='flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full'>
+                <Calendar className='w-5 h-5 text-primary' />
+              </div>
+              <div className='flex-1'>
+                <p className='font-medium text-sm'>{appointment.serviceName}</p>
+                <p className='text-xs text-muted-foreground'>
+                  {appointment.professionalName} • {new Date(appointment.date).toLocaleDateString('pt-BR')}
+                </p>
+              </div>
+              <Badge variant={appointment.status === 'completed' ? 'default' : 'outline'}>
+                {appointment.status === 'completed' ? 'Concluído' : 'Agendado'}
+              </Badge>
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>
@@ -636,49 +701,216 @@ function HistoryTab({ patientId: _patientId }: { patientId: string }) {
 }
 
 /**
- * Appointments Tab Component (Placeholder)
+ * Appointments Tab Component - Shows upcoming and recent appointments
  */
-function AppointmentsTab({ patientId: _patientId }: { patientId: string }) {
+function AppointmentsTab({ patientId }: { patientId: string }) {
+  const { data: appointments = [], isLoading } = usePatientAppointmentHistory(patientId);
+  const navigate = useNavigate();
+
+  const upcoming = appointments.filter(a =>
+    (a.status === 'scheduled' || a.status === 'confirmed') && new Date(a.date) >= new Date()
+  );
+  const past = appointments.filter(a =>
+    a.status === 'completed' || new Date(a.date) < new Date()
+  );
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className='p-6'>
+          <div className='animate-pulse space-y-4'>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className='h-16 bg-muted rounded'></div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Consultas e Agendamentos</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className='text-center py-8'>
-          <Calendar className='w-12 h-12 text-muted-foreground mx-auto mb-4' />
-          <h3 className='text-lg font-semibold mb-2'>Consultas em Desenvolvimento</h3>
-          <p className='text-muted-foreground mb-4'>
-            A visualização de consultas estará disponível em breve.
-          </p>
-          <Button size='sm'>
-            Agendar Nova Consulta
+    <div className='space-y-6'>
+      {/* Upcoming Appointments */}
+      <Card>
+        <CardHeader className='flex flex-row items-center justify-between'>
+          <CardTitle className='flex items-center gap-2'>
+            <Calendar className='w-5 h-5' />
+            Próximas Consultas ({upcoming.length})
+          </CardTitle>
+          <Button size='sm' onClick={() => navigate({ to: '/appointments/new', search: { patientId } })}>
+            Agendar Nova
           </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          {upcoming.length > 0 ? (
+            <div className='space-y-3'>
+              {upcoming.slice(0, 3).map(appointment => (
+                <div key={appointment.id} className='flex items-center gap-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800'>
+                  <div className='flex items-center justify-center w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full'>
+                    <Clock className='w-5 h-5 text-blue-600' />
+                  </div>
+                  <div className='flex-1'>
+                    <p className='font-medium text-sm'>{appointment.serviceName}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      {appointment.professionalName} • {new Date(appointment.date).toLocaleDateString('pt-BR')} às {new Date(appointment.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                  <Badge variant='outline'>Agendado</Badge>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className='text-center text-muted-foreground py-4'>Nenhuma consulta agendada</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Past Appointments */}
+      <Card>
+        <CardHeader>
+          <CardTitle className='flex items-center gap-2'>
+            <History className='w-5 h-5' />
+            Consultas Anteriores ({past.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {past.length > 0 ? (
+            <div className='space-y-3'>
+              {past.slice(0, 5).map(appointment => (
+                <div key={appointment.id} className='flex items-center gap-4 p-3 bg-muted/50 rounded-lg'>
+                  <div className='flex items-center justify-center w-10 h-10 bg-muted rounded-full'>
+                    <Calendar className='w-5 h-5 text-muted-foreground' />
+                  </div>
+                  <div className='flex-1'>
+                    <p className='font-medium text-sm'>{appointment.serviceName}</p>
+                    <p className='text-xs text-muted-foreground'>
+                      {appointment.professionalName} • {new Date(appointment.date).toLocaleDateString('pt-BR')}
+                    </p>
+                  </div>
+                  <Badge variant='secondary'>Concluído</Badge>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className='text-center text-muted-foreground py-4'>Nenhuma consulta anterior</p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
 /**
- * Documents Tab Component (Placeholder)
+ * Documents Tab Component - Shows patient documents summary
  */
-function DocumentsTab({ patientId: _patientId }: { patientId: string }) {
+function DocumentsTab({ patientId }: { patientId: string }) {
+  const { data: documents = [], isLoading } = usePatientDocuments(patientId);
+  const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className='p-6'>
+          <div className='animate-pulse space-y-4'>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className='h-16 bg-muted rounded'></div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (documents.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Documentos do Paciente</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className='text-center py-8'>
+            <FileText className='w-12 h-12 text-muted-foreground mx-auto mb-4' />
+            <h3 className='text-lg font-semibold mb-2'>Nenhum documento</h3>
+            <p className='text-muted-foreground mb-4'>
+              Este paciente ainda não possui documentos anexados.
+            </p>
+            <Button
+              variant='outline'
+              size='sm'
+              onClick={() => navigate({ to: '/patients/$patientId/documents', params: { patientId } })}
+            >
+              Enviar Documento
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Group documents by category
+  const byCategory = documents.reduce((acc, doc) => {
+    acc[doc.category] = (acc[doc.category] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const categoryLabels: Record<string, string> = {
+    medical: 'Médicos',
+    exams: 'Exames',
+    consent: 'Consentimentos',
+    insurance: 'Convênios',
+    photos: 'Fotos',
+    other: 'Outros',
+  };
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Documentos do Paciente</CardTitle>
+      <CardHeader className='flex flex-row items-center justify-between'>
+        <CardTitle>Documentos do Paciente ({documents.length})</CardTitle>
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={() => navigate({ to: '/patients/$patientId/documents', params: { patientId } })}
+        >
+          Ver Todos
+        </Button>
       </CardHeader>
       <CardContent>
-        <div className='text-center py-8'>
-          <FileText className='w-12 h-12 text-muted-foreground mx-auto mb-4' />
-          <h3 className='text-lg font-semibold mb-2'>Documentos em Desenvolvimento</h3>
-          <p className='text-muted-foreground mb-4'>
-            O sistema de documentos estará disponível em breve.
-          </p>
-          <Button variant='outline' size='sm'>
-            Fazer Upload de Documento
-          </Button>
+        <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
+          {Object.entries(byCategory).map(([category, count]) => (
+            <div
+              key={category}
+              className='flex items-center gap-3 p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors'
+              onClick={() => navigate({
+                to: '/patients/$patientId/documents',
+                params: { patientId },
+                search: { category: category as any },
+              })}
+            >
+              <div className='flex items-center justify-center w-10 h-10 bg-primary/10 rounded-full'>
+                <FileText className='w-5 h-5 text-primary' />
+              </div>
+              <div>
+                <p className='font-semibold text-lg'>{count}</p>
+                <p className='text-xs text-muted-foreground'>{categoryLabels[category] || category}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Recent documents */}
+        <div className='mt-6'>
+          <h4 className='text-sm font-medium mb-3'>Documentos Recentes</h4>
+          <div className='space-y-2'>
+            {documents.slice(0, 3).map(doc => (
+              <div key={doc.id} className='flex items-center gap-3 p-2 bg-muted/30 rounded'>
+                <FileText className='w-4 h-4 text-muted-foreground' />
+                <span className='text-sm flex-1 truncate'>{doc.name}</span>
+                <span className='text-xs text-muted-foreground'>
+                  {new Date(doc.created_at).toLocaleDateString('pt-BR')}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

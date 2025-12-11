@@ -42,16 +42,17 @@ function AppointmentsPage() {
   const { /* user, */ profile, hasPermission, loading: authLoading } = useAuth();
   const toast = useToast();
 
-  // Get clinic ID from user profile
-  const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback for testing
+  // Get clinic ID from user profile - no hardcoded fallback
+  const clinicId = profile?.clinicId || profile?.tenantId || null;
 
   // Check permissions - handle case where profile is null
   const canViewAllAppointments = profile ? hasPermission('canViewAllAppointments') : true; // Allow access when no profile
   // const canCreateAppointments = profile ? hasPermission('canCreateAppointments') : true; // Removed top CTA, keep permission check if re-enabled later
 
-  // Fetch appointments from database
+  // Fetch appointments from database - only if we have a clinic ID
   // For patients, we'll need to filter by patient_id in the future
-  const { data: appointments, isLoading, error } = useAppointments(clinicId);
+  const { data: appointments, isLoading, error } = useAppointments(clinicId || '');
+
 
   // Build a memoized set of event time ranges for collision checks
   const appointmentRanges = useMemo(() => {
@@ -126,7 +127,7 @@ function AppointmentsPage() {
           notes: updateData.notes,
         },
       });
-    } catch {}
+    } catch { }
 
     updateAppointmentMutation.mutate({
       appointmentId: event.id,
@@ -275,6 +276,23 @@ function AppointmentsPage() {
                 <p className='mt-2 text-sm text-muted-foreground'>
                   Você não tem permissão para visualizar agendamentos.
                 </p>
+              </div>
+            </div>
+          )}
+          {!authLoading && !clinicId && (
+            <div className='flex items-center justify-center h-96'>
+              <div className='text-center'>
+                <p className='text-lg font-semibold text-amber-600'>Clínica não configurada</p>
+                <p className='mt-2 text-sm text-muted-foreground'>
+                  Você precisa estar associado a uma clínica para visualizar agendamentos.
+                </p>
+                <Button
+                  variant='outline'
+                  onClick={() => window.location.href = '/settings'}
+                  className='mt-4'
+                >
+                  Ir para Configurações
+                </Button>
               </div>
             </div>
           )}

@@ -6,8 +6,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { queryClient, setupQueryErrorHandling } from '@/lib/query-client';
 import {
   IconCalendar,
+  IconChevronDown,
   IconDashboard,
   IconFileText,
+  IconLogout,
   IconMoneybag,
   IconReport,
   IconSettings,
@@ -174,6 +176,7 @@ const useRoutePrefetch = () => {
 
 function AppShellContent() {
   const [open, setOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user } = useAuth();
   const location = useLocation();
 
@@ -227,13 +230,13 @@ function AppShellContent() {
         <IconMoneybag className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
       ),
     },
-    {
-      label: 'Documentos',
-      href: '/documents',
-      icon: (
-        <IconFileText className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
-      ),
-    },
+    /*     {
+          label: 'Documentos',
+          href: '/documents',
+          icon: (
+            <IconFileText className='h-5 w-5 shrink-0 text-muted-foreground group-hover/sidebar:text-foreground' />
+          ),
+        }, */
     {
       label: 'Relatórios',
       href: '/reports',
@@ -315,21 +318,87 @@ function AppShellContent() {
               open ? '' : 'flex justify-center'
             )}>
               {open ? (
-                <div className='flex items-center gap-x-3 px-1'>
-                  <div className='h-9 w-9 shrink-0 rounded-full bg-primary/15 flex items-center justify-center'>
-                    <IconUsers className='h-4 w-4 text-primary' />
-                  </div>
-                  <div className='flex flex-col min-w-0 flex-1'>
-                    <span className='text-sm font-medium text-foreground truncate'>{user.email}</span>
-                    <span className='text-xs text-muted-foreground'>Admin</span>
-                  </div>
+                <div className='relative'>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className='w-full flex items-center gap-x-3 px-2 py-2 rounded-lg hover:bg-accent/50 dark:hover:bg-accent/20 transition-colors'
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup='true'
+                  >
+                    <div className='h-9 w-9 shrink-0 rounded-full bg-primary/15 flex items-center justify-center'>
+                      <IconUsers className='h-4 w-4 text-primary' />
+                    </div>
+                    <div className='flex flex-col min-w-0 flex-1 text-left'>
+                      <span className='text-sm font-medium text-foreground truncate'>{user.email}</span>
+                      <span className='text-xs text-muted-foreground'>Admin</span>
+                    </div>
+                    <IconChevronDown className={cn(
+                      'h-4 w-4 text-muted-foreground transition-transform duration-200',
+                      userMenuOpen && 'rotate-180'
+                    )} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className='absolute bottom-full left-0 right-0 mb-2 bg-popover border border-border rounded-lg shadow-lg overflow-hidden z-50'
+                      >
+                        <button
+                          onClick={async () => {
+                            setUserMenuOpen(false);
+                            await supabase.auth.signOut();
+                            window.location.href = '/login';
+                          }}
+                          className='w-full flex items-center gap-3 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors'
+                        >
+                          <IconLogout className='h-4 w-4' />
+                          <span>Sair</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
-                <div
-                  className='h-11 w-11 rounded-full bg-primary/15 flex items-center justify-center cursor-pointer hover:bg-primary/25 transition-colors'
-                  title={user.email}
-                >
-                  <IconUsers className='h-5 w-5 text-primary' />
+                <div className='relative'>
+                  <button
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                    className='h-11 w-11 rounded-full bg-primary/15 flex items-center justify-center cursor-pointer hover:bg-primary/25 transition-colors'
+                    title={user.email}
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup='true'
+                  >
+                    <IconUsers className='h-5 w-5 text-primary' />
+                  </button>
+
+                  {/* Dropdown Menu (collapsed) */}
+                  <AnimatePresence>
+                    {userMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className='absolute bottom-full left-0 mb-2 bg-popover border border-border rounded-lg shadow-lg overflow-hidden z-50 min-w-[120px]'
+                      >
+                        <button
+                          onClick={async () => {
+                            setUserMenuOpen(false);
+                            await supabase.auth.signOut();
+                            window.location.href = '/login';
+                          }}
+                          className='w-full flex items-center gap-3 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors'
+                        >
+                          <IconLogout className='h-4 w-4' />
+                          <span>Sair</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
             </div>

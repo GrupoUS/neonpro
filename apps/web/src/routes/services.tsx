@@ -28,12 +28,28 @@ import { useDeleteService, useServices } from '@/hooks/useServices';
 import type { Service } from '@/types/service';
 import { toast } from 'sonner';
 function ServicesPage() {
-  const { user } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [isCreateDrawerOpen, setIsCreateDrawerOpen] = useState(false);
 
-  // Get clinic ID from user
-  const clinicId = user?.user_metadata?.clinic_id;
+  // Get clinic ID from user profile - consistent with other pages
+  const clinicId = profile?.clinicId || profile?.tenantId || user?.user_metadata?.clinic_id;
+
+  // Show loading state while auth is loading
+  if (authLoading) {
+    return (
+      <div className='container mx-auto py-8'>
+        <Card>
+          <CardContent className='pt-6'>
+            <div className='flex items-center justify-center'>
+              <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+              <span className='ml-2 text-muted-foreground'>Carregando...</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // If clinicId is missing, show error and prevent data fetch
   if (!clinicId) {
@@ -41,8 +57,18 @@ function ServicesPage() {
       <div className='container mx-auto py-8'>
         <Card>
           <CardContent className='pt-6'>
-            <div className='text-center text-destructive'>
-              Erro: Não foi possível identificar a clínica do usuário. Por favor, faça login novamente.
+            <div className='text-center'>
+              <p className='text-lg font-semibold text-amber-600'>Clínica não configurada</p>
+              <p className='mt-2 text-sm text-muted-foreground'>
+                Você precisa estar associado a uma clínica para gerenciar serviços.
+              </p>
+              <Button
+                variant='outline'
+                onClick={() => window.location.href = '/settings'}
+                className='mt-4'
+              >
+                Ir para Configurações
+              </Button>
             </div>
           </CardContent>
         </Card>

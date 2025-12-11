@@ -11,6 +11,20 @@ import {
   updateDefaultChatModel,
 } from '@/services/chat-settings.service';
 import {
+  fetchClinicSettings,
+  fetchTeamStats,
+  fetchUserProfile,
+  getNotificationPreferences,
+  updateClinicName,
+  updateClinicTimezone,
+  updateNotificationPreferences,
+  updateUserLanguage,
+  type ClinicSettings,
+  type NotificationPreferences,
+  type TeamStats,
+  type UserProfile,
+} from '@/services/settings.service';
+import {
   Alert,
   AlertDescription,
   AlertTitle,
@@ -24,7 +38,7 @@ import {
   Switch,
 } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Bell, Brain, Eye, EyeOff, Globe, Shield, ShieldCheck, Users } from 'lucide-react';
+import { Bell, Brain, Eye, EyeOff, Globe, Shield, ShieldCheck, Users, Loader2 } from 'lucide-react';
 import React from 'react';
 
 export const Route = createFileRoute('/settings')({
@@ -46,31 +60,85 @@ function SettingsPage() {
   const { availableModels, subscriptionInfo } = useSubscription();
   const { shouldShowUpgradePrompt, upgradeUrl } = useSubscriptionPrompt();
 
+  // Settings data state
+  const [userProfile, setUserProfile] = React.useState<UserProfile | null>(null);
+  const [clinicSettings, setClinicSettings] = React.useState<ClinicSettings | null>(null);
+  const [teamStats, setTeamStats] = React.useState<TeamStats | null>(null);
+  const [loadingSettings, setLoadingSettings] = React.useState(true);
+
+  // Form state
+  const [clinicName, setClinicName] = React.useState('');
+  const [timezone, setTimezone] = React.useState('America/Sao_Paulo');
+  const [language, setLanguage] = React.useState('pt-BR');
+  const [notifications, setNotifications] = React.useState<NotificationPreferences>({
+    appointment_notifications: true,
+    appointment_reminders: true,
+    financial_reports: false,
+    system_updates: true,
+  });
+
   // Chat settings state
   const [defaultModel, setDefaultModel] = React.useState<string>(() => {
     if (typeof window === 'undefined') return 'gpt-5-mini';
     return localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini';
   });
   const [saving, setSaving] = React.useState(false);
+  const [saveMessage, setSaveMessage] = React.useState<string | null>(null);
 
+  // Load settings data
   React.useEffect(() => {
-    (async () => {
+    const loadSettings = async () => {
       if (!user?.id) return;
+
+      setLoadingSettings(true);
+
+      // Fetch user profile
+      const profile = await fetchUserProfile(user.id);
+      setUserProfile(profile);
+
+      if (profile) {
+        // Set form values from profile
+        setLanguage(profile.preferred_language || 'pt-BR');
+        setNotifications(getNotificationPreferences(profile.notification_preferences));
+
+        // Fetch clinic settings if user has a clinic
+        const clinicId = profile.clinic_id || profile.tenant_id;
+        if (clinicId) {
+          const clinic = await fetchClinicSettings(clinicId);
+          setClinicSettings(clinic);
+          if (clinic) {
+            setClinicName(clinic.clinic_name || '');
+            setTimezone(clinic.timezone || 'America/Sao_Paulo');
+          }
+
+          // Fetch team stats
+          if (profile.tenant_id) {
+            const stats = await fetchTeamStats(profile.tenant_id);
+            setTeamStats(stats);
+          }
+        }
+      }
+
+      // Fetch default chat model
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
         setDefaultModel(serverModel);
         try {
           localStorage.setItem('neonpro-default-chat-model', serverModel);
-        } catch {}
+        } catch { }
       }
-    })();
+
+      setLoadingSettings(false);
+    };
+
+    loadSettings();
   }, [user?.id]);
 
   const handleSelectDefault = async (model: string) => {
     setDefaultModel(model);
     try {
       localStorage.setItem('neonpro-default-chat-model', model);
-    } catch {}
+    } catch { }
 
     if (!user?.id) return;
     setSaving(true);
@@ -102,14 +170,54 @@ function SettingsPage() {
     !hiddenProviders.includes(providerByModel[m.model])
   );
 
-  if (loading) {
+  // Handle notification toggle
+  const handleNotificationToggle = async (key: keyof NotificationPreferences) => {
+    const newNotifications = {
+      ...notifications,
+      [key]: !notifications[key],
+    };
+    setNotifications(newNotifications);
+
+    if (user?.id) {
+      await updateNotificationPreferences(user.id, newNotifications);
+    }
+  };
+
+  // Handle save settings
+  const handleSaveSettings = async () => {
+    if (!user?.id) return;
+    setSaving(true);
+    setSaveMessage(null);
+
+    try {
+      // Update language
+      await updateUserLanguage(user.id, language);
+
+      // Update clinic settings
+      const clinicId = userProfile?.clinic_id || userProfile?.tenant_id;
+      if (clinicId) {
+        await updateClinicName(clinicId, clinicName);
+        await updateClinicTimezone(clinicId, timezone);
+      }
+
+      // Update notifications
+      await updateNotificationPreferences(user.id, notifications);
+
+      setSaveMessage('Configurações salvas com sucesso!');
+      setTimeout(() => setSaveMessage(null), 3000);
+    } catch (e) {
+      setSaveMessage('Erro ao salvar configurações');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading || loadingSettings) {
     return (
       <div className='flex items-center justify-center h-full min-h-[200px]'>
-        <div
-          className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'
-          role='status'
-          aria-label='Carregando'
-        >
+        <div className='flex flex-col items-center gap-2'>
+          <Loader2 className='h-8 w-8 animate-spin text-primary' />
+          <span className='text-sm text-muted-foreground'>Carregando configurações...</span>
         </div>
       </div>
     );
@@ -160,6 +268,12 @@ function SettingsPage() {
         </Alert>
       )}
 
+      {saveMessage && (
+        <Alert variant={saveMessage.includes('Erro') ? 'destructive' : 'default'}>
+          <AlertDescription>{saveMessage}</AlertDescription>
+        </Alert>
+      )}
+
       <div className='grid gap-6 md:grid-cols-2'>
         {/* General Settings */}
         <Card>
@@ -178,22 +292,37 @@ function SettingsPage() {
               <Input
                 id='clinicName'
                 placeholder='Nome da sua clínica'
-                defaultValue='Clínica NeonPro'
+                value={clinicName}
+                onChange={(e) => setClinicName(e.target.value)}
               />
             </div>
 
             <div className='space-y-2'>
               <Label htmlFor='timezone'>Fuso Horário</Label>
-              <select className='w-full p-2 border rounded-md'>
+              <select
+                id='timezone'
+                className='w-full p-2 border rounded-md'
+                value={timezone}
+                onChange={(e) => setTimezone(e.target.value)}
+              >
                 <option value='America/Sao_Paulo'>São Paulo (GMT-3)</option>
                 <option value='America/Rio_Branco'>Rio Branco (GMT-5)</option>
                 <option value='America/Manaus'>Manaus (GMT-4)</option>
+                <option value='America/Fortaleza'>Fortaleza (GMT-3)</option>
+                <option value='America/Recife'>Recife (GMT-3)</option>
+                <option value='America/Cuiaba'>Cuiabá (GMT-4)</option>
               </select>
             </div>
 
             <div className='space-y-2'>
               <Label htmlFor='language'>Idioma</Label>
-              <select id='language' name='language' className='w-full p-2 border rounded-md'>
+              <select
+                id='language'
+                name='language'
+                className='w-full p-2 border rounded-md'
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
                 <option value='pt-BR'>Português (Brasil)</option>
                 <option value='en-US'>English (US)</option>
                 <option value='es-ES'>Español</option>
@@ -285,7 +414,10 @@ function SettingsPage() {
                 <p className='font-medium'>Notificações de Agendamento</p>
                 <p className='text-sm text-muted-foreground'>Novos agendamentos e alterações</p>
               </div>
-              <Switch defaultChecked />
+              <Switch
+                checked={notifications.appointment_notifications}
+                onCheckedChange={() => handleNotificationToggle('appointment_notifications')}
+              />
             </div>
 
             <div className='flex items-center justify-between'>
@@ -293,7 +425,10 @@ function SettingsPage() {
                 <p className='font-medium'>Lembretes de Consulta</p>
                 <p className='text-sm text-muted-foreground'>Lembretes 24h antes da consulta</p>
               </div>
-              <Switch defaultChecked />
+              <Switch
+                checked={notifications.appointment_reminders}
+                onCheckedChange={() => handleNotificationToggle('appointment_reminders')}
+              />
             </div>
 
             <div className='flex items-center justify-between'>
@@ -301,7 +436,10 @@ function SettingsPage() {
                 <p className='font-medium'>Relatórios Financeiros</p>
                 <p className='text-sm text-muted-foreground'>Relatórios mensais automáticos</p>
               </div>
-              <Switch />
+              <Switch
+                checked={notifications.financial_reports}
+                onCheckedChange={() => handleNotificationToggle('financial_reports')}
+              />
             </div>
 
             <div className='flex items-center justify-between'>
@@ -309,7 +447,10 @@ function SettingsPage() {
                 <p className='font-medium'>Atualizações do Sistema</p>
                 <p className='text-sm text-muted-foreground'>Novidades e atualizações</p>
               </div>
-              <Switch defaultChecked />
+              <Switch
+                checked={notifications.system_updates}
+                onCheckedChange={() => handleNotificationToggle('system_updates')}
+              />
             </div>
           </CardContent>
         </Card>
@@ -428,7 +569,9 @@ function SettingsPage() {
             <div className='flex items-center justify-between'>
               <div>
                 <p className='font-medium'>Usuários Ativos</p>
-                <p className='text-sm text-muted-foreground'>3 usuários ativos</p>
+                <p className='text-sm text-muted-foreground'>
+                  {teamStats?.activeUsers ?? 0} usuário{(teamStats?.activeUsers ?? 0) !== 1 ? 's' : ''} ativo{(teamStats?.activeUsers ?? 0) !== 1 ? 's' : ''}
+                </p>
               </div>
               <Button variant='outline' size='sm'>Ver Todos</Button>
             </div>
@@ -439,8 +582,18 @@ function SettingsPage() {
       {/* Save Button */}
       <div className='flex justify-end space-x-4'>
         <Button variant='outline'>Restaurar Padrões</Button>
-        <Button>Salvar Configurações</Button>
+        <Button onClick={handleSaveSettings} disabled={saving}>
+          {saving ? (
+            <>
+              <Loader2 className='h-4 w-4 animate-spin mr-2' />
+              Salvando...
+            </>
+          ) : (
+            'Salvar Configurações'
+          )}
+        </Button>
       </div>
     </div>
   );
 }
+

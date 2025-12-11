@@ -102,11 +102,11 @@ const navigationItems: NavigationItem[] = [
     href: '/financial',
     icon: <IconMoneybag className='h-5 w-5' />,
   },
-  {
-    label: 'Documentos',
-    href: '/documents',
-    icon: <IconFileText className='h-5 w-5' />,
-  },
+  /*   {
+      label: 'Documentos',
+      href: '/documents',
+      icon: <IconFileText className='h-5 w-5' />,
+    }, */
   {
     label: 'Relatórios',
     href: '/reports',
@@ -440,7 +440,7 @@ function NavigationItemComponent({
                   isCollapsed={isCollapsed}
                   isActive={location.pathname === child.href}
                   isExpanded={false}
-                  onToggleExpanded={() => {}}
+                  onToggleExpanded={() => { }}
                   level={level + 1}
                 />
               ))}

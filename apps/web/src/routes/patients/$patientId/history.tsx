@@ -3,12 +3,14 @@
  * Features: Timeline view, procedure history, appointment records, LGPD compliance
  */
 
+import { usePatientAppointmentHistory } from '@/hooks/usePatients';
 import { usePatient } from '@/hooks/usePatients';
+import type { PatientAppointmentHistory } from '@/services/patients.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
-import { differenceInDays, format, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   Activity,
@@ -40,25 +42,6 @@ const historySearchSchema = z.object({
   sortBy: z.enum(['date', 'type', 'status']).optional().default('date'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
-
-// Mock data types (replace with actual API types)
-interface HistoryItem {
-  id: string;
-  type: 'appointment' | 'procedure' | 'medication' | 'exam';
-  title: string;
-  description?: string;
-  date: string;
-  status: 'completed' | 'cancelled' | 'scheduled' | 'in_progress';
-  professional?: string;
-  location?: string;
-  notes?: string;
-  attachments?: Array<{
-    id: string;
-    name: string;
-    type: string;
-    url: string;
-  }>;
-}
 
 // Route definition
 export const Route = createFileRoute('/patients/$patientId/history')({
@@ -130,75 +113,45 @@ function PatientHistoryPage() {
 
   // Data fetching
   const { data: patient, isLoading: patientLoading } = usePatient(patientId);
-  // const { data: appointmentHistory, isLoading: historyLoading } = usePatientAppointmentHistory(patientId);
+  const {
+    data: appointmentHistory = [],
+    isLoading: historyLoading,
+    error: historyError,
+  } = usePatientAppointmentHistory(patientId);
 
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Mock data for demonstration (replace with real data)
-  const mockHistoryData: HistoryItem[] = [
-    {
-      id: '1',
-      type: 'appointment',
-      title: 'Consulta de Rotina',
-      description: 'Avaliação geral e check-up preventivo',
-      date: '2024-01-15T14:00:00Z',
-      status: 'completed',
-      professional: 'Dr. Carlos Silva',
-      location: 'Consultório 1',
-      notes: 'Paciente apresenta bom estado geral. Recomendado retorno em 6 meses.',
-    },
-    {
-      id: '2',
-      type: 'procedure',
-      title: 'Aplicação de Botox',
-      description: 'Tratamento estético facial - região frontal',
-      date: '2024-01-10T10:30:00Z',
-      status: 'completed',
-      professional: 'Dra. Ana Santos',
-      location: 'Sala de Procedimentos',
-      notes: 'Procedimento realizado sem intercorrências. Orientações pós-procedimento fornecidas.',
-    },
-    {
-      id: '3',
-      type: 'exam',
-      title: 'Exames Laboratoriais',
-      description: 'Hemograma completo, glicose, colesterol',
-      date: '2024-01-05T08:00:00Z',
-      status: 'completed',
-      professional: 'Lab. Diagnóstico',
-      attachments: [
-        { id: '1', name: 'resultados_lab.pdf', type: 'pdf', url: '#' },
-      ],
-    },
-    {
-      id: '4',
-      type: 'appointment',
-      title: 'Consulta de Retorno',
-      description: 'Avaliação pós-procedimento',
-      date: '2024-02-15T15:00:00Z',
-      status: 'scheduled',
-      professional: 'Dra. Ana Santos',
-      location: 'Consultório 2',
-    },
-  ];
+  // Transform appointment history to display format
+  const historyItems = useMemo(() => {
+    return appointmentHistory.map(appointment => ({
+      id: appointment.id,
+      type: 'appointment' as const,
+      title: appointment.serviceName,
+      description: `Atendimento com ${appointment.professionalName}`,
+      date: appointment.date,
+      status: mapStatus(appointment.status),
+      professional: appointment.professionalName,
+      notes: appointment.notes,
+    }));
+  }, [appointmentHistory]);
 
   // Filter and sort history data
   const filteredHistory = useMemo(() => {
-    let filtered = mockHistoryData;
+    let filtered = historyItems;
 
     // Apply type filter
-    if ((search as any).filter !== 'all') {
+    if (search.filter !== 'all') {
       const filterMap: Record<string, string[]> = {
         appointments: ['appointment'],
         procedures: ['procedure'],
         medications: ['medication'],
       };
-      filtered = filtered.filter(item => filterMap[(search as any).filter]?.includes(item.type));
+      filtered = filtered.filter(item => filterMap[search.filter]?.includes(item.type));
     }
 
     // Apply period filter
-    if ((search as any).period !== 'all') {
+    if (search.period !== 'all') {
       const now = new Date();
       const periodDays: Record<string, number> = {
         '7d': 7,
@@ -206,9 +159,10 @@ function PatientHistoryPage() {
         '90d': 90,
         '1y': 365,
       };
-      const dayLimit = periodDays[(search as any).period];
+      const dayLimit = periodDays[search.period];
       if (dayLimit) {
-        filtered = filtered.filter(item => differenceInDays(now, parseISO(item.date)) <= dayLimit);
+        const cutoffDate = new Date(now.getTime() - dayLimit * 24 * 60 * 60 * 1000);
+        filtered = filtered.filter(item => new Date(item.date) >= cutoffDate);
       }
     }
 
@@ -226,7 +180,7 @@ function PatientHistoryPage() {
     filtered.sort((a, b) => {
       let comparison = 0;
 
-      switch ((search as any).sortBy) {
+      switch (search.sortBy) {
         case 'date':
           comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
           break;
@@ -238,18 +192,25 @@ function PatientHistoryPage() {
           break;
       }
 
-      return (search as any).sortOrder === 'desc' ? -comparison : comparison;
+      return search.sortOrder === 'desc' ? -comparison : comparison;
     });
 
     return filtered;
-  }, [
-    mockHistoryData,
-    (search as any).filter,
-    (search as any).period,
-    searchQuery,
-    (search as any).sortBy,
-    (search as any).sortOrder,
-  ]);
+  }, [historyItems, search.filter, search.period, searchQuery, search.sortBy, search.sortOrder]);
+
+  // Calculate stats from real data
+  const stats = useMemo(() => {
+    const completed = historyItems.filter(item => item.status === 'completed');
+    const lastAppointment = historyItems
+      .filter(item => item.status === 'completed')
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0];
+
+    return {
+      totalAppointments: historyItems.length,
+      completedAppointments: completed.length,
+      lastAppointmentDate: lastAppointment?.date,
+    };
+  }, [historyItems]);
 
   // Filter change handler
   const handleFilterChange = (newFilter: 'all' | 'appointments' | 'procedures' | 'medications') => {
@@ -258,9 +219,9 @@ function PatientHistoryPage() {
       params: { patientId },
       search: {
         filter: newFilter,
-        period: (search as any).period,
-        sortBy: (search as any).sortBy,
-        sortOrder: (search as any).sortOrder,
+        period: search.period,
+        sortBy: search.sortBy,
+        sortOrder: search.sortOrder,
       },
     });
   };
@@ -271,15 +232,15 @@ function PatientHistoryPage() {
       to: '/patients/$patientId/history',
       params: { patientId },
       search: {
-        filter: (search as any).filter,
+        filter: search.filter,
         period: newPeriod,
-        sortBy: (search as any).sortBy,
-        sortOrder: (search as any).sortOrder,
+        sortBy: search.sortBy,
+        sortOrder: search.sortOrder,
       },
     });
   };
 
-  if (patientLoading) {
+  if (patientLoading || historyLoading) {
     return (
       <div className='container mx-auto p-4 md:p-6 space-y-6'>
         <div className='animate-pulse space-y-6'>
@@ -356,12 +317,26 @@ function PatientHistoryPage() {
             <Download className='w-4 h-4 mr-2' />
             Exportar
           </Button>
-          <Button size='sm'>
-            <Calendar className='w-4 h-4 mr-2' />
-            Nova Consulta
+          <Button size='sm' asChild>
+            <Link to='/appointments/new' search={{ patientId }}>
+              <Calendar className='w-4 h-4 mr-2' />
+              Nova Consulta
+            </Link>
           </Button>
         </div>
       </div>
+
+      {/* Error state */}
+      {historyError && (
+        <Card className='border-destructive bg-destructive/10'>
+          <CardContent className='p-4'>
+            <div className='flex items-center gap-2 text-destructive'>
+              <AlertCircle className='w-5 h-5' />
+              <span>Erro ao carregar histórico: {(historyError as Error).message}</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters and Search */}
       <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
@@ -379,7 +354,7 @@ function PatientHistoryPage() {
 
         {/* Type Filter */}
         <select
-          value={(search as any).filter}
+          value={search.filter}
           onChange={e =>
             handleFilterChange(
               e.target.value as 'all' | 'appointments' | 'procedures' | 'medications',
@@ -394,7 +369,7 @@ function PatientHistoryPage() {
 
         {/* Period Filter */}
         <select
-          value={(search as any).period}
+          value={search.period}
           onChange={e => handlePeriodChange(e.target.value as 'all' | '7d' | '30d' | '90d' | '1y')}
           className='w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
         >
@@ -460,25 +435,27 @@ function PatientHistoryPage() {
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
             <HistoryStat
               label='Total de Consultas'
-              value={mockHistoryData.filter(item => item.type === 'appointment').length}
+              value={stats.totalAppointments}
               icon={Calendar}
               color='blue'
             />
             <HistoryStat
-              label='Procedimentos Realizados'
-              value={mockHistoryData.filter(item => item.type === 'procedure').length}
+              label='Consultas Realizadas'
+              value={stats.completedAppointments}
               icon={Stethoscope}
               color='green'
             />
             <HistoryStat
-              label='Exames Realizados'
-              value={mockHistoryData.filter(item => item.type === 'exam').length}
+              label='Consultas Pendentes'
+              value={stats.totalAppointments - stats.completedAppointments}
               icon={Activity}
               color='purple'
             />
             <HistoryStat
               label='Última Consulta'
-              value={format(parseISO('2024-01-15T14:00:00Z'), 'dd/MM/yyyy', { locale: ptBR })}
+              value={stats.lastAppointmentDate
+                ? format(parseISO(stats.lastAppointmentDate), 'dd/MM/yyyy', { locale: ptBR })
+                : 'Nenhuma'}
               icon={Clock}
               color='orange'
             />
@@ -487,6 +464,33 @@ function PatientHistoryPage() {
       </Card>
     </div>
   );
+}
+
+// Helper function to map status
+function mapStatus(status: string): 'completed' | 'cancelled' | 'scheduled' | 'in_progress' {
+  const statusMap: Record<string, 'completed' | 'cancelled' | 'scheduled' | 'in_progress'> = {
+    completed: 'completed',
+    confirmed: 'scheduled',
+    scheduled: 'scheduled',
+    cancelled: 'cancelled',
+    canceled: 'cancelled',
+    in_progress: 'in_progress',
+    pending: 'scheduled',
+  };
+  return statusMap[status] || 'scheduled';
+}
+
+// History item type for component
+interface HistoryItem {
+  id: string;
+  type: 'appointment' | 'procedure' | 'medication' | 'exam';
+  title: string;
+  description?: string;
+  date: string;
+  status: 'completed' | 'cancelled' | 'scheduled' | 'in_progress';
+  professional?: string;
+  location?: string;
+  notes?: string;
 }
 
 /**
@@ -601,26 +605,6 @@ function HistoryItemCard({ item, isLast }: { item: HistoryItem; isLast: boolean 
               {item.notes && (
                 <div className='bg-muted/50 p-3 rounded-lg'>
                   <p className='text-sm text-foreground'>{item.notes}</p>
-                </div>
-              )}
-
-              {/* Attachments */}
-              {item.attachments && item.attachments.length > 0 && (
-                <div className='space-y-2'>
-                  <h4 className='text-sm font-medium'>Anexos:</h4>
-                  <div className='flex flex-wrap gap-2'>
-                    {item.attachments.map(attachment => (
-                      <Button
-                        key={attachment.id}
-                        variant='outline'
-                        size='sm'
-                        className='h-auto p-2'
-                      >
-                        <FileText className='w-4 h-4 mr-2' />
-                        <span className='text-xs'>{attachment.name}</span>
-                      </Button>
-                    ))}
-                  </div>
                 </div>
               )}
             </div>

@@ -3,7 +3,16 @@
  * Features: Upload, organize, preview, secure sharing, audit trail
  */
 
+import { useAuth } from '@/hooks/useAuth';
+import {
+  useDeleteDocument,
+  useDeleteDocuments,
+  useDocumentDownloadUrl,
+  usePatientDocuments,
+  useUploadDocument,
+} from '@/hooks/usePatientDocuments';
 import { usePatient } from '@/hooks/usePatients';
+import type { PatientDocument } from '@/services/patient-documents.service';
 import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
@@ -20,6 +29,7 @@ import {
   FileText,
   FolderOpen,
   Image,
+  Loader2,
   Lock,
   MoreVertical,
   Search,
@@ -29,8 +39,7 @@ import {
   Upload,
   User,
 } from 'lucide-react';
-import { useCallback, useState } from 'react';
-import { toast } from 'sonner';
+import { useCallback, useMemo, useState } from 'react';
 import { z } from 'zod';
 
 // Type-safe params schema
@@ -40,27 +49,11 @@ const patientParamsSchema = z.object({
 
 // Search params for filtering documents
 const documentsSearchSchema = z.object({
-  category: z.enum(['all', 'medical', 'insurance', 'consent', 'exams', 'photos']).optional()
+  documentType: z.enum(['all', 'medical', 'exam', 'consent', 'insurance', 'photo', 'prescription', 'report', 'other']).optional()
     .default('all'),
-  sortBy: z.enum(['name', 'date', 'size', 'type']).optional().default('date'),
+  sortBy: z.enum(['created_at', 'document_type', 'status']).optional().default('created_at'),
   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
 });
-
-// Document interface
-interface PatientDocument {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  category: 'medical' | 'insurance' | 'consent' | 'exams' | 'photos';
-  uploadedAt: string;
-  uploadedBy: string;
-  isSecure: boolean;
-  url?: string;
-  preview?: string;
-  description?: string;
-  tags?: string[];
-}
 
 // Route definition
 export const Route = createFileRoute('/patients/$patientId/documents')({
@@ -127,135 +120,108 @@ export const Route = createFileRoute('/patients/$patientId/documents')({
 
 function PatientDocumentsPage() {
   const { patientId } = Route.useParams();
-  const { category, sortBy, sortOrder } = Route.useSearch();
+  const { documentType, sortBy, sortOrder } = Route.useSearch();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Get clinic ID from user
+  const clinicId = (user as any)?.user_metadata?.clinic_id || (user as any)?.clinic_id;
 
   // Data fetching
   const { data: patient, isLoading: patientLoading } = usePatient(patientId);
+  const {
+    data: documents = [],
+    isLoading: documentsLoading,
+    error: documentsError,
+  } = usePatientDocuments(patientId, {
+    documentType: documentType === 'all' ? undefined : documentType,
+    sortBy,
+    sortOrder,
+  });
+
+  // Mutations
+  const uploadMutation = useUploadDocument();
+  const deleteMutation = useDeleteDocument();
+  const deleteMultipleMutation = useDeleteDocuments();
+  const downloadMutation = useDocumentDownloadUrl();
 
   // Local state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDocuments, setSelectedDocuments] = useState<string[]>([]);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [isUploading, setIsUploading] = useState(false);
 
-  // Mock documents data (replace with real data)
-  const mockDocuments: PatientDocument[] = [
-    {
-      id: '1',
-      name: 'Exame de Sangue - Janeiro 2024.pdf',
-      type: 'application/pdf',
-      size: 1234567,
-      category: 'exams',
-      uploadedAt: '2024-01-15T10:30:00Z',
-      uploadedBy: 'Dr. Carlos Silva',
-      isSecure: true,
-      description: 'Hemograma completo e bioquímica',
-      tags: ['laboratório', 'rotina'],
-    },
-    {
-      id: '2',
-      name: 'Termo de Consentimento - Botox.pdf',
-      type: 'application/pdf',
-      size: 456789,
-      category: 'consent',
-      uploadedAt: '2024-01-10T14:20:00Z',
-      uploadedBy: 'Dra. Ana Santos',
-      isSecure: true,
-      description: 'Consentimento informado para aplicação de toxina botulínica',
-      tags: ['botox', 'estético', 'consentimento'],
-    },
-    {
-      id: '3',
-      name: 'Foto Antes - Tratamento Facial.jpg',
-      type: 'image/jpeg',
-      size: 2345678,
-      category: 'photos',
-      uploadedAt: '2024-01-08T16:45:00Z',
-      uploadedBy: 'Dra. Ana Santos',
-      isSecure: true,
-      preview: '/api/documents/3/preview',
-      description: 'Foto antes do procedimento estético',
-      tags: ['antes', 'facial', 'estético'],
-    },
-    {
-      id: '4',
-      name: 'Carteirinha do Plano de Saúde.pdf',
-      type: 'application/pdf',
-      size: 123456,
-      category: 'insurance',
-      uploadedAt: '2024-01-05T09:15:00Z',
-      uploadedBy: 'Recepção',
-      isSecure: false,
-      description: 'Documento do plano de saúde',
-      tags: ['plano', 'saúde'],
-    },
-  ];
+  // Filter documents by search query (additional client-side filtering)
+  const filteredDocuments = useMemo(() => {
+    if (!searchQuery) return documents;
+
+    const query = searchQuery.toLowerCase();
+    return documents.filter(doc => {
+      const filename = doc.upload?.file_name || '';
+      return filename.toLowerCase().includes(query)
+        || doc.notes?.toLowerCase().includes(query)
+        || doc.document_type.toLowerCase().includes(query)
+        || doc.tags?.some(tag => tag.toLowerCase().includes(query));
+    });
+  }, [documents, searchQuery]);
 
   // File upload handler
-  const handleFileUpload = useCallback((files: FileList | null) => {
-    if (!files) return;
+  const handleFileUpload = useCallback(async (files: FileList | null) => {
+    if (!files || !clinicId || !patient?.email) return;
 
-    Array.from(files).forEach(file => {
-      const fileId = Math.random().toString(36).substr(2, 9);
+    setIsUploading(true);
 
-      // Simulate upload progress
-      setUploadProgress(prev => ({ ...prev, [fileId]: 0 }));
-
-      const interval = setInterval(() => {
-        setUploadProgress(prev => {
-          const newProgress = (prev[fileId] || 0) + 10;
-          if (newProgress >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setUploadProgress(prev => {
-                const { [fileId]: _, ...rest } = prev;
-                return rest;
-              });
-              toast.success(`${file.name} enviado com sucesso!`);
-            }, 500);
-            return { ...prev, [fileId]: 100 };
-          }
-          return { ...prev, [fileId]: newProgress };
+    try {
+      for (const file of Array.from(files)) {
+        await uploadMutation.mutateAsync({
+          patientId,
+          patientEmail: patient.email,
+          clinicId,
+          request: {
+            file,
+            documentType: documentType === 'all' ? 'other' : documentType,
+            classification: 'standard',
+            sensitivityLevel: 'standard',
+          },
         });
-      }, 200);
-    });
-  }, []);
-
-  // Filter documents based on search and category
-  const filteredDocuments = mockDocuments.filter(doc => {
-    const matchesSearch = searchQuery === ''
-      || doc.name.toLowerCase().includes(searchQuery.toLowerCase())
-      || doc.description?.toLowerCase().includes(searchQuery.toLowerCase())
-      || doc.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    const matchesCategory = category === 'all' || doc.category === category;
-
-    return matchesSearch && matchesCategory;
-  });
-
-  // Sort documents
-  const sortedDocuments = [...filteredDocuments].sort((a, b) => {
-    let comparison = 0;
-
-    switch (sortBy) {
-      case 'name':
-        comparison = a.name.localeCompare(b.name);
-        break;
-      case 'date':
-        comparison = new Date(a.uploadedAt).getTime() - new Date(b.uploadedAt).getTime();
-        break;
-      case 'size':
-        comparison = a.size - b.size;
-        break;
-      case 'type':
-        comparison = a.type.localeCompare(b.type);
-        break;
+      }
+    } finally {
+      setIsUploading(false);
     }
+  }, [clinicId, patientId, patient?.email, documentType, uploadMutation]);
 
-    return sortOrder === 'desc' ? -comparison : comparison;
-  });
+  // Handle document download
+  const handleDownload = useCallback(async (documentId: string, fileName: string) => {
+    try {
+      const url = await downloadMutation.mutateAsync(documentId);
+      // Create a temporary link to trigger download
+      const link = window.document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      window.document.body.appendChild(link);
+      link.click();
+      window.document.body.removeChild(link);
+    } catch {
+      // Error is handled by the mutation
+    }
+  }, [downloadMutation]);
 
-  if (patientLoading) {
+  // Handle document deletion
+  const handleDelete = useCallback(async (documentId: string) => {
+    if (!window.confirm('Tem certeza que deseja excluir este documento?')) return;
+
+    await deleteMutation.mutateAsync({ documentId, patientId });
+    setSelectedDocuments(prev => prev.filter(id => id !== documentId));
+  }, [deleteMutation, patientId]);
+
+  // Handle bulk deletion
+  const handleBulkDelete = useCallback(async () => {
+    if (!window.confirm(`Tem certeza que deseja excluir ${selectedDocuments.length} documento(s)?`)) return;
+
+    await deleteMultipleMutation.mutateAsync({ documentIds: selectedDocuments, patientId });
+    setSelectedDocuments([]);
+  }, [deleteMultipleMutation, selectedDocuments, patientId]);
+
+  if (patientLoading || documentsLoading) {
     return (
       <div className='container mx-auto p-4 md:p-6 space-y-6'>
         <div className='animate-pulse space-y-6'>
@@ -336,37 +302,34 @@ function PatientDocumentsPage() {
             onChange={e => handleFileUpload(e.target.files)}
             className='hidden'
             id='file-upload'
+            disabled={isUploading || !clinicId}
           />
-          <Button asChild>
+          <Button asChild disabled={isUploading || !clinicId}>
             <label htmlFor='file-upload' className='cursor-pointer'>
-              <Upload className='w-4 h-4 mr-2' />
-              Enviar Documentos
+              {isUploading ? (
+                <>
+                  <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Upload className='w-4 h-4 mr-2' />
+                  Enviar Documentos
+                </>
+              )}
             </label>
           </Button>
         </div>
       </div>
 
-      {/* Upload Progress */}
-      {Object.keys(uploadProgress).length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className='text-sm'>Enviando Arquivos...</CardTitle>
-          </CardHeader>
-          <CardContent className='space-y-2'>
-            {Object.entries(uploadProgress).map(([fileId, progress]) => (
-              <div key={fileId} className='space-y-1'>
-                <div className='flex justify-between text-sm'>
-                  <span>Upload {fileId}</span>
-                  <span>{progress}%</span>
-                </div>
-                <div className='w-full bg-muted rounded-full h-2'>
-                  <div
-                    className='bg-primary h-2 rounded-full transition-all duration-300'
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+      {/* Error state for documents */}
+      {documentsError && (
+        <Card className='border-destructive bg-destructive/10'>
+          <CardContent className='p-4'>
+            <div className='flex items-center gap-2 text-destructive'>
+              <AlertCircle className='w-5 h-5' />
+              <span>Erro ao carregar documentos: {(documentsError as Error).message}</span>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -385,23 +348,26 @@ function PatientDocumentsPage() {
           />
         </div>
 
-        {/* Category Filter */}
+        {/* Document Type Filter */}
         <select
-          value={category}
+          value={documentType}
           onChange={e =>
             navigate({
               to: '/patients/$patientId/documents',
               params: { patientId },
-              search: { category: e.target.value as typeof category, sortBy, sortOrder },
+              search: { documentType: e.target.value as typeof documentType, sortBy, sortOrder },
             })}
           className='w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
         >
-          <option value='all'>Todas as categorias</option>
+          <option value='all'>Todos os tipos</option>
           <option value='medical'>Médicos</option>
-          <option value='exams'>Exames</option>
-          <option value='consent'>Termos de Consentimento</option>
+          <option value='exam'>Exames</option>
+          <option value='consent'>Consentimentos</option>
           <option value='insurance'>Convênios</option>
-          <option value='photos'>Fotos</option>
+          <option value='photo'>Fotos</option>
+          <option value='prescription'>Receitas</option>
+          <option value='report'>Laudos</option>
+          <option value='other'>Outros</option>
         </select>
 
         {/* Sort */}
@@ -415,31 +381,31 @@ function PatientDocumentsPage() {
             navigate({
               to: '/patients/$patientId/documents',
               params: { patientId },
-              search: { category, sortBy: newSortBy, sortOrder: newSortOrder },
+              search: { documentType, sortBy: newSortBy, sortOrder: newSortOrder },
             });
           }}
           className='w-full px-3 py-2 border border-input rounded-md bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2'
         >
-          <option value='date-desc'>Mais recentes</option>
-          <option value='date-asc'>Mais antigos</option>
-          <option value='name-asc'>Nome A-Z</option>
-          <option value='name-desc'>Nome Z-A</option>
-          <option value='size-desc'>Maior tamanho</option>
-          <option value='size-asc'>Menor tamanho</option>
+          <option value='created_at-desc'>Mais recentes</option>
+          <option value='created_at-asc'>Mais antigos</option>
+          <option value='document_type-asc'>Tipo A-Z</option>
+          <option value='document_type-desc'>Tipo Z-A</option>
+          <option value='status-asc'>Status A-Z</option>
+          <option value='status-desc'>Status Z-A</option>
         </select>
 
         {/* Results count */}
         <div className='flex items-center justify-center px-3 py-2 bg-muted rounded-md text-sm text-muted-foreground'>
-          {sortedDocuments.length} documento(s)
+          {filteredDocuments.length} documento(s)
         </div>
       </div>
 
       {/* Documents Grid */}
       <div className='space-y-6'>
-        {sortedDocuments.length > 0
+        {filteredDocuments.length > 0
           ? (
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {sortedDocuments.map(document => (
+              {filteredDocuments.map(document => (
                 <DocumentCard
                   key={document.id}
                   document={document}
@@ -451,6 +417,9 @@ function PatientDocumentsPage() {
                       setSelectedDocuments(prev => prev.filter(id => id !== document.id));
                     }
                   }}
+                  onDownload={() => handleDownload(document.id, document.upload?.file_name || 'documento')}
+                  onDelete={() => handleDelete(document.id)}
+                  isDeleting={deleteMutation.isLoading}
                 />
               ))}
             </div>
@@ -492,8 +461,17 @@ function PatientDocumentsPage() {
                   <Share2 className='w-4 h-4 mr-2' />
                   Compartilhar
                 </Button>
-                <Button variant='destructive' size='sm'>
-                  <Trash2 className='w-4 h-4 mr-2' />
+                <Button
+                  variant='destructive'
+                  size='sm'
+                  onClick={handleBulkDelete}
+                  disabled={deleteMultipleMutation.isLoading}
+                >
+                  {deleteMultipleMutation.isLoading ? (
+                    <Loader2 className='w-4 h-4 mr-2 animate-spin' />
+                  ) : (
+                    <Trash2 className='w-4 h-4 mr-2' />
+                  )}
                   Excluir
                 </Button>
                 <Button
@@ -536,10 +514,16 @@ function DocumentCard({
   document,
   isSelected,
   onSelect,
+  onDownload,
+  onDelete,
+  isDeleting,
 }: {
   document: PatientDocument;
   isSelected: boolean;
   onSelect: (selected: boolean) => void;
+  onDownload: () => void;
+  onDelete: () => void;
+  isDeleting: boolean;
 }) {
   const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) return Image;
@@ -547,17 +531,19 @@ function DocumentCard({
     return File;
   };
 
-  const getCategoryBadge = (category: string) => {
-    const categoryMap = {
-      medical: { label: 'Médico', variant: 'default' as const },
-      exams: { label: 'Exame', variant: 'secondary' as const },
-      consent: { label: 'Consentimento', variant: 'outline' as const },
-      insurance: { label: 'Convênio', variant: 'outline' as const },
-      photos: { label: 'Foto', variant: 'secondary' as const },
+  const getDocTypeBadge = (docType: string) => {
+    const typeMap: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' }> = {
+      medical: { label: 'Médico', variant: 'default' },
+      exam: { label: 'Exame', variant: 'secondary' },
+      consent: { label: 'Consentimento', variant: 'outline' },
+      insurance: { label: 'Convênio', variant: 'outline' },
+      photo: { label: 'Foto', variant: 'secondary' },
+      prescription: { label: 'Receita', variant: 'default' },
+      report: { label: 'Laudo', variant: 'default' },
+      other: { label: 'Outro', variant: 'outline' },
     };
 
-    return categoryMap[category as keyof typeof categoryMap]
-      || { label: category, variant: 'outline' as const };
+    return typeMap[docType] || { label: docType, variant: 'outline' as const };
   };
 
   const formatFileSize = (bytes: number) => {
@@ -567,14 +553,18 @@ function DocumentCard({
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const FileIcon = getFileIcon(document.type);
-  const categoryInfo = getCategoryBadge(document.category);
+  const fileType = document.upload?.file_type || (document.metadata as any)?.file_type || 'unknown';
+  const fileSize = document.upload?.file_size_bytes || (document.metadata as any)?.file_size || 0;
+  const fileName = document.upload?.file_name || (document.metadata as any)?.original_filename || 'Documento';
+
+  const FileIcon = getFileIcon(fileType);
+  const docTypeInfo = getDocTypeBadge(document.document_type);
+  const isConfidential = document.sensitivity_level === 'confidential' || document.sensitivity_level === 'restricted';
 
   return (
     <Card
-      className={`cursor-pointer transition-all hover:shadow-md ${
-        isSelected ? 'ring-2 ring-primary' : ''
-      }`}
+      className={`cursor-pointer transition-all hover:shadow-md ${isSelected ? 'ring-2 ring-primary' : ''
+        }`}
     >
       <CardContent className='p-4'>
         <div className='space-y-3'>
@@ -594,7 +584,7 @@ function DocumentCard({
             </div>
 
             <div className='flex items-center gap-1'>
-              {document.isSecure && (
+              {isConfidential && (
                 <Lock className='w-4 h-4 text-blue-600' aria-label='Documento protegido' />
               )}
               <Button variant='ghost' size='sm'>
@@ -607,20 +597,20 @@ function DocumentCard({
           <div className='space-y-2'>
             <div className='space-y-1'>
               <h3 className='font-medium text-sm leading-tight line-clamp-2'>
-                {document.name}
+                {fileName}
               </h3>
-              {document.description && (
+              {document.notes && (
                 <p className='text-xs text-muted-foreground line-clamp-2'>
-                  {document.description}
+                  {document.notes}
                 </p>
               )}
             </div>
 
             {/* Metadata */}
             <div className='flex items-center justify-between text-xs text-muted-foreground'>
-              <span>{formatFileSize(document.size)}</span>
-              <Badge variant={categoryInfo.variant}>
-                {categoryInfo.label}
+              <span>{formatFileSize(fileSize)}</span>
+              <Badge variant={docTypeInfo.variant}>
+                {docTypeInfo.label}
               </Badge>
             </div>
 
@@ -644,11 +634,11 @@ function DocumentCard({
             <div className='flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t'>
               <div className='flex items-center gap-1'>
                 <User className='w-3 h-3' />
-                <span>{document.uploadedBy}</span>
+                <span>{document.uploaded_by_name || 'Usuário'}</span>
               </div>
               <div className='flex items-center gap-1'>
                 <Clock className='w-3 h-3' />
-                <span>{format(new Date(document.uploadedAt), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                <span>{format(new Date(document.created_at), 'dd/MM/yyyy', { locale: ptBR })}</span>
               </div>
             </div>
           </div>
@@ -659,7 +649,15 @@ function DocumentCard({
               <Eye className='w-3 h-3 mr-1' />
               Ver
             </Button>
-            <Button variant='outline' size='sm' className='flex-1'>
+            <Button
+              variant='outline'
+              size='sm'
+              className='flex-1'
+              onClick={e => {
+                e.stopPropagation();
+                onDownload();
+              }}
+            >
               <Download className='w-3 h-3 mr-1' />
               Baixar
             </Button>
