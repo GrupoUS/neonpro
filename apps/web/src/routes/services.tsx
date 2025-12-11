@@ -35,6 +35,18 @@ function ServicesPage() {
   // Get clinic ID from user profile - consistent with other pages
   const clinicId = profile?.clinicId || profile?.tenantId || user?.user_metadata?.clinic_id;
 
+  // Fetch services data - must be called before any early returns to maintain hooks order
+  const { data: servicesResponse, isLoading, error } = useServices({
+    clinic_id: clinicId || '',
+    is_active: true,
+  });
+
+  // Delete service mutation - must be before early returns
+  const deleteServiceMutation = useDeleteService();
+
+  // Extract services array from response
+  const services = servicesResponse?.data || [];
+
   // Show loading state while auth is loading
   if (authLoading) {
     return (
@@ -75,18 +87,6 @@ function ServicesPage() {
       </div>
     );
   }
-  // Fetch services data
-  const { data: servicesResponse, isLoading, error } = useServices({
-    clinic_id: clinicId,
-    // clinicId is deprecated; use clinic_id only
-    is_active: true,
-  });
-
-  // Extract services array from response
-  const services = servicesResponse?.data || [];
-
-  // Delete service mutation
-  const deleteServiceMutation = useDeleteService();
 
   const handleEdit = (service: Service) => {
     setEditingService(service);
@@ -116,7 +116,7 @@ function ServicesPage() {
         <Card>
           <CardContent className='pt-6'>
             <div className='text-center text-destructive'>
-              Erro ao carregar serviços: {error.message}
+              Erro ao carregar serviços: {(error as Error)?.message || 'Erro desconhecido'}
             </div>
           </CardContent>
         </Card>
