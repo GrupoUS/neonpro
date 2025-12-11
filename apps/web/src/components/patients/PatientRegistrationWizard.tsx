@@ -367,7 +367,7 @@ export function PatientRegistrationWizard({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className='max-w-4xl max-h-[90vh] overflow-hidden'>
+      <DialogContent className='max-w-4xl h-[90vh] flex flex-col overflow-hidden'>
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2'>
             <User className='h-5 w-5 text-primary' />
@@ -400,15 +400,14 @@ export function PatientRegistrationWizard({
                 key={step.id}
                 onClick={() => handleStepClick(step.id)}
                 disabled={!isAccessible}
-                className={`flex flex-col items-center gap-2 p-2 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-primary text-primary-foreground'
-                    : isCompleted
+                className={`flex flex-col items-center gap-2 p-2 rounded-lg transition-colors ${isActive
+                  ? 'bg-primary text-primary-foreground'
+                  : isCompleted
                     ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
                     : isAccessible
-                    ? 'hover:bg-muted'
-                    : 'opacity-50 cursor-not-allowed'
-                }`}
+                      ? 'hover:bg-muted'
+                      : 'opacity-50 cursor-not-allowed'
+                  }`}
               >
                 <div className='relative'>
                   {isCompleted
@@ -419,9 +418,8 @@ export function PatientRegistrationWizard({
                     )
                     : (
                       <div
-                        className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          isActive ? 'bg-primary-foreground text-primary' : 'bg-muted'
-                        }`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${isActive ? 'bg-primary-foreground text-primary' : 'bg-muted'
+                          }`}
                       >
                         <Icon className='w-4 h-4' />
                       </div>
@@ -437,8 +435,8 @@ export function PatientRegistrationWizard({
         </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
-            <div className='min-h-[400px] overflow-y-auto'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='flex-1 flex flex-col min-h-0'>
+            <div className='flex-1 overflow-y-auto px-1 -mx-1'>
               {/* Step Content will be rendered here */}
               {currentStep === 1 && <BasicInformationStep form={form} />}
               {currentStep === 2 && <ContactAddressStep form={form} />}
